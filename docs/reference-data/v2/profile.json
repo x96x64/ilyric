@@ -1,0 +1,152 @@
+{
+  "profile_version": 2,
+  "scope": "internal native-space typography calibration; not a public project schema",
+  "previous_profile": "../v1/profile.json",
+  "previous_results": "../v1/results.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "capture_geometry": {
+    "status": "measured",
+    "width": 1179,
+    "height": 2556,
+    "unit": "native screenshot pixel",
+    "origin": "top-left",
+    "y_direction": "down",
+    "profile": "Display P3",
+    "source_ids": [
+      "S02",
+      "S03",
+      "S04",
+      "S05",
+      "S07",
+      "S08",
+      "S09",
+      "S10"
+    ]
+  },
+  "provenance": {
+    "status": "measured",
+    "case_to_source": {
+      "S02": "S02",
+      "S03": "S03",
+      "S04B": "S04",
+      "S05": "S05",
+      "S07": "S07",
+      "S08": "S08",
+      "S09": "S09",
+      "S10": "S10"
+    },
+    "source_media": "private, excluded from Git",
+    "baseline_reproduction": "Four archived cases reproduced exactly in the local environment"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0"
+  },
+  "parameters": {
+    "system_font": {
+      "status": "fitted",
+      "value": "Public system UI font plus bold symbolic trait; default optical behavior",
+      "native_identity": "unknown",
+      "local_resolved_names": [
+        ".SFNS-Bold",
+        ".HiraKakuInterface-W6"
+      ]
+    },
+    "origin_x": {
+      "status": "fitted",
+      "value": 96,
+      "uncertainty_px": 4,
+      "provenance": "Retained v1 registration prior; not an exact native layout box"
+    },
+    "paragraph_width": {
+      "status": "fitted",
+      "value": 987,
+      "uncertainty_px": 4,
+      "qualification": "983 and 991 tested; width and wrapping remain underidentified"
+    },
+    "latin_size": {
+      "status": "fitted",
+      "value": 104.5,
+      "unit": "requested Core Text size in native raster coordinates",
+      "qualification": "At width 987; exclusion range 104.25–104.5, with one held-out wrapping failure"
+    },
+    "japanese_size": {
+      "status": "unknown",
+      "qualification": "Separate case optima 102 and 103; no universal script-specific correction adopted"
+    },
+    "mixed_alignment": {
+      "status": "measured",
+      "value": "right",
+      "sources": [
+        "S10"
+      ],
+      "qualification": "Observed state only; selection rule unknown"
+    },
+    "first_baseline": {
+      "status": "fitted",
+      "value": 791.466,
+      "uncertainty_px": 5,
+      "qualification": "Case-balanced ordinary Latin proxy fit at size 104.5; conservative empirical investigation band, not a confidence interval"
+    },
+    "line_advance": {
+      "status": "fitted",
+      "value": 125.325,
+      "observed_case_fit_range_px": [
+        124,
+        129
+      ],
+      "qualification": "Proxy fit across four Latin cases; not a native universal line or paragraph spacing rule"
+    },
+    "paragraph_spacing": {
+      "status": "unknown"
+    },
+    "source_break_semantics": {
+      "status": "unknown",
+      "qualification": "S04B, S09, and S10 preserve observed boundaries as explicit input constraints"
+    },
+    "japanese_state_effect": {
+      "status": "inferred",
+      "qualification": "State or local fallback differences are competing explanations; neither isolated"
+    },
+    "investigation_bands": {
+      "status": "provisional",
+      "ink_edge_sensitivity_px": [
+        0,
+        2
+      ],
+      "baseline_px": 5,
+      "qualification": "Observed extraction sensitivity and case spread; not final fidelity acceptance thresholds"
+    }
+  },
+  "disposition": {
+    "status": "inferred",
+    "architecture": "retained with qualifications",
+    "shared_typography_model": "not established",
+    "production_renderer_changed": false,
+    "next_gate": "state-controlled Japanese typography and English wrapping refinement"
+  }
+}
