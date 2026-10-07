@@ -10,6 +10,10 @@ let package = Package(
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
         .executableTarget(name: "ilyric", dependencies: ["SpikeCore", "RenderMac"]),
         .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
+        .target(name: "LyricsSliceCore", dependencies: ["SpikeCore"]),
+        .target(name: "LyricsSliceMac", dependencies: ["LyricsSliceCore", "SpikeCore"]),
+        .executableTarget(name: "LyricsSliceProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
+        .testTarget(name: "LyricsSliceTests", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"])
     ],
     swiftLanguageModes: [.v5]
