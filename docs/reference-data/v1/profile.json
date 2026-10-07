@@ -1,0 +1,521 @@
+{
+  "profile_version": 1,
+  "scope": "Internal physical-reference validation; not the public iLyric project schema",
+  "provenance": {
+    "source_ids": "S01–S10 and V01–V04 map to original files only in the ignored private manifest",
+    "screenshots": 10,
+    "recordings": 4,
+    "source_media_public": false
+  },
+  "device": {
+    "model": {
+      "value": "iPhone 16",
+      "status": "reported"
+    },
+    "os": {
+      "value": "iOS 27.0.1",
+      "status": "reported"
+    },
+    "display_zoom": {
+      "value": "Default",
+      "status": "reported"
+    },
+    "text_size": {
+      "value": "4/7, smallest selectable size counted as 1/7",
+      "status": "reported"
+    },
+    "bold_text": {
+      "value": false,
+      "status": "reported"
+    },
+    "reduce_motion": {
+      "value": false,
+      "status": "reported"
+    },
+    "reduce_transparency": {
+      "value": false,
+      "status": "reported"
+    },
+    "increase_contrast": {
+      "value": false,
+      "status": "reported"
+    },
+    "appearance": {
+      "value": "Light",
+      "status": "reported"
+    },
+    "system_language": {
+      "value": "English",
+      "status": "reported"
+    },
+    "music_language": {
+      "value": "English",
+      "status": "reported"
+    },
+    "build": {
+      "value": "Unknown",
+      "status": "unknown",
+      "method": "Not verified on the physical device"
+    }
+  },
+  "coordinates": {
+    "origin": {
+      "value": "top-left",
+      "status": "definition"
+    },
+    "axes": {
+      "value": "x right, y down",
+      "status": "definition"
+    },
+    "primary_units": {
+      "value": "native capture pixels",
+      "status": "definition"
+    },
+    "screenshot_size": {
+      "value": [
+        1179,
+        2556
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 0,
+      "sources": [
+        "S01–S10"
+      ],
+      "method": "PNG dimensions"
+    },
+    "recording_size": {
+      "value": [
+        1180,
+        2556
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 0,
+      "sources": [
+        "V01–V04"
+      ],
+      "method": "decoded HEVC dimensions"
+    },
+    "uikit_point_canvas": {
+      "value": [
+        393,
+        852
+      ],
+      "status": "inferred",
+      "units": "pt",
+      "uncertainty": "Unverified three-pixel scale; not device-measured"
+    },
+    "recording_extra_column": {
+      "value": "Unknown origin; retain separate width",
+      "status": "unknown"
+    }
+  },
+  "geometry": {
+    "handle_bounds": {
+      "value": [
+        500,
+        198,
+        680,
+        210
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 1,
+      "sources": [
+        "S01",
+        "S03",
+        "S04",
+        "S06",
+        "S07",
+        "S09",
+        "S10"
+      ],
+      "method": "Local contrast mask; half-open bounds"
+    },
+    "progress_bounds": {
+      "value": [
+        96,
+        1683,
+        1083,
+        1704
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 1,
+      "sources": [
+        "S01",
+        "S03",
+        "S04",
+        "S06",
+        "S07",
+        "S09",
+        "S10"
+      ],
+      "method": "Local contrast mask; half-open bounds"
+    },
+    "volume_bounds": {
+      "value": [
+        171,
+        2192,
+        982,
+        2214
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 1,
+      "sources": [
+        "S01",
+        "S03",
+        "S04",
+        "S06",
+        "S07",
+        "S09",
+        "S10"
+      ],
+      "method": "Local contrast mask; half-open bounds"
+    },
+    "artwork_bounds": {
+      "value": [
+        96,
+        276,
+        312,
+        492
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 2,
+      "sources": [
+        "S03",
+        "S04",
+        "S06",
+        "S09",
+        "S10"
+      ],
+      "method": "Manual inspection of original-resolution boundaries"
+    },
+    "ordinary_english_first_ink_top_range": {
+      "value": [
+        715,
+        718
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 3,
+      "sources": [
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S07"
+      ],
+      "method": "Thresholded visible glyph bounds"
+    },
+    "japanese_lower_active_ink_bounds": {
+      "value": [
+        104,
+        1053,
+        1025,
+        1139
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 3,
+      "sources": [
+        "S08"
+      ],
+      "method": "Thresholded visible glyph bounds"
+    },
+    "mixed_right_aligned_ink_right_edges": {
+      "value": [
+        1075,
+        1080
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 3,
+      "sources": [
+        "S10"
+      ],
+      "method": "Thresholded visible glyph bounds"
+    },
+    "gap_dim_x_spans": {
+      "value": [
+        [
+          95,
+          131
+        ],
+        [
+          156,
+          192
+        ],
+        [
+          217,
+          253
+        ]
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 2,
+      "sources": [
+        "S01"
+      ],
+      "method": "Local contrast threshold 2/255"
+    },
+    "gap_bright_x_spans": {
+      "value": [
+        [
+          83,
+          126
+        ],
+        [
+          153,
+          195
+        ],
+        [
+          222,
+          265
+        ]
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 2,
+      "sources": [
+        "S06"
+      ],
+      "method": "Local contrast threshold 25/255"
+    },
+    "gap_dim_y_span": {
+      "value": [
+        744,
+        780
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 2,
+      "sources": [
+        "S01"
+      ],
+      "method": "Local contrast mask"
+    },
+    "gap_bright_y_span": {
+      "value": [
+        740,
+        784
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 2,
+      "sources": [
+        "S06"
+      ],
+      "method": "Local contrast mask"
+    },
+    "expanded_sing_control_bounds": {
+      "value": [
+        969,
+        1353,
+        1083,
+        1587
+      ],
+      "status": "measured",
+      "units": "px",
+      "uncertainty": 3,
+      "sources": [
+        "S07"
+      ],
+      "method": "Manual original-resolution inspection"
+    },
+    "lyric_horizontal_layout": {
+      "value": {
+        "left": 96,
+        "right": 1083,
+        "width": 987
+      },
+      "status": "fitted",
+      "units": "px",
+      "uncertainty": 4,
+      "sources": [
+        "S02",
+        "S03",
+        "S04",
+        "S09",
+        "S10"
+      ],
+      "method": "Shared edge alignment and Core Text side-bearing registration; not a measured UIKit view"
+    },
+    "english_line_advance": {
+      "value": 128,
+      "status": "fitted",
+      "units": "px",
+      "uncertainty": 3,
+      "sources": [
+        "S02",
+        "S03",
+        "S04",
+        "S07"
+      ],
+      "method": "Multiple line ink offsets with script-dependent glyph bearings"
+    },
+    "english_baseline_first": {
+      "value": 792,
+      "status": "fitted",
+      "units": "px",
+      "uncertainty": 5,
+      "sources": [
+        "S02",
+        "S04"
+      ],
+      "method": "Registered Core Text candidate; baseline is not directly visible"
+    },
+    "paragraph_spacing_rule": {
+      "value": "Unknown; first repeated two-line block advances approximately 325 pixels",
+      "status": "unknown"
+    },
+    "lyric_viewport_clip_rect": {
+      "value": "Unknown; fades and state-dependent presentation prevent a hard boundary measurement",
+      "status": "unknown"
+    },
+    "system_safe_area_and_occlusion": {
+      "value": "Unknown bounds; status chrome and recording occlusion are separate from application content",
+      "status": "unknown"
+    }
+  },
+  "typography": {
+    "native_font_identity": {
+      "value": "Unknown",
+      "status": "unknown"
+    },
+    "latin_candidate": {
+      "value": {
+        "api": "CTFontCreateUIFontForLanguage with bold symbolic trait",
+        "resolved_font": ".SFNS-Bold",
+        "size": 104
+      },
+      "status": "fitted",
+      "units": "native px",
+      "uncertainty": "Size grid only; native identity and weight remain unknown",
+      "sources": [
+        "S02",
+        "S04",
+        "S10"
+      ]
+    },
+    "japanese_candidate": {
+      "value": {
+        "resolved_font": ".HiraKakuInterface-W6",
+        "size": 102
+      },
+      "status": "fitted",
+      "units": "native px",
+      "uncertainty": "Single short Japanese sample; not a universal correction",
+      "sources": [
+        "S08"
+      ]
+    },
+    "whole_paragraph_shaping": {
+      "value": "Preserve layout and clip for timing; do not reshape timed fragments",
+      "status": "engineering_inference"
+    },
+    "source_authored_breaks": {
+      "value": "Unknown; S04 requires an explicit observed break to match wrapping",
+      "status": "unknown"
+    }
+  },
+  "motion": {
+    "anchor": {
+      "value": "Horizontal glyph-edge contrast centroid of first line",
+      "status": "definition",
+      "units": "native px",
+      "uncertainty": 4,
+      "sources": [
+        "V01",
+        "V02",
+        "V03"
+      ]
+    },
+    "time_base": {
+      "value": "1/600",
+      "status": "measured",
+      "units": "s",
+      "uncertainty": 0,
+      "sources": [
+        "V01",
+        "V02",
+        "V03",
+        "V04"
+      ]
+    },
+    "sampling_uncertainty": {
+      "value": 16.667,
+      "status": "inferred",
+      "units": "ms",
+      "uncertainty": "Maximum observed adjacent-frame interval; display-to-capture latency is unknown"
+    },
+    "fit_protocol": {
+      "value": {
+        "window_seconds": [
+          2,
+          5
+        ],
+        "onset_grid_seconds": [
+          2,
+          3.99,
+          0.01
+        ],
+        "duration_grid_seconds": [
+          0.04,
+          0.81,
+          0.01
+        ],
+        "training": "even observations",
+        "within_capture_holdout": "odd observations",
+        "between_capture_holdout": "V01 parameters; only 50-percent crossing phase registration on V02/V03",
+        "parameter_meaning": "critical duration is a time constant; Hermite duration is finite completion time"
+      },
+      "status": "definition"
+    },
+    "native_implementation": {
+      "value": "Unknown; analytic models are iLyric reconstructions",
+      "status": "unknown"
+    }
+  },
+  "delivery": {
+    "contain": {
+      "value": {
+        "scale": 0.7511737089201878,
+        "x": 97.18309859154931,
+        "y": 0.0
+      },
+      "status": "calculated",
+      "units": "output px and uniform scale",
+      "uncertainty": 0,
+      "method": "Transform native reference space after layout"
+    },
+    "cover": {
+      "value": {
+        "scale": 0.916030534351145,
+        "x": 0.0,
+        "y": -210.6870229007634
+      },
+      "status": "calculated",
+      "units": "output px and uniform scale",
+      "uncertainty": 0,
+      "method": "Transform native reference space after layout"
+    },
+    "adapt": {
+      "value": "Reflow is an adaptation; no measured native reproduction claim",
+      "status": "definition"
+    }
+  },
+  "provisional_diagnostics": {
+    "value": {
+      "settled_anchor_spread_px": 2,
+      "moving_anchor_measurement_band_px": 4,
+      "highlight_registration_band_ms": 50,
+      "final_fidelity_thresholds": "Not established"
+    },
+    "status": "provisional",
+    "uncertainty": "Investigation bands only; no release acceptance or native-fidelity pass threshold"
+  }
+}

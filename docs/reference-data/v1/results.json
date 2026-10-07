@@ -1,0 +1,1216 @@
+{
+  "results_version": 1,
+  "recordings": {
+    "V01": {
+      "streams": [
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration": "30.065669",
+          "nb_frames": "1300",
+          "sample_rate": "44100",
+          "channels": 2,
+          "channel_layout": "stereo"
+        },
+        {
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "profile": "Main",
+          "width": 1180,
+          "height": 2556,
+          "pix_fmt": "yuvj420p",
+          "color_range": "pc",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "color_primaries": "bt709",
+          "r_frame_rate": "60/1",
+          "avg_frame_rate": "1084800/18049",
+          "time_base": "1/600",
+          "start_time": "0.000000",
+          "duration": "30.065000",
+          "nb_frames": "1808"
+        }
+      ],
+      "container_format": "mov,mp4,m4a,3gp,3g2,mj2",
+      "container_duration": "30.065669",
+      "decoded_frames": 1807,
+      "first_pts": 0,
+      "last_pts": 18029,
+      "time_base": "1/600",
+      "interval_counts": {
+        "1/60": 1775,
+        "3/200": 31
+      },
+      "discard_packets": 1,
+      "container_frames": 1808
+    },
+    "V02": {
+      "streams": [
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration": "29.887392",
+          "nb_frames": "1291",
+          "sample_rate": "44100",
+          "channels": 2,
+          "channel_layout": "stereo"
+        },
+        {
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "profile": "Main",
+          "width": 1180,
+          "height": 2556,
+          "pix_fmt": "yuvj420p",
+          "color_range": "pc",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "color_primaries": "bt709",
+          "r_frame_rate": "60/1",
+          "avg_frame_rate": "539100/8971",
+          "time_base": "1/600",
+          "start_time": "0.000000",
+          "duration": "29.886667",
+          "nb_frames": "1797"
+        }
+      ],
+      "container_format": "mov,mp4,m4a,3gp,3g2,mj2",
+      "container_duration": "29.887392",
+      "decoded_frames": 1796,
+      "first_pts": 0,
+      "last_pts": 17922,
+      "time_base": "1/600",
+      "interval_counts": {
+        "1/60": 1767,
+        "3/200": 28
+      },
+      "discard_packets": 1,
+      "container_frames": 1797
+    },
+    "V03": {
+      "streams": [
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration": "29.566259",
+          "nb_frames": "1278",
+          "sample_rate": "44100",
+          "channels": 2,
+          "channel_layout": "stereo"
+        },
+        {
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "profile": "Main",
+          "width": 1180,
+          "height": 2556,
+          "pix_fmt": "yuvj420p",
+          "color_range": "pc",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "color_primaries": "bt709",
+          "r_frame_rate": "60/1",
+          "avg_frame_rate": "1066800/17753",
+          "time_base": "1/600",
+          "start_time": "0.000000",
+          "duration": "29.571667",
+          "nb_frames": "1778"
+        }
+      ],
+      "container_format": "mov,mp4,m4a,3gp,3g2,mj2",
+      "container_duration": "29.571667",
+      "decoded_frames": 1777,
+      "first_pts": 0,
+      "last_pts": 17733,
+      "time_base": "1/600",
+      "interval_counts": {
+        "1/60": 1749,
+        "3/200": 27
+      },
+      "discard_packets": 1,
+      "container_frames": 1778
+    },
+    "V04": {
+      "streams": [
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "profile": "LC",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/44100",
+          "start_time": "0.000000",
+          "duration": "19.531882",
+          "nb_frames": "845",
+          "sample_rate": "44100",
+          "channels": 2,
+          "channel_layout": "stereo"
+        },
+        {
+          "codec_type": "video",
+          "codec_name": "hevc",
+          "profile": "Main",
+          "width": 1180,
+          "height": 2556,
+          "pix_fmt": "yuvj420p",
+          "color_range": "pc",
+          "color_space": "bt709",
+          "color_transfer": "bt709",
+          "color_primaries": "bt709",
+          "r_frame_rate": "60/1",
+          "avg_frame_rate": "176250/2933",
+          "time_base": "1/600",
+          "start_time": "0.000000",
+          "duration": "19.536667",
+          "nb_frames": "1175"
+        }
+      ],
+      "container_format": "mov,mp4,m4a,3gp,3g2,mj2",
+      "container_duration": "19.536667",
+      "decoded_frames": 1174,
+      "first_pts": 0,
+      "last_pts": 11712,
+      "time_base": "1/600",
+      "interval_counts": {
+        "1/60": 1155,
+        "3/200": 18
+      },
+      "discard_packets": 1,
+      "container_frames": 1175
+    }
+  },
+  "typography": {
+    "S02": {
+      "native_ink_bounds": [
+        [
+          99,
+          717,
+          1012,
+          796
+        ],
+        [
+          101,
+          847,
+          1060,
+          935
+        ],
+        [
+          101,
+          970,
+          684,
+          1042
+        ]
+      ],
+      "candidates": [
+        {
+          "font": "spike",
+          "size": 81,
+          "fonts": [
+            "Helvetica"
+          ],
+          "line_lengths": [
+            20,
+            26,
+            5
+          ],
+          "advances": [
+            729.31640625,
+            981.5712890625,
+            216.14501953125
+          ],
+          "ink_bounds": [
+            [
+              4,
+              36,
+              728,
+              97
+            ],
+            [
+              4,
+              148,
+              978,
+              224
+            ],
+            [
+              2,
+              274,
+              213,
+              319
+            ]
+          ],
+          "width_error": [
+            -189,
+            15,
+            -372
+          ]
+        },
+        {
+          "font": "system-bold",
+          "size": 104,
+          "fonts": [
+            ".SFNS-Bold"
+          ],
+          "line_lengths": [
+            20,
+            20,
+            11
+          ],
+          "advances": [
+            918.53125,
+            967.3828125,
+            591.169921875
+          ],
+          "ink_bounds": [
+            [
+              3,
+              29,
+              914,
+              105
+            ],
+            [
+              5,
+              157,
+              963,
+              250
+            ],
+            [
+              5,
+              285,
+              588,
+              361
+            ]
+          ],
+          "width_error": [
+            -2,
+            -1,
+            0
+          ]
+        }
+      ],
+      "first_line_mask_iou": {
+        "spike-81": [
+          {
+            "threshold": 15,
+            "iou": 0.21167027417027418,
+            "registration": [
+              -5,
+              5
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.211401210588129,
+            "registration": [
+              -5,
+              5
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.21142217922360623,
+            "registration": [
+              -5,
+              5
+            ]
+          }
+        ],
+        "system-bold-104": [
+          {
+            "threshold": 15,
+            "iou": 0.7982340664633167,
+            "registration": [
+              0,
+              0
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.7972299881101578,
+            "registration": [
+              0,
+              0
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.7946325138370447,
+            "registration": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "status": "measured local comparison; fitted candidate, no native font identification"
+    },
+    "S04B": {
+      "native_ink_bounds": [
+        [
+          99,
+          716,
+          778,
+          790
+        ],
+        [
+          97,
+          846,
+          445,
+          919
+        ]
+      ],
+      "candidates": [
+        {
+          "font": "spike",
+          "size": 81,
+          "fonts": [
+            "Helvetica"
+          ],
+          "line_lengths": [
+            16,
+            7
+          ],
+          "advances": [
+            546.5126953125,
+            270.25048828125
+          ],
+          "ink_bounds": [
+            [
+              4,
+              36,
+              542,
+              98
+            ],
+            [
+              1,
+              152,
+              267,
+              208
+            ]
+          ],
+          "width_error": [
+            -141,
+            -82
+          ]
+        },
+        {
+          "font": "system-bold",
+          "size": 104,
+          "fonts": [
+            ".SFNS-Bold"
+          ],
+          "line_lengths": [
+            16,
+            7
+          ],
+          "advances": [
+            683.71875,
+            353.158203125
+          ],
+          "ink_bounds": [
+            [
+              3,
+              29,
+              678,
+              108
+            ],
+            [
+              1,
+              158,
+              350,
+              233
+            ]
+          ],
+          "width_error": [
+            -4,
+            1
+          ]
+        }
+      ],
+      "first_line_mask_iou": {
+        "spike-81": [
+          {
+            "threshold": 15,
+            "iou": 0.1883804250468203,
+            "registration": [
+              -5,
+              5
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.18806347652266145,
+            "registration": [
+              -5,
+              5
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.18777364049265519,
+            "registration": [
+              -5,
+              5
+            ]
+          }
+        ],
+        "system-bold-104": [
+          {
+            "threshold": 15,
+            "iou": 0.8247339350666846,
+            "registration": [
+              0,
+              -1
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.8235717175349485,
+            "registration": [
+              0,
+              -1
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.8212662556810512,
+            "registration": [
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "status": "measured local comparison; fitted candidate, no native font identification"
+    },
+    "S08": {
+      "native_ink_bounds": [
+        [
+          104,
+          1053,
+          1025,
+          1139
+        ]
+      ],
+      "candidates": [
+        {
+          "font": "spike",
+          "size": 81,
+          "fonts": [
+            "HiraginoSans-W3"
+          ],
+          "line_lengths": [
+            10
+          ],
+          "advances": [
+            810
+          ],
+          "ink_bounds": [
+            [
+              9,
+              30,
+              798,
+              100
+            ]
+          ],
+          "width_error": [
+            -132
+          ]
+        },
+        {
+          "font": "system-bold",
+          "size": 102,
+          "fonts": [
+            ".HiraKakuInterface-W6"
+          ],
+          "line_lengths": [
+            10
+          ],
+          "advances": [
+            941.8282548476453
+          ],
+          "ink_bounds": [
+            [
+              8,
+              23,
+              930,
+              109
+            ]
+          ],
+          "width_error": [
+            1
+          ]
+        }
+      ],
+      "first_line_mask_iou": {
+        "spike-81": [
+          {
+            "threshold": 15,
+            "iou": 0.15125588923895136,
+            "registration": [
+              5,
+              5
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.15094668877061337,
+            "registration": [
+              5,
+              5
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.15089701191138166,
+            "registration": [
+              5,
+              5
+            ]
+          }
+        ],
+        "system-bold-102": [
+          {
+            "threshold": 15,
+            "iou": 0.9278434138599895,
+            "registration": [
+              0,
+              0
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.92509376548015,
+            "registration": [
+              0,
+              0
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.9229185158885141,
+            "registration": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "status": "measured local comparison; fitted candidate, no native font identification"
+    },
+    "S10": {
+      "native_ink_bounds": [
+        [
+          423,
+          717,
+          1075,
+          795
+        ],
+        [
+          269,
+          841,
+          1080,
+          922
+        ]
+      ],
+      "candidates": [
+        {
+          "font": "spike",
+          "size": 81,
+          "fonts": [
+            "Helvetica",
+            "HiraginoSans-W3"
+          ],
+          "line_lengths": [
+            16,
+            13
+          ],
+          "advances": [
+            537.53466796875,
+            685.7314453125
+          ],
+          "ink_bounds": [
+            [
+              2,
+              37,
+              531,
+              97
+            ],
+            [
+              2,
+              141,
+              682,
+              210
+            ]
+          ],
+          "width_error": [
+            -123,
+            -131
+          ]
+        },
+        {
+          "font": "system-bold",
+          "size": 104,
+          "fonts": [
+            ".HiraKakuInterface-W6",
+            ".SFNS-Bold"
+          ],
+          "line_lengths": [
+            16,
+            13
+          ],
+          "advances": [
+            658.734375,
+            819.7981283904662
+          ],
+          "ink_bounds": [
+            [
+              329,
+              29,
+              981,
+              105
+            ],
+            [
+              168,
+              152,
+              984,
+              237
+            ]
+          ],
+          "width_error": [
+            0,
+            5
+          ]
+        }
+      ],
+      "first_line_mask_iou": {
+        "spike-81": [
+          {
+            "threshold": 15,
+            "iou": 0.17377180491278035,
+            "registration": [
+              5,
+              5
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.17358878170775277,
+            "registration": [
+              5,
+              5
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.1737177759813168,
+            "registration": [
+              5,
+              5
+            ]
+          }
+        ],
+        "system-bold-104": [
+          {
+            "threshold": 15,
+            "iou": 0.7780371605526442,
+            "registration": [
+              0,
+              -1
+            ]
+          },
+          {
+            "threshold": 25,
+            "iou": 0.776669371390387,
+            "registration": [
+              0,
+              -1
+            ]
+          },
+          {
+            "threshold": 35,
+            "iou": 0.7752561524466149,
+            "registration": [
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "status": "measured local comparison; fitted candidate, no native font identification"
+    }
+  },
+  "motion_fits": {
+    "V01": {
+      "models": {
+        "hermite": {
+          "model": "hermite",
+          "onset": 3.02,
+          "duration": 0.42,
+          "offset": 1085.005848392259,
+          "amplitude": -323.7842812947466,
+          "rmse": 4.139701155646375,
+          "max_error": 17.26988219866621,
+          "held_out": {
+            "rmse": 4.126246123777591,
+            "max_error": 16.821898587050896,
+            "count": 90
+          }
+        },
+        "critical": {
+          "model": "critical",
+          "onset": 3.08,
+          "duration": 0.08,
+          "offset": 1084.5765494620964,
+          "amplitude": -324.90037774883194,
+          "rmse": 2.451499124974627,
+          "max_error": 9.18054069110687,
+          "held_out": {
+            "rmse": 2.4776397437836715,
+            "max_error": 8.879005298733318,
+            "count": 90
+          }
+        }
+      }
+    },
+    "V02": {
+      "models": {
+        "hermite": {
+          "model": "hermite",
+          "onset": 3.17,
+          "duration": 0.43,
+          "offset": 1084.894753318209,
+          "amplitude": -323.65192741888484,
+          "rmse": 4.097629017599134,
+          "max_error": 14.717283542449422,
+          "held_out": {
+            "rmse": 4.149187266845212,
+            "max_error": 15.009219122405966,
+            "count": 90
+          }
+        },
+        "critical": {
+          "model": "critical",
+          "onset": 3.24,
+          "duration": 0.08,
+          "offset": 1083.7636129740845,
+          "amplitude": -324.5818810538966,
+          "rmse": 2.6736380540587286,
+          "max_error": 13.29056431636975,
+          "held_out": {
+            "rmse": 2.6339717154254574,
+            "max_error": 13.77647825553504,
+            "count": 90
+          }
+        }
+      }
+    },
+    "V03": {
+      "models": {
+        "hermite": {
+          "model": "hermite",
+          "onset": 3.0700000000000003,
+          "duration": 0.42,
+          "offset": 1085.1218460265138,
+          "amplitude": -323.4089739845626,
+          "rmse": 4.11249636968039,
+          "max_error": 16.94939449915165,
+          "held_out": {
+            "rmse": 4.129459297162608,
+            "max_error": 17.359318259458632,
+            "count": 90
+          }
+        },
+        "critical": {
+          "model": "critical",
+          "onset": 3.13,
+          "duration": 0.08,
+          "offset": 1084.707194349819,
+          "amplitude": -324.57709049991786,
+          "rmse": 2.670544224971517,
+          "max_error": 10.917429911279356,
+          "held_out": {
+            "rmse": 2.671264158469231,
+            "max_error": 10.698652275352515,
+            "count": 90
+          }
+        }
+      }
+    }
+  },
+  "repeatability": {
+    "V01": {
+      "exact_duplicate_roi_pairs": 0,
+      "roi_mad_below_0_05": 274,
+      "minimum_roi_mad_8bit": 0.01856043956043956,
+      "window_sensitivity_max_px": 3.705040178849231,
+      "window_sensitivity_median_px": 0.20247532890266484,
+      "half_crossing_seconds": 3.221943260183285,
+      "settled_y_mean": 758.6800505016531,
+      "settled_y_sd": 0.5226292968494927
+    },
+    "V02": {
+      "exact_duplicate_roi_pairs": 0,
+      "roi_mad_below_0_05": 401,
+      "minimum_roi_mad_8bit": 0.010846153846153846,
+      "window_sensitivity_max_px": 3.8144514205359883,
+      "window_sensitivity_median_px": 0.5730433300579989,
+      "half_crossing_seconds": 3.3740091612399588,
+      "settled_y_mean": 759.5639854367712,
+      "settled_y_sd": 0.6948269633357828,
+      "registration_seconds": 0.1520659010566736,
+      "capture_holdout_after_phase_registration": {
+        "rmse": 2.456201579150327,
+        "max_error": 9.756685306196005,
+        "count": 180
+      }
+    },
+    "V03": {
+      "exact_duplicate_roi_pairs": 0,
+      "roi_mad_below_0_05": 246,
+      "minimum_roi_mad_8bit": 0.010648351648351649,
+      "window_sensitivity_max_px": 3.813422221441897,
+      "window_sensitivity_median_px": 0.23250931986393653,
+      "half_crossing_seconds": 3.273494170476524,
+      "settled_y_mean": 759.3700784817972,
+      "settled_y_sd": 0.6541942526471927,
+      "registration_seconds": 0.05155091029323877,
+      "capture_holdout_after_phase_registration": {
+        "rmse": 2.4626227920742894,
+        "max_error": 9.390028407112254,
+        "count": 180
+      }
+    },
+    "V04": {
+      "exact_duplicate_roi_pairs": 0,
+      "roi_mad_below_0_05": 325,
+      "minimum_roi_mad_8bit": 0.005846153846153846
+    }
+  },
+  "anchor_sensitivity": {
+    "V01": {
+      "glyph_vs_line_proxy_median_offset": -4.288374588155534,
+      "centered_rms_difference": 0.8276642261056133,
+      "centered_max_difference": 1.648732410548746,
+      "fixed_0_8_hermite_fit": {
+        "model": "hermite",
+        "onset": 2.83,
+        "duration": 0.8,
+        "offset": 1091.2009880291903,
+        "amplitude": -334.3167243356493,
+        "rmse": 17.058266887508612,
+        "max_error": 66.60106993096582
+      }
+    },
+    "V02": {
+      "glyph_vs_line_proxy_median_offset": -4.442173543478248,
+      "centered_rms_difference": 1.0362807591828613,
+      "centered_max_difference": 1.6308736196615428,
+      "fixed_0_8_hermite_fit": {
+        "model": "hermite",
+        "onset": 2.99,
+        "duration": 0.8,
+        "offset": 1089.6090296628297,
+        "amplitude": -333.42896174737695,
+        "rmse": 17.136891001815837,
+        "max_error": 63.573742343049474
+      }
+    },
+    "V03": {
+      "glyph_vs_line_proxy_median_offset": -4.355128850074891,
+      "centered_rms_difference": 1.044768593536797,
+      "centered_max_difference": 1.8062101271072493,
+      "fixed_0_8_hermite_fit": {
+        "model": "hermite",
+        "onset": 2.89,
+        "duration": 0.8,
+        "offset": 1089.7413809356058,
+        "amplitude": -333.38688570241635,
+        "rmse": 17.13108658175735,
+        "max_error": 63.254003205667075
+      }
+    }
+  },
+  "appearance": {
+    "V01": {
+      "strip_mean_rgb_first": [
+        73.7046875,
+        73.3140625,
+        66.5671875
+      ],
+      "strip_mean_rgb_range": [
+        44.9578125,
+        41.0828125,
+        34.740624999999994
+      ],
+      "strip_mean_rgb_temporal_sd": [
+        14.012745374084627,
+        12.838388499906088,
+        10.754064470672892
+      ],
+      "vertical_rgb_gradient_range": [
+        49.10000000000001,
+        47.5625,
+        38.51249999999999
+      ],
+      "sample_pts": [
+        0,
+        1198,
+        2396,
+        3594,
+        4792,
+        5990,
+        7188,
+        8386,
+        9584,
+        10782,
+        11980,
+        13178,
+        14376,
+        15574,
+        16772,
+        17970
+      ],
+      "first_line_contrast_groups": [
+        {
+          "x_range": [
+            100,
+            248
+          ],
+          "contrast_p10_p90": [
+            101.0,
+            192.0
+          ],
+          "half_change_time": 0.9316666666666666,
+          "status": "contrast crossing"
+        },
+        {
+          "x_range": [
+            272,
+            512
+          ],
+          "contrast_p10_p90": [
+            91.0,
+            195.0
+          ],
+          "half_change_time": 1.2983333333333333,
+          "status": "contrast crossing"
+        },
+        {
+          "x_range": [
+            532,
+            780
+          ],
+          "contrast_p10_p90": [
+            93.0,
+            178.0
+          ],
+          "half_change_time": 1.93,
+          "status": "contrast crossing"
+        }
+      ]
+    },
+    "V02": {
+      "strip_mean_rgb_first": [
+        67.225,
+        66.946875,
+        62.503125
+      ],
+      "strip_mean_rgb_range": [
+        13.032812499999999,
+        18.335937500000007,
+        16.706250000000004
+      ],
+      "strip_mean_rgb_temporal_sd": [
+        4.008640848715816,
+        5.071979629834036,
+        4.711809080742561
+      ],
+      "vertical_rgb_gradient_range": [
+        61.84375000000001,
+        57.29375,
+        49.81874999999999
+      ],
+      "sample_pts": [
+        0,
+        1198,
+        2396,
+        3594,
+        4792,
+        5991,
+        7189,
+        8387,
+        9585,
+        10783,
+        11982,
+        13180,
+        14378,
+        15576,
+        16774
+      ],
+      "first_line_contrast_groups": [
+        {
+          "x_range": [
+            100,
+            248
+          ],
+          "contrast_p10_p90": [
+            89.0,
+            162.0
+          ],
+          "half_change_time": 1.065,
+          "status": "contrast crossing"
+        },
+        {
+          "x_range": [
+            272,
+            512
+          ],
+          "contrast_p10_p90": [
+            90.0,
+            147.0
+          ],
+          "half_change_time": 1.4483333333333333,
+          "status": "contrast crossing"
+        },
+        {
+          "x_range": [
+            532,
+            780
+          ],
+          "contrast_p10_p90": [
+            91.0,
+            135.64999999999998
+          ],
+          "half_change_time": 2.08,
+          "status": "contrast crossing"
+        }
+      ]
+    },
+    "V03": {
+      "strip_mean_rgb_first": [
+        75.596875,
+        72.7125,
+        66.446875
+      ],
+      "strip_mean_rgb_range": [
+        25.9453125,
+        24.49843750000001,
+        18.598437500000003
+      ],
+      "strip_mean_rgb_temporal_sd": [
+        8.008432725980938,
+        7.4060101241627665,
+        5.618913155383615
+      ],
+      "vertical_rgb_gradient_range": [
+        31.9625,
+        35.45,
+        30.86874999999999
+      ],
+      "sample_pts": [
+        0,
+        1198,
+        2396,
+        3595,
+        4793,
+        5991,
+        7189,
+        8388,
+        9586,
+        10784,
+        11982,
+        13180,
+        14378,
+        15577,
+        16775
+      ],
+      "first_line_contrast_groups": [
+        {
+          "x_range": [
+            100,
+            248
+          ],
+          "contrast_p10_p90": [
+            157.0,
+            161.0
+          ],
+          "half_change_time": null,
+          "status": "unavailable: insufficient contrast change"
+        },
+        {
+          "x_range": [
+            272,
+            512
+          ],
+          "contrast_p10_p90": [
+            91.0,
+            146.0
+          ],
+          "half_change_time": 1.315,
+          "status": "contrast crossing"
+        },
+        {
+          "x_range": [
+            532,
+            780
+          ],
+          "contrast_p10_p90": [
+            91.0,
+            138.0
+          ],
+          "half_change_time": 1.98,
+          "status": "contrast crossing"
+        }
+      ]
+    },
+    "V04": {
+      "strip_mean_rgb_first": [
+        69.71875,
+        70.19375,
+        66.959375
+      ],
+      "strip_mean_rgb_range": [
+        19.078125,
+        17.571875,
+        12.518749999999997
+      ],
+      "strip_mean_rgb_temporal_sd": [
+        6.3675938309764275,
+        5.811384891775071,
+        4.157764412184336
+      ],
+      "vertical_rgb_gradient_range": [
+        11.837500000000006,
+        8.9375,
+        9.48125000000001
+      ],
+      "sample_pts": [
+        0,
+        1198,
+        2397,
+        3595,
+        4793,
+        5991,
+        7189,
+        8388,
+        9586,
+        10784
+      ]
+    }
+  }
+}
