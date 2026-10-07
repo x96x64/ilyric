@@ -1,0 +1,1802 @@
+{
+  "evidence_status": "Measured renderer comparison using fitted v5 parameters and observed private appearance events",
+  "parameter_provenance": "Frozen v5 fits; no vertical refitting in this gate",
+  "dim_opacity_training": {
+    "V09": 0.440755285712399,
+    "V10": 0.4321160402560651
+  },
+  "comparisons": {
+    "V09": {
+      "fixed": {
+        "held_out": "V10",
+        "parameters": {
+          "size": 103.25,
+          "width": 987,
+          "originX": 98,
+          "originY": 688.075,
+          "lineAdvance": 125.66785714285714,
+          "amplitude": 0,
+          "tau": 0.195,
+          "dimOpacity": 0.440755285712399
+        },
+        "phases": [
+          {
+            "pts": 4802,
+            "common_origin_iou": 0.754422800264396,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 4922,
+            "common_origin_iou": 0.8175808720112517,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5202,
+            "common_origin_iou": 0.8127062211290419,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5501,
+            "common_origin_iou": 0.8296874685556741,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5791,
+            "common_origin_iou": 0.8315855030536805,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6070,
+            "common_origin_iou": 0.8199630020090307,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6240,
+            "common_origin_iou": 0.7619679317106933,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6420,
+            "common_origin_iou": 0.7249553529467055,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6599,
+            "common_origin_iou": 0.7129905984181465,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6779,
+            "common_origin_iou": 0.6812171973008064,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.91785714285714,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          }
+        ],
+        "aggregate": {
+          "glyph_observations": 150,
+          "residual_rmse": 2.420743687382041,
+          "maximum_residual": 5,
+          "registration_at_limit": 0,
+          "minimum_glyph_iou": 0.4401384083044983,
+          "mean_glyph_iou": 0.7789863215877713,
+          "appearance_rmse": 41.94801326920571,
+          "appearance_shared_rmse": 12.523062469098681,
+          "maximum_glyph_appearance_shared_rmse": 44.57656526091865,
+          "minimum_shared_support": 0.639447731755424
+        }
+      },
+      "vertical": {
+        "held_out": "V10",
+        "parameters": {
+          "size": 103.25,
+          "width": 987,
+          "originX": 98,
+          "originY": 685.916348972559,
+          "lineAdvance": 123.01415456579801,
+          "amplitude": 6.030049390921261,
+          "tau": 0.19,
+          "dimOpacity": 0.440755285712399
+        },
+        "phases": [
+          {
+            "pts": 4802,
+            "common_origin_iou": 0.929115006412997,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                716,
+                844,
+                804
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 4922,
+            "common_origin_iou": 0.8916189201622684,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                716,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5202,
+            "common_origin_iou": 0.9306937019445806,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5501,
+            "common_origin_iou": 0.9280473322588854,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                711,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5791,
+            "common_origin_iou": 0.9291351911805159,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                801
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6070,
+            "common_origin_iou": 0.9246707896840423,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                837,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6240,
+            "common_origin_iou": 0.9274222381122631,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                834,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6420,
+            "common_origin_iou": 0.9343339587242027,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                833,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6599,
+            "common_origin_iou": 0.9247940640130793,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                832,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6779,
+            "common_origin_iou": 0.9303727034120735,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                832,
+                756,
+                923
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.264154565798,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          }
+        ],
+        "aggregate": {
+          "glyph_observations": 150,
+          "residual_rmse": 0.408248290463863,
+          "maximum_residual": 1,
+          "registration_at_limit": 0,
+          "minimum_glyph_iou": 0.8208418891170431,
+          "mean_glyph_iou": 0.919072011330405,
+          "appearance_rmse": 12.486142492442118,
+          "appearance_shared_rmse": 10.071857456411376,
+          "maximum_glyph_appearance_shared_rmse": 45.18337839834827,
+          "minimum_shared_support": 0.9603760913364674
+        }
+      }
+    },
+    "V10": {
+      "fixed": {
+        "held_out": "V09",
+        "parameters": {
+          "size": 103.25,
+          "width": 987,
+          "originX": 98,
+          "originY": 687.9875,
+          "lineAdvance": 125.6125,
+          "amplitude": 0,
+          "tau": 0.195,
+          "dimOpacity": 0.4321160402560651
+        },
+        "phases": [
+          {
+            "pts": 4803,
+            "common_origin_iou": 0.6743892477908963,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 4922,
+            "common_origin_iou": 0.818509276773856,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5202,
+            "common_origin_iou": 0.8125087561292905,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5501,
+            "common_origin_iou": 0.8298219465033838,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5791,
+            "common_origin_iou": 0.8310858337185233,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6071,
+            "common_origin_iou": 0.8238295497578378,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6240,
+            "common_origin_iou": 0.7684531388663811,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6420,
+            "common_origin_iou": 0.7289520760756991,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6600,
+            "common_origin_iou": 0.7144189690875511,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6779,
+            "common_origin_iou": 0.6859094071551504,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                800
+              ],
+              [
+                102,
+                837,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 228.8625,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          }
+        ],
+        "aggregate": {
+          "glyph_observations": 150,
+          "residual_rmse": 2.524546163834865,
+          "maximum_residual": 5,
+          "registration_at_limit": 0,
+          "minimum_glyph_iou": 0.44134593224245217,
+          "mean_glyph_iou": 0.772876125587398,
+          "appearance_rmse": 41.66938182585401,
+          "appearance_shared_rmse": 12.925291250449309,
+          "maximum_glyph_appearance_shared_rmse": 50.95670614607708,
+          "minimum_shared_support": 0.6394344069128044
+        }
+      },
+      "vertical": {
+        "held_out": "V09",
+        "parameters": {
+          "size": 103.25,
+          "width": 987,
+          "originX": 98,
+          "originY": 685.8997319737828,
+          "lineAdvance": 123.04717213183767,
+          "amplitude": 5.843115124165684,
+          "tau": 0.2,
+          "dimOpacity": 0.4321160402560651
+        },
+        "phases": [
+          {
+            "pts": 4803,
+            "common_origin_iou": 0.8729183105610698,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                716,
+                844,
+                804
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 4922,
+            "common_origin_iou": 0.8872483501796007,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                716,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5202,
+            "common_origin_iou": 0.9272611193871036,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                712,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5501,
+            "common_origin_iou": 0.9319694617527593,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                711,
+                844,
+                803
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 5791,
+            "common_origin_iou": 0.927950231701898,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                801
+              ],
+              [
+                102,
+                838,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6071,
+            "common_origin_iou": 0.9252067072016158,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                837,
+                756,
+                927
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6240,
+            "common_origin_iou": 0.9254731447056105,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                835,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6420,
+            "common_origin_iou": 0.9330905109796408,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                833,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6600,
+            "common_origin_iou": 0.9275930781331935,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                832,
+                756,
+                926
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          },
+          {
+            "pts": 6779,
+            "common_origin_iou": 0.9358168478146615,
+            "width_errors": [
+              0,
+              1
+            ],
+            "ink_bounds": [
+              [
+                102,
+                710,
+                844,
+                798
+              ],
+              [
+                102,
+                832,
+                756,
+                923
+              ]
+            ],
+            "lines": [
+              {
+                "baseline": 103.25,
+                "breakKind": "observed-explicit",
+                "length": 9,
+                "start": 0,
+                "width": 762.69621421976
+              },
+              {
+                "baseline": 226.29717213183767,
+                "breakKind": "end",
+                "length": 7,
+                "start": 9,
+                "width": 667.35918744229
+              }
+            ],
+            "fonts": [
+              ".HiraKakuInterface-W6",
+              ".SFNS-Bold"
+            ]
+          }
+        ],
+        "aggregate": {
+          "glyph_observations": 150,
+          "residual_rmse": 0.5033222956847166,
+          "maximum_residual": 1,
+          "registration_at_limit": 0,
+          "minimum_glyph_iou": 0.7996910401647785,
+          "mean_glyph_iou": 0.9137802055288581,
+          "appearance_rmse": 12.858974789513702,
+          "appearance_shared_rmse": 10.592913223975609,
+          "maximum_glyph_appearance_shared_rmse": 50.60187406948437,
+          "minimum_shared_support": 0.9572591587516961
+        }
+      }
+    }
+  }
+}
