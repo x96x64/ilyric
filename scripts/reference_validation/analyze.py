@@ -73,12 +73,12 @@ def runs(values, gap=1, minimum=9):
     return [part for part in np.split(indices,np.where(np.diff(indices)>gap)[0]+1) if len(part)>=minimum]
 
 
-def foreground(image, threshold=25):
+def foreground(image, threshold=25, min_gray=145):
     import numpy as np
     from PIL import Image, ImageFilter
     gray=np.asarray(image.convert('RGB')).astype(float).mean(2)
     background=np.asarray(Image.fromarray(gray.astype('uint8')).filter(ImageFilter.GaussianBlur(18))).astype(float)
-    return (gray-background>threshold)&(gray>145)
+    return (gray-background>threshold)&(gray>min_gray)
 
 
 def ink_bounds(mask, x=0, y=0):

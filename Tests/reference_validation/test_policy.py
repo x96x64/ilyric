@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts/reference_validation'))
 import analyze
+import calibrate
 
 class PolicyTests(unittest.TestCase):
     def test_private_path_escape(self):
@@ -23,6 +24,11 @@ class PolicyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, patch.object(analyze,'private_root',return_value=Path(directory)), patch.object(sys,'argv',['analyze.py']):
             output=io.StringIO()
             with contextlib.redirect_stdout(output):analyze.main()
+            self.assertEqual(json.loads(output.getvalue())['status'],'unavailable')
+    def test_missing_typography_corpus_is_unavailable(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(calibrate,'private_root',return_value=Path(directory)), patch.object(sys,'argv',['calibrate.py']):
+            output=io.StringIO()
+            with contextlib.redirect_stdout(output):calibrate.main()
             self.assertEqual(json.loads(output.getvalue())['status'],'unavailable')
     def test_unrelated_root_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -31,8 +31,29 @@ struct Input: Decodable {
     let numerator, denominator: Int64?
     let motion: Motion?
     let anchorOffset: Double?
+    let fontSelection: String? // Public UI font API: symbolic-bold (default) or emphasized.
+    let language: String?
+    let opticalSize: String? // auto, none, or a positive numeric point size.
+    let weight: Double? // Public normalized Core Text weight trait, -1 ... 1.
 }
-struct Metric: Encodable { let start, length: Int; let width, baseline: Double }
+struct RunMetric: Encodable {
+    let start, length, glyphCount: Int
+    let font: String
+    let size: Double
+    let weight: Double?
+    let matrix: [Double]
+}
+struct LineDetail: Encodable {
+    let originX, ascent, descent, leading: Double
+    let glyphPathBounds: [Double] // Baseline-relative, Core Text y-up coordinates.
+    let breakKind: String // Observed input structure, not native source semantics.
+    let runs: [RunMetric]
+}
+struct Metric: Encodable {
+    let start, length: Int
+    let width, baseline: Double
+    var detail: LineDetail? = nil
+}
 struct Result: Encodable {
     let status: String
     let fonts: [String]
@@ -83,8 +104,28 @@ do {
         metrics = layout.metrics.map { Metric(start: $0.start, length: $0.length, width: $0.width * 3, baseline: $0.baseline * 3) }
     } else {
         guard input.font == "system-bold" else { throw SpikeError.failure("Unknown candidate font") }
-        let regular = CTFontCreateUIFontForLanguage(.system, input.size, nil)!
-        let font = CTFontCreateCopyWithSymbolicTraits(regular, input.size, nil, .traitBold, .traitBold)!
+        let selection = input.fontSelection ?? "symbolic-bold"
+        guard ["symbolic-bold", "emphasized"].contains(selection),
+              [nil, "left", "right"].contains(input.alignment),
+              input.weight.map({ $0.isFinite && (-1...1).contains($0) }) ?? true else {
+            throw SpikeError.failure("Invalid calibration configuration")
+        }
+        let regular = CTFontCreateUIFontForLanguage(selection == "emphasized" ? .emphasizedSystem : .system,
+                                                    input.size, input.language as CFString?)!
+        var font = selection == "emphasized" ? regular :
+            CTFontCreateCopyWithSymbolicTraits(regular, input.size, nil, .traitBold, .traitBold)!
+        var attributes: [CFString: Any] = [:]
+        if let optical = input.opticalSize {
+            if ["auto", "none"].contains(optical) { attributes[kCTFontOpticalSizeAttribute] = optical }
+            else if let value = Double(optical), value.isFinite, value > 0 {
+                attributes[kCTFontOpticalSizeAttribute] = value
+            } else { throw SpikeError.failure("Invalid optical size") }
+        }
+        if let weight = input.weight { attributes[kCTFontTraitsAttribute] = [kCTFontWeightTrait: weight] }
+        if !attributes.isEmpty {
+            font = CTFontCreateCopyWithAttributes(font, input.size, nil,
+                CTFontDescriptorCreateWithAttributes(attributes as CFDictionary))
+        }
         let attributed = NSAttributedString(string: input.text, attributes: [
             NSAttributedString.Key(kCTFontAttributeName as String): font,
             NSAttributedString.Key(kCTForegroundColorAttributeName as String): CGColor(gray: 1, alpha: 1)
@@ -95,13 +136,31 @@ do {
             let length = CTTypesetterSuggestLineBreak(setter, start, input.width)
             guard length > 0 else { throw SpikeError.failure("Unbreakable input") }
             let line = CTTypesetterCreateLine(setter, CFRange(location: start, length: length))
-            let width = CTLineGetTypographicBounds(line, nil, nil, nil) - CTLineGetTrailingWhitespaceWidth(line)
-            lines.append((line, Metric(start: start, length: length, width: width,
-                                        baseline: input.size + Double(lines.count) * input.lineAdvance)))
+            var ascent: CGFloat = 0, descent: CGFloat = 0, leading: CGFloat = 0
+            let width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading) - CTLineGetTrailingWhitespaceWidth(line)
+            let x = input.alignment == "right" ? input.width - width : 0
+            let pathBounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
+            var runs: [RunMetric] = []
             for run in CTLineGetGlyphRuns(line) as! [CTRun] {
                 let attrs = CTRunGetAttributes(run) as NSDictionary
-                names.insert(CTFontCopyPostScriptName(attrs[kCTFontAttributeName] as! CTFont) as String)
+                let resolved = attrs[kCTFontAttributeName] as! CTFont
+                let name = CTFontCopyPostScriptName(resolved) as String
+                names.insert(name)
+                let range = CTRunGetStringRange(run), matrix = CTFontGetMatrix(resolved)
+                let traits = CTFontCopyTraits(resolved) as NSDictionary
+                runs.append(RunMetric(start: range.location, length: range.length,
+                    glyphCount: CTRunGetGlyphCount(run), font: name, size: CTFontGetSize(resolved),
+                    weight: (traits[kCTFontWeightTrait] as? NSNumber)?.doubleValue,
+                    matrix: [matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty]))
             }
+            let substring = (input.text as NSString).substring(with: NSRange(location: start, length: length))
+            let breakKind = substring.last.map({ "\n\r\u{2028}\u{2029}".contains($0) }) == true ? "explicit" :
+                (start + length == attributed.length ? "end" : "automatic")
+            lines.append((line, Metric(start: start, length: length, width: width,
+                baseline: input.size + Double(lines.count) * input.lineAdvance,
+                detail: LineDetail(originX: x, ascent: ascent, descent: descent, leading: leading,
+                    glyphPathBounds: [pathBounds.minX, pathBounds.minY, pathBounds.maxX, pathBounds.maxY],
+                    breakKind: breakKind, runs: runs))))
             start += length
         }
         fonts = names.sorted(); metrics = lines.map(\.1)
