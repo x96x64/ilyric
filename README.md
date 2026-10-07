@@ -28,4 +28,8 @@ The [Japanese state-control report](docs/state-controlled-typography.md) records
 
 ## S09 Typography Continuation
 
-The [S09 continuation report](docs/s09-typography-validation.md) supports a shared experimental Japanese base-size candidate across repeated S08/S09 observations. Relative vertical treatment during progressive appearance remains unresolved; complete state-controlled typography and native fidelity are not validated.
+The [S09 continuation report](docs/s09-typography-validation.md) supports a shared experimental Japanese base-size candidate across repeated S08/S09 observations. At that gate, relative vertical treatment during progressive appearance remained unresolved; complete state-controlled typography and native fidelity were not validated.
+
+## Common-Origin Glyph Validation
+
+The [glyph-outline report](docs/glyph-outline-validation.md) supports a bounded experimental vertical treatment over the shared Japanese base configuration. Reverse recording holdouts justify a first measured typography slice with explicit appearance-event inputs. Native implementation, generality, and full Music fidelity remain unestablished; production rendering is unchanged.

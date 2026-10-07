@@ -1,0 +1,163 @@
+{
+  "profile_version": 5,
+  "scope": "Internal common-origin S09 outline validation; not a public project schema",
+  "previous_profile": "../v4/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "provenance": {
+    "new_recordings": [],
+    "correspondence": {
+      "status": "observed",
+      "V09": "S09",
+      "V10": "S09"
+    },
+    "sing": {
+      "status": "reported",
+      "enabled": false
+    },
+    "configuration_unchanged": {
+      "status": "reported",
+      "value": true
+    },
+    "prior_correspondence": {
+      "status": "reported confirmation of existing observations",
+      "V05": "S08",
+      "V06": "S08",
+      "V07": "S10",
+      "V08": "S10"
+    },
+    "source_integrity": "SHA-256 unchanged before and after analysis; hashes private",
+    "source_media_public": false,
+    "reused_recordings": [
+      "V09",
+      "V10"
+    ]
+  },
+  "parameters": {
+    "font": {
+      "status": "fitted",
+      "value": "Public system UI font with bold symbolic trait; default optical behavior",
+      "local_resolved_name": ".HiraKakuInterface-W6",
+      "native_identity": "unknown"
+    },
+    "width": {
+      "status": "provisional",
+      "value": 987,
+      "unit": "px",
+      "provenance": "Inherited v2 constraint; not refitted"
+    },
+    "size": {
+      "status": "fitted",
+      "value": 103.25,
+      "unit": "requested Core Text size in native raster coordinates",
+      "scope": "sharp S08/S09 base geometry; no general CJK guarantee",
+      "evidence": "Both S09 repetitions independently select the archived S08 candidate; all four recording exclusions retain it",
+      "grid_step": 0.25,
+      "uncertainty": "Environment-specific grid fit; dim-mask cutoffs bias selection. Not an exact native font setting."
+    },
+    "native_baseline": {
+      "status": "unknown"
+    },
+    "authored_breaks": {
+      "status": "unknown"
+    },
+    "native_font_identity": {
+      "status": "unknown"
+    },
+    "vertical_candidate": {
+      "status": "fitted",
+      "origin_x": 98,
+      "parameterization_origin_y": 686,
+      "parameterization_advance": 123,
+      "formula": "y = 686 + b + line * (123 + d) + A * (1 + u) * exp(-u); u = max(0, observed event age) / tau",
+      "training_fits": {
+        "V09": {
+          "origin_correction": -0.08365102744098074,
+          "advance": 123.01415456579801,
+          "amplitude": 6.030049390921261,
+          "tau_seconds": 0.19
+        },
+        "V10": {
+          "origin_correction": -0.10026802621727238,
+          "advance": 123.04717213183767,
+          "amplitude": 5.843115124165684,
+          "tau_seconds": 0.2
+        }
+      },
+      "uncertainty": "Conditional on observed appearance events; early sharp residuals and native implementation remain unresolved"
+    }
+  },
+  "protocol": {
+    "status": "definition",
+    "source_time_base": "1/600",
+    "phases_per_recording": 10,
+    "glyph_windows_per_phase": 15,
+    "thresholds": [
+      0.35,
+      0.5,
+      0.65
+    ],
+    "crossing_levels": [
+      180,
+      195,
+      210
+    ],
+    "normalization": "Background-subtracted column-wise contrast; global and linear-light controls",
+    "holdout": "Fit one recording; evaluate the other without geometry retuning; reverse",
+    "native_timing_semantics": "unknown",
+    "production_changed": false
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "architecture": "retained with qualifications",
+    "bounded_vertical_reconstruction": "supported in the inspected sharp S09 interval",
+    "appearance_only": "tested controls insufficient to explain contour movement",
+    "native_private_implementation": "unknown",
+    "next_gate": "First measured native-space Japanese typography slice with explicit event inputs and qualified residual bands",
+    "fidelity_validated": false
+  }
+}
