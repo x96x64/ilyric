@@ -1,0 +1,163 @@
+{
+  "profile_version": 4,
+  "scope": "Internal S09 typography continuation; not a public project schema",
+  "previous_profile": "../v3/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "provenance": {
+    "new_recordings": [
+      "V09",
+      "V10"
+    ],
+    "correspondence": {
+      "status": "observed",
+      "V09": "S09",
+      "V10": "S09"
+    },
+    "sing": {
+      "status": "reported",
+      "enabled": false
+    },
+    "configuration_unchanged": {
+      "status": "reported",
+      "value": true
+    },
+    "prior_correspondence": {
+      "status": "reported confirmation of existing observations",
+      "V05": "S08",
+      "V06": "S08",
+      "V07": "S10",
+      "V08": "S10"
+    },
+    "source_integrity": "SHA-256 unchanged before and after analysis; hashes private",
+    "source_media_public": false
+  },
+  "protocol": {
+    "status": "definition",
+    "native_pts_range": [
+      4200,
+      7100
+    ],
+    "time_base": "1/600",
+    "thresholds": [
+      15,
+      25,
+      35
+    ],
+    "luminance_cutoffs": [
+      80,
+      100,
+      125,
+      145
+    ],
+    "baseline_cutoff": 100,
+    "alpha_thresholds": [
+      96,
+      127,
+      160
+    ],
+    "state_stability_coordinates": [
+      "line left",
+      "line ink top",
+      "line width"
+    ],
+    "span_tolerance_px": 2,
+    "boundary_guard_seconds": 0.1,
+    "minimum_run_seconds": 0.5,
+    "holdout": "recording exclusions; unchanged S08 candidate tested on S09",
+    "source_break_semantics": "unknown"
+  },
+  "parameters": {
+    "font": {
+      "status": "fitted",
+      "value": "Public system UI font with bold symbolic trait; default optical behavior",
+      "local_resolved_name": ".HiraKakuInterface-W6",
+      "native_identity": "unknown"
+    },
+    "width": {
+      "status": "provisional",
+      "value": 987,
+      "unit": "px",
+      "provenance": "Inherited v2 constraint; not refitted"
+    },
+    "size": {
+      "status": "fitted",
+      "value": 103.25,
+      "unit": "requested Core Text size in native raster coordinates",
+      "scope": "sharp S08/S09 base geometry; no general CJK guarantee",
+      "evidence": "Both S09 repetitions independently select the archived S08 candidate; all four recording exclusions retain it",
+      "grid_step": 0.25,
+      "uncertainty": "Environment-specific grid fit; dim-mask cutoffs bias selection. Not an exact native font setting."
+    },
+    "line_advance": {
+      "status": "provisional",
+      "value": 128,
+      "unit": "px",
+      "limitation": "Fixed paragraph advance fails relative vertical appearance states"
+    },
+    "native_baseline": {
+      "status": "unknown"
+    },
+    "state_transform": {
+      "status": "unknown"
+    },
+    "authored_breaks": {
+      "status": "unknown"
+    },
+    "native_font_identity": {
+      "status": "unknown"
+    }
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "architecture": "retained with qualifications",
+    "shared_base_size": "supported within measured sharp states",
+    "complete_state_controlled_typography": "not validated",
+    "production_renderer_changed": false,
+    "next_gate": "Common-origin glyph-outline diagnostics across appearance states using existing repetitions; no new capture currently required"
+  }
+}

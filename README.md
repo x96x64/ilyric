@@ -25,3 +25,7 @@ The [native-space typography report](docs/typography-calibration.md) records sha
 ## State-Controlled Typography
 
 The [Japanese state-control report](docs/state-controlled-typography.md) records repeated S08 geometry, state-dependent spacing evidence, and the missing S09 recording correspondence. Candidate parameters remain experimental; the shared Japanese model is not yet validated.
+
+## S09 Typography Continuation
+
+The [S09 continuation report](docs/s09-typography-validation.md) supports a shared experimental Japanese base-size candidate across repeated S08/S09 observations. Relative vertical treatment during progressive appearance remains unresolved; complete state-controlled typography and native fidelity are not validated.
