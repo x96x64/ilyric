@@ -40,12 +40,23 @@ struct Result: Encodable {
     let timestampNumerator, timestampDenominator: Int64
     let fittedY: Double?
 }
+// Foundation may leave a nonexistent descendant under a different macOS path
+// alias than its existing parent. Resolve the parent before appending new names.
+func canonicalURL(_ url: URL) -> URL {
+    if FileManager.default.fileExists(atPath: url.path) {
+        return url.resolvingSymlinksInPath()
+    }
+    let parent = url.deletingLastPathComponent()
+    guard parent.path != url.path else { return url.standardizedFileURL }
+    return canonicalURL(parent).appendingPathComponent(url.lastPathComponent, isDirectory: url.hasDirectoryPath)
+}
+
 do {
     let args = CommandLine.arguments
     if args.count != 3 { throw SpikeError.failure("Usage: ReferenceProbe input.json output-directory") }
-    let repository = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).resolvingSymlinksInPath()
-    let inputURL = URL(fileURLWithPath: args[1]).resolvingSymlinksInPath()
-    let output = URL(fileURLWithPath: args[2], isDirectory: true).resolvingSymlinksInPath()
+    let repository = canonicalURL(URL(fileURLWithPath: FileManager.default.currentDirectoryPath))
+    let inputURL = canonicalURL(URL(fileURLWithPath: args[1]))
+    let output = canonicalURL(URL(fileURLWithPath: args[2], isDirectory: true))
     let allowed = ["reference-private", "artifacts"].contains { directory in
         let prefix = repository.appendingPathComponent(directory).path + "/"
         return inputURL.path.hasPrefix(prefix) && output.path.hasPrefix(prefix)

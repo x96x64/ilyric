@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import subprocess
+import tempfile
 from core import evaluate
 
 root=Path(__file__).resolve().parents[2]
@@ -19,8 +20,10 @@ for i in [0,120,240,600,240,0,600,120]:
     image=(out/'frame/scene.png').read_bytes()
     if i in expected:assert image==expected[i]
     expected[i]=image
+with tempfile.TemporaryDirectory(dir=out) as directory:
+    subprocess.run([str(root/'.build/release/ReferenceProbe'),str(path),str(Path(directory)/'new-frame')],cwd=root,check=True)
 rejected=subprocess.run([str(root/'.build/release/ReferenceProbe'),str(path),str(root/'unsafe-probe-output')],cwd=root,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 assert rejected.returncode != 0
 assert not (root/'unsafe-probe-output').exists()
 print(json.dumps({'status':'passed','unique_timestamps':4,'evaluations':8,
-                  'checks':['Swift/Python fitted position','random-order PNG equality','output path rejection']}))
+                  'checks':['Swift/Python fitted position','random-order PNG equality','output path rejection','nonexistent output directory']}))
