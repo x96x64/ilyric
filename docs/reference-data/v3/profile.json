@@ -1,0 +1,169 @@
+{
+  "profile_version": 3,
+  "scope": "Internal state-controlled Japanese typography investigation; not a public project schema",
+  "previous_profile": "../v2/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "provenance": {
+    "status": "measured",
+    "recordings": [
+      "V05",
+      "V06",
+      "V07",
+      "V08"
+    ],
+    "known_text_sources": [
+      "S08",
+      "S09"
+    ],
+    "observed_correspondence": {
+      "V05": "S08",
+      "V06": "S08",
+      "V07": "S10",
+      "V08": "S10"
+    },
+    "missing_required_recording_case": "S09",
+    "sing": {
+      "status": "reported",
+      "enabled": false
+    },
+    "track_identity": {
+      "status": "unknown"
+    },
+    "source_integrity": "SHA-256 unchanged before and after analysis; hashes retained privately",
+    "source_media_public": false
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "protocol": {
+    "status": "definition",
+    "recording_measurement_pts": [
+      1700,
+      2900
+    ],
+    "time_base": "1/600",
+    "foreground_contrast_thresholds": [
+      15,
+      25,
+      35
+    ],
+    "recording_luminance_cutoffs": [
+      100,
+      145
+    ],
+    "screenshot_luminance_cutoffs": [
+      80,
+      100,
+      125,
+      145
+    ],
+    "candidate_alpha_thresholds": [
+      96,
+      127,
+      160
+    ],
+    "stability_coordinate_span_px": 2,
+    "stability_minimum_seconds": 0.5,
+    "maximum_observation_gap_seconds": 0.04,
+    "comparison_boundary_guard_seconds": 0.1,
+    "parameter_selection": "equal recording weight; width loss; recorded structure required",
+    "holdout": "leave one recording out; screenshots excluded from fitting",
+    "native_state_rule": "unknown"
+  },
+  "parameters": {
+    "font_selection": {
+      "status": "fitted",
+      "value": "Public system UI font with bold symbolic trait; default optical behavior",
+      "local_resolved_name": ".HiraKakuInterface-W6",
+      "native_identity": "unknown"
+    },
+    "width": {
+      "status": "provisional",
+      "value": 987,
+      "unit": "px",
+      "provenance": "Inherited v2 constraint; not refitted"
+    },
+    "size": {
+      "status": "fitted",
+      "value": 103.25,
+      "sensitivity_range": [
+        103.25,
+        103.5
+      ],
+      "unit": "requested Core Text size in native raster coordinates",
+      "scope": "stable S08 observations only; repeated S09 evidence absent"
+    },
+    "baseline": {
+      "status": "fitted",
+      "value": 799.25,
+      "unit": "px",
+      "scope": "representative S08 frames at selected candidate; not a native baseline"
+    },
+    "spacing_change": {
+      "status": "fitted",
+      "within_recording_ratios": [
+        1.0106285292411814,
+        1.0111543668487033
+      ],
+      "interpretation": "Relative horizontal interior-landmark spacing; not a native scale implementation"
+    },
+    "authored_breaks": {
+      "status": "unknown"
+    },
+    "paragraph_spacing": {
+      "status": "unknown"
+    },
+    "shared_japanese_state_rule": {
+      "status": "unknown"
+    }
+  },
+  "disposition": {
+    "status": "inferred",
+    "architecture": "retained with qualifications",
+    "shared_japanese_model": "not validated",
+    "production_renderer_changed": false,
+    "next_gate": "Two matched S09 recordings; evaluate the recording-selected candidate without refitting each screenshot"
+  }
+}
