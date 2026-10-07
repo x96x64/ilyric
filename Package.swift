@@ -9,6 +9,7 @@ let package = Package(
         .target(name: "SpikeCore"),
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
         .executableTarget(name: "ilyric", dependencies: ["SpikeCore", "RenderMac"]),
+        .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
         .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"])
     ],
     swiftLanguageModes: [.v5]

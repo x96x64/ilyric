@@ -25,3 +25,11 @@ Do not incorporate proprietary Apple Music assets, extracted icons, private fram
 Test rational scheduling, timeline boundaries, event ordering, interrupted motion, random-access determinism, and layout. Validate decoded media dimensions, cadence, duration, audio timing, representative pixels, and memory/performance on an optimized build. Encoded-file byte equality is not required. Pin or report environment limitations for raw raster equality.
 
 Keep generated outputs and machine-specific logs out of Git. Record sanitized benchmark hardware and toolchain context without hostnames, serial numbers, device identifiers, or personal paths. Review staged changes before concise conventional commits. Review all history, ignored files, and untracked files before publication. Publish only under the established repository name `ilyric`.
+
+## Archival Writing and Reference Validation
+
+All project documentation, engineering reports, commit messages, and completion reports must use precise, grammatical, formal English suitable for an archival engineering record. Describe technical changes, evidence, uncertainty, and consequences without conversational framing, promotional language, agent-centric narration, or unsupported claims. Keep conventional commit subjects specific and intelligible independently of the development conversation.
+
+Preserve completed planning and architecture reports as historical records. Record subsequent findings in new reports. The empirical reference device for the next validation gate is iPhone 16 running reported iOS 27.0.1; its exact build is Unknown until verified on that device. Do not substitute externally researched build metadata or treat the earlier provisional iPhone 16 Pro canvas as measured geometry.
+
+Keep original captures, extracted frames, reference text/audio, crops, overlays, and copyright-bearing derivatives under ignored `reference-private/`. Confirm ignore behavior before processing and audit every staged change before committing or pushing. Public profiles may contain sanitized numerical measurements, provenance, uncertainty, fitted parameters, and evidence classifications, but no private paths or protected source content. Reference validation must explicitly report unavailable inputs; the public synthetic suite must work without the private corpus, network access, or an Apple Music subscription.

@@ -5,3 +5,5 @@ artifacts/
 *.xcuserstate
 .env
 .env.*
+/reference-private/
+__pycache__/
