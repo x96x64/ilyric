@@ -2,7 +2,7 @@
 
 ## Status and Product Objective
 
-This document records confirmed long-term goals and deferred decisions. It is not a feature declaration, implementation plan for the current appearance gate, or stabilized schema. Historical experiment reports remain authoritative for measured capabilities and limitations.
+This document records confirmed long-term goals and deferred decisions. It is not a feature declaration, implementation plan for any single engineering gate, or stabilized schema. Historical experiment reports remain authoritative for measured capabilities and limitations.
 
 The intended product is a scriptable command-line tool that creates animated Lyrics videos from user-supplied recordings, synchronized lyric data, artwork, and configuration. Rendering existing songs must eventually be possible; synthetic fixtures are engineering tests, not the final input workflow.
 
@@ -10,7 +10,7 @@ The intended product is a scriptable command-line tool that creates animated Lyr
 | --- | --- | --- |
 | Rendering | Deterministic experimental typography, appearance, composition, and audiovisual export | Supported user inputs and documented compatibility guarantees |
 | Fidelity | Qualified physical-reference reconstruction candidates | Stable canonical native-layout preset with explicit uncertainty |
-| Input and synchronization | Synthetic fixtures and private diagnostic inputs | Rights-respecting local input, timing provenance, and correction workflow |
+| Input and synchronization | Bounded experimental local LRC/audio workflow and private diagnostics | Reviewed compatibility, broader timing granularity, and correction workflow |
 | Configuration and CLI | Experimental developer invocations | Versioned project configuration and conventional scripting interface |
 | Materials, controls, transitions | Provisional backgrounds, original placeholders, bounded test events | Separately measured and tested presentation options |
 
@@ -52,4 +52,4 @@ Do not extract Music application icons or use SF Symbols as the iLyric logo or t
 
 ## Deferred Milestones
 
-Input acquisition, synchronization, configuration, symbol rendering, generalized customization, and transition libraries remain deferred. Introduce each through explicit requirements, a bounded experiment, public synthetic regression tests, rights review where applicable, and compatibility decisions. Dynamic materials and cross-script inactive appearance remain separate measurement questions. None of these goals is implemented by documenting it.
+The bounded [local LRC/audio experiment](local-input-integration.md) supplies line-level timing only. External acquisition, broader synchronization, configuration, symbol rendering, generalized customization, and transition libraries remain deferred. Introduce each through explicit requirements, a bounded experiment, public synthetic regression tests, rights review where applicable, and compatibility decisions. Dynamic materials and cross-script inactive appearance remain separate measurement questions. None of these goals is implemented by documenting it.

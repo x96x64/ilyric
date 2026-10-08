@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "evidence_status": "measured synthetic local-input validation",
+  "implementation_commit": "5f9efc7940ae69ffb8405baa990cdf883a553eec",
+  "environment": {
+    "processor": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 (swiftlang-6.4.0.30.4)",
+    "sdk": "macOS 27",
+    "ffmpeg": "8.1.2"
+  },
+  "benchmark": {
+    "export": {
+      "audio_samples": 480144,
+      "delivery": "contain",
+      "export": {
+        "appendSeconds": 0.019533395767211914,
+        "backpressureSeconds": 15.69958233833313,
+        "effectiveFPS": 29.728211360950645,
+        "finishSeconds": 0.004050016403198242,
+        "frames": 601,
+        "height": 1920,
+        "rasterSeconds": 20.05678641796112,
+        "seconds": 20.216487050056458,
+        "width": 1080
+      },
+      "final_focus": 4,
+      "focus_events": [
+        {
+          "denominator": 1,
+          "numerator": 0,
+          "paragraph": -1
+        },
+        {
+          "denominator": 8,
+          "numerator": 5,
+          "paragraph": 0
+        },
+        {
+          "denominator": 1,
+          "numerator": 2,
+          "paragraph": 1
+        },
+        {
+          "denominator": 4,
+          "numerator": 13,
+          "paragraph": -1
+        },
+        {
+          "denominator": 2,
+          "numerator": 9,
+          "paragraph": 2
+        },
+        {
+          "denominator": 1,
+          "numerator": 6,
+          "paragraph": 3
+        },
+        {
+          "denominator": 1,
+          "numerator": 7,
+          "paragraph": 4
+        }
+      ],
+      "lyric_events": 6,
+      "offset_milliseconds": 125,
+      "output_padding_samples": 656,
+      "paragraphs": 5,
+      "source_channels": 2,
+      "source_format": 1819304813,
+      "source_sample_rate": 44100,
+      "status": "experimental",
+      "timing": "supplied-line-level"
+    },
+    "peak_rss_bytes": 433553408,
+    "peak_rss_mib": 413.46875,
+    "process_wall_seconds": 20.59,
+    "qualification": "single isolated optimized run; ten-second original fixture; no sustained-growth or cross-machine claim"
+  },
+  "media_validation": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "format_checks": [
+    {
+      "container": "wav",
+      "source_rate": 44100,
+      "source_channels": 2,
+      "validation": {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.999920524353107,
+        "content_gain": 0.7068517293572892,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      }
+    },
+    {
+      "container": "aiff",
+      "source_rate": 44100,
+      "source_channels": 2,
+      "validation": {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.999920524353107,
+        "content_gain": 0.7068517293572892,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      }
+    },
+    {
+      "container": "m4a",
+      "source_rate": 44100,
+      "source_channels": 2,
+      "validation": {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.9999206093976458,
+        "content_gain": 0.7065209456744712,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      }
+    }
+  ],
+  "control_audit": {
+    "status": "passed",
+    "frames": 601,
+    "regions": {
+      "handle": {
+        "largest_consecutive_mean_difference": 0.953125,
+        "frames_above_2_levels": []
+      },
+      "transport": {
+        "largest_consecutive_mean_difference": 0.24947916666666667,
+        "frames_above_2_levels": []
+      },
+      "bottom": {
+        "largest_consecutive_mean_difference": 0.18333333333333332,
+        "frames_above_2_levels": []
+      }
+    },
+    "diagnostic_marker_pixel_range": [
+      58,
+      59
+    ],
+    "interpretation": "synthetic codec-sensitive defect audit; not native fidelity"
+  },
+  "public_tests": {
+    "swift": 40,
+    "python": 66,
+    "cli_error_cases": 12,
+    "fresh_checkout_without_private_inputs": "passed",
+    "private_unavailable_commands": 13
+  },
+  "nonregression": {
+    "japanese_archived_renders": 20,
+    "raw_equality": "byte-identical in recorded environment",
+    "latin_common_origin": "unchanged",
+    "original_exports": [
+      "architecture spike",
+      "motion composition",
+      "inactive full-screen"
+    ]
+  },
+  "reference_integrity": {
+    "status": "passed",
+    "source_ids": [
+      "V01",
+      "V02",
+      "V03",
+      "V09",
+      "V10"
+    ],
+    "original_hashes": "unchanged",
+    "tracking": "ignored"
+  },
+  "limitations": [
+    "ordinary line timing only",
+    "64 expanded events",
+    "four rendered lines per paragraph",
+    "ten-minute audio cap",
+    "mono lossy AAC output",
+    "restricted tested decoder formats",
+    "provisional script heuristic and paragraph spacing",
+    "native Music fidelity unvalidated"
+  ]
+}

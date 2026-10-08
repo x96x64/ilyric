@@ -62,6 +62,10 @@ The [full-screen report](docs/full-screen-composition.md) records measured compo
 
 The [inactive-appearance report](docs/inactive-appearance.md) records the benchmark timeline audit, held-out Latin blur/contrast diagnostics, and an opt-in cached appearance treatment. Geometry, Japanese appearance, and the original benchmark path remain unchanged. [Developer commands](docs/inactive-appearance-commands.md) separate synthetic verification from private calibration. Native fidelity remains unvalidated.
 
+## Experimental Local Input
+
+The [local-input report](docs/local-input-integration.md) records a bounded path from supplied UTF-8 LRC and unprotected local audio to a complete experimental Lyrics video. The [input contract](docs/local-input-subset.md) and [developer commands](docs/local-input-commands.md) define exact line timing, multiline constraints, audio conversion, and resource limits. This path does not provide fine-grained synchronization, a finalized public CLI, or native Music fidelity.
+
 ## Deferred Product Requirements
 
 The [product requirements](docs/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.
