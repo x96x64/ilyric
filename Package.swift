@@ -14,6 +14,7 @@ let package = Package(
         .target(name: "LyricsSliceMac", dependencies: ["LyricsSliceCore", "SpikeCore"]),
         .executableTarget(name: "LyricsSliceProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .executableTarget(name: "LyricsCompositionProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .executableTarget(name: "LyricsScreenProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .testTarget(name: "LyricsSliceTests", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"])
     ],
