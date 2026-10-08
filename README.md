@@ -86,6 +86,10 @@ The [acquisition study](docs/lyrics-acquisition-feasibility.md) compares documen
 
 The [alignment report](docs/automatic-alignment.md) evaluates a speech CTC baseline and a singing-specific model against licensed English/Japanese recordings. The [preparation commands](docs/alignment-commands.md) provide optional offline inference, preserved source mapping, reviewed corrections, and line-level TTML for the existing renderer. Model dependencies are separate from public tests. Accuracy, coverage, licensing, and the 60-second context limit prevent qualification for unattended or complete-song use; mandatory automatic synchronization remains incomplete.
 
+## Singing-Alignment Refinement
+
+The [refinement report](docs/alignment-refinement.md) reproduces the archived baseline, recovers two Japanese cases through explicit source-preserving pronunciation hypotheses, and evaluates English endpoint and incorrect-text controls. The [refinement commands](docs/alignment-refinement-commands.md) document optional overrides. Endpoint repair and automatic score-based acceptance remain unqualified; full-song synchronization remains blocked by measured correspondence and failure-detection limits.
+
 ## Deferred Product Requirements
 
 The [product requirements](docs/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.

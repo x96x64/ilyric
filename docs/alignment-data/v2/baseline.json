@@ -1,0 +1,78 @@
+{
+  "evidence": "Direct reproduction before adapter changes; source and model hashes verified",
+  "cases": [
+    {
+      "case": "EN01-ctc",
+      "exit": 0,
+      "seconds": 4.234514416,
+      "identical": true
+    },
+    {
+      "case": "EN01-tifa",
+      "exit": 0,
+      "seconds": 17.992483249999992,
+      "identical": true
+    },
+    {
+      "case": "EN02-ctc",
+      "exit": 0,
+      "seconds": 2.781458333,
+      "identical": true
+    },
+    {
+      "case": "EN02-tifa",
+      "exit": 0,
+      "seconds": 17.30596483399998,
+      "identical": true
+    },
+    {
+      "case": "EN03-ctc",
+      "exit": 0,
+      "seconds": 2.922197334,
+      "identical": true
+    },
+    {
+      "case": "EN03-tifa",
+      "exit": 0,
+      "seconds": 16.723223792,
+      "identical": true
+    },
+    {
+      "case": "JA01-tifa",
+      "exit": 0,
+      "seconds": 17.805244416,
+      "identical": true
+    },
+    {
+      "case": "JA02-tifa",
+      "exit": 0,
+      "seconds": 16.735497541999997,
+      "identical": true
+    },
+    {
+      "case": "JA03-tifa",
+      "exit": 0,
+      "seconds": 18.155365792000005,
+      "identical": true
+    },
+    {
+      "case": "JA04-tifa",
+      "exit": 0,
+      "seconds": 17.190470833999996,
+      "identical": true
+    },
+    {
+      "case": "JA05-tifa",
+      "exit": 0,
+      "seconds": 17.081548916000003,
+      "identical": true
+    },
+    {
+      "case": "JA06-tifa",
+      "exit": 0,
+      "seconds": 13.497797833999996,
+      "identical": true
+    }
+  ],
+  "post_extension_positive_units": "All eight matched positive adapter checks retained baseline units"
+}

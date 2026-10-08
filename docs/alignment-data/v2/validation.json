@@ -1,0 +1,200 @@
+{
+  "evidence": "Direct software and media verification, separate from acoustic accuracy",
+  "implementation_commit": "83b5435851818edf8bca96af794e09db2aae05d8",
+  "public_tests": {
+    "swift": 61,
+    "python": 99,
+    "new_refinement_tests": 13,
+    "release_build": "passed"
+  },
+  "fresh_public_checkout": {
+    "swift": 61,
+    "python": 99,
+    "release_build": "passed",
+    "private_inputs_present": false,
+    "model_assets_present": false,
+    "tracked_working_tree": "clean",
+    "private_reference": {
+      "status": "unavailable",
+      "reason": "Private screenshots or recordings are absent"
+    },
+    "optional_refinement": {
+      "status": "unavailable",
+      "reason": "Private refinement manifest unavailable"
+    },
+    "synthetic_export": {
+      "status": "passed",
+      "evidence": "Synthetic software correctness, not acoustic accuracy",
+      "export": {
+        "artwork": {},
+        "audio_samples": 480144,
+        "delivery": "contain",
+        "export": {
+          "appendSeconds": 0.01547849178314209,
+          "backpressureSeconds": 13.65907108783722,
+          "effectiveFPS": 33.12807532422491,
+          "finishSeconds": 0.004102945327758789,
+          "frames": 601,
+          "height": 1920,
+          "rasterSeconds": 17.98637294769287,
+          "seconds": 18.141711950302124,
+          "width": 1080
+        },
+        "final_focus": 2,
+        "focus_events": [
+          {
+            "denominator": 1,
+            "numerator": 0,
+            "paragraph": -1
+          },
+          {
+            "denominator": 8,
+            "numerator": 5,
+            "paragraph": 0
+          },
+          {
+            "denominator": 4,
+            "numerator": 13,
+            "paragraph": -1
+          },
+          {
+            "denominator": 2,
+            "numerator": 9,
+            "paragraph": 1
+          },
+          {
+            "denominator": 20,
+            "numerator": 139,
+            "paragraph": -1
+          },
+          {
+            "denominator": 1,
+            "numerator": 7,
+            "paragraph": 2
+          },
+          {
+            "denominator": 1000,
+            "numerator": 10003,
+            "paragraph": -1
+          }
+        ],
+        "highlighting": "disabled",
+        "lyric_events": 3,
+        "offset_milliseconds": 0,
+        "output_padding_samples": 656,
+        "paragraphs": 3,
+        "project_version": 0,
+        "source_channels": 2,
+        "source_format": 1819304813,
+        "source_sample_rate": 44100,
+        "status": "experimental",
+        "timed_segments": 0,
+        "timing": "supplied-line-level"
+      },
+      "media": {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.9999205243531306,
+        "content_gain": 0.7068517293573156,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      },
+      "source_preserved": true
+    }
+  },
+  "regressions": {
+    "reference_probe": {
+      "status": "passed",
+      "unique_timestamps": 4,
+      "evaluations": 8,
+      "checks": [
+        "Swift/Python fitted position",
+        "random-order PNG equality",
+        "output path rejection",
+        "nonexistent output directory"
+      ]
+    },
+    "determinism": "Two independent renderer invocations identical; Swift tests retain random-order raw-raster checks",
+    "ttml": "Existing enabled/disabled/direct input audiovisual checks passed, including 36 refusal checks",
+    "repository_synthetic_export": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  },
+  "singing_export": {
+    "validation": {
+      "status": "passed",
+      "frames": 720,
+      "seconds": 12.0,
+      "width": 1080,
+      "height": 1920,
+      "fps": 60,
+      "color_range": "tv",
+      "audio": "48-kHz mono AAC",
+      "audio_correlation": 0.9997201841023392,
+      "audio_lag_samples": 0,
+      "lag_search_step_samples": 16,
+      "all_video_pts": "passed",
+      "acoustic_alignment_accuracy": "Evaluated separately; container agreement is not lyric accuracy"
+    },
+    "render": {
+      "appendSeconds": 0.017634034156799316,
+      "backpressureSeconds": 13.406530380249023,
+      "effectiveFPS": 41.43497356195521,
+      "finishSeconds": 0.005248069763183594,
+      "frames": 720,
+      "height": 1920,
+      "rasterSeconds": 17.185078144073486,
+      "seconds": 17.376625061035156,
+      "width": 1080
+    },
+    "timing_origin": "Estimated with explicit pronunciation hypotheses; reviewed against independent annotation without timestamp correction",
+    "visual_inspection": "Decoded 5.0-s and 11.5-s frames: original source displayed across three wrapped lines, focused then inactive; contain margins and existing composition preserved"
+  },
+  "pronunciation_suggestion": "Real JA02 no-override invocation retains unresolved estimate and baseline units; suggestion remains unapplied",
+  "environment_limitation": "One sandboxed determinism invocation failed Core Image blur; authorized repeat passed without source/toolchain changes",
+  "resource_budget": {
+    "additional_download_bytes": 0,
+    "continuing_download_GB_ceiling": 2,
+    "continuing_storage_GB_ceiling": 6,
+    "prior_retained_download_MiB_approximate": 1065.3,
+    "cumulative_evaluation_and_checkout_storage_MiB": 3784.1
+  },
+  "privacy": "Original model, source audio and transcript hashes verified. No source media, corpus text, weights, credentials or personal paths committed."
+}

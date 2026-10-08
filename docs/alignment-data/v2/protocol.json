@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "evidence": "Prospective bounded refinement protocol; original v1 acceptance criteria unchanged",
+  "split": "EN01 and JA01/JA02 development; EN02/EN03 and JA03\u2013JA06 held out. No claim of new model-pretraining independence.",
+  "baseline": "Reproduce all twelve archived outputs before adapter changes; compare units and line estimates exactly.",
+  "pronunciation": {
+    "JA02": "Preserve dropped long-vowel source support in an explicit fixed range. Compare unchanged phone sequence and an explicit repeated-vowel alternative; no reference times used.",
+    "JA06": "Nonstandard small-kana sequences: compare literal full-size kana expansion with common palatalized approximations. These are linguistic hypotheses, not human-verified sung readings. No automatic best-reference selection.",
+    "positive_control": "Identity reading override on one accepted Japanese case; repeat estimates."
+  },
+  "endpoint": {
+    "scope": "All English line endpoints; onsets frozen. Whole-mixture RMS is not vocal activity.",
+    "candidates": [
+      "unchanged baseline",
+      "Nearest sustained low-energy run within a bounded local window, with fixed energy/window parameters chosen on EN01 only",
+      "Unchanged estimate plus review-required flag when silence evidence is absent or end touches recording boundary"
+    ],
+    "grid": {
+      "relative_dB": [
+        -20,
+        -30,
+        -40
+      ],
+      "minimum_low_ms": [
+        80,
+        160
+      ],
+      "radius_ms": [
+        250,
+        500,
+        1000
+      ]
+    },
+    "censoring": "EN02 final endpoint remains excluded from accuracy aggregation; never interpret clip boundary as silence evidence."
+  },
+  "negative_controls": {
+    "types": [
+      "omit middle phrase",
+      "duplicate phrase",
+      "replace with independently authored absent phrase",
+      "omit final phrase while retaining original audio"
+    ],
+    "development": "EN01 and JA01; matched positives and deliberate negatives both enter diagnostic threshold selection",
+    "held_out": "EN02/EN03 and JA03, thresholds frozen before held-out score inspection",
+    "scores": "TIFA token agreement and CTC forced-token log support; uncalibrated. Report false acceptance/rejection and model-unresolved outputs separately."
+  },
+  "promotion": "No endpoint correction or confidence threshold enters active preparation unless held-out evidence supports it. Pronunciation overrides remain explicit supplied data with unchanged display source.",
+  "limits": "Reuse local assets; no new downloads; cumulative 2-GB download / 6-GB storage ceilings."
+}

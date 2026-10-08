@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "frames": 720,
+  "seconds": 12.0,
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "color_range": "tv",
+  "audio": "48-kHz mono AAC",
+  "audio_correlation": 0.9997201841023392,
+  "audio_lag_samples": 0,
+  "lag_search_step_samples": 16,
+  "all_video_pts": "passed",
+  "acoustic_alignment_accuracy": "Evaluated separately; container agreement is not lyric accuracy"
+}

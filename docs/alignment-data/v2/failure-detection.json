@@ -1,0 +1,407 @@
+{
+  "evidence": "Experimental review flags, not calibrated correctness probabilities",
+  "thresholds": {
+    "ctc": -2.598405957221985,
+    "tifa": 0.989473283290863
+  },
+  "cases": [
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "variant": "matched",
+      "role": "development",
+      "matched": true,
+      "score": -2.4887404441833496,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "variant": "omit_middle",
+      "role": "development",
+      "matched": false,
+      "score": -2.70807147026062,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "variant": "duplicate",
+      "role": "development",
+      "matched": false,
+      "score": -3.295999526977539,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "variant": "absent",
+      "role": "development",
+      "matched": false,
+      "score": -3.1920907497406006,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "variant": "early_end",
+      "role": "development",
+      "matched": false,
+      "score": -1.7160760164260864,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "variant": "matched",
+      "role": "development",
+      "matched": true,
+      "score": 0.9906712174415588,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "variant": "omit_middle",
+      "role": "development",
+      "matched": false,
+      "score": 0.9819662570953369,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "variant": "duplicate",
+      "role": "development",
+      "matched": false,
+      "score": 0.9882753491401672,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "variant": "absent",
+      "role": "development",
+      "matched": false,
+      "score": 0.9848340749740601,
+      "unresolved": false
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "variant": "early_end",
+      "role": "development",
+      "matched": false,
+      "score": 0.9929556250572205,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "variant": "matched",
+      "role": "held-out",
+      "matched": true,
+      "score": -1.5274029970169067,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "variant": "omit_middle",
+      "role": "held-out",
+      "matched": false,
+      "score": -1.5979262590408325,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "variant": "duplicate",
+      "role": "held-out",
+      "matched": false,
+      "score": -1.7363947629928589,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "variant": "absent",
+      "role": "held-out",
+      "matched": false,
+      "score": -2.506857395172119,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "variant": "early_end",
+      "role": "held-out",
+      "matched": false,
+      "score": -1.3884029388427734,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "variant": "matched",
+      "role": "held-out",
+      "matched": true,
+      "score": 0.9975824356079102,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "variant": "omit_middle",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9935374855995178,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "variant": "duplicate",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9950487613677979,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "variant": "absent",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9825664758682251,
+      "unresolved": false
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "variant": "early_end",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9937248229980469,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "variant": "matched",
+      "role": "held-out",
+      "matched": true,
+      "score": -1.0355379581451416,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "variant": "omit_middle",
+      "role": "held-out",
+      "matched": false,
+      "score": -2.2128286361694336,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "variant": "duplicate",
+      "role": "held-out",
+      "matched": false,
+      "score": -1.3273130655288696,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "variant": "absent",
+      "role": "held-out",
+      "matched": false,
+      "score": -3.0676162242889404,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "variant": "early_end",
+      "role": "held-out",
+      "matched": false,
+      "score": -1.1385754346847534,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "variant": "matched",
+      "role": "held-out",
+      "matched": true,
+      "score": 0.9949002861976624,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "variant": "omit_middle",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9816327095031738,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "variant": "duplicate",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9859368801116943,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "variant": "absent",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9688630700111389,
+      "unresolved": false
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "variant": "early_end",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9721933603286743,
+      "unresolved": false
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "variant": "matched",
+      "role": "development",
+      "matched": true,
+      "score": 0.9993608593940735,
+      "unresolved": false
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "variant": "omit_middle",
+      "role": "development",
+      "matched": false,
+      "score": 0.9964855909347534,
+      "unresolved": false
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "variant": "duplicate",
+      "role": "development",
+      "matched": false,
+      "score": 0.9741570353507996,
+      "unresolved": true
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "variant": "absent",
+      "role": "development",
+      "matched": false,
+      "score": 0.9874796271324158,
+      "unresolved": true
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "variant": "early_end",
+      "role": "development",
+      "matched": false,
+      "score": 0.9687010049819946,
+      "unresolved": false
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "variant": "matched",
+      "role": "held-out",
+      "matched": true,
+      "score": 0.9994942545890808,
+      "unresolved": false
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "variant": "omit_middle",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9964138269424438,
+      "unresolved": false
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "variant": "duplicate",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9907801747322083,
+      "unresolved": true
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "variant": "absent",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9814149141311646,
+      "unresolved": false
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "variant": "early_end",
+      "role": "held-out",
+      "matched": false,
+      "score": 0.9883931875228882,
+      "unresolved": false
+    }
+  ],
+  "confusion": [
+    {
+      "engine": "ctc",
+      "role": "development",
+      "matched": 1,
+      "mismatched": 4,
+      "false_acceptance": 1,
+      "false_rejection": 0,
+      "unresolved": 0
+    },
+    {
+      "engine": "ctc",
+      "role": "held-out",
+      "matched": 2,
+      "mismatched": 8,
+      "false_acceptance": 7,
+      "false_rejection": 0,
+      "unresolved": 0
+    },
+    {
+      "engine": "tifa",
+      "role": "development",
+      "matched": 2,
+      "mismatched": 8,
+      "false_acceptance": 2,
+      "false_rejection": 0,
+      "unresolved": 2
+    },
+    {
+      "engine": "tifa",
+      "role": "held-out",
+      "matched": 3,
+      "mismatched": 12,
+      "false_acceptance": 4,
+      "false_rejection": 0,
+      "unresolved": 1
+    }
+  ]
+}
