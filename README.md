@@ -14,6 +14,10 @@ No software license has been selected. No proprietary media, extracted Apple ass
 
 The [implementation-readiness and release plan](docs/implementation-release-readiness.md) records the intended transition to a supported open-source command-line product maintained by one person. It recommends audio-derived passage correspondence, bounded alignment, and measured complete-song qualification before broad visual expansion. License selection, reliable automatic synchronization, supported installation, and release qualification remain incomplete; no new implementation or license is introduced by the study.
 
+## Audio-Derived Correspondence Preparation
+
+The [preparation report](docs/audio-derived-correspondence-preparation.md) records model-free anchor matching, repeated-occurrence handling, baseline reproduction, and a pinned provisioning proposal. Whisper inference, bounded refinement, and acoustic M1 qualification remain pending approval; coarse anchors are not final timing estimates.
+
 ## Architecture Spike
 
 The repository contains a deliberately narrow Swift Package prototype with a synthetic scene. See the [architecture-spike report](docs/architecture-spike.md) for measured results and limitations, and [developer experiment commands](docs/spike-commands.md) for reproduction.

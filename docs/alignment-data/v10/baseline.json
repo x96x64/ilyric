@@ -1,0 +1,204 @@
+{
+  "cases": [
+    {
+      "case": "EN-F01",
+      "serialized_semantic_equal": true,
+      "original_text_hash_verified": true,
+      "metrics": {
+        "occurrences": 26,
+        "raw_proposals": 26,
+        "estimated": 2,
+        "unresolved": 24,
+        "flags": {
+          "weak_lexical_agreement": 24,
+          "extended_line_support": 1,
+          "repeated_occurrence_requires_review": 18,
+          "weak_acoustic_support": 20
+        },
+        "raw_onset": {
+          "n": 26,
+          "median_absolute_ms": 2184.051,
+          "p95_absolute_ms": 22724.481,
+          "maximum_absolute_ms": 23980.678,
+          "over_500_ms": 20
+        },
+        "raw_offset": {
+          "n": 26,
+          "median_absolute_ms": 1570.0720000000001,
+          "p95_absolute_ms": 19646.46525,
+          "maximum_absolute_ms": 23749.822,
+          "over_500_ms": 19
+        },
+        "supported_onset": {
+          "n": 2,
+          "median_absolute_ms": 22.932000000000002,
+          "p95_absolute_ms": 27.323999999999998,
+          "maximum_absolute_ms": 27.812,
+          "over_500_ms": 0
+        },
+        "supported_offset": {
+          "n": 2,
+          "median_absolute_ms": 256.4855,
+          "p95_absolute_ms": 336.3852499999999,
+          "maximum_absolute_ms": 345.263,
+          "over_500_ms": 0
+        },
+        "proposals_without_reference_overlap": 8,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "measurements": {
+        "preprocessing_seconds": 0.26523645799898077,
+        "initialization_seconds": 0.03808933300024364,
+        "inference_seconds": 4.670323250000365,
+        "reconciliation_seconds": 1.5430956249911105,
+        "window_inference_seconds": [
+          0.8262121250008931,
+          0.662587375001749,
+          0.6660885839955881,
+          0.6654710000002524,
+          0.6660137090075295,
+          0.6738272910006344,
+          0.5039857910014689
+        ],
+        "total_seconds": 9.685167374991579,
+        "peak_rss_bytes": 1887109120
+      }
+    },
+    {
+      "case": "EN-F02",
+      "serialized_semantic_equal": true,
+      "original_text_hash_verified": true,
+      "metrics": {
+        "occurrences": 72,
+        "raw_proposals": 72,
+        "estimated": 22,
+        "unresolved": 50,
+        "flags": {
+          "weak_lexical_agreement": 50,
+          "repeated_occurrence_requires_review": 46,
+          "weak_acoustic_support": 21
+        },
+        "raw_onset": {
+          "n": 72,
+          "median_absolute_ms": 79.71799999999999,
+          "p95_absolute_ms": 1001.9853500000003,
+          "maximum_absolute_ms": 2882.52,
+          "over_500_ms": 8
+        },
+        "raw_offset": {
+          "n": 72,
+          "median_absolute_ms": 264.21799999999996,
+          "p95_absolute_ms": 2352.4088500000007,
+          "maximum_absolute_ms": 7275.516,
+          "over_500_ms": 20
+        },
+        "supported_onset": {
+          "n": 22,
+          "median_absolute_ms": 81.79849999999999,
+          "p95_absolute_ms": 162.21654999999998,
+          "maximum_absolute_ms": 177.126,
+          "over_500_ms": 0
+        },
+        "supported_offset": {
+          "n": 22,
+          "median_absolute_ms": 249.024,
+          "p95_absolute_ms": 636.69755,
+          "maximum_absolute_ms": 1592.654,
+          "over_500_ms": 5
+        },
+        "proposals_without_reference_overlap": 2,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "measurements": {
+        "preprocessing_seconds": 0.30398283299291506,
+        "initialization_seconds": 0.02409116699709557,
+        "inference_seconds": 5.494950624997728,
+        "reconciliation_seconds": 2.8304787919914816,
+        "window_inference_seconds": [
+          0.74788629100658,
+          0.7019542089983588,
+          0.6969758340128465,
+          0.6907206670002779,
+          0.6677611659979448,
+          0.6301597909914562,
+          0.6018659999972442,
+          0.5941548330010846,
+          0.1567425419925712
+        ],
+        "total_seconds": 8.960514291000436,
+        "peak_rss_bytes": 2324463616
+      }
+    },
+    {
+      "case": "EN-F03",
+      "serialized_semantic_equal": true,
+      "original_text_hash_verified": true,
+      "metrics": {
+        "occurrences": 42,
+        "raw_proposals": 42,
+        "estimated": 29,
+        "unresolved": 13,
+        "flags": {
+          "weak_lexical_agreement": 13,
+          "repeated_occurrence_requires_review": 18
+        },
+        "raw_onset": {
+          "n": 42,
+          "median_absolute_ms": 70.57650000000001,
+          "p95_absolute_ms": 769.5934499999996,
+          "maximum_absolute_ms": 17056.722,
+          "over_500_ms": 4
+        },
+        "raw_offset": {
+          "n": 42,
+          "median_absolute_ms": 240.7485,
+          "p95_absolute_ms": 438.80575,
+          "maximum_absolute_ms": 11362.449,
+          "over_500_ms": 1
+        },
+        "supported_onset": {
+          "n": 29,
+          "median_absolute_ms": 74.89,
+          "p95_absolute_ms": 297.61299999999966,
+          "maximum_absolute_ms": 665.634,
+          "over_500_ms": 1
+        },
+        "supported_offset": {
+          "n": 29,
+          "median_absolute_ms": 249.525,
+          "p95_absolute_ms": 430.89379999999994,
+          "maximum_absolute_ms": 483.671,
+          "over_500_ms": 0
+        },
+        "proposals_without_reference_overlap": 1,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "measurements": {
+        "preprocessing_seconds": 0.2663480829942273,
+        "initialization_seconds": 0.0219914999906905,
+        "inference_seconds": 5.576048374990933,
+        "reconciliation_seconds": 2.544834832995548,
+        "window_inference_seconds": [
+          0.6313807499973336,
+          0.5990956250025192,
+          0.5991136670054402,
+          0.5942168750043493,
+          0.5898279579996597,
+          0.596201583990478,
+          0.592062083989731,
+          0.5965222500090022,
+          0.593244333009352,
+          0.12088054200285114
+        ],
+        "total_seconds": 8.705769624997629,
+        "peak_rss_bytes": 2726510592
+      }
+    }
+  ],
+  "comparison": "Serialized JSON excludes measurements; initial in-memory tuple/list comparison was not a semantic comparison",
+  "classification": "Reproduced historical CTC baseline; no Whisper evaluation",
+  "performance_scope": "Three sequential inferences in one process; peak RSS is cumulative, not isolated per-song peak. Concurrent Swift verification may affect runtime."
+}

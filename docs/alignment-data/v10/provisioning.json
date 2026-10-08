@@ -1,0 +1,1040 @@
+{
+  "status": "proposed_not_authorized",
+  "source_repository": "https://github.com/ggml-org/whisper.cpp",
+  "source_revision": "d1be6fde11ac6e0407606b4e42fe72d34add8037",
+  "source_payload_bytes": 12445968,
+  "source_files": [
+    {
+      "path": "AUTHORS",
+      "bytes": 21736,
+      "git_blob_sha1": "f523e0a722439151060782dabbdea8f50faceea8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 12772,
+      "git_blob_sha1": "c8a08468d437cf35ce8e13207d00fb687ff3a62b"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1078,
+      "git_blob_sha1": "e7dca554bcb802f98408383a864404e3aa4eacca"
+    },
+    {
+      "path": "README.md",
+      "bytes": 40988,
+      "git_blob_sha1": "e58c4ba1061221bd295e08eea5a021dd7178189f"
+    },
+    {
+      "path": "bindings/javascript/package-tmpl.json",
+      "bytes": 612,
+      "git_blob_sha1": "33777d1b42ea2dae312ccefb0b293db58300cac3"
+    },
+    {
+      "path": "cmake/DefaultTargetOptions.cmake",
+      "bytes": 385,
+      "git_blob_sha1": "0cfbb34d35ace8d18e96fddb18bb2e008d1226da"
+    },
+    {
+      "path": "cmake/FindFFmpeg.cmake",
+      "bytes": 6231,
+      "git_blob_sha1": "bb6aff6c93d5d6d6ba5a6e1f1066cc9941a1f6c6"
+    },
+    {
+      "path": "cmake/arm64-apple-clang.cmake",
+      "bytes": 555,
+      "git_blob_sha1": "5fcd2882afc9d96ccc1c28396b91e5e46c93f66c"
+    },
+    {
+      "path": "cmake/arm64-windows-llvm-cuda.cmake",
+      "bytes": 1225,
+      "git_blob_sha1": "526a5a2c8da4a9ef30f8e0c0803ea0a896904c22"
+    },
+    {
+      "path": "cmake/arm64-windows-llvm.cmake",
+      "bytes": 592,
+      "git_blob_sha1": "8023796800683240e32048180a1eb874ddab1963"
+    },
+    {
+      "path": "cmake/build-info.cmake",
+      "bytes": 1723,
+      "git_blob_sha1": "b293c9b5d834cd382a5c69910f184ae77cb041a5"
+    },
+    {
+      "path": "cmake/git-vars.cmake",
+      "bytes": 717,
+      "git_blob_sha1": "1a4c24ebf6adeb1126e626f56de601621179353d"
+    },
+    {
+      "path": "cmake/parakeet-config.cmake.in",
+      "bytes": 1018,
+      "git_blob_sha1": "4895d7dedd3a04c096d79a157995a959008f2ecc"
+    },
+    {
+      "path": "cmake/parakeet.pc.in",
+      "bytes": 299,
+      "git_blob_sha1": "de1acb7750db1338ce3f03d63bdd52e7f86e14f7"
+    },
+    {
+      "path": "cmake/riscv64-spacemit-linux-gnu-gcc.cmake",
+      "bytes": 1357,
+      "git_blob_sha1": "08fdbf506304e049cdc0abd2e3c6266e3a6992de"
+    },
+    {
+      "path": "cmake/whisper-config.cmake.in",
+      "bytes": 1000,
+      "git_blob_sha1": "551abe1d919c17ef0f4b4b7bf5161669030c1cbd"
+    },
+    {
+      "path": "cmake/whisper.pc.in",
+      "bytes": 297,
+      "git_blob_sha1": "270fc2e78c823f1c5774d54de449ca6cb5a64bc6"
+    },
+    {
+      "path": "cmake/x64-windows-llvm.cmake",
+      "bytes": 139,
+      "git_blob_sha1": "77e79140798b2fcee2d84a3abdeab315c08b7a03"
+    },
+    {
+      "path": "examples/CMakeLists.txt",
+      "bytes": 3688,
+      "git_blob_sha1": "7aedb9df6830f5de957bbae043e6a24d3e66b7cb"
+    },
+    {
+      "path": "examples/bench/CMakeLists.txt",
+      "bytes": 205,
+      "git_blob_sha1": "f255f2dc52779d10c0bdb4b7011a412d597e3c30"
+    },
+    {
+      "path": "examples/bench/README.md",
+      "bytes": 1989,
+      "git_blob_sha1": "9002e2d50a5b4f6b920e7782f4749ae9149bc1d7"
+    },
+    {
+      "path": "examples/bench/bench.cpp",
+      "bytes": 7160,
+      "git_blob_sha1": "84915c56a8ab163f177bd2c03359adb6a4367161"
+    },
+    {
+      "path": "examples/cli/CMakeLists.txt",
+      "bytes": 228,
+      "git_blob_sha1": "3a73776c5cd805ffd721cf15232e9af823b975ff"
+    },
+    {
+      "path": "examples/cli/README.md",
+      "bytes": 4534,
+      "git_blob_sha1": "65285c3cb66d530ee3c6240a31883c58501d4116"
+    },
+    {
+      "path": "examples/cli/cli.cpp",
+      "bytes": 64715,
+      "git_blob_sha1": "b015319d76f930fe452e30fa9c04ba6dfa19331e"
+    },
+    {
+      "path": "examples/common-ggml.cpp",
+      "bytes": 8843,
+      "git_blob_sha1": "11a5c0a1a0526d6486954fb68f3aeab7bd3786f8"
+    },
+    {
+      "path": "examples/common-ggml.h",
+      "bytes": 410,
+      "git_blob_sha1": "477de341a1faa99344d05efd968dc58d434b6e24"
+    },
+    {
+      "path": "examples/common-sdl.cpp",
+      "bytes": 6560,
+      "git_blob_sha1": "c18a5f3c69d9028eb2ff8e73495b14af845b2110"
+    },
+    {
+      "path": "examples/common-sdl.h",
+      "bytes": 975,
+      "git_blob_sha1": "9ee8a320724ea27a3456743b2cf5d99b20b049bb"
+    },
+    {
+      "path": "examples/common-whisper.cpp",
+      "bytes": 8141,
+      "git_blob_sha1": "b12481c013fd16da3b9dd6db357b9e04d194cc05"
+    },
+    {
+      "path": "examples/common-whisper.h",
+      "bytes": 1339,
+      "git_blob_sha1": "aec430d36350e32998a50e482f981f72c554c2e2"
+    },
+    {
+      "path": "examples/common.cpp",
+      "bytes": 23353,
+      "git_blob_sha1": "1ff8b43ab7c3fda73b25068dda03e724b0e88f96"
+    },
+    {
+      "path": "examples/common.h",
+      "bytes": 9629,
+      "git_blob_sha1": "8f99df7dd326a0f6587a9b64628475098b75a656"
+    },
+    {
+      "path": "examples/deprecation-warning/CMakeLists.txt",
+      "bytes": 228,
+      "git_blob_sha1": "55cef032e609ca3b6fdc4d9c417b00c39e123096"
+    },
+    {
+      "path": "examples/deprecation-warning/README.md",
+      "bytes": 639,
+      "git_blob_sha1": "e07e134b643e647c0ae07c8868494a7ec8a77574"
+    },
+    {
+      "path": "examples/deprecation-warning/deprecation-warning.cpp",
+      "bytes": 1261,
+      "git_blob_sha1": "9cac82fb425ee8c64f19a54fbdf7241a42d47136"
+    },
+    {
+      "path": "examples/ffmpeg-transcode.cpp",
+      "bytes": 8197,
+      "git_blob_sha1": "7657af6982336d1e83a1475a150debfe574d078c"
+    },
+    {
+      "path": "examples/grammar-parser.cpp",
+      "bytes": 17785,
+      "git_blob_sha1": "e282fc7bf56169831f18c11afe64c28dd9203903"
+    },
+    {
+      "path": "examples/grammar-parser.h",
+      "bytes": 895,
+      "git_blob_sha1": "47d019c33e15375042c3e61957a520a00b851072"
+    },
+    {
+      "path": "examples/json.hpp",
+      "bytes": 907858,
+      "git_blob_sha1": "4d1a37ad7cb874769d911fc3362d567da3aca291"
+    },
+    {
+      "path": "examples/miniaudio.h",
+      "bytes": 4107565,
+      "git_blob_sha1": "24e676bb264742a2899e3b1c678a1959bbea5132"
+    },
+    {
+      "path": "examples/parakeet-cli/CMakeLists.txt",
+      "bytes": 239,
+      "git_blob_sha1": "adb9aba38efd7853bf70650705048d37882d8a5a"
+    },
+    {
+      "path": "examples/parakeet-cli/README.md",
+      "bytes": 6537,
+      "git_blob_sha1": "46f1701bffeb40effedc8992e8ae9eb30ea5f0f0"
+    },
+    {
+      "path": "examples/parakeet-cli/parakeet-cli.cpp",
+      "bytes": 9985,
+      "git_blob_sha1": "03ddc7f8b8c011d5c03afb58306e41ccb108e0cc"
+    },
+    {
+      "path": "examples/parakeet-quantize/CMakeLists.txt",
+      "bytes": 228,
+      "git_blob_sha1": "6b46da18d27bdcc96822608f82e381d81dbf1890"
+    },
+    {
+      "path": "examples/parakeet-quantize/parakeet-quantize.cpp",
+      "bytes": 9842,
+      "git_blob_sha1": "a5d9616420f04347219aaaf9d8972fc2c2c58420"
+    },
+    {
+      "path": "examples/quantize/CMakeLists.txt",
+      "bytes": 217,
+      "git_blob_sha1": "aa2828e3e45493bd7afc72d1a072ed2398de334b"
+    },
+    {
+      "path": "examples/quantize/README.md",
+      "bytes": 75,
+      "git_blob_sha1": "2d918acf7f330081c1495257ee362ae9eb745fea"
+    },
+    {
+      "path": "examples/quantize/quantize.cpp",
+      "bytes": 8213,
+      "git_blob_sha1": "4dbae2055518e755f57740def5bf8c3730164fab"
+    },
+    {
+      "path": "examples/server/CMakeLists.txt",
+      "bytes": 369,
+      "git_blob_sha1": "c082546bdf15a82623103513a9955fddcf61b5aa"
+    },
+    {
+      "path": "examples/server/README.md",
+      "bytes": 6359,
+      "git_blob_sha1": "8d4c802b8bf86aead16dfc6ab3a62c3c2347f051"
+    },
+    {
+      "path": "examples/server/bench.js",
+      "bytes": 912,
+      "git_blob_sha1": "127544357eb3a975220d12d939360c2c57cab031"
+    },
+    {
+      "path": "examples/server/httplib.h",
+      "bytes": 352973,
+      "git_blob_sha1": "200d425a93c028ff307ccfad0e5bf858d75807dd"
+    },
+    {
+      "path": "examples/server/server.cpp",
+      "bytes": 60951,
+      "git_blob_sha1": "b745f4d7b093ae597048ef6c1e824ad5230cd336"
+    },
+    {
+      "path": "examples/stb_vorbis.c",
+      "bytes": 192790,
+      "git_blob_sha1": "3e5c2504c08f76b9d04e4adfbce80818631e835e"
+    },
+    {
+      "path": "examples/vad-speech-segments/CMakeLists.txt",
+      "bytes": 247,
+      "git_blob_sha1": "857b88c9a59739bd5e88ad83a54712746b079d00"
+    },
+    {
+      "path": "examples/vad-speech-segments/README.md",
+      "bytes": 2198,
+      "git_blob_sha1": "aa5c8114726556f8d4dcb093e2f5fdf7f44df4c8"
+    },
+    {
+      "path": "examples/vad-speech-segments/speech.cpp",
+      "bytes": 8036,
+      "git_blob_sha1": "469a30c304fd97ff20ffc97856ea1487c5827f27"
+    },
+    {
+      "path": "ggml/.gitignore",
+      "bytes": 27,
+      "git_blob_sha1": "9dd9ddea1f95a6a90c28080d7e5d4cfbeddb7548"
+    },
+    {
+      "path": "ggml/CMakeLists.txt",
+      "bytes": 21801,
+      "git_blob_sha1": "3eacd4cd55ea2556fa38592cf8a4941e36575adf"
+    },
+    {
+      "path": "ggml/cmake/FindNCCL.cmake",
+      "bytes": 964,
+      "git_blob_sha1": "67511e2d56a6cf2e3bbcd000e6c7ad5d0535a2bd"
+    },
+    {
+      "path": "ggml/cmake/GitVars.cmake",
+      "bytes": 717,
+      "git_blob_sha1": "1a4c24ebf6adeb1126e626f56de601621179353d"
+    },
+    {
+      "path": "ggml/cmake/common.cmake",
+      "bytes": 5109,
+      "git_blob_sha1": "f3610298ffb8c1cb0baf4c815d79e375472220fe"
+    },
+    {
+      "path": "ggml/cmake/ggml-config.cmake.in",
+      "bytes": 8018,
+      "git_blob_sha1": "a28e49e8342012ed680be18b0fd2baa393fa6c70"
+    },
+    {
+      "path": "ggml/include/ggml-alloc.h",
+      "bytes": 3689,
+      "git_blob_sha1": "81cce2e2a60778f5fe6d923a74b38f7fa47d7dcc"
+    },
+    {
+      "path": "ggml/include/ggml-backend.h",
+      "bytes": 25776,
+      "git_blob_sha1": "5ef80da306b0cfe20a6fd81c11fd0155630dc8de"
+    },
+    {
+      "path": "ggml/include/ggml-blas.h",
+      "bytes": 586,
+      "git_blob_sha1": "87a81b36348b8eec067427216c1988277ec3b8f7"
+    },
+    {
+      "path": "ggml/include/ggml-cann.h",
+      "bytes": 4553,
+      "git_blob_sha1": "74af465337a53101d583177254faa9c6147e8445"
+    },
+    {
+      "path": "ggml/include/ggml-cpp.h",
+      "bytes": 1652,
+      "git_blob_sha1": "48aa79682b65d9a0ec12f7d937ebc7f0840dc6b8"
+    },
+    {
+      "path": "ggml/include/ggml-cpu.h",
+      "bytes": 7753,
+      "git_blob_sha1": "dc6453c6eaa16667f720f987659ad42d03a403a2"
+    },
+    {
+      "path": "ggml/include/ggml-cuda.h",
+      "bytes": 1565,
+      "git_blob_sha1": "1cd81eeaebcdf4abcd46c87ba1a9a46e275aa12b"
+    },
+    {
+      "path": "ggml/include/ggml-et.h",
+      "bytes": 887,
+      "git_blob_sha1": "8b78f39aabce2be2271b735ba2d1cbf2e239df76"
+    },
+    {
+      "path": "ggml/include/ggml-hexagon.h",
+      "bytes": 351,
+      "git_blob_sha1": "6e079004103933a284e4292adfd24b4564026e78"
+    },
+    {
+      "path": "ggml/include/ggml-metal.h",
+      "bytes": 2141,
+      "git_blob_sha1": "433838f0d6d68d1fffabbe18a23e3c2bca3ee2fc"
+    },
+    {
+      "path": "ggml/include/ggml-opencl.h",
+      "bytes": 581,
+      "git_blob_sha1": "6b61771358f875be2f1b5ce584d4e30b7c2450b4"
+    },
+    {
+      "path": "ggml/include/ggml-openvino.h",
+      "bytes": 1034,
+      "git_blob_sha1": "c43beb07b6a6e384b58cd91b5a4a97c6f194c0e1"
+    },
+    {
+      "path": "ggml/include/ggml-opt.h",
+      "bytes": 14040,
+      "git_blob_sha1": "1c2ed79b77420e74fd3b81b83367109164380853"
+    },
+    {
+      "path": "ggml/include/ggml-rpc.h",
+      "bytes": 1184,
+      "git_blob_sha1": "1f8cb7906cb2ab83e68904f76e67a5b35ffc42d8"
+    },
+    {
+      "path": "ggml/include/ggml-sycl.h",
+      "bytes": 2492,
+      "git_blob_sha1": "1e353ffa31c7cdc5d261ed9591e860c09a223ef9"
+    },
+    {
+      "path": "ggml/include/ggml-virtgpu.h",
+      "bytes": 194,
+      "git_blob_sha1": "faaba8f246d1f97237f45378982ad46c96796a77"
+    },
+    {
+      "path": "ggml/include/ggml-vulkan.h",
+      "bytes": 952,
+      "git_blob_sha1": "ed5ea5f798cb5b0ce6801689d43fc2ef15e5fa35"
+    },
+    {
+      "path": "ggml/include/ggml-webgpu.h",
+      "bytes": 328,
+      "git_blob_sha1": "65b8ed9bb66443573fad7cdc1ebec41f20faf981"
+    },
+    {
+      "path": "ggml/include/ggml-zdnn.h",
+      "bytes": 361,
+      "git_blob_sha1": "e6970ad2f7e41b178e2f55749405c31957febc6f"
+    },
+    {
+      "path": "ggml/include/ggml-zendnn.h",
+      "bytes": 498,
+      "git_blob_sha1": "a30a3a980883524be05e884a7d67f8d9f5f8b528"
+    },
+    {
+      "path": "ggml/include/ggml.h",
+      "bytes": 116144,
+      "git_blob_sha1": "224bdef927ac90bfa07ee39db3247b7bac4f14ec"
+    },
+    {
+      "path": "ggml/include/gguf.h",
+      "bytes": 11355,
+      "git_blob_sha1": "b3a1e1230a06110a0a5f04469d849ac2000b467c"
+    },
+    {
+      "path": "ggml/src/CMakeLists.txt",
+      "bytes": 26989,
+      "git_blob_sha1": "9477320002199d1e3a6df5885efe3f8c4d1b478c"
+    },
+    {
+      "path": "ggml/src/ggml-alloc.c",
+      "bytes": 45068,
+      "git_blob_sha1": "b0c067b491350275ffab568a23a16c95b88c2c7b"
+    },
+    {
+      "path": "ggml/src/ggml-backend-dl.cpp",
+      "bytes": 1051,
+      "git_blob_sha1": "a65cf009055283d8b0b583326452d66c62908aed"
+    },
+    {
+      "path": "ggml/src/ggml-backend-dl.h",
+      "bytes": 791,
+      "git_blob_sha1": "f74b7c948946995d3360be99329df8c7bc987e6b"
+    },
+    {
+      "path": "ggml/src/ggml-backend-impl.h",
+      "bytes": 15095,
+      "git_blob_sha1": "dc7367dec4fe3246eb255332c45c23af34fcb959"
+    },
+    {
+      "path": "ggml/src/ggml-backend-meta.cpp",
+      "bytes": 119562,
+      "git_blob_sha1": "0394433c08bfe8e5bf9b1e3c9a1efe62efa23b5a"
+    },
+    {
+      "path": "ggml/src/ggml-backend-reg.cpp",
+      "bytes": 18555,
+      "git_blob_sha1": "1c18b82cd501842c7b4d14764c79900534624277"
+    },
+    {
+      "path": "ggml/src/ggml-backend.cpp",
+      "bytes": 105561,
+      "git_blob_sha1": "5bdade6de44484ef3af39ead58652910409bf7ba"
+    },
+    {
+      "path": "ggml/src/ggml-common.h",
+      "bytes": 135161,
+      "git_blob_sha1": "1dbbe326d0fc6a5ce8a86d237cb94901340443af"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/CMakeLists.txt",
+      "bytes": 32900,
+      "git_blob_sha1": "71f55b490aa6cdf79757ed823b10321897fdf1ca"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/amx/amx.cpp",
+      "bytes": 8404,
+      "git_blob_sha1": "e90c2797ffdd2877a3fdd216f95e9e27003e4bf1"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/amx/amx.h",
+      "bytes": 202,
+      "git_blob_sha1": "5b65d76bdc89cb6217bbbe6fcbf11dff36e22d23"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/amx/common.h",
+      "bytes": 2675,
+      "git_blob_sha1": "26a6ec1a2d0092fa24ca8b9d937ebf1fed183976"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/amx/mmq.cpp",
+      "bytes": 108216,
+      "git_blob_sha1": "9f3a744b5de32658c5f0cb1b100d2fc9e9c0e38a"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/amx/mmq.h",
+      "bytes": 397,
+      "git_blob_sha1": "baf7684773453b98d825ad2b48029da83789932f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch-fallback.h",
+      "bytes": 23209,
+      "git_blob_sha1": "e4882984a24c77bb49d85c2a575e378d779072ef"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/arm/cpu-feats.cpp",
+      "bytes": 926,
+      "git_blob_sha1": "84a11eabd4e110ea7186e4105d5940994161ec01"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/arm/quants.c",
+      "bytes": 217556,
+      "git_blob_sha1": "cfbbf66178cfcbb220f4fe7bdd30e0badbe6b343"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/arm/repack.cpp",
+      "bytes": 269785,
+      "git_blob_sha1": "ad0e5ccaf7b7ed185c69dfb7731de2ee22c1f785"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/loongarch/quants.c",
+      "bytes": 94730,
+      "git_blob_sha1": "9c43da6cf89ac5d8fc8b24608b44ada5aca60c57"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/powerpc/cpu-feats.cpp",
+      "bytes": 2074,
+      "git_blob_sha1": "fedd6430278c2b1cf9cba626ec6347b2177763e0"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/powerpc/quants.c",
+      "bytes": 97985,
+      "git_blob_sha1": "644c380c7381e78c7488e735806d2d0beb9c23e3"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/riscv/cpu-feats.cpp",
+      "bytes": 807,
+      "git_blob_sha1": "43c757bd014a0e227f0876a91b47e169a837f753"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/riscv/quants.c",
+      "bytes": 294126,
+      "git_blob_sha1": "47e9180bf9bb4aa9efc59541b72f6246208c4936"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/riscv/repack.cpp",
+      "bytes": 97889,
+      "git_blob_sha1": "c37488cae5456b29818676541f6b4916a1a2a046"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/s390/cpu-feats.cpp",
+      "bytes": 1017,
+      "git_blob_sha1": "5f4405a7f308bd1bf2cb4f065ad5227eb0f61fc4"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/s390/quants.c",
+      "bytes": 57060,
+      "git_blob_sha1": "52344828e39dbcad5ac0dcf87b3f5ac7c102d4c0"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/s390/repack.cpp",
+      "bytes": 8886,
+      "git_blob_sha1": "abf3433adda261358a0a33bd2841b595ae2c4019"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/wasm/quants.c",
+      "bytes": 46731,
+      "git_blob_sha1": "0a7119b4e1fbd3a13664e2aa0cee9dc26cf754bb"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/x86/cpu-feats.cpp",
+      "bytes": 10727,
+      "git_blob_sha1": "d775a0363858de273f273d2f0e9a318600ae52fa"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/x86/quants.c",
+      "bytes": 197407,
+      "git_blob_sha1": "ea54cfe44ce403fe06c8b4aa10b5a882779e7e71"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/arch/x86/repack.cpp",
+      "bytes": 665038,
+      "git_blob_sha1": "af1cebad131d17118c26634faccb9a6e0c08a6f9"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/binary-ops.cpp",
+      "bytes": 6709,
+      "git_blob_sha1": "75e38290015a6fd6137fa09142585051cf27179b"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/binary-ops.h",
+      "bytes": 518,
+      "git_blob_sha1": "aca1d89be7e538239598610bd8a809ccb3dcdcf5"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/cmake/FindSIMD.cmake",
+      "bytes": 2651,
+      "git_blob_sha1": "5533668ec4ab18ff7261865e43be0100de65e5bf"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/cmake/FindSMTIME.cmake",
+      "bytes": 2075,
+      "git_blob_sha1": "c8a4d4b4ec9335164617f3f35529d405371c9205"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/common.h",
+      "bytes": 2333,
+      "git_blob_sha1": "abbadc359c5addac941f8add92674061c8b790bf"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/ggml-cpu-impl.h",
+      "bytes": 13752,
+      "git_blob_sha1": "5dd9ec8e628acad32537e87eccfdeb01c1c1dc46"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/ggml-cpu.c",
+      "bytes": 132440,
+      "git_blob_sha1": "7c274c03b7f1546cfd665ad7f60f01b80f47f592"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/ggml-cpu.cpp",
+      "bytes": 25005,
+      "git_blob_sha1": "81ff5d79fa98dbfeb9c149e58883d922fe001743"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/hbm.cpp",
+      "bytes": 2156,
+      "git_blob_sha1": "0ca5c8647b133f804078867ce92ee24aa8c1a4e3"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/hbm.h",
+      "bytes": 155,
+      "git_blob_sha1": "09a1f09d72be294f6866e58d69105c5db28ffddd"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/kleidiai/CMakeLists.txt",
+      "bytes": 417,
+      "git_blob_sha1": "b36cb6d3a9d9d157064b7348c24ba0875b812320"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/kleidiai/kernels.cpp",
+      "bytes": 77210,
+      "git_blob_sha1": "d4551298f86f5c90a3493da4c4629cf67cd1747f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/kleidiai/kernels.h",
+      "bytes": 3413,
+      "git_blob_sha1": "1da8610eae72ea4280689d27bf8eb6d69ae4830f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/kleidiai/kleidiai.cpp",
+      "bytes": 76756,
+      "git_blob_sha1": "1384ca92787bae1bf8cd65a6c715ffaeddd52942"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/kleidiai/kleidiai.h",
+      "bytes": 323,
+      "git_blob_sha1": "38eac58f7c207ded2a74db705c75f92e6e6eb66c"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/llamafile/sgemm.cpp",
+      "bytes": 166263,
+      "git_blob_sha1": "d28840a91504a4c0ce14ec2e384ba759dc4c0797"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/llamafile/sgemm.h",
+      "bytes": 524,
+      "git_blob_sha1": "867b0c04aee846915938802be8fb5fcfea1ff2cb"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/ops.cpp",
+      "bytes": 425708,
+      "git_blob_sha1": "16a916d20af145506628d198ba9d1d99204a9b38"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/ops.h",
+      "bytes": 10249,
+      "git_blob_sha1": "2728b08b6c976ed864353f8eb84e2e10d309f287"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/quants.c",
+      "bytes": 45124,
+      "git_blob_sha1": "5e36459f8cbc5900b375d2189414307393471a6b"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/quants.h",
+      "bytes": 10862,
+      "git_blob_sha1": "93ea7eeffe5b00ad2c612aac49b7983c12949525"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/repack.cpp",
+      "bytes": 213604,
+      "git_blob_sha1": "2632ae3a063c40c81438c7e8ab992e5903481d86"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/repack.h",
+      "bytes": 21341,
+      "git_blob_sha1": "fc6715c39ce93fd012591de1ab652b27414ae887"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/simd-gemm.h",
+      "bytes": 8816,
+      "git_blob_sha1": "4b9396d540664e5925c7ea46eb707e83ce60d900"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/simd-mappings.h",
+      "bytes": 55790,
+      "git_blob_sha1": "89a5afa9ca9342c9f0071e0f7f75fa3b7a48f165"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime.cpp",
+      "bytes": 77910,
+      "git_blob_sha1": "81e86b9dd6664e622ff322e707823e1cdfb2e35d"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime.h",
+      "bytes": 511,
+      "git_blob_sha1": "6849dd95e058ed0810ac72a97762220a57cb6788"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime1_kernels.cpp",
+      "bytes": 63629,
+      "git_blob_sha1": "6c974f6eb3a4ccd5e8325c8668999ccc33e3eafe"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime2_kernels.cpp",
+      "bytes": 291755,
+      "git_blob_sha1": "0c7a036a92af34ebf91a49f1eb7391f7ff43959e"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime_env.cpp",
+      "bytes": 12208,
+      "git_blob_sha1": "a13ba391da2fe686299330356fb4276898c6700b"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime_env.h",
+      "bytes": 1810,
+      "git_blob_sha1": "a6ca06d26a4b6fe6e742a994f9b26e86d6d79772"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/ime_kernels.h",
+      "bytes": 8410,
+      "git_blob_sha1": "476a0e74be1303e49014c184a57fe4962bde29e5"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/repack.cpp",
+      "bytes": 77894,
+      "git_blob_sha1": "2039056e0a5afe70937b15c08fb1e240410465b1"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/repack.h",
+      "bytes": 316,
+      "git_blob_sha1": "950cbde759349015b8ab185c0784d90fa621198d"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/rvv_kernels.cpp",
+      "bytes": 154759,
+      "git_blob_sha1": "13b84dcbe72b5052c57bb6136c58bd053555479f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/rvv_kernels.h",
+      "bytes": 4380,
+      "git_blob_sha1": "edddf957c21de0dc8d26774d65bb286c788c269e"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/spine_barrier.h",
+      "bytes": 1007,
+      "git_blob_sha1": "f897dad4b8a755a5f08322731227a4d05ff56fd0"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/spine_mem_pool.cpp",
+      "bytes": 27104,
+      "git_blob_sha1": "1409423b14547c28c26b9dfc766a2d12f0cd5af9"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/spine_mem_pool.h",
+      "bytes": 920,
+      "git_blob_sha1": "8740d2c99ef0d781fa66aa7ba8f0c1c149c01377"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/spacemit/spine_tcm.h",
+      "bytes": 13965,
+      "git_blob_sha1": "f300d7d5c0413fe3dcc2d071421884a6b7ba8ad9"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/tiled/tiled-kernel.cpp",
+      "bytes": 36853,
+      "git_blob_sha1": "bffa737c7cd48062b0da157fb8cb7bc18a368708"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/tiled/tiled-kernel.h",
+      "bytes": 9547,
+      "git_blob_sha1": "1a97f406a62f096554b408c8c8b1bebacc64158f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/tiled/tiled.cpp",
+      "bytes": 58049,
+      "git_blob_sha1": "77e1a99450ffd6b03e2f2547fb3e7f2bbdcdee42"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/tiled/tiled.h",
+      "bytes": 1387,
+      "git_blob_sha1": "6f3e8dc13ef358be9ea45752ba418417ca8dc46b"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/traits.cpp",
+      "bytes": 1231,
+      "git_blob_sha1": "4f32f10255aa4620484244e98f132a1bb0089d8e"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/traits.h",
+      "bytes": 1157,
+      "git_blob_sha1": "f4e0990ddfc95b61c2e38f224aac0fd76475c9c1"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/unary-ops.cpp",
+      "bytes": 11555,
+      "git_blob_sha1": "1d8344436f022cb028418d5d46b56093411083d2"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/unary-ops.h",
+      "bytes": 2442,
+      "git_blob_sha1": "bcad5a3af1a9879718c56ef8e4d9438c0797544f"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/vec.cpp",
+      "bytes": 25373,
+      "git_blob_sha1": "3918a6f4d9d269c0df1e09b9b2d2d0c0a8d1a16d"
+    },
+    {
+      "path": "ggml/src/ggml-cpu/vec.h",
+      "bytes": 68484,
+      "git_blob_sha1": "59fa88f2c9c5accda28e19b709dcf76552dd99d0"
+    },
+    {
+      "path": "ggml/src/ggml-feats.h",
+      "bytes": 4885,
+      "git_blob_sha1": "79a0afd87a8775172a2e86e0641c01ee9915b8b1"
+    },
+    {
+      "path": "ggml/src/ggml-impl.h",
+      "bytes": 25821,
+      "git_blob_sha1": "ae26e0c23b461b716ed5f91977a419e10556087b"
+    },
+    {
+      "path": "ggml/src/ggml-opt.cpp",
+      "bytes": 42081,
+      "git_blob_sha1": "53903defa8f419069f3046b960f2f057e06e6263"
+    },
+    {
+      "path": "ggml/src/ggml-quants.c",
+      "bytes": 226847,
+      "git_blob_sha1": "7750a72ce61b9ddf4aa6b63f60b07e5283147e9f"
+    },
+    {
+      "path": "ggml/src/ggml-quants.h",
+      "bytes": 9803,
+      "git_blob_sha1": "75188f1af180e3592f3c94bc4077989fb817c359"
+    },
+    {
+      "path": "ggml/src/ggml-threading.cpp",
+      "bytes": 250,
+      "git_blob_sha1": "25a19eedb90535daccd640056175dbbbc58c1ca7"
+    },
+    {
+      "path": "ggml/src/ggml-threading.h",
+      "bytes": 198,
+      "git_blob_sha1": "dec2c8840aa3669c2f813ba940d192f803e1da5e"
+    },
+    {
+      "path": "ggml/src/ggml-version.h.in",
+      "bytes": 95,
+      "git_blob_sha1": "37de362977b7818c2bf8f9e9af814b95f45451fa"
+    },
+    {
+      "path": "ggml/src/ggml.c",
+      "bytes": 261112,
+      "git_blob_sha1": "9bcabdbd34bbc6c3679dad2eea35bf8acee87fcc"
+    },
+    {
+      "path": "ggml/src/ggml.cpp",
+      "bytes": 738,
+      "git_blob_sha1": "0d388d45536d1fb6fd39ee35a5b8e0583e212b54"
+    },
+    {
+      "path": "ggml/src/gguf.cpp",
+      "bytes": 58995,
+      "git_blob_sha1": "75ceade7d5fb9155f30e01d0cfa45d2f92814fb3"
+    },
+    {
+      "path": "include/parakeet.h",
+      "bytes": 16246,
+      "git_blob_sha1": "c10442d90f7b4b995eafcb158446cad4f6623978"
+    },
+    {
+      "path": "include/whisper.h",
+      "bytes": 37439,
+      "git_blob_sha1": "545084ef26ee80af25db1d43479d0187abd979c4"
+    },
+    {
+      "path": "src/CMakeLists.txt",
+      "bytes": 8601,
+      "git_blob_sha1": "c5f69771fc17504bd73e911664f6c4a45ba60db1"
+    },
+    {
+      "path": "src/aneforge/whisper-aneforge.cpp",
+      "bytes": 6768,
+      "git_blob_sha1": "f9f7eb9ea8b7a824688a7c2febbb54bff1398fda"
+    },
+    {
+      "path": "src/aneforge/whisper-aneforge.h",
+      "bytes": 952,
+      "git_blob_sha1": "7ecfe14998a6e4f9444d856db971f45815a56f4b"
+    },
+    {
+      "path": "src/coreml/whisper-compat.h",
+      "bytes": 467,
+      "git_blob_sha1": "feacb9e8a9863846d4136730a4b0e702562385c5"
+    },
+    {
+      "path": "src/coreml/whisper-compat.m",
+      "bytes": 1246,
+      "git_blob_sha1": "690414cae6b9cdda79111f41fb0868f3a469aef0"
+    },
+    {
+      "path": "src/coreml/whisper-decoder-impl.h",
+      "bytes": 8837,
+      "git_blob_sha1": "8ec9373d288636dd1e1f2428c4758cdcf1f69fc8"
+    },
+    {
+      "path": "src/coreml/whisper-decoder-impl.m",
+      "bytes": 10249,
+      "git_blob_sha1": "de1fd1ea0b7076757e3a07c543b4f2eabff27654"
+    },
+    {
+      "path": "src/coreml/whisper-encoder-impl.h",
+      "bytes": 8605,
+      "git_blob_sha1": "c4d422480a48a944f7bca0c0d0a581a3c45ecfaa"
+    },
+    {
+      "path": "src/coreml/whisper-encoder-impl.m",
+      "bytes": 9961,
+      "git_blob_sha1": "0ddda3d3ceec8eb44bc5718e84850e8951a20e40"
+    },
+    {
+      "path": "src/coreml/whisper-encoder.h",
+      "bytes": 675,
+      "git_blob_sha1": "508df7c1e94b8277a94e7492b877e1a34dcf9a4b"
+    },
+    {
+      "path": "src/coreml/whisper-encoder.mm",
+      "bytes": 2224,
+      "git_blob_sha1": "81a5a6aaa462deb81fcd9aab45cf5317504b34ce"
+    },
+    {
+      "path": "src/openvino/whisper-openvino-encoder.cpp",
+      "bytes": 3988,
+      "git_blob_sha1": "4d9ce12285849ff62c76444a53d9602adf34b335"
+    },
+    {
+      "path": "src/openvino/whisper-openvino-encoder.h",
+      "bytes": 876,
+      "git_blob_sha1": "7c2f6dfc2e0dbed4cc1a00f390d074cc337b5c43"
+    },
+    {
+      "path": "src/parakeet-arch.h",
+      "bytes": 12911,
+      "git_blob_sha1": "e8c6effe4a35c8a390c774503c6e321247206533"
+    },
+    {
+      "path": "src/parakeet.cpp",
+      "bytes": 148946,
+      "git_blob_sha1": "ed66382996b47827fba1a297f1ed82dae60325f7"
+    },
+    {
+      "path": "src/vitisai/whisper-vitisai-encoder.cpp",
+      "bytes": 23683,
+      "git_blob_sha1": "707f876f92e6a4d10fe16d4b1d830c3e4417bcc0"
+    },
+    {
+      "path": "src/vitisai/whisper-vitisai-encoder.h",
+      "bytes": 833,
+      "git_blob_sha1": "132e241f34d2e8cef78d5c74985f23bb52ad71bf"
+    },
+    {
+      "path": "src/vitisai/whisper-vitisai-helpers.cpp",
+      "bytes": 16986,
+      "git_blob_sha1": "4176346156a88fb5c776b477c156ed68127f9bae"
+    },
+    {
+      "path": "src/vitisai/whisper-vitisai-helpers.h",
+      "bytes": 3835,
+      "git_blob_sha1": "d50a2f4a28f8e8f1992b15ad286c4c1a3f0cddaa"
+    },
+    {
+      "path": "src/whisper-arch.h",
+      "bytes": 9212,
+      "git_blob_sha1": "3a65ff35aa070e254d5a1bf174f8914f20eb50df"
+    },
+    {
+      "path": "src/whisper.cpp",
+      "bytes": 344329,
+      "git_blob_sha1": "1675f33acf0b250bc9db648a3c2150fa6144f970"
+    }
+  ],
+  "model": {
+    "repository": "https://huggingface.co/ggerganov/whisper.cpp",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "file": "ggml-small.bin",
+    "bytes": 487601967,
+    "sha256": "1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b",
+    "declared_license": "MIT"
+  },
+  "cmake": {
+    "version": "3.31.6",
+    "file": "cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+    "bytes": 47224338,
+    "sha256": "da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e",
+    "url": "https://files.pythonhosted.org/packages/7f/09/516b0d709672bc430eb13278f0316acd34869269447744f5d136daeef689/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+    "package_license": "Apache-2.0",
+    "upstream_cmake_license": "BSD-3-Clause"
+  },
+  "exact_artifact_payload_bytes": 547272273,
+  "proposed_new_transfer_cap_bytes": 560000000,
+  "proposed_additional_peak_storage_cap_bytes": 2000000000,
+  "proposed_cumulative_download_ceiling_bytes": 2100000000,
+  "proposed_cumulative_storage_ceiling_bytes": 17000000000
+}

@@ -1,0 +1,91 @@
+{
+  "implementation_commit": "6d949f2924bf19fed6f64b999ea79e318e234b1a",
+  "verification": {
+    "python_tests": 163,
+    "new_tests": 17,
+    "public_source_python_tests": 163,
+    "swift_tests": 61,
+    "release_build": "passed",
+    "raw_raster_determinism": "passed",
+    "fresh_swift_build": "pending additional storage approval",
+    "synthetic_export": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.9999189933072695,
+      "content_gain": 0.7068585872278985,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  },
+  "resource_snapshot": {
+    "allocated_bytes": 14619537408,
+    "free_filesystem_bytes": 39936000000,
+    "roots": [
+      {
+        "root": "artifacts",
+        "bytes": 4423651328
+      },
+      {
+        "root": "reference-private",
+        "bytes": 4862353408
+      },
+      {
+        "root": ".build",
+        "bytes": 986365952
+      },
+      {
+        "root": "ilyric-alignment-public-20261008",
+        "bytes": 487297024
+      },
+      {
+        "root": "ilyric-coverage-public-20261008",
+        "bytes": 472731648
+      },
+      {
+        "root": "ilyric-passage-public-20261009",
+        "bytes": 688562176
+      },
+      {
+        "root": "ilyric-personal-public-20261009",
+        "bytes": 637083648
+      },
+      {
+        "root": "ilyric-public-check",
+        "bytes": 307220480
+      },
+      {
+        "root": "ilyric-refinement-public-20261008",
+        "bytes": 472436736
+      },
+      {
+        "root": "ilyric-typography-public-check",
+        "bytes": 320745472
+      },
+      {
+        "root": "ilyric-vad-public-20261008",
+        "bytes": 472702976
+      },
+      {
+        "root": "ilyric-veracity-public-20261009",
+        "bytes": 488386560
+      }
+    ]
+  },
+  "acoustic_evaluation": "Whisper unavailable; not provisioned; M1 unmeasured"
+}
