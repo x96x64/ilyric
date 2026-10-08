@@ -82,6 +82,8 @@ The [TTML integration report](docs/ttml-integration.md) records exact parent-rel
 
 The [acquisition study](docs/lyrics-acquisition-feasibility.md) compares documented providers, content-use permissions, recording matching, local correction, and optional alignment. It recommends offline preparation and provenance before conditional provider lookup. API access does not establish permission to export lyrics into videos. No acquisition client, alignment system, or project-schema change is implemented by this study.
 
+The [local Music cache feasibility report](docs/apple-music-local-cache-feasibility.md) distinguishes response-body reading from signed-request replay, records the limited local metadata inspection, and documents why cache integration remains unqualified. Legitimately supplied timing can avoid inference for matching recordings; acoustic alignment remains the fallback.
+
 ## Experimental Automatic Singing Alignment
 
 The [alignment report](docs/automatic-alignment.md) evaluates a speech CTC baseline and a singing-specific model against licensed English/Japanese recordings. The [preparation commands](docs/alignment-commands.md) provide optional offline inference, preserved source mapping, reviewed corrections, and line-level TTML for the existing renderer. Model dependencies are separate from public tests. Accuracy, coverage, licensing, and the 60-second context limit prevent qualification for unattended or complete-song use; mandatory automatic synchronization remains incomplete.
