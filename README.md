@@ -78,6 +78,10 @@ The [timing integration report](docs/enhanced-lrc-integration.md) records exact 
 
 The [TTML integration report](docs/ttml-integration.md) records exact parent-relative paragraph/span intervals, explicit paragraph ends, multiline progression, and version-3 selection. The [subset and commands](docs/ttml-subset.md) define namespace, whitespace, XML safety, and compatibility limits. Versions 1 and 2 retain their prior contracts. This bounded importer does not implement TTML styling, provider-specific lyric profiles, or native Music fidelity.
 
+## Lyrics Acquisition Feasibility
+
+The [acquisition study](docs/lyrics-acquisition-feasibility.md) compares documented providers, content-use permissions, recording matching, local correction, and optional alignment. It recommends offline preparation and provenance before conditional provider lookup. API access does not establish permission to export lyrics into videos. No acquisition client, alignment system, or project-schema change is implemented by this study.
+
 ## Deferred Product Requirements
 
 The [product requirements](docs/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.
