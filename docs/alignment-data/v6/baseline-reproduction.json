@@ -1,0 +1,129 @@
+{
+  "status": "reproduced",
+  "model_assets_verified": 18,
+  "feature_records": [
+    {
+      "case": "EN01",
+      "semantic_equality": true,
+      "audio_sha256": "dc16403af1d72df42ba30c97213bb6d91f8bc38aca2cb5b58bc8fb74f34946e6",
+      "measurements": {
+        "preprocessing_seconds": 0.10847837499750312,
+        "spectral_seconds": 0.011158875000546686,
+        "initialization_seconds": 0.04088262500590645,
+        "inference_seconds": 0.4812766249960987,
+        "peak_rss_bytes": 1410793472
+      },
+      "process_seconds": 4.3755310000000005
+    },
+    {
+      "case": "EN02",
+      "semantic_equality": true,
+      "audio_sha256": "b39c8586d623abe8922ca5a0bdb541cccf67eda0d64bdbe88f2ea1e57908e4c8",
+      "measurements": {
+        "preprocessing_seconds": 0.06539124999835622,
+        "spectral_seconds": 0.00489075000223238,
+        "initialization_seconds": 0.030354499991517514,
+        "inference_seconds": 0.3064609580032993,
+        "peak_rss_bytes": 1240252416
+      },
+      "process_seconds": 2.9415123340000005
+    },
+    {
+      "case": "EN03",
+      "semantic_equality": true,
+      "audio_sha256": "5d4beac9a1ceab86543b272eb477bd33ff6c328c262ce8db24029eb068423365",
+      "measurements": {
+        "preprocessing_seconds": 0.06719045899808407,
+        "spectral_seconds": 0.005491333999088965,
+        "initialization_seconds": 0.03017337499477435,
+        "inference_seconds": 0.3338137909886427,
+        "peak_rss_bytes": 1262092288
+      },
+      "process_seconds": 2.9853126670000005
+    },
+    {
+      "case": "JA01",
+      "semantic_equality": true,
+      "audio_sha256": "a17a9c7792a6763ff381460dd354c0147ff4dd7cba7313faa5d244c915cc8046",
+      "measurements": {
+        "preprocessing_seconds": 0.05208454199600965,
+        "spectral_seconds": 0.005910041989409365,
+        "initialization_seconds": 0.029798292001942173,
+        "inference_seconds": 0.3705507919949014,
+        "peak_rss_bytes": 1375993856
+      },
+      "process_seconds": 3.016624457999999
+    },
+    {
+      "case": "JA03",
+      "semantic_equality": true,
+      "audio_sha256": "dad0952167465d2835bb3679f1d197f203e00134b5c0fbe2e639c55640c3e210",
+      "measurements": {
+        "preprocessing_seconds": 0.054620208000415005,
+        "spectral_seconds": 0.005045541998697445,
+        "initialization_seconds": 0.04436116600118112,
+        "inference_seconds": 0.3051133750122972,
+        "peak_rss_bytes": 1268252672
+      },
+      "process_seconds": 2.951174042
+    },
+    {
+      "case": "EN04",
+      "semantic_equality": true,
+      "audio_sha256": "f03c694e15ccafc121866cd54ef27542ad6e2daf817162b2d1359cc73201c7de",
+      "measurements": {
+        "preprocessing_seconds": 0.049196959007531404,
+        "spectral_seconds": 0.0035871250001946464,
+        "initialization_seconds": 0.02949987500323914,
+        "inference_seconds": 0.1975132920051692,
+        "peak_rss_bytes": 1073594368
+      },
+      "process_seconds": 2.8212873750000007
+    },
+    {
+      "case": "EN05",
+      "semantic_equality": true,
+      "audio_sha256": "dae2fd405ad0a553bc7c2a7778e41b6d6b903ab480e3316744f4a17ae40b5daf",
+      "measurements": {
+        "preprocessing_seconds": 0.050251125008799136,
+        "spectral_seconds": 0.004004292000900023,
+        "initialization_seconds": 0.02897741599008441,
+        "inference_seconds": 0.24137458299810532,
+        "peak_rss_bytes": 1121845248
+      },
+      "process_seconds": 2.8413235840000013
+    },
+    {
+      "case": "JA04",
+      "semantic_equality": true,
+      "audio_sha256": "63059e64ef244f06a1316cf238a66611717bbd97aa5651ca388bec093399f097",
+      "measurements": {
+        "preprocessing_seconds": 0.05062941700452939,
+        "spectral_seconds": 0.005712624988518655,
+        "initialization_seconds": 0.0300505419872934,
+        "inference_seconds": 0.3446308749989839,
+        "peak_rss_bytes": 1312309248
+      },
+      "process_seconds": 2.970122374999999
+    },
+    {
+      "case": "JA05",
+      "semantic_equality": true,
+      "audio_sha256": "5b4866395d813aa8b47c03d42b2b21765b7366c3c367034a6e292f42104ce6ca",
+      "measurements": {
+        "preprocessing_seconds": 0.056224707994260825,
+        "spectral_seconds": 0.0073776249919319525,
+        "initialization_seconds": 0.03248754200467374,
+        "inference_seconds": 0.4817854580032872,
+        "peak_rss_bytes": 1474232320
+      },
+      "process_seconds": 3.1783849579999988
+    }
+  ],
+  "archived_activity_comparisons_equal": 18,
+  "control_records_equal": 76,
+  "frozen_thresholds_unchanged": true,
+  "annotation_manifest_sha256": "2181cb33b409bd58b6108ab40124fd45744804a78e2b07f4f9c81cea68059e4e",
+  "new_singing_detector_inference": false,
+  "scope": "Reproduction of the frozen spectral/CTC baseline only; candidate execution is recorded separately in exploratory.json"
+}

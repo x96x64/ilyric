@@ -1,0 +1,201 @@
+{
+  "classification": "Software correctness and exploratory diagnostic execution, not vocal-activity accuracy",
+  "starting_head": "00f4a8f7da2a6d7cb014e59563466e8b66d8c6e6",
+  "implementation_head": "aa1ed2d8eba73a625f44b9bb7cbd7f13bd2b3417",
+  "environment": {
+    "hardware": "Apple M4",
+    "memory_bytes": 17179869184,
+    "os": "macOS 27.0.1",
+    "python": "3.12.14",
+    "torch": "2.8.0",
+    "torchaudio": "2.8.0",
+    "numpy": "2.5.3",
+    "numba": "0.68.0",
+    "soundfile": "0.14.0"
+  },
+  "public_tests": {
+    "swift": 61,
+    "python": 118,
+    "release_build": "passed",
+    "focused_new_tests": 6
+  },
+  "determinism": {
+    "probe": {
+      "status": "passed",
+      "unique_timestamps": 4,
+      "evaluations": 8,
+      "checks": [
+        "Swift/Python fitted position",
+        "random-order PNG equality",
+        "output path rejection",
+        "nonexistent output directory"
+      ]
+    },
+    "raw_raster": "Sequential, shuffled, repeated and fresh-renderer checks passed; main and public-only digests equal",
+    "independent_diagnostic_process_semantic_equality": true
+  },
+  "preparation_media": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "ttml": {
+    "status": "passed",
+    "refusal_checks": 36,
+    "modes": [
+      "enabled",
+      "disabled"
+    ],
+    "direct_media": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  },
+  "fresh_public_checkout": {
+    "swift": 61,
+    "python": 118,
+    "release_build": "passed",
+    "private_assets_present": false,
+    "missing_assets": "Explicit unavailable: adapter/check exit 3, existing reference analysis exit 0",
+    "preparation_media": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.9999205243531306,
+      "content_gain": 0.7068517293573156,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  },
+  "identities": {
+    "historical_models": 18,
+    "original_recordings": 9,
+    "archived_annotations": "unchanged",
+    "source_excerpts": 9
+  },
+  "resources": {
+    "rows": [
+      {
+        "category": "alignment",
+        "allocated_bytes": 2963668992
+      },
+      {
+        "category": "alignment-refinement",
+        "allocated_bytes": 41734144
+      },
+      {
+        "category": "acoustic-coverage",
+        "allocated_bytes": 32120832
+      },
+      {
+        "category": "singing-vad",
+        "allocated_bytes": 29134848
+      },
+      {
+        "category": "veracity-readiness",
+        "allocated_bytes": 278528
+      },
+      {
+        "category": "checkpoint-annotation-preparation",
+        "allocated_bytes": 4096
+      },
+      {
+        "category": "veracity-local",
+        "allocated_bytes": 49889280
+      },
+      {
+        "category": "private alignment research",
+        "allocated_bytes": 3375104
+      },
+      {
+        "category": "ilyric-alignment-public-20261008",
+        "allocated_bytes": 487297024
+      },
+      {
+        "category": "ilyric-refinement-public-20261008",
+        "allocated_bytes": 472436736
+      },
+      {
+        "category": "ilyric-coverage-public-20261008",
+        "allocated_bytes": 473423872
+      },
+      {
+        "category": "ilyric-vad-public-20261008",
+        "allocated_bytes": 473370624
+      },
+      {
+        "category": "ilyric-veracity-public-20261009",
+        "allocated_bytes": 488386560
+      }
+    ],
+    "total_allocated_bytes": 5515120640,
+    "total_decimal_GB": 5.51512064,
+    "total_MiB": 5259.62890625,
+    "new_allocated_bytes": 538275840,
+    "remaining_ceiling_bytes": 484879360,
+    "scope": "All continuing alignment evaluation roots, private research, and five public-only verification checkouts; unrelated production build and physical-reference assets excluded as in prior inventories",
+    "deletions": 0
+  },
+  "privacy": {
+    "ignored_assets": true,
+    "private_paths_or_media_published": false,
+    "historical_reports_unchanged": true,
+    "backup_reference_preserved": true
+  },
+  "independent_vocal_accuracy": null,
+  "automatic_decisions": false
+}

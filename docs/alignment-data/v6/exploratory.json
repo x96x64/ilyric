@@ -1,0 +1,294 @@
+{
+  "classification": "Exploratory proxy comparison, no independent VAD ground truth or held-out accuracy",
+  "rows": [
+    {
+      "case": "EN01",
+      "audio_sha256": "dc16403af1d72df42ba30c97213bb6d91f8bc38aca2cb5b58bc8fb74f34946e6",
+      "seconds": 18.898062,
+      "word_phone_union_coverage": 0.9205716730165037,
+      "outside_word_phone_union_activation": 0.3015757508829276,
+      "active_seconds": 13.614285714285714,
+      "score_min": 0.004675795789808035,
+      "score_max": 0.9907259941101074,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.9991062784175779,
+          "outside_union_activation": 0.9724153595058944
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.09987510733574312,
+          "outside_union_activation": 0.020110841255280162
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.4569015000015497,
+        "initialization_seconds": 0.03359545799321495,
+        "preprocessing_seconds": 0.7354509589931695,
+        "inference_seconds": 0.09908266601269133,
+        "postprocessing_seconds": 0.010785874997964129,
+        "total_seconds": 1.3358164579985896,
+        "peak_rss_bytes": 413908992
+      },
+      "process_seconds": 1.543399875
+    },
+    {
+      "case": "EN02",
+      "audio_sha256": "b39c8586d623abe8922ca5a0bdb541cccf67eda0d64bdbe88f2ea1e57908e4c8",
+      "seconds": 12.319354,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.4152297284274562,
+      "active_seconds": 8.805068285714286,
+      "score_min": 0.004173762630671263,
+      "score_max": 0.990310788154602,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.994891807302698,
+          "outside_union_activation": 0.9970432731427232
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.13949878186934717,
+          "outside_union_activation": 0.02326394423934961
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.4543931250082096,
+        "initialization_seconds": 0.031924957991577685,
+        "preprocessing_seconds": 0.5860558749991469,
+        "inference_seconds": 0.06895995800732635,
+        "postprocessing_seconds": 0.007117500004824251,
+        "total_seconds": 1.1484514160110848,
+        "peak_rss_bytes": 410435584
+      },
+      "process_seconds": 1.371160959
+    },
+    {
+      "case": "EN03",
+      "audio_sha256": "5d4beac9a1ceab86543b272eb477bd33ff6c328c262ce8db24029eb068423365",
+      "seconds": 14.372104,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.3196836556320631,
+      "active_seconds": 10.814961142857143,
+      "score_min": 0.004540819209069014,
+      "score_max": 0.9893402457237244,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 1.0,
+          "outside_union_activation": 0.9995976024449859
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.1309960448163734,
+          "outside_union_activation": 0.011904579758484966
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.45365116698667407,
+        "initialization_seconds": 0.032921875012107193,
+        "preprocessing_seconds": 0.6356822079978883,
+        "inference_seconds": 0.07796595800027717,
+        "postprocessing_seconds": 0.008360249994439073,
+        "total_seconds": 1.2085814579913858,
+        "peak_rss_bytes": 413073408
+      },
+      "process_seconds": 1.4221068340000005
+    },
+    {
+      "case": "JA01",
+      "audio_sha256": "a17a9c7792a6763ff381460dd354c0147ff4dd7cba7313faa5d244c915cc8046",
+      "seconds": 16.0,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.18727703054318792,
+      "active_seconds": 12.271428571428572,
+      "score_min": 0.006771924905478954,
+      "score_max": 0.990293025970459,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.9877324782987541,
+          "outside_union_activation": 0.14555102368218684
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.1402002480142387,
+          "outside_union_activation": 0.0
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.44891125000140164,
+        "initialization_seconds": 0.0316955419984879,
+        "preprocessing_seconds": 0.6898977499949979,
+        "inference_seconds": 0.0879228330013575,
+        "postprocessing_seconds": 0.009436917011043988,
+        "total_seconds": 1.267864292007289,
+        "peak_rss_bytes": 429146112
+      },
+      "process_seconds": 1.4924674160000002
+    },
+    {
+      "case": "JA03",
+      "audio_sha256": "dad0952167465d2835bb3679f1d197f203e00134b5c0fbe2e639c55640c3e210",
+      "seconds": 13.090917,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.2047047741678144,
+      "active_seconds": 9.042857142857143,
+      "score_min": 0.006189785897731781,
+      "score_max": 0.9887883067131042,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.9850017023067882,
+          "outside_union_activation": 0.282728773171128
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.16998070718973401,
+          "outside_union_activation": 0.0
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.46048362500732765,
+        "initialization_seconds": 0.03251066700613592,
+        "preprocessing_seconds": 0.6215858329960611,
+        "inference_seconds": 0.07157625000400003,
+        "postprocessing_seconds": 0.007848166991607286,
+        "total_seconds": 1.194004542005132,
+        "peak_rss_bytes": 413827072
+      },
+      "process_seconds": 1.4306970410000002
+    },
+    {
+      "case": "EN04",
+      "audio_sha256": "f03c694e15ccafc121866cd54ef27542ad6e2daf817162b2d1359cc73201c7de",
+      "seconds": 8.365208,
+      "word_phone_union_coverage": 0.9170942438559397,
+      "outside_word_phone_union_activation": 0.9521119179488794,
+      "active_seconds": 7.742857142857143,
+      "score_min": 0.010470854118466377,
+      "score_max": 0.9889624714851379,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.9936835978353058,
+          "outside_union_activation": 1.0
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.12580646638513404,
+          "outside_union_activation": 0.031145556015309307
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.4605891669925768,
+        "initialization_seconds": 0.031985875000827946,
+        "preprocessing_seconds": 0.5085764579998795,
+        "inference_seconds": 0.049296917000901885,
+        "postprocessing_seconds": 0.004993833004846238,
+        "total_seconds": 1.0554422499990324,
+        "peak_rss_bytes": 410484736
+      },
+      "process_seconds": 1.2740967079999992
+    },
+    {
+      "case": "EN05",
+      "audio_sha256": "dae2fd405ad0a553bc7c2a7778e41b6d6b903ab480e3316744f4a17ae40b5daf",
+      "seconds": 10.507958,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.8529754447684037,
+      "active_seconds": 10.3,
+      "score_min": 0.03600497171282768,
+      "score_max": 0.9881777167320251,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 1.0,
+          "outside_union_activation": 1.0
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.19574391153958748,
+          "outside_union_activation": 0.0
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.4579480000102194,
+        "initialization_seconds": 0.03176020798855461,
+        "preprocessing_seconds": 0.5465286670078058,
+        "inference_seconds": 0.058463666995521635,
+        "postprocessing_seconds": 0.00620425000670366,
+        "total_seconds": 1.100904792008805,
+        "peak_rss_bytes": 409059328
+      },
+      "process_seconds": 1.3212832089999988
+    },
+    {
+      "case": "JA04",
+      "audio_sha256": "63059e64ef244f06a1316cf238a66611717bbd97aa5651ca388bec093399f097",
+      "seconds": 14.4,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.1843641728576714,
+      "active_seconds": 10.442857142857143,
+      "score_min": 0.004074516240507364,
+      "score_max": 0.9879533052444458,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.9842905535432919,
+          "outside_union_activation": 0.2744669032206868
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.14452690740171514,
+          "outside_union_activation": 0.0
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.45890774999861605,
+        "initialization_seconds": 0.03234112499922048,
+        "preprocessing_seconds": 0.6494144169992069,
+        "inference_seconds": 0.07844470799318515,
+        "postprocessing_seconds": 0.008473750000121072,
+        "total_seconds": 1.2275817499903496,
+        "peak_rss_bytes": 408059904
+      },
+      "process_seconds": 1.4378722920000016
+    },
+    {
+      "case": "JA05",
+      "audio_sha256": "5b4866395d813aa8b47c03d42b2b21765b7366c3c367034a6e292f42104ce6ca",
+      "seconds": 19.764688,
+      "word_phone_union_coverage": 1.0,
+      "outside_word_phone_union_activation": 0.45823115333489123,
+      "active_seconds": 17.914285714285715,
+      "score_min": 0.009455358609557152,
+      "score_max": 0.9883925318717957,
+      "frozen_comparators": [
+        {
+          "signal": "spectral",
+          "union_coverage": 0.981457691673693,
+          "outside_union_activation": 0.5310953092139531
+        },
+        {
+          "signal": "ctc",
+          "union_coverage": 0.15556181477937303,
+          "outside_union_activation": 0.0048859853789346925
+        }
+      ],
+      "measurements": {
+        "dependency_import_seconds": 0.45802158300648443,
+        "initialization_seconds": 0.03250287499395199,
+        "preprocessing_seconds": 0.7837499589950312,
+        "inference_seconds": 0.10262175000389107,
+        "postprocessing_seconds": 0.011679750008624978,
+        "total_seconds": 1.3885759170079837,
+        "peak_rss_bytes": 431767552
+      },
+      "process_seconds": 1.5902480830000005
+    }
+  ],
+  "semantic_repeat_equal": true
+}

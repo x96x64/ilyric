@@ -1,0 +1,37 @@
+{
+  "classification": "Authorized personal noncommercial local research; no checkpoint-specific confirmation",
+  "repository": "https://github.com/CPJKU/veracity",
+  "revision": "0983900f136173015f3c5d0b116be014edd33905",
+  "checkpoint": "dataset/jamendo/models/model_log_0mean/model.pt",
+  "checkpoint_git_blob": "6d8a4434482615b142e45b8220ff5a0462a9fee6",
+  "assets": [
+    {
+      "name": "model.pt",
+      "bytes": 7433173,
+      "sha256": "f09cd6a55c83c13640622ce67480443ce282e3124dd22fccee8a898bb2ba9dee"
+    },
+    {
+      "name": "torchaudio-2.8.0-cp312-cp312-macosx_11_0_arm64.whl",
+      "bytes": 1856736,
+      "sha256": "ddef94bf181e6447cbb05f38beaca8f6c5bb8d2b9ddced1aa3452025b9fc70d3"
+    },
+    {
+      "name": "kaiser_best-0.2.2.npz",
+      "bytes": 262736,
+      "sha256": "67fab90360555b1704a6e84f75335eb306b166617f5b4de45a28ea225e69b0bb",
+      "git_blob": "de385037529f00c7403b5df168600569758c500b"
+    }
+  ],
+  "known_new_download_body_bytes": 9582382,
+  "new_transfer_cap_bytes": 12000000,
+  "historical_download_planning_charge_bytes": 1500000000,
+  "historical_transfer_ledger_exact": false,
+  "incremental_peak_storage_cap_bytes": 671088640,
+  "source_licenses": {
+    "veracity": "MIT",
+    "resampy": "ISC",
+    "torchaudio": "BSD-2-Clause"
+  },
+  "checkpoint_scope": "Root MIT and public reproduction instructions support local-evaluation interpretation; no verified separate checkpoint grant or redistribution/commercial conclusion",
+  "model_weights_published": false
+}

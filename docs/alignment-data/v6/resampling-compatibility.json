@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "reference": "resampy 0.2.2 original core/kernel, pathlib-only resource loader adaptation; librosa ceil padding",
+  "rows": [
+    {
+      "rate": 22050,
+      "samples": 44113,
+      "byte_equal": true,
+      "maximum_absolute_error": 0.0
+    },
+    {
+      "rate": 44100,
+      "samples": 44107,
+      "byte_equal": true,
+      "maximum_absolute_error": 0.0
+    },
+    {
+      "rate": 48000,
+      "samples": 44106,
+      "byte_equal": true,
+      "maximum_absolute_error": 0.0
+    }
+  ]
+}

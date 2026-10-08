@@ -104,6 +104,10 @@ The [singing-activity report](docs/singing-vocal-activity.md) reproduces the fro
 
 ## Checkpoint Permission and Evaluation Readiness
 
-The [veracity readiness assessment](docs/veracity-evaluation-readiness.md) records checkpoint permission, native dependency metadata, cumulative resources, and missing independent activity annotations. The [conditional evaluation procedure](docs/veracity-evaluation-procedure.md) and [unsent permission inquiry](docs/veracity-permission-inquiry.md) define the remaining preparation steps. No model provisioning or inference is performed; automatic synchronization remains incomplete.
+The [veracity readiness assessment](docs/veracity-evaluation-readiness.md) records checkpoint permission, native dependency metadata, cumulative resources, and missing independent activity annotations. The [conditional evaluation procedure](docs/veracity-evaluation-procedure.md) and [unsent permission inquiry](docs/veracity-permission-inquiry.md) define the remaining preparation steps. Those historical gates did not provision or execute the model. The local-inference update below records subsequent authorization and execution; automatic synchronization remains incomplete.
 
-The [permission and annotation preparation update](docs/checkpoint-permission-annotation-preparation.md) identifies the verified institutional contact, final unsent inquiry, minimum missing recording, and independent human annotation steps. User action is required before provisioning can be requested.
+The [permission and annotation preparation update](docs/checkpoint-permission-annotation-preparation.md) identifies the verified institutional contact, final unsent inquiry, minimum missing recording, and independent human annotation steps. That gate required further user action before provisioning; the later local-research scope is recorded below.
+
+## Local veracity Inference Validation
+
+The [local inference report](docs/local-veracity-inference.md) supersedes the procedural provisioning restriction above for explicitly authorized personal, noncommercial exploratory research. The pinned CPU diagnostic is executable and reproducible; checkpoint-specific licensing scope and independent vocal-activity accuracy remain unresolved. No developer contact is required by this workflow. The [deferred documentation cleanup](docs/deferred-documentation-cleanup.md) preserves the obsolete unsent inquiries until a dedicated cleanup milestone. Automatic acceptance and full-song synchronization remain disabled.

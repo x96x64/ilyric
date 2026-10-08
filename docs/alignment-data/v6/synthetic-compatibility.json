@@ -1,0 +1,150 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "signal": "silence",
+      "original_rate": 22050,
+      "samples": 44113,
+      "stft_max_absolute_error": 0.0,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.01781141199171543,
+      "score_max": 0.017811428755521774
+    },
+    {
+      "signal": "impulse",
+      "original_rate": 22050,
+      "samples": 44113,
+      "stft_max_absolute_error": 8.940696716308594e-08,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.005157924722880125,
+      "score_max": 0.02873881720006466
+    },
+    {
+      "signal": "tone",
+      "original_rate": 22050,
+      "samples": 44113,
+      "stft_max_absolute_error": 7.62939453125e-06,
+      "chunk_full_max_score_error": 1.30385160446167e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.002672289265319705,
+      "score_max": 0.02081822045147419
+    },
+    {
+      "signal": "noise",
+      "original_rate": 22050,
+      "samples": 44113,
+      "stft_max_absolute_error": 3.5762786865234375e-07,
+      "chunk_full_max_score_error": 5.587935447692871e-09,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.0030277527403086424,
+      "score_max": 0.04963115602731705
+    },
+    {
+      "signal": "silence",
+      "original_rate": 44100,
+      "samples": 44107,
+      "stft_max_absolute_error": 0.0,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.01781141199171543,
+      "score_max": 0.017811428755521774
+    },
+    {
+      "signal": "impulse",
+      "original_rate": 44100,
+      "samples": 44107,
+      "stft_max_absolute_error": 5.960464477539063e-08,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.00551666459068656,
+      "score_max": 0.028702672570943832
+    },
+    {
+      "signal": "tone",
+      "original_rate": 44100,
+      "samples": 44107,
+      "stft_max_absolute_error": 7.62939453125e-06,
+      "chunk_full_max_score_error": 2.514570951461792e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.002374849747866392,
+      "score_max": 0.01803860254585743
+    },
+    {
+      "signal": "noise",
+      "original_rate": 44100,
+      "samples": 44107,
+      "stft_max_absolute_error": 2.384185791015625e-07,
+      "chunk_full_max_score_error": 1.4901161193847656e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.003464437322691083,
+      "score_max": 0.03686961904168129
+    },
+    {
+      "signal": "silence",
+      "original_rate": 48000,
+      "samples": 44106,
+      "stft_max_absolute_error": 0.0,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.01781141199171543,
+      "score_max": 0.017811428755521774
+    },
+    {
+      "signal": "impulse",
+      "original_rate": 48000,
+      "samples": 44106,
+      "stft_max_absolute_error": 7.916241884231567e-08,
+      "chunk_full_max_score_error": 1.6763806343078613e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.00556785985827446,
+      "score_max": 0.02873891219496727
+    },
+    {
+      "signal": "tone",
+      "original_rate": 48000,
+      "samples": 44106,
+      "stft_max_absolute_error": 7.62939453125e-06,
+      "chunk_full_max_score_error": 1.30385160446167e-08,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.0030509228818118572,
+      "score_max": 0.01898813433945179
+    },
+    {
+      "signal": "noise",
+      "original_rate": 48000,
+      "samples": 44106,
+      "stft_max_absolute_error": 2.384185791015625e-07,
+      "chunk_full_max_score_error": 3.725290298461914e-09,
+      "repeat_equal": true,
+      "median_equal": true,
+      "active_fraction": 0.0,
+      "score_min": 0.0033503964077681303,
+      "score_max": 0.03507903218269348
+    }
+  ],
+  "scope": "Synthetic preprocessing and inference compatibility; not singing accuracy"
+}
