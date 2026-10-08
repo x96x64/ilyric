@@ -1,0 +1,378 @@
+{
+  "version": 1,
+  "gate": "bounded-ttml-integration",
+  "implementation_commit": "9d03992ab9638ff566e6bbc93cc12e4a719ac066",
+  "evidence_classification": "measured synthetic interoperability and nonregression; no new native fit",
+  "native_fidelity": "unvalidated",
+  "reference_environment": {
+    "status": "inherited-reported",
+    "device": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": "Unknown",
+    "new_physical_measurements": false
+  },
+  "subset": {
+    "specification": "W3C TTML2 Recommendation 2018-11-08, bounded content/media-time subset",
+    "namespace": "http://www.w3.org/ns/ttml",
+    "structure": "tt/body/div/p with direct timed span and br",
+    "timing": "exact parent-relative begin/end or begin-relative dur; nonoverlapping explicit paragraph/span intervals",
+    "whitespace": "required xml:space preserve; no Unicode normalization; br supplies explicit breaks",
+    "rendering_policy": "whole-paragraph shaping; persistent completed spans; explicit paragraph ends",
+    "unsupported": "styling, profiles, nested spans, sequential timing, provider extensions, frame/tick/wall-clock timing, split grapheme/glyph clusters, timed RTL/color-glyph support"
+  },
+  "xml_security": {
+    "external_resolution": false,
+    "external_policy": "never",
+    "doctype_and_entity_declarations": "rejected before parsing",
+    "processing_instructions": "rejected",
+    "network_access": "none during parsing or rendering",
+    "input_bytes": 65536,
+    "depth": 6,
+    "elements": 1024,
+    "paragraphs_and_gaps": 64,
+    "utf16_units_per_paragraph_exclusive": 500,
+    "supplied_or_rendered_lines": 4,
+    "spans_per_paragraph": 128,
+    "spans_per_document": 512,
+    "duration_seconds": 600,
+    "encoding_preflight": "UTF-8 decoding and forbidden-control refusal before XML encoding recognition",
+    "controlled_review": {
+      "initial_alternate_encoding_and_unused_dtd_accepted": true,
+      "internal_entity_expansion_established": false,
+      "external_resolution_enabled": false,
+      "utf16_little_and_big_endian_regressions": "refused"
+    }
+  },
+  "compatibility": {
+    "project_v1_v2": "unchanged contract",
+    "project_v3": "explicit format selection including ttml",
+    "lrc_enhanced_lrc": "unchanged next-event/final-hold policy",
+    "audio_and_writer": "unchanged",
+    "production": "unchanged"
+  },
+  "public_tests": {
+    "swift": 61,
+    "python": 72,
+    "raw_raster": "qualified repeated/random-order/cross-format/fresh-instance equality",
+    "refusal_checks": 36,
+    "cross_format_equivalence": "complete text and supplied span times; state/raster where paragraph-end semantics coincide"
+  },
+  "media": [
+    {
+      "mode": "enabled",
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    },
+    {
+      "mode": "disabled",
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  ],
+  "direct_command_media": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "decoded_progression": [
+    {
+      "script": "Latin",
+      "observations": [
+        {
+          "frame": 126,
+          "numerator": 126,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11573,
+              "mean_encoded_rgb_proxy": 251.7888764077277,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9773,
+              "mean_encoded_rgb_proxy": 150.52788294279938,
+              "bright_fraction_above_200": 0.0
+            }
+          ]
+        },
+        {
+          "frame": 144,
+          "numerator": 144,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11592,
+              "mean_encoded_rgb_proxy": 251.77274557165552,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9772,
+              "mean_encoded_rgb_proxy": 184.38340837767478,
+              "bright_fraction_above_200": 0.33155955792058944
+            }
+          ]
+        },
+        {
+          "frame": 174,
+          "numerator": 174,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11599,
+              "mean_encoded_rgb_proxy": 251.77023881368711,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9775,
+              "mean_encoded_rgb_proxy": 233.2754646206328,
+              "bright_fraction_above_200": 0.8126854219948849
+            }
+          ]
+        },
+        {
+          "frame": 189,
+          "numerator": 189,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11563,
+              "mean_encoded_rgb_proxy": 251.82438236904943,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9764,
+              "mean_encoded_rgb_proxy": 251.9240406937068,
+              "bright_fraction_above_200": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "script": "Japanese",
+      "observations": [
+        {
+          "frame": 336,
+          "numerator": 336,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11627,
+              "mean_encoded_rgb_proxy": 251.50419999426472,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13472,
+              "mean_encoded_rgb_proxy": 150.73799980205197,
+              "bright_fraction_above_200": 0.0
+            }
+          ]
+        },
+        {
+          "frame": 369,
+          "numerator": 369,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.51886251576167,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13463,
+              "mean_encoded_rgb_proxy": 186.61514273688368,
+              "bright_fraction_above_200": 0.3518532273638862
+            }
+          ]
+        },
+        {
+          "frame": 396,
+          "numerator": 396,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.5229044834259,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13463,
+              "mean_encoded_rgb_proxy": 223.13379880660395,
+              "bright_fraction_above_200": 0.7216073683428657
+            }
+          ]
+        },
+        {
+          "frame": 417,
+          "numerator": 417,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.51834651988867,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13462,
+              "mean_encoded_rgb_proxy": 251.3754271282078,
+              "bright_fraction_above_200": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "visual_inspection": {
+    "classification": "sampled synthetic inspection",
+    "frames": [
+      144,
+      189,
+      396,
+      417
+    ],
+    "modes": [
+      "enabled",
+      "disabled"
+    ],
+    "findings": "second-line progression and completion; stable layout and controls; static materials, placeholder icons and qualified inactive appearance remain"
+  },
+  "conversion_diagnostic": {
+    "iterations": 100,
+    "seconds": {
+      "enhanced-lrc": 0.027354001998901367,
+      "ttml": 0.011847972869873047
+    },
+    "classification": "optimized single warm batch including identical assertion overhead"
+  },
+  "equivalent_export_benchmarks": [
+    {
+      "workload": "enhanced",
+      "export": {
+        "appendSeconds": 0.01810598373413086,
+        "backpressureSeconds": 18.502299785614014,
+        "effectiveFPS": 26.12164655872131,
+        "finishSeconds": 0.004026055335998535,
+        "frames": 601,
+        "height": 1920,
+        "rasterSeconds": 22.84815526008606,
+        "seconds": 23.00773799419403,
+        "width": 1080
+      },
+      "peak_rss_bytes": 426246144,
+      "classification": "measured-synthetic-single-run"
+    },
+    {
+      "workload": "ttml",
+      "export": {
+        "appendSeconds": 0.017892956733703613,
+        "backpressureSeconds": 17.360331892967224,
+        "effectiveFPS": 26.15628631341512,
+        "finishSeconds": 0.004609942436218262,
+        "frames": 601,
+        "height": 1920,
+        "rasterSeconds": 22.819149613380432,
+        "seconds": 22.97726798057556,
+        "width": 1080
+      },
+      "peak_rss_bytes": 436846592,
+      "classification": "measured-synthetic-single-run"
+    }
+  ],
+  "performance_limitations": "single isolated sequential runs at initial integration commit; final encoding guard affects preparation only; renderer and writer unchanged; no speedup or maximum-duration claim; preparation excluded from exporter timer",
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4",
+    "sdk": "macOS 27",
+    "ffmpeg": "8.1.2",
+    "public_python": "3.9.6",
+    "numerical_python": "3.12"
+  },
+  "private_nonregression": {
+    "source_ids": [
+      "V01",
+      "V02",
+      "V03",
+      "V09",
+      "V10"
+    ],
+    "hashes": "unchanged",
+    "japanese_archived_renderings": 20,
+    "japanese": "byte-identical appearance, coverage and state/layout records",
+    "latin": "archived baseline reproduced",
+    "tracked_private_files": 0
+  },
+  "fresh_public_checkout": {
+    "status": "passed",
+    "implementation_commit": "9d03992ab9638ff566e6bbc93cc12e4a719ac066",
+    "private_corpus_present": false,
+    "grouped_checks": 28,
+    "swift_tests": 61,
+    "python_tests": 72,
+    "private_commands_unavailable": 13,
+    "ttml_refusals": 36,
+    "working_tree": "clean apart from ignored generated outputs",
+    "exports": "original spike, composition, full screen, inactive/progression, supplied WAV/AIFF/AAC, version-1 project, enhanced-LRC and TTML enabled/disabled/direct"
+  },
+  "recommendation": "retain bounded TTML; next gate supplied Lyrics Translation correspondence with independent line-level semantics",
+  "equivalent_export_benchmark_commit": "8a15967ddfcdd6302e1dcd44c7f9825ad7a8c0b1"
+}
