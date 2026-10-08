@@ -115,3 +115,7 @@ The [local inference report](docs/local-veracity-inference.md) supersedes the pr
 ## Evaluation Resources
 
 The [current resource policy](docs/evaluation-resource-policy.md) charges complete evaluation storage against the approved 15-GB ceiling. [Optional vocal-annotation intake](docs/vocal-annotation-intake.md) supports the independent research protocol; [readiness findings](docs/evaluation-storage-annotation-readiness.md) distinguish that protocol from personal review-first development.
+
+## Personal Full-Song Preparation
+
+The [review-first full-song prototype](docs/review-first-full-song.md) processes complete recordings through bounded English CTC windows. [Experimental commands](docs/full-song-commands.md) preserve unresolved occurrences and require explicit review before TTML export. Current measured coverage is insufficient to complete mandatory automatic synchronization.

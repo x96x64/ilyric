@@ -1,0 +1,202 @@
+{
+  "version": 8,
+  "implementation_commit": "25c6ad89b59a71aee3adc94b5488ca347263748a",
+  "verification": {
+    "python_tests": 135,
+    "swift_tests": 61,
+    "checkouts": [
+      "working",
+      "public_only"
+    ],
+    "release_builds": "passed",
+    "raw_raster_determinism": "passed",
+    "original_alignment_preparation": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    },
+    "ttml_refusal_checks": 36,
+    "ttml_exports": [
+      {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.999920524353107,
+        "content_gain": 0.7068517293572892,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      },
+      {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.999920524353107,
+        "content_gain": 0.7068517293572892,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      },
+      {
+        "status": "passed",
+        "width": 1080,
+        "height": 1920,
+        "frames": 601,
+        "seconds": 10.016666666666667,
+        "video_time_base": "1/600",
+        "color_range": "tv",
+        "audio_samples_trimmed": 480800,
+        "audio_decoded_padding": 416,
+        "audio_priming_samples": 2112,
+        "content_correlation": 0.999920524353107,
+        "content_gain": 0.7068517293572892,
+        "content_lag_samples": 0,
+        "marker_errors_seconds": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "video_timestamps": "all passed"
+      }
+    ],
+    "fresh_full_song": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 4501,
+      "seconds": 75.01666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 3600800,
+      "audio_decoded_padding": 544,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.9999687997043107,
+      "content_gain": 0.7071864356870357,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    },
+    "final_preparation_ttml_byte_equality": true,
+    "missing_optional_model_exit": 3,
+    "missing_private_evaluation_exit": 3
+  },
+  "storage": {
+    "allocated_bytes": 13875027968,
+    "decimal_GB": 13.875027968,
+    "binary_GiB": 12.922126770019531,
+    "ceiling_bytes": 15000000000,
+    "headroom_bytes": 1124972032,
+    "filesystem_available_bytes": 39280640000,
+    "inventory": [
+      {
+        "root": "artifacts",
+        "allocated_bytes": 4368072704
+      },
+      {
+        "root": "reference-private",
+        "allocated_bytes": 4862353408
+      },
+      {
+        "root": ".build",
+        "allocated_bytes": 985321472
+      },
+      {
+        "root": "ilyric-alignment-public-20261008",
+        "allocated_bytes": 487297024
+      },
+      {
+        "root": "ilyric-coverage-public-20261008",
+        "allocated_bytes": 472731648
+      },
+      {
+        "root": "ilyric-personal-public-20261009",
+        "allocated_bytes": 637759488
+      },
+      {
+        "root": "ilyric-public-check",
+        "allocated_bytes": 307220480
+      },
+      {
+        "root": "ilyric-refinement-public-20261008",
+        "allocated_bytes": 472436736
+      },
+      {
+        "root": "ilyric-typography-public-check",
+        "allocated_bytes": 320745472
+      },
+      {
+        "root": "ilyric-vad-public-20261008",
+        "allocated_bytes": 472702976
+      },
+      {
+        "root": "ilyric-veracity-public-20261009",
+        "allocated_bytes": 488386560
+      }
+    ],
+    "new_download_bytes": 0,
+    "new_installations": 0,
+    "deletions": 0
+  },
+  "privacy": {
+    "private_media_and_weights_ignored": true,
+    "historical_reports_unchanged": true,
+    "backup_reference_preserved": true
+  }
+}
