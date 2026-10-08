@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "storage_ceiling_bytes": 15000000000,
+  "download_ceiling_bytes": 2000000000,
+  "inventory": [
+    {
+      "root": "artifacts",
+      "allocated_bytes": 4279189504
+    },
+    {
+      "root": "reference-private",
+      "allocated_bytes": 4862353408
+    },
+    {
+      "root": ".build",
+      "allocated_bytes": 984068096
+    },
+    {
+      "root": "ilyric-alignment-public-20261008",
+      "allocated_bytes": 487297024
+    },
+    {
+      "root": "ilyric-coverage-public-20261008",
+      "allocated_bytes": 472731648
+    },
+    {
+      "root": "ilyric-personal-public-20261009",
+      "allocated_bytes": 464338944
+    },
+    {
+      "root": "ilyric-public-check",
+      "allocated_bytes": 307220480
+    },
+    {
+      "root": "ilyric-refinement-public-20261008",
+      "allocated_bytes": 472436736
+    },
+    {
+      "root": "ilyric-typography-public-check",
+      "allocated_bytes": 320745472
+    },
+    {
+      "root": "ilyric-vad-public-20261008",
+      "allocated_bytes": 472702976
+    },
+    {
+      "root": "ilyric-veracity-public-20261009",
+      "allocated_bytes": 488386560
+    }
+  ],
+  "total_allocated_bytes": 13611470848,
+  "filesystem_available_bytes": 39649280000,
+  "verification": {
+    "python_tests": 126,
+    "swift_tests": 61,
+    "fresh_public_checkout": true,
+    "release_build": true,
+    "raw_raster_determinism": true
+  },
+  "independent_activity_accuracy": "unavailable"
+}

@@ -111,3 +111,7 @@ The [permission and annotation preparation update](docs/checkpoint-permission-an
 ## Local veracity Inference Validation
 
 The [local inference report](docs/local-veracity-inference.md) supersedes the procedural provisioning restriction above for explicitly authorized personal, noncommercial exploratory research. The pinned CPU diagnostic is executable and reproducible; checkpoint-specific licensing scope and independent vocal-activity accuracy remain unresolved. No developer contact is required by this workflow. The [deferred documentation cleanup](docs/deferred-documentation-cleanup.md) preserves the obsolete unsent inquiries until a dedicated cleanup milestone. Automatic acceptance and full-song synchronization remain disabled.
+
+## Evaluation Resources
+
+The [current resource policy](docs/evaluation-resource-policy.md) charges complete evaluation storage against the approved 15-GB ceiling. [Optional vocal-annotation intake](docs/vocal-annotation-intake.md) supports the independent research protocol; [readiness findings](docs/evaluation-storage-annotation-readiness.md) distinguish that protocol from personal review-first development.
