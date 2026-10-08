@@ -10,6 +10,10 @@ The [technical planning study](docs/planning-study.md) is preserved verbatim as 
 
 No software license has been selected. No proprietary media, extracted Apple assets, or font files are included.
 
+## Implementation and Release Planning
+
+The [implementation-readiness and release plan](docs/implementation-release-readiness.md) records the intended transition to a supported open-source command-line product maintained by one person. It recommends audio-derived passage correspondence, bounded alignment, and measured complete-song qualification before broad visual expansion. License selection, reliable automatic synchronization, supported installation, and release qualification remain incomplete; no new implementation or license is introduced by the study.
+
 ## Architecture Spike
 
 The repository contains a deliberately narrow Swift Package prototype with a synthetic scene. See the [architecture-spike report](docs/architecture-spike.md) for measured results and limitations, and [developer experiment commands](docs/spike-commands.md) for reproduction.
