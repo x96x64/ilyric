@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "source_sha256": "b1913b777c9463288b8e0a9f0a09d893a67dd0a2816bbdbdce51b2ad55152ed4",
+  "overrides": [
+    {
+      "paragraph": 1,
+      "start_utf16": 0,
+      "length_utf16": 1,
+      "text": "海",
+      "reading": "ウミ",
+      "note": "Original synthetic occurrence-specific reading"
+    }
+  ]
+}

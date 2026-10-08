@@ -33,6 +33,7 @@ def main():
     align.add_argument('--language', choices=['en', 'ja'], required=True)
     align.add_argument('--model', type=pathlib.Path, required=True)
     align.add_argument('--tifa-source', type=pathlib.Path)
+    align.add_argument('--pronunciations', type=pathlib.Path)
     align.add_argument('--output', type=pathlib.Path, required=True)
     check = sub.add_parser('validate'); check.add_argument('artifact', type=pathlib.Path)
     edit = sub.add_parser('review'); edit.add_argument('artifact', type=pathlib.Path)
@@ -53,9 +54,11 @@ def main():
                 raise AlignmentError('Lyrics must be a readable UTF-8 file no larger than 64 KiB')
             src = source(args.lyrics.read_bytes())
             from alignment.worker import infer
+            from alignment.pronunciation import read_overrides
+            pronunciation = read_overrides(args.pronunciations, src) if args.pronunciations else None
             with tempfile.TemporaryDirectory(prefix='ilyric-alignment-', dir=output.parent) as work:
                 result = infer(args.audio, src, args.engine, args.model, args.tifa_source,
-                               args.language, pathlib.Path(work))
+                               args.language, pathlib.Path(work), pronunciation)
             validate(result)
         else:
             result = read_artifact(args.artifact)

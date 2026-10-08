@@ -145,6 +145,9 @@ def validate(result, ready=False):
             raise AlignmentError("Invalid audio identity")
         if not result['engine'].get('identity') or type(result['engine'].get('precision_us')) is not int or result['engine']['precision_us'] <= 0:
             raise AlignmentError("Missing engine provenance")
+        if 'pronunciation_overrides' in result['engine']:
+            from .pronunciation import validate_overrides
+            validate_overrides(src, result['engine']['pronunciation_overrides'])
         raw_check = make_result(src, result['audio']['sha256'], duration, result['engine'], result['units'])
         if raw_check['unresolved'] and not result['unresolved']:
             raise AlignmentError('Unresolved model support was silently removed')

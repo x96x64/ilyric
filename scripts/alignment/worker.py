@@ -121,10 +121,11 @@ def speech(audio, paragraphs, model):
         index += len(word) + 1
     return units, {'initialization_seconds': initialization, 'model_grid_us': 20000,
                    'raw_mean_best_log_probability': float(emissions.max(axis=1).mean()),
+                   'forced_token_log_support': float(np.mean([emissions[a:b, vocab[c]].mean() for c, (a, b) in zip(text, spans)])),
                    'confidence_semantics': 'uncalibrated acoustic diagnostic; forced paths can be wrong'}
 
 
-def singing(audio, paragraphs, model, vendor, language):
+def singing(audio, paragraphs, model, vendor, language, pronunciation=None, src=None):
     import torch
     import onnxruntime
     onnxruntime.disable_telemetry_events()
@@ -143,6 +144,11 @@ def singing(audio, paragraphs, model, vendor, language):
     backend, vocabulary, config = load_inference_model(model / 'model.pt', scope=1)
     initialization = time.perf_counter() - start
     audio.with_suffix('.txt').write_text('\n'.join(paragraphs), encoding='utf-8')
+    if pronunciation is not None:
+        from .pronunciation import pfml
+        from g2pflow.converters.japanese import JapaneseKanaConverter
+        converter = JapaneseKanaConverter(str(model / 'dictionaries/japanese_dict_full.txt'))
+        audio.with_suffix('.pfml').write_text(pfml(src, pronunciation, converter.convert), encoding='utf-8')
     # Explicit local reduced dictionary prevents g2pflow's automatic full download.
     import unidic_lite
     for converter in config.g2p.converters:
@@ -182,13 +188,20 @@ def singing(audio, paragraphs, model, vendor, language):
               for ph, (a, b), owner in zip(r['phonemes'], frames, ids)]
     return units, {'initialization_seconds': initialization, 'model_grid_us': 10000,
                    'skipped_word_units': skipped, 'phones': phones,
+                   'token_agreement': float(r['agreement']),
+                   'mean_span_similarity': float(torch.stack([r['similarity'][a:b, i].mean() for i, (a, b) in enumerate(frames) if a < b]).mean()) if any(a < b for a, b in frames) else None,
                    'confidence_semantics': 'no calibrated confidence; skipped units retained as unresolved'}
 
 
-def infer(audio, src, engine, model, vendor, language, work):
+def infer(audio, src, engine, model, vendor, language, work, pronunciation=None):
     normalized = ''.join(canonical(p)[0] for p in src['paragraphs'])
     if not normalized or len(normalized) > 1500:
         raise AlignmentError('At most 1,500 retained alignment characters are supported')
+    if pronunciation is not None:
+        from .pronunciation import validate_overrides
+        validate_overrides(src, pronunciation)
+        if engine != 'tifa' or language != 'ja':
+            raise AlignmentError('Pronunciation overrides require the Japanese TIFA candidate')
     audio = audio.resolve(); model = model.resolve() if model else None
     vendor = vendor.resolve() if vendor else None; work = work.resolve()
     # Disallow implicit Hub/network retrieval. TIFA model G2P resources must be local.
@@ -243,7 +256,7 @@ def infer(audio, src, engine, model, vendor, language, work):
             from contextlib import redirect_stdout, redirect_stderr
             with redirect_stdout(log), redirect_stderr(log):
                 units, metadata = (speech(work / 'input.wav', src['paragraphs'], model) if engine == 'ctc'
-                                   else singing(work / 'input.wav', src['paragraphs'], model, vendor, language))
+                                   else singing(work / 'input.wav', src['paragraphs'], model, vendor, language, pronunciation, src))
     except ImportError as e:
         raise Unavailable('Optional inference dependency unavailable: ' + str(e)) from e
     finally:
@@ -261,7 +274,14 @@ def infer(audio, src, engine, model, vendor, language, work):
                   'dependencies': {p: importlib.metadata.version(p) for p in (['torch', 'numpy', 'transformers', 'scipy'] if engine == 'ctc' else ['torch', 'numpy', 'lightning', 'g2pflow', 'unidic-lite', 'onnxruntime'])},
                   'preprocessing': 'FFmpeg mono 48-kHz PCM16 copy; CTC additionally polyphase 16-kHz resampling',
                   'metadata': metadata}
+    if pronunciation is not None:
+        provenance['pronunciation_overrides'] = pronunciation
     result = make_result(src, before, duration, provenance, units)
+    if engine == 'tifa' and language == 'ja' and pronunciation is None and result['unresolved']:
+        from .pronunciation import suggest_long_vowels
+        suggestion = suggest_long_vowels(src, units)
+        if suggestion is not None:
+            result['diagnostics'].append({'kind': 'unapplied_pronunciation_suggestion', 'document': suggestion})
     # Preserve bad model output; never repair invalid ordering or out-of-audio bounds.
     prior = 0
     for line in result['lines']:
