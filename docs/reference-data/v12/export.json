@@ -1,0 +1,27 @@
+{
+  "appendSeconds": 0.012711167335510254,
+  "backpressureSeconds": 12.677793860435486,
+  "effectiveFPS": 22.00058530801694,
+  "finishSeconds": 0.0038989782333374023,
+  "frames": 360,
+  "height": 1920,
+  "rasterSeconds": 16.203996777534485,
+  "seconds": 16.363201022148132,
+  "width": 1080,
+  "evidence_status": "measured synthetic diagnostic",
+  "environment": {
+    "processor": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4",
+    "sdk": "macOS 27",
+    "ffmpeg": "8.1.2"
+  },
+  "peak_rss_mib": 404.84375,
+  "process_wall_seconds": 16.46,
+  "baseline": {
+    "seconds": 16.796370029449463,
+    "fps": 21.43320249368189,
+    "peak_rss_mib": 342.5
+  },
+  "qualification": "single optimized runs; no speedup claim"
+}

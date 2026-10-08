@@ -1,0 +1,696 @@
+{
+  "status": "measured",
+  "evidence_status": "fitted reconstruction and color-managed contrast diagnostics",
+  "sources": [
+    "V01",
+    "V02",
+    "V03"
+  ],
+  "hashes_verified": true,
+  "observations_per_recording": 180,
+  "selected_frames_per_recording": 60,
+  "pts_time_base": "1/600",
+  "template_pts": 2825,
+  "variants": {
+    "column": {
+      "V01": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.22282202036376336,
+            "active": 0.5863737377993773,
+            "duration": 0
+          },
+          "training_rms": 9.931483301960393,
+          "held_out_rms": 11.972902567692724,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 11.972902567692724,
+            "0": 11.972902567692724,
+            "0.016666666666666666": 11.972902567692724
+          },
+          "inactive_rms": 12.023570541023993,
+          "transition_rms": 16.38548086486031
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.13827223153426074,
+            "active": 0.5863737377993773,
+            "duration": 0
+          },
+          "training_rms": 9.151983012492135,
+          "held_out_rms": 11.307999893410619,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 11.307999893410619,
+            "0": 11.307999893410619,
+            "0.016666666666666666": 11.307999893410619
+          },
+          "inactive_rms": 10.082796538245603,
+          "transition_rms": 16.32775125587214
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.22900107033305556,
+            "active": 0.5863737377993773,
+            "duration": 0
+          },
+          "training_rms": 8.086347255526988,
+          "held_out_rms": 10.523407081064946,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.523407081064946,
+            "0": 10.523407081064946,
+            "0.016666666666666666": 10.523407081064946
+          },
+          "inactive_rms": 7.398101661299699,
+          "transition_rms": 16.205852715648707
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.22900107033305556,
+            "active": 0.5863737377993773,
+            "duration": 0.15
+          },
+          "training_rms": 6.9851085237931905,
+          "held_out_rms": 9.517892324391385,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.450116635110065,
+            "0": 9.517892324391385,
+            "0.016666666666666666": 9.613394239507707
+          },
+          "inactive_rms": 7.398101661299699,
+          "transition_rms": 12.357614314290455
+        }
+      },
+      "V02": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.20473422388200677,
+            "active": 0.538774273373702,
+            "duration": 0
+          },
+          "training_rms": 9.854290912233656,
+          "held_out_rms": 9.642901810804945,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.642901810804945,
+            "0": 9.642901810804945,
+            "0.016666666666666666": 9.642901810804945
+          },
+          "inactive_rms": 10.309093553902569,
+          "transition_rms": 12.78396037407055
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.13875118738945785,
+            "active": 0.538774273373702,
+            "duration": 0
+          },
+          "training_rms": 9.426620669201752,
+          "held_out_rms": 9.027006878624363,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.027006878624363,
+            "0": 9.027006878624363,
+            "0.016666666666666666": 9.027006878624363
+          },
+          "inactive_rms": 8.814165455515358,
+          "transition_rms": 12.762257092322244
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.2325883811625142,
+            "active": 0.538774273373702,
+            "duration": 0
+          },
+          "training_rms": 8.434634091021541,
+          "held_out_rms": 7.94314885692191,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.94314885692191,
+            "0": 7.94314885692191,
+            "0.016666666666666666": 7.94314885692191
+          },
+          "inactive_rms": 5.782057239357928,
+          "transition_rms": 12.610385187824752
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.2325883811625142,
+            "active": 0.538774273373702,
+            "duration": 0.15
+          },
+          "training_rms": 7.655326792053754,
+          "held_out_rms": 7.058300107601104,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.064016839329718,
+            "0": 7.058300107601104,
+            "0.016666666666666666": 7.096600472779763
+          },
+          "inactive_rms": 5.782057239357928,
+          "transition_rms": 9.306884837595543
+        }
+      },
+      "V03": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.19805859391771466,
+            "active": 0.5212068260992491,
+            "duration": 0
+          },
+          "training_rms": 9.643882727124982,
+          "held_out_rms": 9.693644477541323,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.693644477541323,
+            "0": 9.693644477541323,
+            "0.016666666666666666": 9.693644477541323
+          },
+          "inactive_rms": 10.191798624631641,
+          "transition_rms": 12.044219867952123
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.1339356684061542,
+            "active": 0.5212068260992491,
+            "duration": 0
+          },
+          "training_rms": 9.181081466670076,
+          "held_out_rms": 9.424662225444502,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.424662225444502,
+            "0": 9.424662225444502,
+            "0.016666666666666666": 9.424662225444502
+          },
+          "inactive_rms": 9.475876679609406,
+          "transition_rms": 12.05711836796807
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.2225946409108828,
+            "active": 0.5212068260992491,
+            "duration": 0
+          },
+          "training_rms": 8.153761496592217,
+          "held_out_rms": 8.402714487491416,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.402714487491416,
+            "0": 8.402714487491416,
+            "0.016666666666666666": 8.402714487491416
+          },
+          "inactive_rms": 6.506815527516978,
+          "transition_rms": 11.881542606217423
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.2225946409108828,
+            "active": 0.5212068260992491,
+            "duration": 0.15
+          },
+          "training_rms": 7.366745000238569,
+          "held_out_rms": 7.863234693579378,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.91634414919371,
+            "0": 7.863234693579378,
+            "0.016666666666666666": 7.849642633978184
+          },
+          "inactive_rms": 6.506815527516978,
+          "transition_rms": 9.659533900940913
+        }
+      }
+    },
+    "global": {
+      "V01": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.2273575901257888,
+            "active": 0.5983094476994442,
+            "duration": 0
+          },
+          "training_rms": 9.465908856594908,
+          "held_out_rms": 11.704485476617057,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 11.704485476617057,
+            "0": 11.704485476617057,
+            "0.016666666666666666": 11.704485476617057
+          },
+          "inactive_rms": 12.207711040841549,
+          "transition_rms": 16.231092747665784
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.13884652463512856,
+            "active": 0.5983094476994442,
+            "duration": 0
+          },
+          "training_rms": 8.58696960680172,
+          "held_out_rms": 10.979935387543422,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.979935387543422,
+            "0": 10.979935387543422,
+            "0.016666666666666666": 10.979935387543422
+          },
+          "inactive_rms": 10.172701506885096,
+          "transition_rms": 16.167938371623823
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.23471434339306646,
+            "active": 0.5983094476994442,
+            "duration": 0
+          },
+          "training_rms": 7.3935731603824975,
+          "held_out_rms": 10.138190997969211,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.138190997969211,
+            "0": 10.138190997969211,
+            "0.016666666666666666": 10.138190997969211
+          },
+          "inactive_rms": 7.403835394827905,
+          "transition_rms": 16.038152401088816
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.23471434339306646,
+            "active": 0.5983094476994442,
+            "duration": 0.15
+          },
+          "training_rms": 6.138334061107845,
+          "held_out_rms": 9.064699606384295,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.99140097124471,
+            "0": 9.064699606384295,
+            "0.016666666666666666": 9.169281259862915
+          },
+          "inactive_rms": 7.403835394827905,
+          "transition_rms": 12.032521807043835
+        }
+      },
+      "V02": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.20871557551809125,
+            "active": 0.5492515145212927,
+            "duration": 0
+          },
+          "training_rms": 9.408913993954084,
+          "held_out_rms": 9.157095765102863,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.157095765102863,
+            "0": 9.157095765102863,
+            "0.016666666666666666": 9.157095765102863
+          },
+          "inactive_rms": 10.51702800690545,
+          "transition_rms": 12.354202889319096
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.13943728731366914,
+            "active": 0.5492515145212927,
+            "duration": 0
+          },
+          "training_rms": 8.92625779667919,
+          "held_out_rms": 8.455687103022138,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.455687103022138,
+            "0": 8.455687103022138,
+            "0.016666666666666666": 8.455687103022138
+          },
+          "inactive_rms": 8.939782912078147,
+          "transition_rms": 12.32760062302023
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.23862972443358124,
+            "active": 0.5492515145212927,
+            "duration": 0
+          },
+          "training_rms": 7.82615151316126,
+          "held_out_rms": 7.244448735058284,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.244448735058284,
+            "0": 7.244448735058284,
+            "0.016666666666666666": 7.244448735058284
+          },
+          "inactive_rms": 5.848063660683088,
+          "transition_rms": 12.162242245543982
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.23862972443358124,
+            "active": 0.5492515145212927,
+            "duration": 0.15
+          },
+          "training_rms": 6.958988600464367,
+          "held_out_rms": 6.2392005627719485,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 6.244786759240133,
+            "0": 6.2392005627719485,
+            "0.016666666666666666": 6.285607704337311
+          },
+          "inactive_rms": 5.848063660683088,
+          "transition_rms": 8.601567891371557
+        }
+      },
+      "V03": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.201976811758417,
+            "active": 0.5315179256800447,
+            "duration": 0
+          },
+          "training_rms": 9.19555911066955,
+          "held_out_rms": 9.185560251582674,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.185560251582674,
+            "0": 9.185560251582674,
+            "0.016666666666666666": 9.185560251582674
+          },
+          "inactive_rms": 10.336537443919418,
+          "transition_rms": 11.616580905394345
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.134416381602681,
+            "active": 0.5315179256800447,
+            "duration": 0
+          },
+          "training_rms": 8.668500463438383,
+          "held_out_rms": 8.87457874363778,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.87457874363778,
+            "0": 8.87457874363778,
+            "0.016666666666666666": 8.87457874363778
+          },
+          "inactive_rms": 9.565768567418498,
+          "transition_rms": 11.628013407719635
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.22796847577809035,
+            "active": 0.5315179256800447,
+            "duration": 0
+          },
+          "training_rms": 7.5295434015666975,
+          "held_out_rms": 7.731475977174522,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.731475977174522,
+            "0": 7.731475977174522,
+            "0.016666666666666666": 7.731475977174522
+          },
+          "inactive_rms": 6.486265921679964,
+          "transition_rms": 11.436249903597995
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.22796847577809035,
+            "active": 0.5315179256800447,
+            "duration": 0.15
+          },
+          "training_rms": 6.647512145961616,
+          "held_out_rms": 7.125067493929497,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.183216173921147,
+            "0": 7.125067493929497,
+            "0.016666666666666666": 7.112103052088958
+          },
+          "inactive_rms": 6.486265921679964,
+          "transition_rms": 9.03587743326286
+        }
+      }
+    },
+    "interior": {
+      "V01": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.22439751991603485,
+            "active": 0.5905197892527233,
+            "duration": 0
+          },
+          "training_rms": 10.689333662168364,
+          "held_out_rms": 13.055309817720474,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 13.055309817720474,
+            "0": 13.055309817720474,
+            "0.016666666666666666": 13.055309817720474
+          },
+          "inactive_rms": 13.094143891973024,
+          "transition_rms": 17.935964155212034
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.13721602557997065,
+            "active": 0.5905197892527233,
+            "duration": 0
+          },
+          "training_rms": 9.772811433100184,
+          "held_out_rms": 12.255499871859517,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 12.255499871859517,
+            "0": 12.255499871859517,
+            "0.016666666666666666": 12.255499871859517
+          },
+          "inactive_rms": 10.740751319856463,
+          "transition_rms": 17.86399559002368
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.230882876387305,
+            "active": 0.5905197892527233,
+            "duration": 0
+          },
+          "training_rms": 8.550926126628791,
+          "held_out_rms": 11.389227499553607,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 11.389227499553607,
+            "0": 11.389227499553607,
+            "0.016666666666666666": 11.389227499553607
+          },
+          "inactive_rms": 7.697872735146492,
+          "transition_rms": 17.730765148664428
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.230882876387305,
+            "active": 0.5905197892527233,
+            "duration": 0.15
+          },
+          "training_rms": 7.296313588235423,
+          "held_out_rms": 10.246200739361695,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.169075161308738,
+            "0": 10.246200739361695,
+            "0.016666666666666666": 10.35655672106052
+          },
+          "inactive_rms": 7.697872735146492,
+          "transition_rms": 13.397380862115977
+        }
+      },
+      "V02": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.20513193436050114,
+            "active": 0.5398208798960556,
+            "duration": 0
+          },
+          "training_rms": 10.56524071106496,
+          "held_out_rms": 10.356756401635637,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.356756401635637,
+            "0": 10.356756401635637,
+            "0.016666666666666666": 10.356756401635637
+          },
+          "inactive_rms": 11.316285993821046,
+          "transition_rms": 13.655579937892723
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.1367399785148876,
+            "active": 0.5398208798960556,
+            "duration": 0
+          },
+          "training_rms": 10.050900956061687,
+          "held_out_rms": 9.657557897272675,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 9.657557897272675,
+            "0": 9.657557897272675,
+            "0.016666666666666666": 9.657557897272675
+          },
+          "inactive_rms": 9.655180543370541,
+          "transition_rms": 13.632918921101961
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 10,
+            "inactive": 0.24336825782905905,
+            "active": 0.5398208798960556,
+            "duration": 0
+          },
+          "training_rms": 8.925560895181484,
+          "held_out_rms": 8.445920366060495,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.445920366060495,
+            "0": 8.445920366060495,
+            "0.016666666666666666": 8.445920366060495
+          },
+          "inactive_rms": 6.340525394296233,
+          "transition_rms": 13.48154854745946
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.2324939480855127,
+            "active": 0.5398208798960556,
+            "duration": 0.15
+          },
+          "training_rms": 8.0414519736625,
+          "held_out_rms": 7.439859814162813,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 7.455927516710632,
+            "0": 7.439859814162813,
+            "0.016666666666666666": 7.475856837178801
+          },
+          "inactive_rms": 6.246942520963345,
+          "transition_rms": 9.859046637875403
+        }
+      },
+      "V03": {
+        "existing": {
+          "parameters": {
+            "model": "existing",
+            "blur": 0,
+            "inactive": 0.19890092879551172,
+            "active": 0.523423496830294,
+            "duration": 0
+          },
+          "training_rms": 10.35401695980223,
+          "held_out_rms": 10.396866727010671,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.396866727010671,
+            "0": 10.396866727010671,
+            "0.016666666666666666": 10.396866727010671
+          },
+          "inactive_rms": 11.148906491969033,
+          "transition_rms": 12.932996762392683
+        },
+        "opacity": {
+          "parameters": {
+            "model": "opacity",
+            "blur": 0,
+            "inactive": 0.132508780710437,
+            "active": 0.523423496830294,
+            "duration": 0
+          },
+          "training_rms": 9.802573673196356,
+          "held_out_rms": 10.067329901658823,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 10.067329901658823,
+            "0": 10.067329901658823,
+            "0.016666666666666666": 10.067329901658823
+          },
+          "inactive_rms": 10.291383575934757,
+          "transition_rms": 12.944291736751868
+        },
+        "blur": {
+          "parameters": {
+            "model": "blur",
+            "blur": 8,
+            "inactive": 0.2234599786813215,
+            "active": 0.523423496830294,
+            "duration": 0
+          },
+          "training_rms": 8.633877008541747,
+          "held_out_rms": 8.900795982778845,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.900795982778845,
+            "0": 8.900795982778845,
+            "0.016666666666666666": 8.900795982778845
+          },
+          "inactive_rms": 6.945632692577133,
+          "transition_rms": 12.74680933520381
+        },
+        "interpolated": {
+          "parameters": {
+            "model": "interpolated",
+            "blur": 8,
+            "inactive": 0.2234599786813215,
+            "active": 0.523423496830294,
+            "duration": 0.15
+          },
+          "training_rms": 7.743312166752513,
+          "held_out_rms": 8.290269239153753,
+          "phase_sensitivity": {
+            "-0.016666666666666666": 8.354116360814118,
+            "0": 8.290269239153753,
+            "0.016666666666666666": 8.273208712330653
+          },
+          "inactive_rms": 6.945632692577133,
+          "transition_rms": 10.258284130597906
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Native-to-native sharp template, not a Core Text alpha mask",
+    "Three fixed middle-line regions, shared archived translation only",
+    "sRGB encoded-channel contrast after full-range Rec.709 interpretation; not physical luminance or measured alpha",
+    "Linear interpolation of precomputed blur-grid losses",
+    "Archived fitted onsets; phase shifts are sensitivity only",
+    "Background, glyph support, and progressive appearance remain confounded"
+  ]
+}

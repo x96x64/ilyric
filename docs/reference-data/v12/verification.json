@@ -1,0 +1,15 @@
+{
+  "evidence_status": "observed verification outcomes",
+  "implementation_commit": "c136d327ef29c41e3b11b9c695333dfe4da591c9",
+  "swift_tests": 31,
+  "python_tests": 65,
+  "private_commands_unavailable": 13,
+  "fresh_clone_without_private_inputs": "passed",
+  "private_japanese_phase_renderings_byte_identical": 20,
+  "latin_v8_result": "exact match",
+  "original_benchmark_hash": "unchanged; digest retained locally",
+  "private_original_hashes_and_pts": "matched",
+  "archived_native_crops": "fresh extraction byte-identical",
+  "legacy_exports": "architecture spike and composition passed",
+  "runtime_qualification": "raw raster equality tested on pinned environment only"
+}

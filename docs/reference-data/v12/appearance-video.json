@@ -1,0 +1,155 @@
+{
+  "status": "passed",
+  "frames": 360,
+  "visibility_change_frames": [
+    120,
+    240,
+    300
+  ],
+  "tail_scroll": [
+    324.9999998421117,
+    649.9811390412317,
+    649.9999999999987
+  ],
+  "repeated_pngs": "byte-identical",
+  "decoded_regions": {
+    "transport": {
+      "frames_above_2_levels": [
+        300
+      ],
+      "largest_changes": [
+        {
+          "frame": 300,
+          "mean_absolute_difference": 16.172303237149652
+        },
+        {
+          "frame": 1,
+          "mean_absolute_difference": 0.343882511118006
+        },
+        {
+          "frame": 59,
+          "mean_absolute_difference": 0.24790567793980764
+        },
+        {
+          "frame": 293,
+          "mean_absolute_difference": 0.2257730892543179
+        },
+        {
+          "frame": 177,
+          "mean_absolute_difference": 0.2079842796566346
+        }
+      ]
+    },
+    "bottom": {
+      "frames_above_2_levels": [
+        300
+      ],
+      "largest_changes": [
+        {
+          "frame": 300,
+          "mean_absolute_difference": 8.107142857142858
+        },
+        {
+          "frame": 59,
+          "mean_absolute_difference": 0.26303088803088803
+        },
+        {
+          "frame": 1,
+          "mean_absolute_difference": 0.2192084942084942
+        },
+        {
+          "frame": 293,
+          "mean_absolute_difference": 0.21003861003861005
+        },
+        {
+          "frame": 118,
+          "mean_absolute_difference": 0.20164092664092664
+        }
+      ]
+    },
+    "handle": {
+      "frames_above_2_levels": [],
+      "largest_changes": [
+        {
+          "frame": 177,
+          "mean_absolute_difference": 0.8688888888888889
+        },
+        {
+          "frame": 118,
+          "mean_absolute_difference": 0.8133333333333334
+        },
+        {
+          "frame": 59,
+          "mean_absolute_difference": 0.8122222222222222
+        },
+        {
+          "frame": 293,
+          "mean_absolute_difference": 0.6533333333333333
+        },
+        {
+          "frame": 279,
+          "mean_absolute_difference": 0.29
+        }
+      ]
+    },
+    "compact": {
+      "frames_above_2_levels": [
+        120,
+        240,
+        300
+      ],
+      "largest_changes": [
+        {
+          "frame": 240,
+          "mean_absolute_difference": 32.65072765072765
+        },
+        {
+          "frame": 300,
+          "mean_absolute_difference": 31.031878031878033
+        },
+        {
+          "frame": 120,
+          "mean_absolute_difference": 29.042966042966043
+        },
+        {
+          "frame": 350,
+          "mean_absolute_difference": 0.34234234234234234
+        },
+        {
+          "frame": 177,
+          "mean_absolute_difference": 0.32986832986832987
+        }
+      ]
+    },
+    "expanded": {
+      "frames_above_2_levels": [
+        120,
+        240,
+        300
+      ],
+      "largest_changes": [
+        {
+          "frame": 240,
+          "mean_absolute_difference": 28.73459595959596
+        },
+        {
+          "frame": 300,
+          "mean_absolute_difference": 28.155808080808082
+        },
+        {
+          "frame": 120,
+          "mean_absolute_difference": 10.612373737373737
+        },
+        {
+          "frame": 350,
+          "mean_absolute_difference": 0.22474747474747475
+        },
+        {
+          "frame": 293,
+          "mean_absolute_difference": 0.20757575757575758
+        }
+      ]
+    }
+  },
+  "evidence_status": "measured synthetic diagnostic"
+}

@@ -57,3 +57,11 @@ The [Latin outline report](docs/latin-outline-motion.md) separates common moveme
 ## Experimental Full-Screen Lyrics Composition
 
 The [full-screen report](docs/full-screen-composition.md) records measured component placement around the existing lyric composition, deterministic native-space rendering, and audiovisual export. Original artwork and controls, a provisional fade, and a static background remain qualified approximations. [Developer commands](docs/full-screen-commands.md) render the synthetic scene without private references. Native Music fidelity remains unvalidated.
+
+## Experimental Inactive Appearance
+
+The [inactive-appearance report](docs/inactive-appearance.md) records the benchmark timeline audit, held-out Latin blur/contrast diagnostics, and an opt-in cached appearance treatment. Geometry, Japanese appearance, and the original benchmark path remain unchanged. [Developer commands](docs/inactive-appearance-commands.md) separate synthetic verification from private calibration. Native fidelity remains unvalidated.
+
+## Deferred Product Requirements
+
+The [product requirements](docs/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.

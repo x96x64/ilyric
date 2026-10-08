@@ -1,0 +1,45 @@
+{
+  "schema_version": 12,
+  "purpose": "bounded inactive Latin appearance and synthetic defect investigation",
+  "reference": {
+    "device": "iPhone 16",
+    "reported_os": "iOS 27.0.1",
+    "build": "Unknown",
+    "configuration": "unchanged from v11"
+  },
+  "fitted_candidate": {
+    "blur_native_pixels": 8,
+    "duration_seconds": 0.15,
+    "relative_opacity": 0.42,
+    "evidence_status": "experimental reconstruction; not native alpha or private implementation"
+  },
+  "scope": {
+    "latin": "opt-in static paragraph treatment",
+    "japanese": "unchanged",
+    "outgoing_and_interrupted_transitions": "synthetic continuity contract"
+  },
+  "frozen": [
+    "typography",
+    "observed breaks",
+    "paragraph origin",
+    "line advance",
+    "focus motion",
+    "Japanese appearance",
+    "component geometry",
+    "background",
+    "delivery transform"
+  ],
+  "measurements": "appearance.json",
+  "benchmark_diagnostics": [
+    "baseline-video.json",
+    "appearance-video.json"
+  ],
+  "export": "export.json",
+  "media": "media.json",
+  "limitations": [
+    "Shared V01 template limits independence to appearance parameters",
+    "Pillow fit and Core Image cache kernels are not asserted identical",
+    "Progressive contrast and background remain confounded",
+    "No native fidelity claim"
+  ]
+}
