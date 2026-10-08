@@ -1,0 +1,92 @@
+[
+  {
+    "asset": "wav2vec2/config.json",
+    "bytes": 1596,
+    "sha256": "d3ec255c063d9f95057b553b19c20135b259875834a4fe9deb218a6be25b4cf3"
+  },
+  {
+    "asset": "wav2vec2/model.safetensors",
+    "bytes": 377607901,
+    "sha256": "8aa76ab2243c81747a1f832954586bc566090c83a0ac167df6f31f0fa917d74a"
+  },
+  {
+    "asset": "wav2vec2/preprocessor_config.json",
+    "bytes": 159,
+    "sha256": "b225d617c025463b9e157e06afea8b90dc7078fc70b013c533328423e0486b4a"
+  },
+  {
+    "asset": "wav2vec2/special_tokens_map.json",
+    "bytes": 85,
+    "sha256": "bb7068de1150661a10b55f9e4b12a0e77af8bf91f5e45e1b58afaf1d0e17f675"
+  },
+  {
+    "asset": "wav2vec2/tokenizer_config.json",
+    "bytes": 163,
+    "sha256": "dc790594f5bc351a4311c6624f40acd95850d4aaf2a5cb3c656c9b610720b608"
+  },
+  {
+    "asset": "wav2vec2/vocab.json",
+    "bytes": 291,
+    "sha256": "19727f8944fe6459fc3f240ae2c198395b740f6a029bd23e06656266b83bcf64"
+  },
+  {
+    "asset": "TIFA-1.0-ST/assets/LstmG2p-Eng/char.json",
+    "bytes": 457,
+    "sha256": "99db14a8dfeb313f7190b80098693c02d5b7530af282ef6fe81c4da0cd982138"
+  },
+  {
+    "asset": "TIFA-1.0-ST/assets/LstmG2p-Eng/config.json",
+    "bytes": 217,
+    "sha256": "72357a005ff51874041086583a2ad2537842b4b0635fe8e6df31d090d54bb77a"
+  },
+  {
+    "asset": "TIFA-1.0-ST/assets/LstmG2p-Eng/decoder.onnx",
+    "bytes": 1491741,
+    "sha256": "b5c7e48bd08b4b1d4e1449fdf37e6e07d468f3bea6b5ff6752d470e6f91b2f99"
+  },
+  {
+    "asset": "TIFA-1.0-ST/assets/LstmG2p-Eng/encoder.onnx",
+    "bytes": 2536734,
+    "sha256": "00c6475b6a4c28389f236ca9985157c9b59fe2eabddb4f44d562c999194d7645"
+  },
+  {
+    "asset": "TIFA-1.0-ST/assets/LstmG2p-Eng/phonemes.json",
+    "bytes": 634,
+    "sha256": "4c2e4f50744a88993cda3e7a8f208f5d0e9198995163a1cf5ea71258278b6a85"
+  },
+  {
+    "asset": "TIFA-1.0-ST/config.yaml",
+    "bytes": 1567,
+    "sha256": "b4bdfd5c73ca3a01ff8675ca353c54d4c14eefa75a188eac9a22ab94e147f8ac"
+  },
+  {
+    "asset": "TIFA-1.0-ST/dictionaries/ds-zh-pinyin-lite.txt",
+    "bytes": 6494,
+    "sha256": "1d52f8c9c7821edf46bac484229c0695e93a37a9644c6ff6cfc5bc3b09a245ae"
+  },
+  {
+    "asset": "TIFA-1.0-ST/dictionaries/ds_cmudict-07b.txt",
+    "bytes": 3370331,
+    "sha256": "6604680f94ad57fcdbdc359d867e9f8d2267965f8793bcdbfbbc135c54c49903"
+  },
+  {
+    "asset": "TIFA-1.0-ST/dictionaries/japanese_dict_full.txt",
+    "bytes": 1552,
+    "sha256": "96812fcac957d4d393f5ca2d605f04773824a71d1b51175f5b5eda10281298db"
+  },
+  {
+    "asset": "TIFA-1.0-ST/dictionaries/jyutping_dict.txt",
+    "bytes": 6897,
+    "sha256": "21f6e62320b454a3fec292d227af14e2ba6ec81fe51f1894138227703975475a"
+  },
+  {
+    "asset": "TIFA-1.0-ST/model.pt",
+    "bytes": 158588551,
+    "sha256": "8d9bf896da1827f36bf135f80c7ab1fc4f3c1d48f328818b8402c9527c0f014b"
+  },
+  {
+    "asset": "TIFA-1.0-ST/vocabulary.json",
+    "bytes": 4115,
+    "sha256": "644c85ac28cfe4f26fcf60de5a6d1fe192c11a6a837746119ef2dbc6dac9246c"
+  }
+]
