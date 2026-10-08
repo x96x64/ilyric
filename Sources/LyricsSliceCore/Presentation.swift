@@ -44,7 +44,8 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
     }
 }
 /// Static styles do not infer fine-grained timing from line-level inputs.
-public enum ParagraphStyle: String, Codable, Sendable { case latinStatic, japaneseStatic }
+public enum ParagraphStyle: String, Codable, Sendable { case latinStatic, japaneseStatic, latinTimed, japaneseTimed
+    public var timed: Bool { self == .latinTimed || self == .japaneseTimed } }
 public struct SliceInput: Codable, Sendable {
     public let text: String
     public let paragraphStyle: ParagraphStyle?
@@ -62,7 +63,10 @@ public struct SliceInput: Codable, Sendable {
         try appearance?.validate()
         let count = text.split(separator:"\n",omittingEmptySubsequences:false).count
         let structureValid = paragraphStyle != nil ? (1...4).contains(count) : count == 2
-        if paragraphStyle != nil {
+        if let style=paragraphStyle,style.timed {
+            guard !events.isEmpty,p.amplitude==0 else { throw SliceError.invalid("Supplied timing requires ranges without inferred vertical events") }
+            guard events.allSatisfy({$0.begin != nil && $0.end != nil && $0.verticalEvent == nil}) else { throw SliceError.invalid("Complete supplied intervals required") }
+        } else if paragraphStyle != nil {
             guard events.isEmpty, appearance == nil, p.amplitude == 0 else {
                 throw SliceError.invalid("Static paragraph integration; timed appearance and vertical treatment are unvalidated")
             }
@@ -76,9 +80,14 @@ public struct SliceInput: Codable, Sendable {
               (0...150).contains(p.originX), (500...900).contains(p.originY),
               (110...140).contains(p.lineAdvance), (0...10).contains(p.amplitude),
               (0.08...0.4).contains(p.tau), (0...1).contains(p.dimOpacity) else { throw SliceError.invalid("Experimental paragraph constraints") }
+        var boundaries=Set([0]),boundary=0
+        for c in text { boundary+=String(c).utf16.count;boundaries.insert(boundary) }
         var previous = 0
         for e in events {
             guard e.start >= previous, e.length > 0, e.start <= text.utf16.count - e.length else { throw SliceError.invalid("Ordered nonoverlapping event ranges required") }
+            if paragraphStyle?.timed == true {
+                guard boundaries.contains(e.start),boundaries.contains(e.start+e.length) else { throw SliceError.invalid("Timed range splits an extended grapheme cluster") }
+            }
             previous = e.start + e.length
             if let begin = e.begin, let end = e.end {
                 guard try begin.validated() < end.validated() else { throw SliceError.invalid("Positive appearance interval required") }
@@ -116,6 +125,13 @@ public struct SliceInput: Codable, Sendable {
         p.amplitude=0;p.dimOpacity=1
         return SliceInput(text:text,parameters:p,events:[],paragraphStyle:japanese ? .japaneseStatic : .latinStatic,
             breakEvidence:"supplied-explicit-structure")
+    }
+    /// Supplied segment intervals; the appearance mapping is a synthetic visualization.
+    public static func suppliedTimed(text:String,japanese:Bool,events:[AppearanceEvent]) -> SliceInput {
+        var p=supplied(text:text,japanese:japanese).parameters;p.dimOpacity=0.42
+        var soft=SoftAppearance();soft.intervalScale=1;soft.softness=0.25;soft.completedOpacity=1
+        return SliceInput(text:text,parameters:p,events:events,appearance:japanese ? soft : nil,
+            paragraphStyle:japanese ? .japaneseTimed : .latinTimed,breakEvidence:"supplied-explicit-structure")
     }
     /// Original synthetic text and timings, independent of commercial references.
     public static func synthetic(canvasWidth: Int = 1179, softened: Bool = false) -> SliceInput {

@@ -5,20 +5,25 @@ import LyricsSliceCore
 import LyricsSliceMac
 import SpikeCore
 
-/// Experimental line-level presentation: no word timing is manufactured.
+/// Experimental paragraph focus with optional explicitly supplied segment appearance.
 public final class LocalScene {
     public let lyrics: LocalLyrics
     public let audio: LocalAudio
     public let schedule: OutputSchedule
     public let renderer: ScreenRenderer
-    public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil) throws {
+    public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled) throws {
         self.lyrics=lyrics;self.audio=audio;schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
         for (i,entry) in lyrics.entries.enumerated() {
             let end=i+1<lyrics.entries.count ? lyrics.entries[i+1].time : schedule.audioEnd
             if entry.text.isEmpty { events.append(.init(entry.time,order:i+1,paragraph:-1));continue }
             let japanese=entry.text.unicodeScalars.contains { (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value) || (0xff66...0xff9d).contains($0.value) }
-            let input=SliceInput.supplied(text:entry.text,japanese:japanese)
+            let timed=entry.segments.map { AppearanceEvent(start:$0.start,length:$0.length,
+                begin:SliceTime($0.begin.numerator,$0.begin.denominator),end:SliceTime($0.end.numerator,$0.end.denominator),verticalEvent:nil) }
+            let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed)
+            // Validate supplied cluster boundaries even when their visualization is disabled.
+            if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
+            let input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
             let layout=try SliceParagraph(input)
             events.append(.init(entry.time,order:i+1,paragraph:paragraphs.count))
             paragraphs.append(.init(input:input,position:position,begin:entry.time,end:end))

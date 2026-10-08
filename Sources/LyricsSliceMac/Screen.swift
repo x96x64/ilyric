@@ -40,8 +40,8 @@ public final class ScreenRenderer {
         fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
         if calibratedInactive && !boundedCache {
-            for (i,p) in screen.composition.paragraphs.enumerated() where p.input.paragraphStyle == .latinStatic {
-                inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0))))
+            for (i,p) in screen.composition.paragraphs.enumerated() where (p.input.paragraphStyle == .latinStatic || p.input.paragraphStyle == .latinTimed) {
+                inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0)),coverage:p.input.paragraphStyle == .latinTimed))
             }
         }
     }
@@ -71,14 +71,24 @@ public final class ScreenRenderer {
                 let top=input.parameters.originY+p.translationY-40
                 let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
                 if bottom<v.y || top>v.y+v.height { continue }
-                if calibratedInactive && input.paragraphStyle == .latinStatic && inactiveTiles[p.index]==nil {
+                if calibratedInactive && (input.paragraphStyle == .latinStatic || input.paragraphStyle == .latinTimed) && inactiveTiles[p.index]==nil {
                     if inactiveTiles.count>=6,let key=inactiveTiles.keys.sorted().first { inactiveTiles.removeValue(forKey:key) }
-                    inactiveTiles[p.index]=InactiveTiles(try lyrics.paragraphs[p.index].render(input.evaluate(Time(0))))
+                    inactiveTiles[p.index]=InactiveTiles(try lyrics.paragraphs[p.index].render(input.evaluate(Time(0)),coverage:input.paragraphStyle == .latinTimed))
                 }
             }
             if let tiles=inactiveTiles[p.index] {
                 let a=InactiveTreatment.evaluate(state.output,paragraph:p.index,events:screen.composition.events)
-                tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c)
+                if lyrics.paragraphs[p.index].input.paragraphStyle == .latinTimed {
+                    // A bounded synthetic blend separates supplied highlighting from cached inactive support.
+                    let weight=1-a.blur/8
+                    c.saveGState();c.beginTransparencyLayer(auxiliaryInfo:nil);c.setBlendMode(.plusLighter)
+                    tiles.draw(a.blur,opacity:a.opacity*(1-weight),translation:p.translationY,into:c)
+                    if weight>0 {
+                        let image=try lyrics.paragraphs[p.index].render(p.appearance)
+                        c.setAlpha(a.opacity*weight);c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556))
+                    }
+                    c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
+                } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)

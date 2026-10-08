@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "inputs": {
+    "audio": "source.wav",
+    "lyrics": "lines.lrc",
+    "artwork": "artwork.png",
+    "lyricsFormat": "enhanced-lrc"
+  },
+  "metadata": {
+    "title": "Paper Skies ・ 紙の空",
+    "artist": "Original Timing Fixture"
+  },
+  "timing": {
+    "offsetMilliseconds": 0,
+    "durationPolicy": "audio-pad-frame",
+    "highlighting": "enabled"
+  },
+  "output": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 60,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "delivery": "contain"
+  },
+  "visibility": {
+    "artwork": true,
+    "metadata": true,
+    "progress": true,
+    "transport": true,
+    "volume": false,
+    "bottom": false,
+    "handle": true,
+    "translation": false,
+    "sing": "hidden"
+  }
+}

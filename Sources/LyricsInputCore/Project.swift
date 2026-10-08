@@ -2,12 +2,15 @@ import Foundation
 import CoreFoundation
 import SpikeCore
 
-/// Experimental version-1 settings. Paths are resolved once, independently of rendering.
+/// Experimental versioned settings. Paths are resolved once, independently of rendering.
 public struct ProjectVisibility: Equatable, Sendable {
     public let artwork, metadata, progress, transport, volume, bottom, handle, translation: Bool
     public let sing: String
 }
 public struct ExperimentalProject: Equatable, Sendable {
+    public let version: Int
+    public let lyricsFormat: LyricsFormat
+    public let highlighting: Highlighting
     public let audio, lyrics: URL
     public let artwork: URL?
     public let title, artist: String
@@ -25,8 +28,11 @@ public struct ExperimentalProject: Equatable, Sendable {
         var scan=UniqueJSON(data:data);try scan.value(depth:0);scan.whitespace()
         guard scan.index==scan.bytes.count else { throw InputError.invalid("Invalid project JSON structure") }
         let root=try Object(json,"project",["version","inputs","metadata","timing","output","visibility"])
-        guard try root.integer("version",required:true)==1 else { throw InputError.invalid("Unsupported experimental project version; expected 1") }
-        let input=try root.object("inputs",required:true,allowed:["audio","lyrics","artwork"])
+        let version=try root.integer("version",required:true)!
+        guard [1,2].contains(version) else { throw InputError.invalid("Unsupported experimental project version; expected 1 or 2") }
+        let input=try root.object("inputs",required:true,allowed:version==1 ? ["audio","lyrics","artwork"] : ["audio","lyrics","artwork","lyricsFormat"])
+        let formatValue=try input.string("lyricsFormat",required:version==2) ?? "lrc"
+        guard let format=LyricsFormat(rawValue:formatValue) else { throw InputError.invalid("lyricsFormat must be lrc or enhanced-lrc") }
         let base=url.standardizedFileURL.deletingLastPathComponent()
         func path(_ value:String) throws -> URL {
             guard !value.isEmpty,value.utf8.count<=4096,!value.unicodeScalars.contains(where:{$0.value<32 || $0.value==127}) else { throw InputError.invalid("Input paths must be nonempty local paths within 4096 bytes") }
@@ -42,7 +48,10 @@ public struct ExperimentalProject: Equatable, Sendable {
             guard !text.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,text.utf16.count<=80,
                   !text.unicodeScalars.contains(where:{$0.value<32 || $0.value==127}) else { throw InputError.invalid("Metadata must contain 1–80 UTF-16 units without control characters") }
         }
-        let timing=try root.object("timing",allowed:["offsetMilliseconds","durationPolicy"])
+        let timing=try root.object("timing",allowed:version==1 ? ["offsetMilliseconds","durationPolicy"] : ["offsetMilliseconds","durationPolicy","highlighting"])
+        let highlightingValue=try timing.string("highlighting") ?? "enabled"
+        guard let highlighting=Highlighting(rawValue:highlightingValue) else { throw InputError.invalid("highlighting must be enabled or disabled") }
+        guard format == .enhancedLRC || timing.values["highlighting"] == nil else { throw InputError.invalid("highlighting requires enhanced-lrc input") }
         let offset=try timing.integer("offsetMilliseconds") ?? 0
         guard (-600_000...600_000).contains(offset) else { throw InputError.invalid("Project lyric offset must be within ±600000 milliseconds") }
         guard try timing.string("durationPolicy") ?? "audio-pad-frame" == "audio-pad-frame" else { throw InputError.invalid("Only audio-pad-frame duration policy is supported") }
@@ -56,7 +65,7 @@ public struct ExperimentalProject: Equatable, Sendable {
         let v=try root.object("visibility",allowed:["artwork","metadata","progress","transport","volume","bottom","handle","translation","sing"])
         let sing=try v.string("sing") ?? "hidden"
         guard ["hidden","compact","expanded"].contains(sing) else { throw InputError.invalid("Sing control visibility must be hidden, compact, or expanded; no Sing functionality is implied") }
-        return try .init(audio:audio,lyrics:lyrics,artwork:artwork,title:title,artist:artist,offsetMilliseconds:offset,
+        return try .init(version:Int(version),lyricsFormat:format,highlighting:highlighting,audio:audio,lyrics:lyrics,artwork:artwork,title:title,artist:artist,offsetMilliseconds:offset,
             visibility:.init(artwork:v.boolean("artwork") ?? true,metadata:v.boolean("metadata") ?? true,
                 progress:v.boolean("progress") ?? true,transport:v.boolean("transport") ?? true,
                 volume:v.boolean("volume") ?? true,bottom:v.boolean("bottom") ?? true,
@@ -152,8 +161,9 @@ private struct UniqueJSON {
 public extension LocalLyrics {
     func applyingProjectOffset(_ milliseconds:Int64) throws -> LocalLyrics {
         guard (-600_000...600_000).contains(milliseconds) else { throw InputError.invalid("Project lyric offset out of range") }
-        let shifted=entries.map { LyricEntry(time:$0.time+Time(milliseconds,1000),text:$0.text,sourceLine:$0.sourceLine,suppliedBreaks:$0.suppliedBreaks) }
+        let shifted=entries.map { LyricEntry(time:$0.time+Time(milliseconds,1000),text:$0.text,sourceLine:$0.sourceLine,suppliedBreaks:$0.suppliedBreaks,segments:$0.segments.map { $0.shifted(Time(milliseconds,1000)) }) }
         guard shifted.allSatisfy({$0.time>=Time(0) && $0.time<=Time(600)}) else { throw InputError.invalid("Combined lyric offset places an event outside 0–600 seconds") }
-        return .init(entries:shifted,offsetMilliseconds:offsetMilliseconds+milliseconds,diagnostics:diagnostics)
+        let result=LocalLyrics(entries:shifted,offsetMilliseconds:offsetMilliseconds+milliseconds,diagnostics:diagnostics)
+        try result.validateSegments();return result
     }
 }

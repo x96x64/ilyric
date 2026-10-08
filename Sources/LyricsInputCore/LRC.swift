@@ -11,7 +11,11 @@ public struct LyricEntry: Equatable, Sendable {
     public let text: String
     public let sourceLine: Int
     public let suppliedBreaks: Bool
-    public let timingProvenance = "supplied-line-timestamp-with-explicit-offset"
+    public let segments: [TimedSegment]
+    public var timingProvenance: String { segments.isEmpty ? "supplied-line-timestamp-with-explicit-offset" : "supplied-segment-boundaries-with-explicit-offset" }
+    public init(time:Time,text:String,sourceLine:Int,suppliedBreaks:Bool,segments:[TimedSegment]=[]) {
+        self.time=time;self.text=text;self.sourceLine=sourceLine;self.suppliedBreaks=suppliedBreaks;self.segments=segments
+    }
 }
 public struct LocalLyrics: Sendable {
     public let entries: [LyricEntry]
@@ -26,6 +30,7 @@ public struct LocalLyrics: Sendable {
     public func validate(audioSamples: Int) throws -> OutputSchedule {
         let schedule=try OutputSchedule(audioSamples:audioSamples)
         guard entries.allSatisfy({$0.time<schedule.audioEnd}) else { throw InputError.invalid("A lyric event reaches or exceeds the decoded audio endpoint") }
+        try validateSegments(audioEnd:schedule.audioEnd)
         return schedule
     }
 }

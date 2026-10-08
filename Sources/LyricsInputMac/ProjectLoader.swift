@@ -57,11 +57,11 @@ public struct PreparedProject {
     public let artworkInfo: ArtworkInfo?
     public static func load(_ url: URL) async throws -> PreparedProject {
         let project=try ExperimentalProject.parse(LocalFile.boundedData(url,limit:ExperimentalProject.byteLimit,label:"Project"),at:url)
-        let lyrics=try LRCParser.parse(LocalFile.boundedData(project.lyrics,limit:LRCParser.byteLimit,label:"Lyrics"))
+        let lyrics=try LyricsParser.parse(LocalFile.boundedData(project.lyrics,limit:LRCParser.byteLimit,label:"Lyrics"),format:project.lyricsFormat)
             .applyingProjectOffset(project.offsetMilliseconds)
         let artwork=try project.artwork.map(LocalArtwork.decode)
         let audio=try await LocalAudio.decode(project.audio)
-        let scene=try LocalScene(lyrics:lyrics,audio:audio,project:project,artwork:artwork?.image)
+        let scene=try LocalScene(lyrics:lyrics,audio:audio,project:project,artwork:artwork?.image,highlighting:project.highlighting)
         return .init(project:project,scene:scene,artworkInfo:artwork?.info)
     }
 }
