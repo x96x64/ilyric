@@ -1,0 +1,231 @@
+{
+  "record_version": 1,
+  "schema_version": 1,
+  "status": "experimental",
+  "evidence_categories": {
+    "export": "measured on original synthetic inputs",
+    "presentation": "explicitly authored reconstruction behavior",
+    "native_parameters": "inherited fitted candidates; no new native measurements"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4",
+    "sdk": "macOS 27",
+    "ffmpeg": "8.1.2"
+  },
+  "isolated_export": {
+    "appendSeconds": 0.01873469352722168,
+    "backpressureSeconds": 15.668219566345215,
+    "effectiveFPS": 29.72159136162403,
+    "finishSeconds": 0.0030559301376342773,
+    "frames": 601,
+    "height": 1920,
+    "rasterSeconds": 20.0581191778183,
+    "seconds": 20.22098994255066,
+    "width": 1080,
+    "process_seconds": 20.61,
+    "peak_rss_bytes": 438927360,
+    "peak_rss_mib": 418.59375
+  },
+  "supplied_audio_validation": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "input_summary": {
+    "lyric_events": 6,
+    "paragraphs": 5,
+    "lrc_offset_ms": 100,
+    "project_offset_ms": 25,
+    "total_offset_ms": 125,
+    "source_sample_rate": 44100,
+    "source_channels": 2,
+    "audio_samples": 480144,
+    "output_padding_samples": 656,
+    "artwork_source_dimensions": [
+      256,
+      256
+    ],
+    "artwork_source_color": "original PNG with sRGB chunk",
+    "hidden_groups": [
+      "volume",
+      "bottom"
+    ],
+    "focus_events": [
+      {
+        "denominator": 1,
+        "numerator": 0,
+        "paragraph": -1
+      },
+      {
+        "denominator": 8,
+        "numerator": 5,
+        "paragraph": 0
+      },
+      {
+        "denominator": 1,
+        "numerator": 2,
+        "paragraph": 1
+      },
+      {
+        "denominator": 4,
+        "numerator": 13,
+        "paragraph": -1
+      },
+      {
+        "denominator": 2,
+        "numerator": 9,
+        "paragraph": 2
+      },
+      {
+        "denominator": 1,
+        "numerator": 6,
+        "paragraph": 3
+      },
+      {
+        "denominator": 1,
+        "numerator": 7,
+        "paragraph": 4
+      }
+    ]
+  },
+  "multiline_demonstration": {
+    "classification": "synthetic fixture scheduling limitation; second-line events are supported",
+    "historical_focus_interval_seconds": [
+      1,
+      3
+    ],
+    "new_focus_interval_seconds": [
+      1,
+      6
+    ],
+    "nominal_first_line_interval_seconds": [
+      0.9,
+      3.1
+    ],
+    "nominal_second_line_interval_seconds": [
+      3.15,
+      5.1
+    ],
+    "softened_full_completion_seconds": {
+      "first_line": 3.6,
+      "second_line": 5.6
+    },
+    "completion_checked_at_rational_time": {
+      "numerator": 23,
+      "denominator": 4
+    },
+    "export_validation": {
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "fps": "60/1",
+      "frames": 480,
+      "duration": 8.0,
+      "audioCodec": "aac",
+      "audioDuration": "8.000000",
+      "audioStart": "0.000000",
+      "decodedAudioSamples": 384960,
+      "trimmedAudioSamples": 384000,
+      "primingSamples": 2112,
+      "trailingDecodedPaddingSamples": 960,
+      "color": "bt709",
+      "markerErrorsSeconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "visualMarkerFrames": [
+        0,
+        1,
+        2,
+        60,
+        61,
+        62,
+        75,
+        76,
+        77,
+        180,
+        181,
+        182,
+        240,
+        241,
+        242,
+        300,
+        301,
+        302,
+        315,
+        316,
+        317,
+        420,
+        421,
+        422
+      ],
+      "presentationTimestamps": "all passed"
+    }
+  },
+  "tests": {
+    "swift": 46,
+    "python": 68,
+    "project_cli_refusal_cases": 13,
+    "legacy_local_cli_refusal_cases": 12,
+    "legacy_audio_containers": [
+      "WAV",
+      "AIFF",
+      "AAC in M4A"
+    ],
+    "raw_equality": "repeated and reordered requests in the recorded environment"
+  },
+  "nonregression": {
+    "private_japanese_renderings": 20,
+    "private_japanese_result": "byte-identical",
+    "private_latin": "archived integration results retained",
+    "reference_source_hashes": "V01–V03 and V09/V10 unchanged",
+    "historical_reports_and_profiles": "unchanged",
+    "production_renderer_and_export_backend": "unchanged"
+  },
+  "limits": [
+    "Experimental schema; no indefinite compatibility promise",
+    "Ordinary LRC remains line-level; no inferred fine-grained timing",
+    "Header clipping, original controls, static background, and cross-script inactive differences remain qualified",
+    "No maximum-duration or maximum-event performance qualification",
+    "No native Music fidelity claim"
+  ],
+  "fresh_public_checkout": {
+    "implementation_commit": "0ffab7141507cf026bb536bb41f552ebc1b8dcd9",
+    "status": "passed",
+    "private_corpus_present": false,
+    "swift_tests": 46,
+    "python_tests": 68,
+    "grouped_checks": 26,
+    "private_commands_unavailable": 13,
+    "working_tree": "clean apart from ignored outputs",
+    "project_and_multiline_exports": "decoded audiovisual validation passed"
+  }
+}
