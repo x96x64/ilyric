@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import CoreGraphics
 import SpikeCore
 
 public struct ExportMetrics: Codable {
@@ -18,6 +19,17 @@ public struct ExportMetrics: Codable {
 /// The adaptor supports macOS 14; migration to receiver APIs is a later backend decision.
 public enum Exporter {
     @MainActor public static func video(renderer: Renderer, to url: URL, frames: Int = 240) async throws -> ExportMetrics {
+        let timeline = Timeline()
+        return try await video(width:renderer.width,height:renderer.height,to:url,frames:frames,
+            draw:{ time, context in
+                let wrapped=Time(time.numerator % (4*time.denominator),time.denominator)
+                renderer.draw(timeline.evaluate(wrapped),into:context)
+            },audioSample:{ timeline.audioSample($0 % 192_000) })
+    }
+    /// Shared writer only: callers supply deterministic frames and PCM samples.
+    @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
+        draw: @escaping (Time, CGContext) throws -> Void,
+        audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
         guard frames > 0, !FileManager.default.fileExists(atPath: url.path) else { throw SpikeError.failure("Invalid frame count or existing output") }
         let temporary = url.deletingLastPathComponent().appendingPathComponent(".\(UUID().uuidString).mp4")
         defer { try? FileManager.default.removeItem(at: temporary) }
@@ -25,7 +37,7 @@ public enum Exporter {
         let writer = try AVAssetWriter(outputURL: temporary, fileType: .mp4)
         let settings: [String: Any] = [
             AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: renderer.width, AVVideoHeightKey: renderer.height,
+            AVVideoWidthKey: width, AVVideoHeightKey: height,
             AVVideoColorPropertiesKey: [AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
                                        AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
                                        AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2],
@@ -41,8 +53,8 @@ public enum Exporter {
         ])
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: video, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
-            kCVPixelBufferWidthKey as String: renderer.width,
-            kCVPixelBufferHeightKey as String: renderer.height,
+            kCVPixelBufferWidthKey as String: width,
+            kCVPixelBufferHeightKey as String: height,
             kCVPixelBufferCGImageCompatibilityKey as String: true,
             kCVPixelBufferCGBitmapContextCompatibilityKey as String: true
         ])
@@ -50,7 +62,6 @@ public enum Exporter {
         writer.add(video); writer.add(audio)
         guard writer.startWriting() else { throw writer.error ?? SpikeError.failure("Writer start failed") }
         writer.startSession(atSourceTime: .zero)
-        let timeline = Timeline()
         @MainActor @Sendable func ready(_ isVideo: Bool) async throws {
             let input = isVideo ? video : audio
             let began = Date()
@@ -79,9 +90,9 @@ public enum Exporter {
                     CVPixelBufferLockBaseAddress(buffer, [])
                     let began = Date()
                     do {
-                        let ctx = try context(width: renderer.width, height: renderer.height,
+                        let ctx = try context(width: width, height: height,
                                               data: CVPixelBufferGetBaseAddress(buffer), rowBytes: CVPixelBufferGetBytesPerRow(buffer))
-                        renderer.draw(timeline.evaluate(.frame(Int64(frame % 240))), into: ctx)
+                        try draw(.frame(Int64(frame)),ctx)
                     } catch {
                         CVPixelBufferUnlockBaseAddress(buffer, []); throw error
                     }
@@ -103,7 +114,7 @@ public enum Exporter {
                 let began = Date()
                 try await ready(false)
                 wait += Date().timeIntervalSince(began)
-                let sample = try pcm(timeline: timeline, start: frame * 800, count: 800)
+                let sample = try pcm(sample: audioSample, start: frame * 800, count: 800)
                 guard audio.append(sample) else { throw writer.error ?? SpikeError.failure("Audio append failed") }
             }
             audio.markAsFinished()
@@ -124,11 +135,11 @@ public enum Exporter {
         let finish = Date().timeIntervalSince(finishing)
         try FileManager.default.moveItem(at: temporary, to: url)
         let elapsed = Date().timeIntervalSince(start)
-        return ExportMetrics(width: renderer.width, height: renderer.height, frames: frames, seconds: elapsed,
+        return ExportMetrics(width: width, height: height, frames: frames, seconds: elapsed,
                              effectiveFPS: Double(frames) / elapsed, rasterSeconds: raster,
                              appendSeconds: append, backpressureSeconds: wait, finishSeconds: finish)
     }
-    private static func pcm(timeline: Timeline, start: Int, count: Int) throws -> CMSampleBuffer {
+    private static func pcm(sample: (Int) -> Int16, start: Int, count: Int) throws -> CMSampleBuffer {
         var description = AudioStreamBasicDescription(mSampleRate: 48_000, mFormatID: kAudioFormatLinearPCM,
             mFormatFlags: kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked,
             mBytesPerPacket: 2, mFramesPerPacket: 1, mBytesPerFrame: 2, mChannelsPerFrame: 1, mBitsPerChannel: 16, mReserved: 0)
@@ -141,7 +152,7 @@ public enum Exporter {
         guard CMBlockBufferCreateWithMemoryBlock(allocator: nil, memoryBlock: nil, blockLength: count * 2,
             blockAllocator: nil, customBlockSource: nil, offsetToData: 0, dataLength: count * 2,
             flags: 0, blockBufferOut: &block) == noErr else { throw SpikeError.failure("PCM allocation failed") }
-        let samples = (start..<(start + count)).map { timeline.audioSample($0 % 192_000) }
+        let samples = (start..<(start + count)).map { sample($0) }
         let status = samples.withUnsafeBytes { CMBlockBufferReplaceDataBytes(with: $0.baseAddress!, blockBuffer: block!, offsetIntoDestination: 0, dataLength: count * 2) }
         guard status == noErr else { throw SpikeError.failure("PCM copy failed") }
         var timing = CMSampleTimingInfo(duration: CMTime(value: 1, timescale: 48_000),
