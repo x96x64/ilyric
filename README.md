@@ -101,3 +101,7 @@ The [coverage report](docs/independent-acoustic-coverage.md) compares audio-only
 ## Singing-Aware Activity Evaluation
 
 The [singing-activity report](docs/singing-vocal-activity.md) reproduces the frozen activity baselines and records a bounded candidate screen. Checkpoint-specific licensing and independently verified additional-singer annotations remain unresolved; no new model was provisioned or evaluated. The prospective protocol preserves mandatory review and does not qualify automatic full-song synchronization.
+
+## Checkpoint Permission and Evaluation Readiness
+
+The [veracity readiness assessment](docs/veracity-evaluation-readiness.md) records checkpoint permission, native dependency metadata, cumulative resources, and missing independent activity annotations. The [conditional evaluation procedure](docs/veracity-evaluation-procedure.md) and [unsent permission inquiry](docs/veracity-permission-inquiry.md) define the remaining preparation steps. No model provisioning or inference is performed; automatic synchronization remains incomplete.

@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "classification": "Readiness assessment; no provisioning or inference",
+  "access_date": "2026-10-08",
+  "starting_head": "50447a44026d2a1c0c1033970efe41893cbf58e2",
+  "candidate": {
+    "repository": "https://github.com/CPJKU/veracity",
+    "revision": "0983900f136173015f3c5d0b116be014edd33905",
+    "checkpoint": "dataset/jamendo/models/model_log_0mean/model.pt",
+    "repository_blob": "6d8a4434482615b142e45b8220ff5a0462a9fee6",
+    "repository_bytes": 7433173,
+    "downloaded": false,
+    "sha256": null,
+    "source_license": "MIT",
+    "checkpoint_permission": "Unresolved scope; no explicit exclusion or separate weight terms found; clarification required by this gate"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "memory_bytes": 17179869184,
+    "os": "macOS 27.0.1",
+    "architecture": "arm64",
+    "python": "3.12.14",
+    "torch": "2.8.0",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "librosa": "1.0.0",
+    "resampy": "0.4.3",
+    "soundfile": "0.14.0",
+    "torchaudio_installed": false
+  },
+  "proposed_dependency": {
+    "package": "torchaudio",
+    "version": "2.8.0",
+    "filename": "torchaudio-2.8.0-cp312-cp312-macosx_11_0_arm64.whl",
+    "bytes": 1856736,
+    "sha256": "ddef94bf181e6447cbb05f38beaca8f6c5bb8d2b9ddced1aa3452025b9fc70d3",
+    "metadata": "https://pypi.org/pypi/torchaudio/2.8.0/json",
+    "requires": "torch==2.8.0",
+    "downloaded": false,
+    "installed_size": null
+  },
+  "resources": {
+    "download_ceiling_bytes": 2000000000,
+    "storage_ceiling_bytes": 6000000000,
+    "inventory": {
+      "rows": [
+        {
+          "category": "alignment",
+          "allocated_bytes": 2964361216
+        },
+        {
+          "category": "alignment-refinement",
+          "allocated_bytes": 42684416
+        },
+        {
+          "category": "acoustic-coverage",
+          "allocated_bytes": 32120832
+        },
+        {
+          "category": "singing-vad",
+          "allocated_bytes": 29306880
+        },
+        {
+          "category": "veracity-readiness",
+          "allocated_bytes": 237568
+        },
+        {
+          "category": "ilyric-alignment-public-20261008",
+          "allocated_bytes": 487297024
+        },
+        {
+          "category": "ilyric-refinement-public-20261008",
+          "allocated_bytes": 473128960
+        },
+        {
+          "category": "ilyric-coverage-public-20261008",
+          "allocated_bytes": 473423872
+        },
+        {
+          "category": "ilyric-vad-public-20261008",
+          "allocated_bytes": 473370624
+        },
+        {
+          "category": "private alignment research documentation",
+          "allocated_bytes": 3375104
+        }
+      ],
+      "allocated_bytes": 4979306496,
+      "model_assets_verified": 18,
+      "original_recordings_verified": 9,
+      "allocated_GB": 4.979306496,
+      "allocated_MiB": 4748.63671875,
+      "remaining_storage_bytes": 1020693504
+    },
+    "historical_download_MiB_approximate": 1065.3,
+    "transfer_ledger_exact": false,
+    "conservative_planning_charge_bytes": 1500000000,
+    "planning_charge_note": "Budget reservation, not a verified upper bound on historical network traffic. Acknowledge incomplete accounting before further authorization.",
+    "proposed_new_download_cap_bytes": 12000000,
+    "proposed_incremental_peak_storage_cap_bytes": 335544320,
+    "new_model_package_dataset_bytes": 0,
+    "research_metadata_stored_bytes": 176173,
+    "budget_scope": "Model caches, isolated environments, retained recordings, research documentation, generated diagnostics and four retained public checkouts. Not unrelated rendering builds or physical-reference media."
+  },
+  "gates": {
+    "source_identity": "verified",
+    "checkpoint_permission": "blocked pending scope clarification",
+    "native_dependency_metadata": "verified; installation and preprocessing parity unresolved",
+    "storage_capacity": "verified for proposed cap at inventory time",
+    "cumulative_download_accounting": "unresolved; retained files are not a transfer ledger",
+    "additional_singer": "blocked; no additional qualifying local recording",
+    "independent_VAD_annotations": "blocked; none of nine originals independently reviewed for this purpose",
+    "final_partitions": "blocked; source-role reservations only",
+    "privacy": "verified ignored locations; no model or media published"
+  },
+  "candidate_metrics": null,
+  "candidate_performance": null,
+  "automatic_decisions_enabled": false
+}

@@ -1,0 +1,27 @@
+{
+  "classification": "Documentation-only readiness verification",
+  "swift_public_tests": {
+    "command": "scripts/test.sh",
+    "passed": 61,
+    "initial_direct_invocation": "Sandbox module-cache write failure; rerun with normal cache access and existing script passed"
+  },
+  "python_public_tests": {
+    "command": "python3 -m unittest discover -s Tests/reference_validation -q",
+    "passed": 112
+  },
+  "model_assets_sha256_verified": 18,
+  "original_recording_sha256_verified": 9,
+  "annotation_manifest_unchanged": true,
+  "new_json_parse": "passed",
+  "new_relative_document_links": "passed",
+  "diff_whitespace": "passed",
+  "public_personal_path_scan": "passed",
+  "ignored_private_research_and_artifacts": "verified",
+  "historical_records": "unchanged",
+  "application_code": "unchanged",
+  "new_model_package_dataset_downloads": 0,
+  "candidate_inference": "not performed",
+  "candidate_metrics": null,
+  "fresh_public_checkout": "Not repeated for documentation-only changes; prior gate verified public-only build/tests and explicit unavailable inputs",
+  "release_and_audiovisual_regressions": "Not repeated; no affected application or preparation code"
+}

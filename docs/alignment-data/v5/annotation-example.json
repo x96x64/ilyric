@@ -1,0 +1,40 @@
+{
+  "format_version": 1,
+  "classification": "Original synthetic annotation example; no audio or measured boundaries",
+  "source_id": "synthetic-example",
+  "audio_sha256": null,
+  "sample_rate_hz": 48000,
+  "duration_us": 5000000,
+  "annotator": "A",
+  "reviewer": "B",
+  "review_status": "illustrative only",
+  "intervals": [
+    {
+      "kind": "instrumental",
+      "start_us": 0,
+      "end_us": 990000
+    },
+    {
+      "kind": "lead_singing",
+      "onset_earliest_us": 990000,
+      "onset_latest_us": 1010000,
+      "offset_earliest_us": 2990000,
+      "offset_latest_us": 3020000,
+      "tags": [
+        "sustained_vowel"
+      ],
+      "review": "agreement within stated uncertainty"
+    },
+    {
+      "kind": "ambiguous_reverberation",
+      "start_us": 3020000,
+      "end_us": 3200000
+    },
+    {
+      "kind": "silence",
+      "start_us": 3200000,
+      "end_us": 5000000
+    }
+  ],
+  "notes": "Half-open intervals. Boundary bands and unclassified support remain unknown; null identity prevents use as measured evaluation evidence."
+}
