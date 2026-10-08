@@ -165,14 +165,19 @@ def validate(result, ready=False):
         duration=result['audio']['duration_us']
         if type(duration) is not int or not 0<duration<=MAX_US or not re.fullmatch('[0-9a-f]{64}',result['audio']['sha256']):
             raise AlignmentError('Invalid full-song audio identity or duration')
-        if result['engine']['model_grid_us']!=GRID_US:raise AlignmentError('Unsupported model temporal resolution')
+        passage=result['engine'].get('id')=='bounded-tifa-passage-search'
+        if result['engine']['model_grid_us']!=(10000 if passage else GRID_US):raise AlignmentError('Unsupported model temporal resolution')
         if fingerprint(result)!=result['proposal_sha256']:raise AlignmentError('Original proposals changed; use reviewed corrections')
         if not isinstance(result['history'],list) or len(result['history'])>4096:
             raise AlignmentError('Review history exceeds 4096 entries')
-        count=result['engine'].get('analysis_samples',(duration*16000+999999)//1000000)
-        if type(count) is not int or abs(count*1000000-duration*16000)>1000000:
-            raise AlignmentError('Analysis sample count differs from source duration')
-        expected_windows=windows(count)
+        if passage:
+            from .passage_search import search_windows
+            expected_windows=search_windows(duration)
+        else:
+            count=result['engine'].get('analysis_samples',(duration*16000+999999)//1000000)
+            if type(count) is not int or abs(count*1000000-duration*16000)>1000000:
+                raise AlignmentError('Analysis sample count differs from source duration')
+            expected_windows=windows(count)
         if len(expected_windows)!=len(result['windows']) or any(any(row.get(k)!=v for k,v in expected.items()) for row,expected in zip(result['windows'],expected_windows)):
             raise AlignmentError('Bounded-window source geometry changed')
         template=text_targets(src)[0]
