@@ -26,6 +26,14 @@ Distinguish supplied timestamps from estimated alignment. Record source, granula
 
 Do not extract protected Apple Music data, bypass DRM, scrape restricted services, redistribute copyrighted lyrics, or include commercial recordings in public fixtures. Users must supply media they are entitled to process; provider access does not itself establish export rights.
 
+### Acquisition and Preparation Boundary
+
+The [Lyrics acquisition feasibility study](lyrics-acquisition-feasibility.md) establishes an offline-first direction: local intake, provenance, compatibility validation, and reviewed timing correction precede optional provider integration. Network access must be explicitly requested during preparation and must never enter deterministic frame evaluation. Rendering prepared local inputs must remain possible without network access.
+
+Record source identity, exact recording correspondence, retrieval or intake provenance, timing granularity, supplied versus estimated boundaries, conversion losses, and review decisions. Preserve permission evidence separately for retrieval, retention/cache, transformation, alignment, video embedding, publication, commercial use, and redistribution. Unknown permission is not authorization; user confirmation is an assertion, not verification, and cannot override an explicit provider prohibition. Source and model software licenses do not license lyric content.
+
+Matching a lyric record and aligning it to the supplied recording are separate validation steps. Ambiguous editions, unexplained duration differences, missing ends, overlapping vocals, unsupported Unicode/shaped support, and resource-limit violations require explicit diagnostics or review rather than silent repair. Preserve original files and correction history where retention is permitted. Provider credentials and restricted caches must remain outside shared projects and diagnostics. No provider interface, preparation schema, or automatic alignment capability is established by these requirements.
+
 ## Presentation and Delivery
 
 Plan configurable visibility for artwork, metadata, progress information, transport, volume, lower controls, optional lyric controls, and explicitly qualified system-chrome approximations. Preserve application content and system-owned chrome as distinct concepts.
