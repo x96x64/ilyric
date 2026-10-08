@@ -24,15 +24,19 @@ import RenderMac
                 print(String(data:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys]),encoding:.utf8)!)
                 return
             }
-            guard args.count>=3 else { throw SliceError.invalid("Usage: LyricsScreenProbe timeline | native[-inactive]|still[-inactive] numerator denominator output.png | video[-inactive] output.mp4") }
+            guard args.count>=3 else { throw SliceError.invalid("Usage: LyricsScreenProbe timeline | native[-inactive]|still[-inactive] numerator denominator output.png | video[-inactive][-progression] output.mp4") }
             let output=URL(fileURLWithPath:args.last!).standardizedFileURL
             let root=URL(fileURLWithPath:FileManager.default.currentDirectoryPath).appendingPathComponent("artifacts").resolvingSymlinksInPath()
             let parent=output.deletingLastPathComponent().resolvingSymlinksInPath()
             guard parent.path==root.path || parent.path.hasPrefix(root.path+"/"),
                   FileManager.default.fileExists(atPath:parent.path), !FileManager.default.fileExists(atPath:output.path) else { throw SliceError.invalid("Use a new output in an existing artifacts directory") }
-            let calibrated=args[1].hasSuffix("-inactive")
-            let command=args[1].replacingOccurrences(of:"-inactive",with:"")
-            let renderer=try ScreenRenderer(.synthetic(),calibratedInactive:calibrated)
+            guard ["native","still","video"].flatMap({ base in ["", "-inactive", "-progression", "-inactive-progression"].map { base+$0 } }).contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
+            let calibrated=args[1].contains("-inactive")
+            let progression=args[1].contains("-progression")
+            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"")
+            let scene=try progression ? LyricsScreen(composition:.progressionDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(8),volume:0.62,
+                events:[.init(Time(0),order:0,controls:.init())]) : .synthetic()
+            let renderer=try ScreenRenderer(scene,calibratedInactive:calibrated)
             if ["still","native"].contains(command),args.count==5,let n=Int64(args[2]),let d=Int64(args[3]) {
                 let time=try SliceTime(n,d).validated(),image=try (command=="native" ? renderer.native(renderer.screen.evaluate(time)):renderer.frame(time))
                 guard let writer=CGImageDestinationCreateWithURL(output as CFURL,UTType.png.identifier as CFString,1,nil) else { throw SliceError.invalid("PNG output") }
@@ -45,7 +49,7 @@ import RenderMac
                     "components":try JSONSerialization.jsonObject(with:JSONEncoder().encode(renderer.screen.evaluate(time).components))]
                 print(String(data:try JSONSerialization.data(withJSONObject:record,options:[.sortedKeys]),encoding:.utf8)!)
             } else if command=="video",args.count==3 {
-                let result=try await Exporter.video(width:1080,height:1920,to:output,frames:360,
+                let result=try await Exporter.video(width:1080,height:1920,to:output,frames:progression ? 480 : 360,
                     draw:{ try renderer.draw($0,into:$1) },audioSample:{ renderer.screen.composition.audioSample($0) })
                 let encoder=JSONEncoder();encoder.outputFormatting=[.prettyPrinted,.sortedKeys]
                 print(String(data:try encoder.encode(result),encoding:.utf8)!)

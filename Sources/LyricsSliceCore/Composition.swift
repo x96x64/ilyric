@@ -104,4 +104,14 @@ public struct LyricsComposition: Sendable {
             .init(input:.latin(text:"Keep each shaped line\nsteady as pages move."),position:650,begin:Time(3),end:Time(6))
         ],events:[.init(Time(0),order:0,paragraph:0),.init(Time(1),order:1,paragraph:1),.init(Time(3),order:2,paragraph:2)])
     }
+    /// Separate demonstration: complete both supplied glyph-event lines before departure.
+    /// The original six-second benchmark is preserved unchanged.
+    public static func progressionDemonstration() throws -> LyricsComposition {
+        try LyricsComposition(paragraphs:[
+            .init(input:.latin(text:"A careful draft—\nwith room to revise."),position:0,begin:Time(0),end:Time(1)),
+            .init(input:.synthetic(softened:true),position:325,begin:Time(1),end:Time(6)),
+            .init(input:.latin(text:"Keep each shaped line\nsteady as pages move."),position:650,begin:Time(6),end:Time(8))
+        ],events:[.init(Time(0),order:0,paragraph:0),.init(Time(1),order:1,paragraph:1),.init(Time(6),order:2,paragraph:2)])
+    }
+
 }
