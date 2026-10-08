@@ -1,0 +1,346 @@
+{
+  "version": 1,
+  "gate": "bounded-enhanced-lrc-integration",
+  "implementation_commit": "0904edc663ae0f077bb73724e05df3bb59b75ddd",
+  "native_fidelity": "unvalidated",
+  "reference_environment": {
+    "status": "inherited-reported",
+    "device": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": "Unknown",
+    "new_physical_measurements": false
+  },
+  "dialect": {
+    "status": "documented-subset",
+    "line_tags": "square-bracket paragraph starts",
+    "inline_tags": "angle-bracket absolute boundaries",
+    "terminal_boundary": "required",
+    "grapheme_policy": "reject split boundaries",
+    "glyph_policy": "reject split clusters, right-to-left and color-glyph runs",
+    "multiline_extension": "existing local pipe continuation; not a standard"
+  },
+  "compatibility": {
+    "ordinary_lrc": "unchanged",
+    "project_v1": "unchanged",
+    "project_v2": "explicit format and highlighting mode",
+    "production_renderer": "unchanged",
+    "audio_decoder_and_writer": "unchanged"
+  },
+  "tests": {
+    "swift": 53,
+    "python": 70,
+    "raw_raster": "repeated, reordered, fresh-instance equality in qualified environment",
+    "disabled_mode": "byte-identical to ordinary static presentation for supported input"
+  },
+  "media": [
+    {
+      "mode": "enabled",
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    },
+    {
+      "mode": "disabled",
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  ],
+  "direct_command_media": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "decoded_progression": [
+    {
+      "script": "Latin",
+      "observations": [
+        {
+          "frame": 126,
+          "numerator": 126,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11573,
+              "mean_encoded_rgb_proxy": 251.7888764077277,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9773,
+              "mean_encoded_rgb_proxy": 150.52788294279938,
+              "bright_fraction_above_200": 0.0
+            }
+          ]
+        },
+        {
+          "frame": 144,
+          "numerator": 144,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11592,
+              "mean_encoded_rgb_proxy": 251.77274557165552,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9772,
+              "mean_encoded_rgb_proxy": 184.38340837767478,
+              "bright_fraction_above_200": 0.33155955792058944
+            }
+          ]
+        },
+        {
+          "frame": 174,
+          "numerator": 174,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11599,
+              "mean_encoded_rgb_proxy": 251.77023881368711,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9775,
+              "mean_encoded_rgb_proxy": 233.2754646206328,
+              "bright_fraction_above_200": 0.8126854219948849
+            }
+          ]
+        },
+        {
+          "frame": 189,
+          "numerator": 189,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11563,
+              "mean_encoded_rgb_proxy": 251.82438236904943,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 9764,
+              "mean_encoded_rgb_proxy": 251.9240406937068,
+              "bright_fraction_above_200": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "script": "Japanese",
+      "observations": [
+        {
+          "frame": 336,
+          "numerator": 336,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11627,
+              "mean_encoded_rgb_proxy": 251.50419999426472,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13472,
+              "mean_encoded_rgb_proxy": 150.73799980205197,
+              "bright_fraction_above_200": 0.0
+            }
+          ]
+        },
+        {
+          "frame": 369,
+          "numerator": 369,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.51886251576167,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13463,
+              "mean_encoded_rgb_proxy": 186.61514273688368,
+              "bright_fraction_above_200": 0.3518532273638862
+            }
+          ]
+        },
+        {
+          "frame": 396,
+          "numerator": 396,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.5229044834259,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13463,
+              "mean_encoded_rgb_proxy": 223.13379880660395,
+              "bright_fraction_above_200": 0.7216073683428657
+            }
+          ]
+        },
+        {
+          "frame": 417,
+          "numerator": 417,
+          "denominator": 60,
+          "lines": [
+            {
+              "supported_pixels": 11628,
+              "mean_encoded_rgb_proxy": 251.51834651988867,
+              "bright_fraction_above_200": 1.0
+            },
+            {
+              "supported_pixels": 13462,
+              "mean_encoded_rgb_proxy": 251.3754271282078,
+              "bright_fraction_above_200": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "benchmarks": [
+    {
+      "workload": "ordinary_before",
+      "evidence": "measured-synthetic-single-run",
+      "frames": 601,
+      "seconds": 20.16223692893982,
+      "effective_fps": 29.80820045504753,
+      "raster_seconds": 20.00276243686676,
+      "peak_rss_bytes": 437403648
+    },
+    {
+      "workload": "ordinary_after",
+      "evidence": "measured-synthetic-single-run",
+      "frames": 601,
+      "seconds": 19.896640062332153,
+      "effective_fps": 30.20610505679293,
+      "raster_seconds": 19.750478863716125,
+      "peak_rss_bytes": 437452800
+    },
+    {
+      "workload": "enhanced_enabled",
+      "evidence": "measured-synthetic-single-run",
+      "frames": 601,
+      "seconds": 22.796690940856934,
+      "effective_fps": 26.363475363999836,
+      "raster_seconds": 22.64198863506317,
+      "peak_rss_bytes": 427278336
+    },
+    {
+      "workload": "enhanced_disabled",
+      "evidence": "measured-synthetic-single-run",
+      "frames": 601,
+      "seconds": 18.278658032417297,
+      "effective_fps": 32.879875477407765,
+      "raster_seconds": 18.130107402801514,
+      "peak_rss_bytes": 415776768
+    }
+  ],
+  "performance_qualification": "isolated single runs; no speedup or maximum-duration claim",
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4",
+    "sdk": "macOS 27",
+    "ffmpeg": "8.1.2",
+    "public_python": "3.9.6",
+    "numerical_python": "3.12"
+  },
+  "private_nonregression": {
+    "source_ids": [
+      "V01",
+      "V02",
+      "V03",
+      "V09",
+      "V10"
+    ],
+    "hashes": "unchanged",
+    "japanese_archived_renderings": 20,
+    "japanese_status": "byte-identical appearance, coverage and state/layout records",
+    "latin_status": "baseline reproduced",
+    "tracked_private_files": 0
+  },
+  "color_glyph_diagnostic": {
+    "classification": "measured-synthetic-limitation",
+    "changed_alpha_support_pixels": [
+      2238,
+      1876
+    ],
+    "styles": [
+      "Latin base",
+      "Japanese base"
+    ],
+    "disposition": "explicit progressive-support exclusion; ordinary complete-line rendering retained"
+  },
+  "fresh_public_checkout": {
+    "status": "passed",
+    "commit": "0904edc663ae0f077bb73724e05df3bb59b75ddd",
+    "private_corpus_present": false,
+    "check_groups": 27,
+    "private_commands_unavailable": 13,
+    "swift_tests": 53,
+    "python_tests": 70,
+    "ordinary_lrc_and_project_v1_exports": "passed",
+    "enhanced_enabled_disabled_direct_and_decoded_progression": "passed",
+    "enhanced_cli_refusal_checks": 14,
+    "working_tree": "clean apart from ignored generated outputs"
+  }
+}

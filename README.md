@@ -68,7 +68,11 @@ The [local-input report](docs/local-input-integration.md) records a bounded path
 
 ## Experimental Project Configuration
 
-The [configuration report](docs/project-configuration.md) records strict version-1 JSON preparation, supplied artwork/metadata, exact offsets, independent component visibility, and the separate complete-multiline demonstration. The [format contract and commands](docs/experimental-project-format.md) define the bounded experimental interface and original example generator. Ordinary LRC remains line-level; translated lyric display and fine-grained timing import are deferred. Production `ilyric` behavior is unchanged.
+The [configuration report](docs/project-configuration.md) records strict version-1 JSON preparation, supplied artwork/metadata, exact offsets, independent component visibility, and the separate complete-multiline demonstration. The [format contract and commands](docs/experimental-project-format.md) define the bounded experimental interface and original example generator. Ordinary LRC remains line-level; that gate left translated lyric display and fine-grained timing import deferred. Production `ilyric` behavior is unchanged.
+
+## Experimental Enhanced-LRC Timing
+
+The [timing integration report](docs/enhanced-lrc-integration.md) records exact supplied segment boundaries, whole-paragraph shaping, complete multiline progression, and version-2 format selection. The [subset and commands](docs/enhanced-lrc-subset.md) define supported syntax, Unicode/cluster restrictions, and enabled/disabled behavior. Ordinary LRC and version-1 projects remain compatible; color-glyph progression and native fidelity remain unqualified.
 
 ## Deferred Product Requirements
 
