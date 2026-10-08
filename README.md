@@ -119,3 +119,7 @@ The [current resource policy](docs/evaluation-resource-policy.md) charges comple
 ## Personal Full-Song Preparation
 
 The [review-first full-song prototype](docs/review-first-full-song.md) processes complete recordings through bounded English CTC windows. [Experimental commands](docs/full-song-commands.md) preserve unresolved occurrences and require explicit review before TTML export. Current measured coverage is insufficient to complete mandatory automatic synchronization.
+
+## Bounded TIFA Passage Search
+
+The [passage-search report](docs/tifa-passage-search.md) evaluates automatic overlapping candidates and chronological reconciliation against the frozen complete-song CTC results. Explicit skip and ambiguity states preserve reviewability, but TIFA support does not establish lyric correspondence. The separate [experimental commands](docs/tifa-passage-commands.md) preserve the existing renderer and correction workflow. Automatic synchronization remains incomplete.

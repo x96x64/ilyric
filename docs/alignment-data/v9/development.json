@@ -1,0 +1,169 @@
+{
+  "case": "EN-F01",
+  "interpretation": "Post-inference diagnosis only; overlap does not verify lexical identity",
+  "paragraphs": [
+    {
+      "paragraph": 0,
+      "state": "skipped",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 1,
+      "chosen_overlaps_all_lines": null,
+      "chosen_score": null,
+      "margin": null,
+      "candidate_reasons": {
+        "weak_span_similarity": 5,
+        "model_source_coverage": 3
+      }
+    },
+    {
+      "paragraph": 1,
+      "state": "ambiguous",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7647964656352997,
+      "margin": 0.03990165889263153,
+      "candidate_reasons": {
+        "weak_span_similarity": 4,
+        "model_source_coverage": 2
+      }
+    },
+    {
+      "paragraph": 2,
+      "state": "supported",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7487645447254181,
+      "margin": 0.0656050443649292,
+      "candidate_reasons": {
+        "weak_span_similarity": 3
+      }
+    },
+    {
+      "paragraph": 3,
+      "state": "supported",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7854686677455902,
+      "margin": 0.0656050443649292,
+      "candidate_reasons": {
+        "weak_span_similarity": 1
+      }
+    },
+    {
+      "paragraph": 4,
+      "state": "supported",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7501981556415558,
+      "margin": 0.0656050443649292,
+      "candidate_reasons": {
+        "model_source_coverage": 1
+      }
+    },
+    {
+      "paragraph": 5,
+      "state": "skipped",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": null,
+      "chosen_score": null,
+      "margin": null,
+      "candidate_reasons": {
+        "weak_span_similarity": 3,
+        "model_source_coverage": 1
+      }
+    },
+    {
+      "paragraph": 6,
+      "state": "ambiguous",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7859578728675842,
+      "margin": 0.022676482796669006,
+      "candidate_reasons": {
+        "weak_span_similarity": 3
+      }
+    },
+    {
+      "paragraph": 7,
+      "state": "ambiguous",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": false,
+      "chosen_score": 0.7274779975414276,
+      "margin": 0.022676482796669006,
+      "candidate_reasons": {
+        "model_source_coverage": 2,
+        "weak_span_similarity": 3
+      }
+    },
+    {
+      "paragraph": 8,
+      "state": "ambiguous",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 1,
+      "chosen_overlaps_all_lines": true,
+      "chosen_score": 0.796264261007309,
+      "margin": 0.006678521633148193,
+      "candidate_reasons": {
+        "weak_span_similarity": 2
+      }
+    },
+    {
+      "paragraph": 9,
+      "state": "skipped",
+      "complete_overlapping_candidates": 0,
+      "eligible_overlapping_candidates": 0,
+      "chosen_overlaps_all_lines": null,
+      "chosen_score": null,
+      "margin": null,
+      "candidate_reasons": {
+        "weak_span_similarity": 6,
+        "model_source_coverage": 1
+      }
+    },
+    {
+      "paragraph": 10,
+      "state": "supported",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 1,
+      "chosen_overlaps_all_lines": true,
+      "chosen_score": 0.7854630649089813,
+      "margin": 0.060350388288497925,
+      "candidate_reasons": {
+        "model_source_coverage": 3,
+        "weak_span_similarity": 4
+      }
+    },
+    {
+      "paragraph": 11,
+      "state": "supported",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 1,
+      "chosen_overlaps_all_lines": true,
+      "chosen_score": 0.7731232345104218,
+      "margin": 0.17312323451042166,
+      "candidate_reasons": {
+        "weak_span_similarity": 6,
+        "model_source_coverage": 1
+      }
+    },
+    {
+      "paragraph": 12,
+      "state": "supported",
+      "complete_overlapping_candidates": 1,
+      "eligible_overlapping_candidates": 1,
+      "chosen_overlaps_all_lines": true,
+      "chosen_score": 0.7746403515338898,
+      "margin": 0.17464035153388968,
+      "candidate_reasons": {
+        "weak_span_similarity": 10
+      }
+    }
+  ]
+}

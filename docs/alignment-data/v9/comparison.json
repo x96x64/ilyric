@@ -1,0 +1,431 @@
+{
+  "status": "measured",
+  "reference_manifest_sha256": "b2878c7599450165b0c0d50e8be823c45dcee1bb30dea095837d842e503dfd93",
+  "cases": [
+    {
+      "case": "EN-F01",
+      "audio_sha256": "84e344829620711e39f9c189f15671f7ffd184946cf03e269c23c6061c05e1eb",
+      "source_sha256": "2d6dd1a34b8328a9dc474b62b750d642497a32b7dc39247902657c738bd60502",
+      "duration_us": 180061500,
+      "comparison": {
+        "baseline": {
+          "occurrences": 26,
+          "raw_proposals": 26,
+          "estimated": 2,
+          "unresolved": 24,
+          "flags": {
+            "weak_lexical_agreement": 24,
+            "extended_line_support": 1,
+            "repeated_occurrence_requires_review": 18,
+            "weak_acoustic_support": 20
+          },
+          "raw_onset": {
+            "n": 26,
+            "median_absolute_ms": 2184.051,
+            "p95_absolute_ms": 22724.481,
+            "maximum_absolute_ms": 23980.678,
+            "over_500_ms": 20
+          },
+          "raw_offset": {
+            "n": 26,
+            "median_absolute_ms": 1570.0720000000001,
+            "p95_absolute_ms": 19646.46525,
+            "maximum_absolute_ms": 23749.822,
+            "over_500_ms": 19
+          },
+          "supported_onset": {
+            "n": 2,
+            "median_absolute_ms": 22.932000000000002,
+            "p95_absolute_ms": 27.323999999999998,
+            "maximum_absolute_ms": 27.812,
+            "over_500_ms": 0
+          },
+          "supported_offset": {
+            "n": 2,
+            "median_absolute_ms": 256.4855,
+            "p95_absolute_ms": 336.3852499999999,
+            "maximum_absolute_ms": 345.263,
+            "over_500_ms": 0
+          },
+          "proposals_without_reference_overlap": 8,
+          "wrong_repeated_reference_overlap": 0,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "revised": {
+          "occurrences": 26,
+          "raw_proposals": 20,
+          "estimated": 12,
+          "unresolved": 14,
+          "flags": {
+            "correspondence_skipped": 6,
+            "correspondence_ambiguous": 8,
+            "candidate_requires_review": 12
+          },
+          "raw_onset": {
+            "n": 20,
+            "median_absolute_ms": 19932.2445,
+            "p95_absolute_ms": 27011.961100000004,
+            "maximum_absolute_ms": 28876.11,
+            "over_500_ms": 13
+          },
+          "raw_offset": {
+            "n": 20,
+            "median_absolute_ms": 19274.796499999997,
+            "p95_absolute_ms": 26535.1799,
+            "maximum_absolute_ms": 27104.513,
+            "over_500_ms": 15
+          },
+          "supported_onset": {
+            "n": 12,
+            "median_absolute_ms": 9995.7555,
+            "p95_absolute_ms": 26427.88285,
+            "maximum_absolute_ms": 26913.848,
+            "over_500_ms": 6
+          },
+          "supported_offset": {
+            "n": 12,
+            "median_absolute_ms": 8795.7405,
+            "p95_absolute_ms": 24526.11715,
+            "maximum_absolute_ms": 25313.127,
+            "over_500_ms": 7
+          },
+          "proposals_without_reference_overlap": 12,
+          "wrong_repeated_reference_overlap": 0,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "qualified_reference_nonoverlap": {
+          "baseline": 0,
+          "revised": 6,
+          "newly_introduced": 6
+        },
+        "provisional_support_gained": 10,
+        "provisional_support_lost": 0,
+        "passage_states": {
+          "skipped": 3,
+          "ambiguous": 4,
+          "supported": 6
+        },
+        "paragraphs_with_any_complete_overlapping_candidate": 6,
+        "paragraphs": 13,
+        "caveat": "Reference overlap is a coarse conflict test, not lexical verification; candidate availability uses annotations only after inference"
+      },
+      "measurements": {
+        "total_seconds": 256.93673141700856,
+        "preprocessing_seconds": 0.17812120899907313,
+        "initialization_seconds": 0.39011783299793024,
+        "g2p_seconds": 0.00728558300761506,
+        "inference_seconds": 242.73810870900343,
+        "reconciliation_seconds": 0.0032605420128675178,
+        "candidate_evaluations": 156,
+        "unique_passages": 13,
+        "peak_rss_bytes": 1272397824
+      },
+      "provenance": {
+        "model": "TIFA-1.0-ST",
+        "revision": "614a277d2580efe5e4b84faf4c34753dbc5a062c",
+        "weights_sha256": "8d9bf896da1827f36bf135f80c7ab1fc4f3c1d48f328818b8402c9527c0f014b",
+        "config_sha256": "b4bdfd5c73ca3a01ff8675ca353c54d4c14eefa75a188eac9a22ab94e147f8ac",
+        "source_fingerprint": "e05742f6c2bf250537bb6582461467c7b39b2d13ef705d9505767c55fe1e9bd8",
+        "model_grid_us": 10000,
+        "context_policy": "one preceding and one following supplied paragraph; central timing only",
+        "source_samples_48000": 8642952,
+        "dependencies": {
+          "torch": "2.8.0",
+          "numpy": "2.5.3",
+          "lightning": "2.5.5",
+          "g2pflow": "0.3.1",
+          "onnxruntime": "1.30.0"
+        },
+        "preprocessing": "FFmpeg mono 48-kHz PCM16; pinned TIFA spectrogram, pronunciation scoring and skip_penalty 0.5; fixed 30 s windows/15 s stride"
+      },
+      "qualified_wrong_identical_text_reference_overlap": 0
+    },
+    {
+      "case": "EN-F02",
+      "audio_sha256": "24090af9ca4886bb0551f7c1896c249af3311cce1c585092054ed5c428834d44",
+      "source_sha256": "f6846f8bcafcf5cd4ceca49fd33a32ff684cf95df30865b145daeadfe057887f",
+      "duration_us": 216555250,
+      "comparison": {
+        "baseline": {
+          "occurrences": 72,
+          "raw_proposals": 72,
+          "estimated": 22,
+          "unresolved": 50,
+          "flags": {
+            "weak_lexical_agreement": 50,
+            "repeated_occurrence_requires_review": 46,
+            "weak_acoustic_support": 21
+          },
+          "raw_onset": {
+            "n": 72,
+            "median_absolute_ms": 79.71799999999999,
+            "p95_absolute_ms": 1001.9853500000003,
+            "maximum_absolute_ms": 2882.52,
+            "over_500_ms": 8
+          },
+          "raw_offset": {
+            "n": 72,
+            "median_absolute_ms": 264.21799999999996,
+            "p95_absolute_ms": 2352.4088500000007,
+            "maximum_absolute_ms": 7275.516,
+            "over_500_ms": 20
+          },
+          "supported_onset": {
+            "n": 22,
+            "median_absolute_ms": 81.79849999999999,
+            "p95_absolute_ms": 162.21654999999998,
+            "maximum_absolute_ms": 177.126,
+            "over_500_ms": 0
+          },
+          "supported_offset": {
+            "n": 22,
+            "median_absolute_ms": 249.024,
+            "p95_absolute_ms": 636.69755,
+            "maximum_absolute_ms": 1592.654,
+            "over_500_ms": 5
+          },
+          "proposals_without_reference_overlap": 2,
+          "wrong_repeated_reference_overlap": 0,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "revised": {
+          "occurrences": 72,
+          "raw_proposals": 22,
+          "estimated": 6,
+          "unresolved": 66,
+          "flags": {
+            "correspondence_unresolved": 10,
+            "candidate_requires_review": 6,
+            "correspondence_skipped": 40,
+            "correspondence_ambiguous": 16
+          },
+          "raw_onset": {
+            "n": 22,
+            "median_absolute_ms": 5159.015,
+            "p95_absolute_ms": 31957.09165,
+            "maximum_absolute_ms": 32882.828,
+            "over_500_ms": 15
+          },
+          "raw_offset": {
+            "n": 22,
+            "median_absolute_ms": 2494.1655,
+            "p95_absolute_ms": 28898.07005,
+            "maximum_absolute_ms": 30520.319,
+            "over_500_ms": 13
+          },
+          "supported_onset": {
+            "n": 6,
+            "median_absolute_ms": 2074.84,
+            "p95_absolute_ms": 32629.78925,
+            "maximum_absolute_ms": 32882.828,
+            "over_500_ms": 4
+          },
+          "supported_offset": {
+            "n": 6,
+            "median_absolute_ms": 824.9649999999999,
+            "p95_absolute_ms": 28739.47325,
+            "maximum_absolute_ms": 30520.319,
+            "over_500_ms": 3
+          },
+          "proposals_without_reference_overlap": 12,
+          "wrong_repeated_reference_overlap": 1,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "qualified_reference_nonoverlap": {
+          "baseline": 0,
+          "revised": 2,
+          "newly_introduced": 2
+        },
+        "provisional_support_gained": 2,
+        "provisional_support_lost": 18,
+        "passage_states": {
+          "unresolved": 5,
+          "supported": 3,
+          "skipped": 20,
+          "ambiguous": 8
+        },
+        "paragraphs_with_any_complete_overlapping_candidate": 18,
+        "paragraphs": 36,
+        "caveat": "Reference overlap is a coarse conflict test, not lexical verification; candidate availability uses annotations only after inference"
+      },
+      "measurements": {
+        "total_seconds": 1465.8266326669982,
+        "preprocessing_seconds": 0.2433091249986319,
+        "initialization_seconds": 0.40064641600474715,
+        "g2p_seconds": 0.015401041993754916,
+        "inference_seconds": 1451.91636725,
+        "reconciliation_seconds": 0.012466832995414734,
+        "candidate_evaluations": 504,
+        "unique_passages": 36,
+        "peak_rss_bytes": 1304150016
+      },
+      "provenance": {
+        "model": "TIFA-1.0-ST",
+        "revision": "614a277d2580efe5e4b84faf4c34753dbc5a062c",
+        "weights_sha256": "8d9bf896da1827f36bf135f80c7ab1fc4f3c1d48f328818b8402c9527c0f014b",
+        "config_sha256": "b4bdfd5c73ca3a01ff8675ca353c54d4c14eefa75a188eac9a22ab94e147f8ac",
+        "source_fingerprint": "e05742f6c2bf250537bb6582461467c7b39b2d13ef705d9505767c55fe1e9bd8",
+        "model_grid_us": 10000,
+        "context_policy": "one preceding and one following supplied paragraph; central timing only",
+        "source_samples_48000": 10394652,
+        "dependencies": {
+          "torch": "2.8.0",
+          "numpy": "2.5.3",
+          "lightning": "2.5.5",
+          "g2pflow": "0.3.1",
+          "onnxruntime": "1.30.0"
+        },
+        "preprocessing": "FFmpeg mono 48-kHz PCM16; pinned TIFA spectrogram, pronunciation scoring and skip_penalty 0.5; fixed 30 s windows/15 s stride"
+      },
+      "qualified_wrong_identical_text_reference_overlap": 0
+    },
+    {
+      "case": "EN-F03",
+      "audio_sha256": "beefa48e4520bb290e739faa7c0a91e4e7296fb239577966b2129934ccf86b31",
+      "source_sha256": "d67771088178a77d231d34850196d91adbfefc0099fcf22d8498353c8cf756dc",
+      "duration_us": 240561646,
+      "comparison": {
+        "baseline": {
+          "occurrences": 42,
+          "raw_proposals": 42,
+          "estimated": 29,
+          "unresolved": 13,
+          "flags": {
+            "weak_lexical_agreement": 13,
+            "repeated_occurrence_requires_review": 18
+          },
+          "raw_onset": {
+            "n": 42,
+            "median_absolute_ms": 70.57650000000001,
+            "p95_absolute_ms": 769.5934499999996,
+            "maximum_absolute_ms": 17056.722,
+            "over_500_ms": 4
+          },
+          "raw_offset": {
+            "n": 42,
+            "median_absolute_ms": 240.7485,
+            "p95_absolute_ms": 438.80575,
+            "maximum_absolute_ms": 11362.449,
+            "over_500_ms": 1
+          },
+          "supported_onset": {
+            "n": 29,
+            "median_absolute_ms": 74.89,
+            "p95_absolute_ms": 297.61299999999966,
+            "maximum_absolute_ms": 665.634,
+            "over_500_ms": 1
+          },
+          "supported_offset": {
+            "n": 29,
+            "median_absolute_ms": 249.525,
+            "p95_absolute_ms": 430.89379999999994,
+            "maximum_absolute_ms": 483.671,
+            "over_500_ms": 0
+          },
+          "proposals_without_reference_overlap": 1,
+          "wrong_repeated_reference_overlap": 0,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "revised": {
+          "occurrences": 42,
+          "raw_proposals": 28,
+          "estimated": 22,
+          "unresolved": 20,
+          "flags": {
+            "correspondence_unresolved": 2,
+            "candidate_requires_review": 22,
+            "correspondence_skipped": 12,
+            "correspondence_ambiguous": 6
+          },
+          "raw_onset": {
+            "n": 28,
+            "median_absolute_ms": 4337.7535,
+            "p95_absolute_ms": 19236.3859,
+            "maximum_absolute_ms": 23087.109,
+            "over_500_ms": 19
+          },
+          "raw_offset": {
+            "n": 28,
+            "median_absolute_ms": 4726.6725,
+            "p95_absolute_ms": 19282.02235,
+            "maximum_absolute_ms": 20734.902,
+            "over_500_ms": 19
+          },
+          "supported_onset": {
+            "n": 22,
+            "median_absolute_ms": 5133.15,
+            "p95_absolute_ms": 19315.5757,
+            "maximum_absolute_ms": 23087.109,
+            "over_500_ms": 16
+          },
+          "supported_offset": {
+            "n": 22,
+            "median_absolute_ms": 6630.523,
+            "p95_absolute_ms": 19347.11005,
+            "maximum_absolute_ms": 20734.902,
+            "over_500_ms": 16
+          },
+          "proposals_without_reference_overlap": 15,
+          "wrong_repeated_reference_overlap": 6,
+          "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+        },
+        "qualified_reference_nonoverlap": {
+          "baseline": 0,
+          "revised": 14,
+          "newly_introduced": 14
+        },
+        "provisional_support_gained": 4,
+        "provisional_support_lost": 11,
+        "passage_states": {
+          "unresolved": 1,
+          "supported": 11,
+          "skipped": 6,
+          "ambiguous": 3
+        },
+        "paragraphs_with_any_complete_overlapping_candidate": 9,
+        "paragraphs": 21,
+        "caveat": "Reference overlap is a coarse conflict test, not lexical verification; candidate availability uses annotations only after inference"
+      },
+      "measurements": {
+        "total_seconds": 807.7711639589979,
+        "preprocessing_seconds": 0.26056854099442717,
+        "initialization_seconds": 0.3858364580082707,
+        "g2p_seconds": 0.10293295900919475,
+        "inference_seconds": 793.1317381249974,
+        "reconciliation_seconds": 0.012809833002393134,
+        "candidate_evaluations": 336,
+        "unique_passages": 21,
+        "peak_rss_bytes": 1332117504
+      },
+      "provenance": {
+        "model": "TIFA-1.0-ST",
+        "revision": "614a277d2580efe5e4b84faf4c34753dbc5a062c",
+        "weights_sha256": "8d9bf896da1827f36bf135f80c7ab1fc4f3c1d48f328818b8402c9527c0f014b",
+        "config_sha256": "b4bdfd5c73ca3a01ff8675ca353c54d4c14eefa75a188eac9a22ab94e147f8ac",
+        "source_fingerprint": "e05742f6c2bf250537bb6582461467c7b39b2d13ef705d9505767c55fe1e9bd8",
+        "model_grid_us": 10000,
+        "context_policy": "one preceding and one following supplied paragraph; central timing only",
+        "source_samples_48000": 11546959,
+        "dependencies": {
+          "torch": "2.8.0",
+          "numpy": "2.5.3",
+          "lightning": "2.5.5",
+          "g2pflow": "0.3.1",
+          "onnxruntime": "1.30.0"
+        },
+        "preprocessing": "FFmpeg mono 48-kHz PCM16; pinned TIFA spectrogram, pronunciation scoring and skip_penalty 0.5; fixed 30 s windows/15 s stride"
+      },
+      "qualified_wrong_identical_text_reference_overlap": 6
+    }
+  ],
+  "aggregate": {
+    "occurrences": 140,
+    "raw_proposals": 70,
+    "estimated": 40,
+    "unresolved": 100,
+    "proposals_without_reference_overlap": 39,
+    "wrong_repeated_reference_overlap": 7,
+    "qualified_reference_nonoverlap": 22,
+    "qualified_wrong_identical_text_reference_overlap": 6
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "version": 9,
+  "policy": {
+    "window_us": 30000000,
+    "stride_us": 15000000,
+    "max_evaluations": 2000,
+    "agreement_min": 0.65,
+    "similarity_min": 0.45,
+    "utility_floor": 0.6,
+    "ambiguity_margin": 0.05,
+    "duplicate_boundary_us": 500000,
+    "maximum_passage_us": 25000000
+  },
+  "development_case": "EN-F01",
+  "unchanged_evaluation_cases": [
+    "EN-F02",
+    "EN-F03"
+  ],
+  "context_policy": "one preceding and one following supplied paragraph; central timing only",
+  "source": "Existing full recordings and complete untimed text; manual word-derived line annotations used only for post-inference scoring",
+  "automatic_acceptance": false,
+  "new_download_bytes": 0,
+  "new_installations": 0,
+  "frozen_baseline": {
+    "commit": "39a9568da10ee064a3feeecd532d59491f1a8bf2",
+    "reproduced_cases": 3,
+    "semantic_equality_excluding_measurements": true,
+    "proposals": 140,
+    "qualified": 53,
+    "unresolved": 87,
+    "raw_reference_nonoverlap": 11
+  },
+  "classification": "Bounded personal engineering comparison; no unseen-singer or independent vocal-activity accuracy claim"
+}

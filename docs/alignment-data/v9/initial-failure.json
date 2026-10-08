@@ -1,0 +1,116 @@
+{
+  "version": 9,
+  "case": "EN-F01",
+  "variant": "target paragraph only; failed development experiment",
+  "comparison": {
+    "baseline": {
+      "occurrences": 26,
+      "raw_proposals": 26,
+      "estimated": 2,
+      "unresolved": 24,
+      "flags": {
+        "weak_lexical_agreement": 24,
+        "extended_line_support": 1,
+        "repeated_occurrence_requires_review": 18,
+        "weak_acoustic_support": 20
+      },
+      "raw_onset": {
+        "n": 26,
+        "median_absolute_ms": 2184.051,
+        "p95_absolute_ms": 22724.481,
+        "maximum_absolute_ms": 23980.678,
+        "over_500_ms": 20
+      },
+      "raw_offset": {
+        "n": 26,
+        "median_absolute_ms": 1570.0720000000001,
+        "p95_absolute_ms": 19646.46525,
+        "maximum_absolute_ms": 23749.822,
+        "over_500_ms": 19
+      },
+      "supported_onset": {
+        "n": 2,
+        "median_absolute_ms": 22.932000000000002,
+        "p95_absolute_ms": 27.323999999999998,
+        "maximum_absolute_ms": 27.812,
+        "over_500_ms": 0
+      },
+      "supported_offset": {
+        "n": 2,
+        "median_absolute_ms": 256.4855,
+        "p95_absolute_ms": 336.3852499999999,
+        "maximum_absolute_ms": 345.263,
+        "over_500_ms": 0
+      },
+      "proposals_without_reference_overlap": 8,
+      "wrong_repeated_reference_overlap": 0,
+      "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+    },
+    "revised": {
+      "occurrences": 26,
+      "raw_proposals": 2,
+      "estimated": 2,
+      "unresolved": 24,
+      "flags": {
+        "correspondence_unresolved": 24,
+        "candidate_requires_review": 2
+      },
+      "raw_onset": {
+        "n": 2,
+        "median_absolute_ms": 90947.7555,
+        "p95_absolute_ms": 92113.69875000001,
+        "maximum_absolute_ms": 92243.248,
+        "over_500_ms": 2
+      },
+      "raw_offset": {
+        "n": 2,
+        "median_absolute_ms": 92469.9525,
+        "p95_absolute_ms": 93875.60625,
+        "maximum_absolute_ms": 94031.79,
+        "over_500_ms": 2
+      },
+      "supported_onset": {
+        "n": 2,
+        "median_absolute_ms": 90947.7555,
+        "p95_absolute_ms": 92113.69875000001,
+        "maximum_absolute_ms": 92243.248,
+        "over_500_ms": 2
+      },
+      "supported_offset": {
+        "n": 2,
+        "median_absolute_ms": 92469.9525,
+        "p95_absolute_ms": 93875.60625,
+        "maximum_absolute_ms": 94031.79,
+        "over_500_ms": 2
+      },
+      "proposals_without_reference_overlap": 2,
+      "wrong_repeated_reference_overlap": 0,
+      "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+    },
+    "qualified_reference_nonoverlap": {
+      "baseline": 0,
+      "revised": 2,
+      "newly_introduced": 2
+    },
+    "provisional_support_gained": 2,
+    "provisional_support_lost": 2,
+    "passage_states": {
+      "unresolved": 12,
+      "supported": 1
+    },
+    "paragraphs_with_any_complete_overlapping_candidate": 5,
+    "paragraphs": 13,
+    "caveat": "Reference overlap is a coarse conflict test, not lexical verification; candidate availability uses annotations only after inference"
+  },
+  "measurements": {
+    "total_seconds": 156.87198258300486,
+    "preprocessing_seconds": 0.17892033301177435,
+    "initialization_seconds": 0.38929070900485385,
+    "g2p_seconds": 0.001790250011254102,
+    "inference_seconds": 143.23053595800593,
+    "reconciliation_seconds": 0.001766708999639377,
+    "candidate_evaluations": 96,
+    "unique_passages": 8,
+    "peak_rss_bytes": 1255309312
+  }
+}
