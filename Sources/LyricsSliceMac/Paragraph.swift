@@ -11,7 +11,8 @@ public struct SliceLine: Codable, Equatable {
 }
 private struct Layer {
     let image: CGImage
-    let line, event: Int
+    let line: Int
+    let event: Int?
     let left, right: Double
 }
 /// Shape once, cache source-range masks, and render immutable presentation state.
@@ -42,7 +43,7 @@ public final class SliceParagraph {
             let explicit = substring.hasSuffix("\n")
             let lineIndex = details.count
             details.append(SliceLine(start:start,length:length,width:width,baseline:p.size+Double(lineIndex)*p.lineAdvance,
-                breakKind:explicit ? "observed-explicit" : "end"))
+                breakKind:explicit ? "observed-explicit" : (start+length == attributed.length ? "end" : "automatic")))
             let runs = CTLineGetGlyphRuns(line) as! [CTRun]
             var boundaries = Set([start,start+length])
             for run in runs {
@@ -51,6 +52,13 @@ public final class SliceParagraph {
                 var indices = [CFIndex](repeating:0,count:CTRunGetGlyphCount(run))
                 CTRunGetStringIndices(run,CFRange(location:0,length:0),&indices)
                 boundaries.formUnion(indices)
+            }
+            if input.paragraphStyle == .latinStatic {
+                let context = Self.context(width:Int(ceil(p.width)),height:height)
+                context.textPosition = CGPoint(x:0,y:Double(height)-p.size)
+                // Draw the complete typeset line; no word-wise or timed-unit shaping.
+                CTLineDraw(line,context)
+                storage.append(Layer(image:context.makeImage()!,line:lineIndex,event:nil,left:0,right:width))
             }
             for (eventIndex,event) in input.events.enumerated() where event.start < start+length && event.start+event.length > start {
                 guard event.start >= start, event.start+event.length <= start+length,
@@ -74,9 +82,13 @@ public final class SliceParagraph {
             }
             start += length
         }
-        guard details.count == 2, details[0].breakKind == "observed-explicit" else { throw SliceError.invalid("Observed two-line structure did not fit") }
+        if input.paragraphStyle == .latinStatic {
+            guard (1...4).contains(details.count) else { throw SliceError.invalid("Experimental Latin paragraph exceeds four lines") }
+        } else {
+            guard details.count == 2, details[0].breakKind == "observed-explicit" else { throw SliceError.invalid("Observed two-line structure did not fit") }
+        }
         // Require complete source coverage except the explicit separator.
-        for i in 0..<attributed.length where (input.text as NSString).substring(with:NSRange(location:i,length:1)) != "\n" {
+        for i in 0..<attributed.length where input.paragraphStyle == nil && (input.text as NSString).substring(with:NSRange(location:i,length:1)) != "\n" {
             guard input.events.contains(where: { $0.start <= i && i < $0.start+$0.length }) else { throw SliceError.invalid("Uncovered source range") }
         }
         lines = details;fonts = names.sorted();layers = storage
@@ -93,11 +105,16 @@ public final class SliceParagraph {
         let p = input.parameters;let context = Self.context(width:input.canvasWidth,height:2556)
         context.interpolationQuality = .none
         for layer in layers {
-            let span = state.spans[layer.event]
+            let span = layer.event.map { state.spans[$0] }
             // Integer mask translation follows the measured diagnostic raster convention.
             // Typography baselines remain explicit and are not altered by appearance.
-            let top = (p.originY+Double(layer.line)*p.lineAdvance+span.displacement).rounded()
+            let top = (p.originY+Double(layer.line)*p.lineAdvance+(span?.displacement ?? 0)).rounded()
             let rect = CGRect(x:p.originX,y:2556-top-Double(maskHeight),width:Double(layer.image.width),height:Double(maskHeight))
+            if layer.event == nil {
+                context.saveGState();context.setAlpha(coverage ? 1 : p.dimOpacity)
+                context.draw(layer.image,in:rect);context.restoreGState();continue
+            }
+            guard let span else { throw SliceError.invalid("Missing presentation range") }
             if !coverage, let appearance = input.appearance {
                 // Multiply cached shaped support once; geometry and cluster mapping are unchanged.
                 var bytes = [UInt8](layer.image.dataProvider!.data! as Data)

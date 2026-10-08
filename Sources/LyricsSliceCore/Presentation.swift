@@ -43,22 +43,32 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
         return v*v*(3-2*v)
     }
 }
+/// Only static Latin layout is enabled; Japanese appearance parameters do not transfer.
+public enum ParagraphStyle: String, Codable, Sendable { case latinStatic }
 public struct SliceInput: Codable, Sendable {
     public let text: String
+    public let paragraphStyle: ParagraphStyle?
     public let canvasWidth: Int // 1179 screenshot or 1180 recording; no rescaling.
     public let breakEvidence: String
     public let parameters: SliceParameters
     public let appearance: SoftAppearance?
     public let events: [AppearanceEvent]
-    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil) {
+    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil) {
         self.text = text; self.canvasWidth = canvasWidth; breakEvidence = "observed-structure-source-semantics-unknown"
-        self.parameters = parameters; self.events = events; self.appearance = appearance
+        self.parameters = parameters; self.events = events; self.appearance = appearance; self.paragraphStyle = paragraphStyle
     }
     public func validate() throws {
         let p = parameters
         try appearance?.validate()
+        let count = text.split(separator:"\n",omittingEmptySubsequences:false).count
+        let structureValid = paragraphStyle == .latinStatic ? (1...4).contains(count) : count == 2
+        if paragraphStyle == .latinStatic {
+            guard events.isEmpty, appearance == nil, p.amplitude == 0 else {
+                throw SliceError.invalid("Latin integration is static; timed appearance and vertical treatment are unvalidated")
+            }
+        }
         guard [1179,1180].contains(canvasWidth), text.utf16.count < 500,
-              text.split(separator: "\n", omittingEmptySubsequences: false).count == 2,
+              structureValid, !text.isEmpty, !text.contains("\n\n"),
               !text.hasPrefix("\n"), !text.hasSuffix("\n"),
               breakEvidence == "observed-structure-source-semantics-unknown",
               [p.size,p.width,p.originX,p.originY,p.lineAdvance,p.amplitude,p.tau,p.dimOpacity].allSatisfy({ $0.isFinite }),
@@ -92,6 +102,13 @@ public struct SliceInput: Codable, Sendable {
                 displacement:p.amplitude*(1+u)*exp(-u),phase:phase)
         }
         return SliceSnapshot(time:time,spans:states)
+    }
+    /// Fitted static reconstruction, conditional on observed line structure.
+    public static func latin(text: String = "A careful draft—\nwith room to revise.") -> SliceInput {
+        var p = SliceParameters()
+        p.size=104.25;p.width=987;p.originX=96;p.originY=687;p.lineAdvance=125.5
+        p.amplitude=0;p.dimOpacity=1
+        return SliceInput(text:text,parameters:p,events:[],paragraphStyle:.latinStatic)
     }
     /// Original synthetic text and timings, independent of commercial references.
     public static func synthetic(canvasWidth: Int = 1179, softened: Bool = false) -> SliceInput {

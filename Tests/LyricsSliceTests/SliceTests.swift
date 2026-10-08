@@ -84,3 +84,42 @@ struct SliceTests {
         #expect(pixels[1] != pixels[3])
     }
 }
+
+struct LatinSliceTests {
+    @Test func structuresAndPunctuation() throws {
+        for text in ["AVATAR office.", "A careful draft—\nwith room to revise.",
+                     "An office proof pairs AV and To, then checks punctuation and spacing."] {
+            let input=SliceInput.latin(text:text),paragraph=try SliceParagraph(input)
+            #expect(paragraph.lines.count >= 1 && paragraph.lines.count <= 4)
+            #expect(paragraph.lines.map(\.length).reduce(0,+) == text.utf16.count)
+            if text.contains("\n") { #expect(paragraph.lines[0].breakKind == "observed-explicit") }
+            else if paragraph.lines.count>1 { #expect(paragraph.lines[0].breakKind == "automatic") }
+            #expect(paragraph.lines.last?.breakKind == "end")
+        }
+    }
+    @Test func staticLatinIsRandomAccess() throws {
+        let input=SliceInput.latin(),a=try SliceParagraph(input),b=try SliceParagraph(input)
+        let reference=try a.raw(Time(0))
+        let times=[Time(7,3),Time(-1),Time(0),Time(11,7)]
+        let states=times.map(input.evaluate)
+        for i in [3,1,0,2,0] {
+            #expect(b.input.evaluate(times[i]) == states[i])
+            #expect(states[i].spans.isEmpty)
+            #expect(try b.raw(times[i]) == reference)
+        }
+        #expect(input.parameters.amplitude == 0)
+        #expect(input.appearance == nil)
+    }
+    @Test func latinCannotInheritJapaneseTiming() throws {
+        let latin=SliceInput.latin(),japanese=SliceInput.synthetic(softened:true)
+        #expect(throws: SliceError.self) {
+            try SliceParagraph(SliceInput(text:latin.text,parameters:latin.parameters,events:japanese.events,paragraphStyle:.latinStatic))
+        }
+        #expect(throws: SliceError.self) {
+            try SliceParagraph(SliceInput(text:latin.text,parameters:latin.parameters,events:[],appearance:SoftAppearance(),paragraphStyle:.latinStatic))
+        }
+        #expect(throws: SliceError.self) {
+            try SliceParagraph(SliceInput(text:latin.text,events:[],paragraphStyle:.latinStatic))
+        }
+    }
+}

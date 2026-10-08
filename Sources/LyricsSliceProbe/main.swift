@@ -28,13 +28,13 @@ struct Output: Encodable {
 }
 do {
     let args=CommandLine.arguments
-    guard args.count==5, let n=Int64(args[2]),let d=Int64(args[3]) else { throw SliceError.invalid("Usage: LyricsSliceProbe synthetic|synthetic-soft|input.json numerator denominator output-directory") }
+    guard args.count==5, let n=Int64(args[2]),let d=Int64(args[3]) else { throw SliceError.invalid("Usage: LyricsSliceProbe synthetic|synthetic-soft|synthetic-latin|input.json numerator denominator output-directory") }
     let time=try SliceTime(n,d).validated(),root=canonical(URL(fileURLWithPath:FileManager.default.currentDirectoryPath))
     let output=canonical(URL(fileURLWithPath:args[4],isDirectory:true))
     let input:SliceInput
-    if ["synthetic","synthetic-soft"].contains(args[1]) {
+    if ["synthetic","synthetic-soft","synthetic-latin"].contains(args[1]) {
         guard output.path.hasPrefix(root.appendingPathComponent("artifacts").path+"/") else { throw SliceError.invalid("Synthetic outputs belong in artifacts") }
-        input = .synthetic(softened:args[1]=="synthetic-soft")
+        input = args[1]=="synthetic-latin" ? .latin() : .synthetic(softened:args[1]=="synthetic-soft")
     } else {
         let source=canonical(URL(fileURLWithPath:args[1]))
         guard ["reference-private","artifacts"].contains(where:{ directory in
