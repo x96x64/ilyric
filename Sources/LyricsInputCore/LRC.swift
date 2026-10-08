@@ -12,9 +12,11 @@ public struct LyricEntry: Equatable, Sendable {
     public let sourceLine: Int
     public let suppliedBreaks: Bool
     public let segments: [TimedSegment]
-    public var timingProvenance: String { segments.isEmpty ? "supplied-line-timestamp-with-explicit-offset" : "supplied-segment-boundaries-with-explicit-offset" }
-    public init(time:Time,text:String,sourceLine:Int,suppliedBreaks:Bool,segments:[TimedSegment]=[]) {
-        self.time=time;self.text=text;self.sourceLine=sourceLine;self.suppliedBreaks=suppliedBreaks;self.segments=segments
+    /// Explicit TTML end; nil preserves legacy next-event/final-hold semantics.
+    public let intervalEnd: Time?
+    public var timingProvenance: String { intervalEnd != nil ? (segments.isEmpty ? "supplied-ttml-paragraph-interval" : "supplied-ttml-paragraph-and-span-intervals") : segments.isEmpty ? "supplied-line-timestamp-with-explicit-offset" : "supplied-segment-boundaries-with-explicit-offset" }
+    public init(time:Time,text:String,sourceLine:Int,suppliedBreaks:Bool,segments:[TimedSegment]=[],intervalEnd:Time?=nil) {
+        self.time=time;self.text=text;self.sourceLine=sourceLine;self.suppliedBreaks=suppliedBreaks;self.segments=segments;self.intervalEnd=intervalEnd
     }
 }
 public struct LocalLyrics: Sendable {
@@ -24,12 +26,13 @@ public struct LocalLyrics: Sendable {
     public func focus(at time: Time) -> Int? {
         var low=0, high=entries.count
         while low<high { let mid=(low+high)/2; if entries[mid].time<=time { low=mid+1 } else { high=mid } }
-        guard low>0,!entries[low-1].text.isEmpty else { return nil }
+        guard low>0,!entries[low-1].text.isEmpty,entries[low-1].intervalEnd.map({time<$0}) ?? true else { return nil }
         return low-1
     }
     public func validate(audioSamples: Int) throws -> OutputSchedule {
         let schedule=try OutputSchedule(audioSamples:audioSamples)
         guard entries.allSatisfy({$0.time<schedule.audioEnd}) else { throw InputError.invalid("A lyric event reaches or exceeds the decoded audio endpoint") }
+        guard entries.allSatisfy({$0.intervalEnd.map { $0<=schedule.audioEnd } ?? true}) else { throw InputError.invalid("Explicit paragraph end exceeds the audio endpoint") }
         try validateSegments(audioEnd:schedule.audioEnd)
         return schedule
     }

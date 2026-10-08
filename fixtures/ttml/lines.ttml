@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttp="http://www.w3.org/ns/ttml#parameter" xml:space="preserve" ttp:timeBase="media">
+  <body><div timeContainer="par">
+    <p begin="0.625s" end="3.25s" xml:id="latin"><span begin="0.101s" end="0.450s">AV </span><span begin="0.450s" dur="0.500s">office, </span><span begin="0.950s" end="1.399s">café.</span><br/><span begin="1.503s" end="2.001s">Paper </span><span begin="2.001s" end="2.501s">skies.</span></p>
+    <p begin="3.25s" end="4.5s"/>
+    <p begin="00:00:04.500" end="7s" xml:lang="ja"><span begin="0.101s" end="0.628s">青い点を</span><span begin="0.628s" end="1.026s">二つ置く</span><br/><span begin="1.326s" dur="0.550s">紙の空に</span><span begin="1.876s" end="2.426s">丸を描く</span></p>
+    <p begin="7s" end="10.003s"><span begin="0.101s" end="2.626s">Careful pages move through clear daylight.</span></p>
+  </div></body>
+</tt>

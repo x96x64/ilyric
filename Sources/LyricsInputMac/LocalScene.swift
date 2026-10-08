@@ -15,7 +15,10 @@ public final class LocalScene {
         self.lyrics=lyrics;self.audio=audio;schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
         for (i,entry) in lyrics.entries.enumerated() {
-            let end=i+1<lyrics.entries.count ? lyrics.entries[i+1].time : schedule.audioEnd
+            let end=entry.intervalEnd ?? (i+1<lyrics.entries.count ? lyrics.entries[i+1].time : schedule.audioEnd)
+            if entry.intervalEnd != nil && (i+1==lyrics.entries.count || end<lyrics.entries[i+1].time) {
+                events.append(.init(end,order:lyrics.entries.count+i+1,paragraph:-1))
+            }
             if entry.text.isEmpty { events.append(.init(entry.time,order:i+1,paragraph:-1));continue }
             let japanese=entry.text.unicodeScalars.contains { (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value) || (0xff66...0xff9d).contains($0.value) }
             let timed=entry.segments.map { AppearanceEvent(start:$0.start,length:$0.length,

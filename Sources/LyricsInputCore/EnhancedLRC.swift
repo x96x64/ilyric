@@ -1,7 +1,7 @@
 import Foundation
 import SpikeCore
 
-public enum LyricsFormat: String, Sendable { case lrc, enhancedLRC = "enhanced-lrc" }
+public enum LyricsFormat: String, Sendable { case lrc, enhancedLRC = "enhanced-lrc", ttml }
 public enum Highlighting: String, Sendable { case enabled, disabled }
 /// Supplied absolute boundaries and original UTF-16 source ranges, not inferred words.
 public struct TimedSegment: Equatable, Sendable {
@@ -115,13 +115,22 @@ public enum EnhancedLRCParser {
 }
 public enum LyricsParser {
     public static func parse(_ data:Data,format:LyricsFormat) throws -> LocalLyrics {
-        try format == .lrc ? LRCParser.parse(data) : EnhancedLRCParser.parse(data)
+        switch format {
+        case .lrc: return try LRCParser.parse(data)
+        case .enhancedLRC: return try EnhancedLRCParser.parse(data)
+        case .ttml: return try TTMLParser.parse(data)
+        }
     }
 }
 public extension LocalLyrics {
     func validateSegments(audioEnd:Time = Time(600)) throws {
         for (i,e) in entries.enumerated() {
-            let end=i+1<entries.count ? min(entries[i+1].time,audioEnd) : audioEnd
+            if let explicit=e.intervalEnd {
+                guard e.time<explicit,explicit<=audioEnd,(i+1==entries.count || explicit<=entries[i+1].time) else {
+                    throw InputError.invalid("Explicit paragraph interval overlaps or exceeds the audio endpoint")
+                }
+            }
+            let end=min(e.intervalEnd ?? audioEnd,i+1<entries.count ? min(entries[i+1].time,audioEnd) : audioEnd)
             guard e.segments.allSatisfy({$0.begin>=e.time && $0.begin<$0.end && $0.end<=end}) else {
                 throw InputError.invalid("Segment outside its paragraph interval or audio endpoint at line \(e.sourceLine)")
             }

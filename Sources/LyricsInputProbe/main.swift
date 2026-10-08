@@ -10,7 +10,7 @@ import SpikeCore
         var exporting=false
         do {
             let args=Array(CommandLine.arguments.dropFirst())
-            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4"
+            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc|ttml --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4"
             if args==["--help"] { print(help);return }
             let projectMode=args.first=="project"
             guard (args.first=="render" && [7,9,11].contains(args.count)) || (projectMode && args.count==5) else { throw InputError.invalid(help) }
@@ -35,8 +35,8 @@ import SpikeCore
                 } else {
                     guard let lrc=options["--lyrics"],let audioPath=options["--audio"] else { throw InputError.invalid(help) }
                     guard let format=LyricsFormat(rawValue:options["--format"] ?? "lrc"),
-                          let mode=Highlighting(rawValue:options["--highlighting"] ?? "enabled") else { throw InputError.invalid("Use --format lrc|enhanced-lrc and --highlighting enabled|disabled") }
-                    guard options["--highlighting"]==nil || format == .enhancedLRC else { throw InputError.invalid("--highlighting requires --format enhanced-lrc") }
+                          let mode=Highlighting(rawValue:options["--highlighting"] ?? "enabled") else { throw InputError.invalid("Use --format lrc|enhanced-lrc|ttml and --highlighting enabled|disabled") }
+                    guard options["--highlighting"]==nil || format != .lrc else { throw InputError.invalid("--highlighting requires --format enhanced-lrc or ttml") }
                     highlighting=mode
                     let lyrics=try LyricsParser.parse(LocalFile.boundedData(URL(fileURLWithPath:lrc),limit:LRCParser.byteLimit,label:"Lyrics"),format:format)
                     let audio=try await LocalAudio.decode(URL(fileURLWithPath:audioPath))
