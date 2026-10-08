@@ -12,7 +12,7 @@ The intended product is a scriptable command-line tool that creates animated Lyr
 | Fidelity | Qualified physical-reference reconstruction candidates | Stable canonical native-layout preset with explicit uncertainty |
 | Input and synchronization | Bounded experimental local LRC/audio workflow and private diagnostics | Reviewed compatibility, broader timing granularity, and correction workflow |
 | Configuration and CLI | Experimental developer invocations | Versioned project configuration and conventional scripting interface |
-| Materials, controls, transitions | Provisional backgrounds, original placeholders, bounded test events | Separately measured and tested presentation options |
+| Materials, controls, and animation | Provisional backgrounds, original placeholders, bounded test events | Separately measured and tested presentation options |
 
 ## Recordings, Lyrics, and Timing
 
@@ -30,11 +30,17 @@ Do not extract protected Apple Music data, bypass DRM, scrape restricted service
 
 Plan configurable visibility for artwork, metadata, progress information, transport, volume, lower controls, optional lyric controls, and explicitly qualified system-chrome approximations. Preserve application content and system-owned chrome as distinct concepts.
 
-Future appearance controls include typography, alignment, opacity, blur, highlighting, gradients, and backgrounds. Motion controls include transition selection, duration, easing, and bounded animation intensity. Optional transitions may connect interface, lyric, artwork, and composition states where technically justified. A documented canonical reference preset must remain available alongside customization.
+Future appearance controls include typography, alignment, opacity, blur, highlighting, gradients, and backgrounds. Motion controls may configure the independently justified lyric-focus and appearance animations, including duration, easing, and bounded intensity. A generalized screen, artwork, or scene-transition library is not an established product requirement. Lyrics Translation denotes translated lyric display, not screen-transition animation. A documented canonical reference preset must remain available alongside customization.
 
 Whole-paragraph shaping and deterministic arbitrary-time evaluation remain invariants. Customization must not silently change text shaping at timing boundaries or introduce frame-history dependence.
 
 Native-layout presentation and edge-to-edge 9:16 adaptation are distinct outputs. Preserve uniform `contain`; develop `adapt` through explicit layout rules. Do not stretch the native reference or describe reflowed adaptation as screenshot reproduction.
+
+## Lyrics Translation
+
+Lyrics Translation is a deferred product capability: display user-supplied translated text alongside or in association with original synchronized lyrics. Define explicit original-to-translation line correspondence, language identification, configurable visibility, and synchronized focus presentation. Typography, wrapping, vertical spacing, active/inactive appearance, and full-screen composition must be validated together before integration.
+
+Translated-text display, automatic translation generation, and external translation retrieval are separate capabilities. Only supplied translated-text display is established as a product goal here; generation and retrieval require independent requirements, provider permissions, and rights review. Translations do not inherit original word or character timestamps. Correspondence and timing semantics must be specified explicitly in a later gate; no translation fields are reserved in the current experimental configuration.
 
 ## Configuration and Command-Line Behavior
 
@@ -52,4 +58,4 @@ Do not extract Music application icons or use SF Symbols as the iLyric logo or t
 
 ## Deferred Milestones
 
-The bounded [local LRC/audio experiment](local-input-integration.md) supplies line-level timing only. External acquisition, broader synchronization, configuration, symbol rendering, generalized customization, and transition libraries remain deferred. Introduce each through explicit requirements, a bounded experiment, public synthetic regression tests, rights review where applicable, and compatibility decisions. Dynamic materials and cross-script inactive appearance remain separate measurement questions. None of these goals is implemented by documenting it.
+The bounded [local LRC/audio experiment](local-input-integration.md) supplies line-level timing only. External acquisition, broader synchronization, configuration stabilization, translated-text display, symbol rendering, and generalized customization remain deferred. Focus-motion and appearance animation remain independently justified capabilities; generalized screen-transition libraries are not required by the Lyrics Translation goal. Introduce each through explicit requirements, a bounded experiment, public synthetic regression tests, rights review where applicable, and compatibility decisions. Dynamic materials and cross-script inactive appearance remain separate measurement questions. None of these goals is implemented by documenting it.
