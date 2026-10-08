@@ -13,7 +13,7 @@ public final class ScreenRenderer {
     private let diagnosticMarkers, calibratedInactive, boundedCache: Bool
     private let title: CTLine
     private let artist: CTLine
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil) throws {
         self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
         self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
         title=Self.line(screen.title,size:51,bold:true); artist=Self.line(screen.artist,size:49,bold:false)
@@ -28,7 +28,14 @@ public final class ScreenRenderer {
         art.setFillColor(CGColor(srgbRed:0.94,green:0.70,blue:0.45,alpha:1)); art.fillEllipse(in:CGRect(x:118,y:111,width:58,height:58))
         art.setStrokeColor(CGColor(srgbRed:0.54,green:0.79,blue:0.81,alpha:0.9));art.setLineWidth(9)
         for y in [38.0,62,86] { art.move(to:CGPoint(x:-10,y:y));art.addCurve(to:CGPoint(x:226,y:y+12),control1:CGPoint(x:62,y:y+70),control2:CGPoint(x:154,y:y-55));art.strokePath() }
-        artwork=art.makeImage()!
+        if let image=suppliedArtwork {
+            // Center-cover only the fixed artwork rectangle; scene geometry is unchanged.
+            let target=Self.context(216,216),scale=max(216/Double(image.width),216/Double(image.height))
+            target.interpolationQuality = .high
+            target.draw(image,in:CGRect(x:(216-Double(image.width)*scale)/2,y:(216-Double(image.height)*scale)/2,
+                width:Double(image.width)*scale,height:Double(image.height)*scale))
+            artwork=target.makeImage()!
+        } else { artwork=art.makeImage()! }
         let bytes=(0..<2556).map { UInt8((LyricsScreen.fade(at:Double($0)+0.5)*255).rounded()) }
         fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!

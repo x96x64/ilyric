@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "inputs": { "audio": "source.wav", "lyrics": "lines.lrc", "artwork": "artwork.png" },
+  "metadata": { "title": "Paper Skies ・ 紙の空", "artist": "Original Fixture" },
+  "timing": { "offsetMilliseconds": 25, "durationPolicy": "audio-pad-frame" },
+  "output": { "width": 1080, "height": 1920, "fps": 60, "videoCodec": "h264", "audioCodec": "aac", "delivery": "contain" },
+  "visibility": { "artwork": true, "metadata": true, "progress": true, "transport": true, "volume": false, "bottom": false, "handle": true, "translation": false, "sing": "hidden" }
+}

@@ -35,6 +35,30 @@ public struct ScreenEvent: Sendable {
     public let controls: ScreenControls
     public init(_ time: Time, order: Int, controls: ScreenControls) { self.time=time; self.order=order; self.controls=controls }
 }
+/// Static component masks intersect authored events; they never remove layout nodes.
+public struct ScreenVisibility: Equatable, Sendable {
+    public let artwork, metadata, progress, transport, volume, bottom, handle, translation, sing: Bool
+    public init(artwork: Bool = true, metadata: Bool = true, progress: Bool = true,
+                transport: Bool = true, volume: Bool = true, bottom: Bool = true,
+                handle: Bool = true, translation: Bool = true, sing: Bool = true) {
+        self.artwork=artwork;self.metadata=metadata;self.progress=progress;self.transport=transport
+        self.volume=volume;self.bottom=bottom;self.handle=handle;self.translation=translation;self.sing=sing
+    }
+    public func permits(_ part: ScreenPart) -> Bool {
+        switch part {
+        case .artwork: return artwork
+        case .title,.artist: return metadata
+        case .progress,.elapsed,.remaining: return progress
+        case .previous,.playback,.next: return transport
+        case .volume,.volumeLow,.volumeHigh: return volume
+        case .bottomLeft,.bottomCenter,.bottomRight: return bottom
+        case .handle: return handle
+        case .translation: return translation
+        case .singCompact,.singExpanded: return sing
+        case .background,.lyrics: return true
+        }
+    }
+}
 public struct ScreenSnapshot: Equatable, Sendable {
     public let lyrics: CompositionSnapshot
     public let components: [ScreenComponent]
@@ -49,11 +73,12 @@ public struct LyricsScreen: Sendable {
     public let duration: Time
     public let volume: Double
     public let events: [ScreenEvent]
+    public let visibility: ScreenVisibility
     // Native boundaries remain unknown. This inset and smooth fade are provisional.
     public static let viewport = ScreenBounds(72,550,1040,950)
     public static let fadeLength = 80.0
     public init(composition: LyricsComposition, title: String, artist: String, duration: Time,
-                volume: Double, events: [ScreenEvent]) throws {
+                volume: Double, events: [ScreenEvent], visibility: ScreenVisibility = .init()) throws {
         guard duration>Time(0), volume.isFinite, (0...1).contains(volume),
               !title.isEmpty, !artist.isEmpty, title.utf16.count<=80, artist.utf16.count<=80,
               !events.isEmpty, Set(events.map(\.order)).count==events.count,
@@ -61,7 +86,7 @@ public struct LyricsScreen: Sendable {
         let sorted=events.sorted { $0.time == $1.time ? $0.order<$1.order : $0.time<$1.time }
         guard sorted[0].time==Time(0) else { throw SliceError.invalid("Initial screen controls required") }
         self.composition=composition; self.title=title; self.artist=artist; self.duration=duration
-        self.volume=volume; self.events=sorted
+        self.volume=volume; self.events=sorted;self.visibility=visibility
     }
     public static func fade(at y: Double) -> Double {
         let v=viewport, q=min(1,max(0,min(y-v.y,v.y+v.height-y)/fadeLength))
@@ -77,7 +102,7 @@ public struct LyricsScreen: Sendable {
         let playing=(composition.clocks.last(where:{$0.output<=time}) ?? composition.clocks[0]).running
         var parts=[ScreenComponent]()
         func add(_ id: ScreenPart,_ b: ScreenBounds,_ z: Int,_ visible: Bool = true,_ evidence: String = "provisional shape at approximate measured position") {
-            parts.append(.init(part:id,bounds:b,z:z,visible:visible,clips:true,evidence:evidence))
+            parts.append(.init(part:id,bounds:b,z:z,visible:visible && visibility.permits(id),clips:true,evidence:evidence))
         }
         add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,"original static palette gradient; provisional material")
         add(.lyrics,Self.viewport,1,true,"provisional clip and fade; inherited fitted typography and motion")
