@@ -1,0 +1,118 @@
+{
+  "composition": {
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "fps": "60/1",
+    "frames": 360,
+    "duration": 6.0,
+    "audioCodec": "aac",
+    "audioDuration": "6.000000",
+    "audioStart": "0.000000",
+    "decodedAudioSamples": 288704,
+    "trimmedAudioSamples": 288000,
+    "primingSamples": 2112,
+    "trailingDecodedPaddingSamples": 704,
+    "color": "bt709",
+    "markerErrorsSeconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "visualMarkerFrames": [
+      0,
+      1,
+      2,
+      60,
+      61,
+      62,
+      75,
+      76,
+      77,
+      180,
+      181,
+      182,
+      240,
+      241,
+      242,
+      300,
+      301,
+      302,
+      315,
+      316,
+      317
+    ],
+    "presentationTimestamps": "all passed"
+  },
+  "spike": {
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "fps": "60/1",
+    "frames": 240,
+    "duration": 4.0,
+    "audioCodec": "aac",
+    "audioDuration": "4.000000",
+    "audioStart": "0.000000",
+    "decodedAudioSamples": 192448,
+    "trimmedAudioSamples": 192000,
+    "primingSamples": 2112,
+    "trailingDecodedPaddingSamples": 448,
+    "color": "bt709",
+    "markerErrorsSeconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "visualMarkerFrames": [
+      0,
+      1,
+      2,
+      60,
+      61,
+      62,
+      75,
+      76,
+      77,
+      180,
+      181,
+      182
+    ],
+    "presentationTimestamps": "all passed"
+  },
+  "export_metrics": {
+    "appendSeconds": 0.009227991104125977,
+    "backpressureSeconds": 10.911713004112244,
+    "effectiveFPS": 25.297623140869245,
+    "finishSeconds": 0.0025659799575805664,
+    "frames": 360,
+    "height": 1920,
+    "rasterSeconds": 14.064988732337952,
+    "seconds": 14.230585932731628,
+    "width": 1080
+  },
+  "codec_checks": [
+    {
+      "frame": 65,
+      "meanAbsoluteError": 1.6671948945473252,
+      "psnrDB": 41.9277012570976,
+      "textMeanAbsoluteError": 2.067584229390681,
+      "textPSNRDB": 40.67552115083505
+    },
+    {
+      "frame": 240,
+      "meanAbsoluteError": 1.6586815200617284,
+      "psnrDB": 42.09703838437612,
+      "textMeanAbsoluteError": 2.0258824996104097,
+      "textPSNRDB": 41.18429088144517
+    }
+  ],
+  "qualification": "Machine-specific export and synthetic codec regression; not native fidelity metrics"
+}

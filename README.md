@@ -45,3 +45,7 @@ The [appearance report](docs/progressive-appearance.md) records a shared softene
 ## Experimental Latin Typography
 
 The [Latin integration report](docs/latin-typography-integration.md) records a shared static configuration conditional on observed line structure, held-out geometry results, and Japanese nonregression. Native source breaks and automatic wrapping remain underidentified. [Developer commands](docs/latin-integration-commands.md) exercise original Latin fixtures without importing Japanese timing behavior.
+
+## Experimental Motion and Composition
+
+The [motion-composition report](docs/motion-composition.md) records a deterministic three-paragraph Latin/Japanese sequence, qualified English motion fits, and audiovisual validation. [Developer commands](docs/motion-composition-commands.md) produce original synthetic stills and a six-second video. Native timing, clipping, inactive treatment, and full-screen fidelity remain unvalidated.

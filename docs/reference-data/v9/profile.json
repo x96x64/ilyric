@@ -1,0 +1,109 @@
+{
+  "profile_version": 9,
+  "scope": "Internal experimental Lyrics motion and composition slice",
+  "previous_profile": "../v8/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "provenance": {
+    "source_ids": [
+      "V01",
+      "V02",
+      "V03"
+    ],
+    "integrity": "Private SHA-256 inventory established in this gate; original PTS and archived trajectories reproduced; source bytes unchanged during analysis",
+    "source_media_public": false
+  },
+  "motion": {
+    "status": "fitted",
+    "model": "critical",
+    "time_constant_seconds": 0.081,
+    "scope": "One repeated English focus transition; composition transfer to Japanese is synthetic",
+    "anchor": "Image-derived first-line edge centroid, not baseline",
+    "phase": "Observed half-displacement crossing; not independent native onset prediction",
+    "native_implementation": "Unknown"
+  },
+  "composition": {
+    "status": "synthetic_except_inherited_typography_and_qualified_motion_shape",
+    "canvas": [
+      1179,
+      2556
+    ],
+    "output": [
+      1080,
+      1920
+    ],
+    "delivery": "contain",
+    "viewport": [
+      72,
+      550,
+      1040,
+      1000
+    ],
+    "focus_baseline": 791.25,
+    "paragraph_positions": [
+      0,
+      325,
+      650
+    ],
+    "interface_events_seconds": [
+      0,
+      1,
+      3
+    ],
+    "inactive_opacity": 0.38,
+    "duration_seconds": 6,
+    "fps": "60/1",
+    "media_clock": "identity in exported fixture; explicit rate-zero/one anchors tested synthetically",
+    "paragraph_break_semantics": "supplied; native source semantics unknown"
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "integration": "retained with qualifications",
+    "native_motion_fidelity": false,
+    "next_gate": "Native-resolution common-origin Latin outline tracking through the existing focus transition"
+  }
+}
