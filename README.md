@@ -105,3 +105,5 @@ The [singing-activity report](docs/singing-vocal-activity.md) reproduces the fro
 ## Checkpoint Permission and Evaluation Readiness
 
 The [veracity readiness assessment](docs/veracity-evaluation-readiness.md) records checkpoint permission, native dependency metadata, cumulative resources, and missing independent activity annotations. The [conditional evaluation procedure](docs/veracity-evaluation-procedure.md) and [unsent permission inquiry](docs/veracity-permission-inquiry.md) define the remaining preparation steps. No model provisioning or inference is performed; automatic synchronization remains incomplete.
+
+The [permission and annotation preparation update](docs/checkpoint-permission-annotation-preparation.md) identifies the verified institutional contact, final unsent inquiry, minimum missing recording, and independent human annotation steps. User action is required before provisioning can be requested.
