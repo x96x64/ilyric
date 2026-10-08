@@ -1,0 +1,40 @@
+{
+  "evidence": "Exact archived decision reproduction and fresh inference on the four TIFA misses plus matched EN02",
+  "archived_comparison": "All fields equal to v2/failure-detection.json",
+  "model_assets_verified": 18,
+  "original_recordings_verified": 9,
+  "archived_audio_text_pairs_verified": 40,
+  "replayed": [
+    {
+      "case": "EN02",
+      "variant": "matched",
+      "unit_and_line_equality": true,
+      "score_equality": true
+    },
+    {
+      "case": "EN02",
+      "variant": "omit_middle",
+      "unit_and_line_equality": true,
+      "score_equality": true
+    },
+    {
+      "case": "EN02",
+      "variant": "duplicate",
+      "unit_and_line_equality": true,
+      "score_equality": true
+    },
+    {
+      "case": "EN02",
+      "variant": "early_end",
+      "unit_and_line_equality": true,
+      "score_equality": true
+    },
+    {
+      "case": "JA03",
+      "variant": "omit_middle",
+      "unit_and_line_equality": true,
+      "score_equality": true
+    }
+  ],
+  "new_control_outputs": 36
+}

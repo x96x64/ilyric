@@ -1,0 +1,254 @@
+{
+  "evidence": "External human word/nonpause-phone activity references, not newly annotated VAD truth; thresholds unchanged",
+  "activity": [
+    {
+      "case": "EN01",
+      "signal": "spectral",
+      "reference_voiced_us": 12786980,
+      "gap_us": 6111082,
+      "false_activity_us": 5942510,
+      "missed_reference_us": 11428,
+      "precision": 0.6825253597300831,
+      "recall": 0.9991062784175779,
+      "gap_activity_fraction": 0.9724153595058944
+    },
+    {
+      "case": "EN01",
+      "signal": "ctc",
+      "reference_voiced_us": 12786980,
+      "gap_us": 6111082,
+      "false_activity_us": 122899,
+      "missed_reference_us": 11509879,
+      "precision": 0.912215,
+      "recall": 0.09987510733574312,
+      "gap_activity_fraction": 0.020110841255280162
+    },
+    {
+      "case": "EN02",
+      "signal": "spectral",
+      "reference_voiced_us": 6309668,
+      "gap_us": 6009686,
+      "false_activity_us": 5991917,
+      "missed_reference_us": 32231,
+      "precision": 0.5116354944196736,
+      "recall": 0.994891807302698,
+      "gap_activity_fraction": 0.9970432731427232
+    },
+    {
+      "case": "EN02",
+      "signal": "ctc",
+      "reference_voiced_us": 6309668,
+      "gap_us": 6009686,
+      "false_activity_us": 139809,
+      "missed_reference_us": 5429477,
+      "precision": 0.8629323529411765,
+      "recall": 0.13949878186934717,
+      "gap_activity_fraction": 0.02326394423934961
+    },
+    {
+      "case": "EN03",
+      "signal": "spectral",
+      "reference_voiced_us": 9143444,
+      "gap_us": 5228660,
+      "false_activity_us": 5226556,
+      "missed_reference_us": 0,
+      "precision": 0.6362869867780098,
+      "recall": 1.0,
+      "gap_activity_fraction": 0.9995976024449859
+    },
+    {
+      "case": "EN03",
+      "signal": "ctc",
+      "reference_voiced_us": 9143444,
+      "gap_us": 5228660,
+      "false_activity_us": 62245,
+      "missed_reference_us": 7945689,
+      "precision": 0.9505992063492064,
+      "recall": 0.1309960448163734,
+      "gap_activity_fraction": 0.011904579758484966
+    },
+    {
+      "case": "JA01",
+      "signal": "spectral",
+      "reference_voiced_us": 11412248,
+      "gap_us": 4587752,
+      "false_activity_us": 667752,
+      "missed_reference_us": 140000,
+      "precision": 0.9440743718592964,
+      "recall": 0.9877324782987541,
+      "gap_activity_fraction": 0.14555102368218684
+    },
+    {
+      "case": "JA01",
+      "signal": "ctc",
+      "reference_voiced_us": 11412248,
+      "gap_us": 4587752,
+      "false_activity_us": 0,
+      "missed_reference_us": 9812248,
+      "precision": 1.0,
+      "recall": 0.1402002480142387,
+      "gap_activity_fraction": 0.0
+    },
+    {
+      "case": "JA03",
+      "signal": "spectral",
+      "reference_voiced_us": 8000908,
+      "gap_us": 5090009,
+      "false_activity_us": 1439092,
+      "missed_reference_us": 120000,
+      "precision": 0.8455909871244636,
+      "recall": 0.9850017023067882,
+      "gap_activity_fraction": 0.282728773171128
+    },
+    {
+      "case": "JA03",
+      "signal": "ctc",
+      "reference_voiced_us": 8000908,
+      "gap_us": 5090009,
+      "false_activity_us": 0,
+      "missed_reference_us": 6640908,
+      "precision": 1.0,
+      "recall": 0.16998070718973401,
+      "gap_activity_fraction": 0.0
+    },
+    {
+      "case": "EN04",
+      "signal": "spectral",
+      "reference_voiced_us": 6332719,
+      "gap_us": 2032489,
+      "false_activity_us": 2032489,
+      "missed_reference_us": 40000,
+      "precision": 0.7558632769295374,
+      "recall": 0.9936835978353058,
+      "gap_activity_fraction": 1.0
+    },
+    {
+      "case": "EN04",
+      "signal": "ctc",
+      "reference_voiced_us": 6332719,
+      "gap_us": 2032489,
+      "false_activity_us": 63303,
+      "missed_reference_us": 5536022,
+      "precision": 0.9263918604651162,
+      "recall": 0.12580646638513404,
+      "gap_activity_fraction": 0.031145556015309307
+    },
+    {
+      "case": "EN05",
+      "signal": "spectral",
+      "reference_voiced_us": 9093514,
+      "gap_us": 1414444,
+      "false_activity_us": 1414444,
+      "missed_reference_us": 0,
+      "precision": 0.8653930668546639,
+      "recall": 1.0,
+      "gap_activity_fraction": 1.0
+    },
+    {
+      "case": "EN05",
+      "signal": "ctc",
+      "reference_voiced_us": 9093514,
+      "gap_us": 1414444,
+      "false_activity_us": 0,
+      "missed_reference_us": 7313514,
+      "precision": 1.0,
+      "recall": 0.19574391153958748,
+      "gap_activity_fraction": 0.0
+    },
+    {
+      "case": "JA04",
+      "signal": "spectral",
+      "reference_voiced_us": 9548395,
+      "gap_us": 4851605,
+      "false_activity_us": 1331605,
+      "missed_reference_us": 150000,
+      "precision": 0.875898881640261,
+      "recall": 0.9842905535432919,
+      "gap_activity_fraction": 0.2744669032206868
+    },
+    {
+      "case": "JA04",
+      "signal": "ctc",
+      "reference_voiced_us": 9548395,
+      "gap_us": 4851605,
+      "false_activity_us": 0,
+      "missed_reference_us": 8168395,
+      "precision": 1.0,
+      "recall": 0.14452690740171514,
+      "gap_activity_fraction": 0.0
+    },
+    {
+      "case": "JA05",
+      "signal": "spectral",
+      "reference_voiced_us": 16349205,
+      "gap_us": 3415483,
+      "false_activity_us": 1813947,
+      "missed_reference_us": 303152,
+      "precision": 0.8984352183650616,
+      "recall": 0.981457691673693,
+      "gap_activity_fraction": 0.5310953092139531
+    },
+    {
+      "case": "JA05",
+      "signal": "ctc",
+      "reference_voiced_us": 16349205,
+      "gap_us": 3415483,
+      "false_activity_us": 16688,
+      "missed_reference_us": 13805893,
+      "precision": 0.99348125,
+      "recall": 0.15556181477937303,
+      "gap_activity_fraction": 0.0048859853789346925
+    }
+  ],
+  "terminal_hypotheses": [
+    {
+      "case": "JA01",
+      "signal": "spectral",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 0.608076,
+      "correct_unsupported_fraction": 0.011937354129795874,
+      "extended_unsupported_fraction": 0.02437983244464051
+    },
+    {
+      "case": "JA01",
+      "signal": "ctc",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 1.0,
+      "correct_unsupported_fraction": 0.8635730956594757,
+      "extended_unsupported_fraction": 0.8664205688279707
+    },
+    {
+      "case": "JA03",
+      "signal": "spectral",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 0.199184,
+      "correct_unsupported_fraction": 0.013708423209182998,
+      "extended_unsupported_fraction": 0.01885838132634187
+    },
+    {
+      "case": "JA03",
+      "signal": "ctc",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 1.0,
+      "correct_unsupported_fraction": 0.844637870295926,
+      "extended_unsupported_fraction": 0.8489516914189678
+    },
+    {
+      "case": "JA05",
+      "signal": "spectral",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 0.68,
+      "correct_unsupported_fraction": 0.019365217615726172,
+      "extended_unsupported_fraction": 0.028827931934838992
+    },
+    {
+      "case": "JA05",
+      "signal": "ctc",
+      "extension_us": 250000,
+      "extension_without_proxy_fraction": 1.0,
+      "correct_unsupported_fraction": 0.8511941783442423,
+      "extended_unsupported_fraction": 0.8533256237614323
+    }
+  ],
+  "limitations": "No lexical localization claimed; speech blank intervals include sustained singing. No extra vocal tracks/overlapping singers annotation. Post-score endpoint stress diagnostic, not threshold development or held-out classifier evidence."
+}

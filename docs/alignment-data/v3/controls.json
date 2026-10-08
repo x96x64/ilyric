@@ -1,0 +1,58 @@
+{
+  "evidence": "External annotations and prospective control construction; no model-derived labels",
+  "reserved": [
+    {
+      "case": "EN04",
+      "language": "en",
+      "role": "reserved",
+      "source_audio_sha256": "24090af9ca4886bb0551f7c1896c249af3311cce1c585092054ed5c428834d44",
+      "excerpt_sha256": "f03c694e15ccafc121866cd54ef27542ad6e2daf817162b2d1359cc73201c7de",
+      "duration_us": 8365208,
+      "clip_start_s": 19.0752811432,
+      "reference_line_count": 3,
+      "reference_word_or_phone_count": 16,
+      "note": "Previously retained corpus, newly reserved passage/mutations; not a new singer"
+    },
+    {
+      "case": "EN05",
+      "language": "en",
+      "role": "reserved",
+      "source_audio_sha256": "beefa48e4520bb290e739faa7c0a91e4e7296fb239577966b2129934ccf86b31",
+      "excerpt_sha256": "dae2fd405ad0a553bc7c2a7778e41b6d6b903ab480e3316744f4a17ae40b5daf",
+      "duration_us": 10507958,
+      "clip_start_s": 32.04881572725,
+      "reference_line_count": 3,
+      "reference_word_or_phone_count": 21,
+      "note": "Previously retained corpus, newly reserved passage/mutations; not a new singer"
+    },
+    {
+      "case": "JA04",
+      "language": "ja",
+      "role": "reserved",
+      "source_audio_sha256": "e7dbc8ecce8f9979cbe3ee5003dcec396dd9079666d190268505e3d9e638dda8",
+      "excerpt_sha256": "63059e64ef244f06a1316cf238a66611717bbd97aa5651ca388bec093399f097",
+      "duration_us": 14400000,
+      "clip_start_s": 0,
+      "reference_line_count": 1,
+      "reference_word_or_phone_count": 64,
+      "note": "Previously retained corpus, newly reserved passage/mutations; not a new singer"
+    },
+    {
+      "case": "JA05",
+      "language": "ja",
+      "role": "reserved",
+      "source_audio_sha256": "7e8cc232bd8f10f852463ffd2868390b2317428f5dbb8beda680e2c513cfe4a2",
+      "excerpt_sha256": "5b4866395d813aa8b47c03d42b2b21765b7366c3c367034a6e292f42104ce6ca",
+      "duration_us": 19764688,
+      "clip_start_s": 0,
+      "reference_line_count": 1,
+      "reference_word_or_phone_count": 108,
+      "note": "Previously retained corpus, newly reserved passage/mutations; not a new singer"
+    }
+  ],
+  "annotation_identity": {
+    "original_case_manifest_sha256": "2181cb33b409bd58b6108ab40124fd45744804a78e2b07f4f9c81cea68059e4e",
+    "english_annotation_sha256": "85dcf0edb2aa990cb0507f6be6f64d827478b7353e1e18a947a44fb41da17980"
+  },
+  "control_mutations": "All audio unchanged between matched/omitted/extra/repeated/misordered text inputs. Endpoint extensions are separate post-scoring diagnostics."
+}

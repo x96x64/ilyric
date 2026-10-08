@@ -1,0 +1,47 @@
+{
+  "version": 3,
+  "evidence": "Prospective protocol fixed before acoustic feature extraction",
+  "failure_classes": [
+    "omitted sung material",
+    "extra supplied text",
+    "incorrect repetition",
+    "misordered text",
+    "unsupported terminal extension",
+    "ordinary instrumental gaps"
+  ],
+  "development": [
+    "EN01",
+    "JA01"
+  ],
+  "diagnostic_reuse": [
+    "EN02",
+    "EN03",
+    "JA03"
+  ],
+  "reserved": [
+    "EN04: original EN02 song, annotated lines 4\u20136",
+    "EN05: original EN03 song, annotated lines 4\u20136",
+    "JA04",
+    "JA05"
+  ],
+  "limitations": "Reserved passages and new mutations, not new singers. Existing annotation-defined short excerpts; no full-song or pretraining independence. Japanese phone-to-source phrase localization unavailable.",
+  "controls": [
+    "matched",
+    "omit_middle",
+    "duplicate",
+    "absent",
+    "early_end",
+    "misordered"
+  ],
+  "candidate_features": {
+    "spectral": "40-ms Hann windows, 10-ms hop; spectral flatness <0.3 and RMS above local-clip p90 minus 30 dB. Harmonic/energy proxy, not vocals.",
+    "ctc_activity": "Audio-only argmax nonspecial/nonseparator frames, 20-ms grid. No forced text path. English speech model; Japanese activity transfer unqualified.",
+    "lexical": "English only: normalized Levenshtein disagreement between audio-only greedy letters and supplied canonical letters, divided by maximum length. No language model or replacement transcript."
+  },
+  "coverage": "For each activity proxy, fraction of active frames outside the union of estimated lines plus fraction of estimated line frames without activity; use maximum. No registration or endpoint repair.",
+  "fit": "Each feature separately: threshold above highest matched development score and midway to lowest higher negative; inseparable negatives remain missed. Old thresholds unchanged. Freeze before scoring reserved controls. No post-holdout feature or threshold changes.",
+  "combination": "OR of existing score/unresolved flag and individual independent flag; no learned ensemble.",
+  "localization": "Compare activity intervals with independent annotated word intervals (English) or nonpause phones (Japanese); duration precision/recall and gap false activity. Lexical disagreement makes no localization claim.",
+  "promotion": "Review-only at most; no automatic acceptance. Report all failures and false rejection; small sample intervals descriptive only.",
+  "resources": "No new downloads; existing isolated environment, cumulative 2 GB download / 6 GB storage limits."
+}

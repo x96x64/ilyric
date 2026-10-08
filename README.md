@@ -93,3 +93,7 @@ The [refinement report](docs/alignment-refinement.md) reproduces the archived ba
 ## Deferred Product Requirements
 
 The [product requirements](docs/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.
+
+## Independent Acoustic Coverage Validation
+
+The [coverage report](docs/independent-acoustic-coverage.md) compares audio-only CTC evidence and a spectral proxy against reserved mismatch controls. The [diagnostic commands](docs/acoustic-coverage-commands.md) preserve input artifacts and mandatory review. Limited incremental detections do not establish reliable lyric correspondence; automatic acceptance and full-song synchronization remain unqualified.

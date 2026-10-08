@@ -1,0 +1,114 @@
+{
+  "evidence": "Separate diagnostic process after alignment runs; no incremental forced-alignment inference",
+  "environment": "Apple M4, 16 GiB, macOS 27.0.1; isolated Python 3.12, CPU four threads",
+  "provenance": {
+    "model": "facebook/wav2vec2-base-960h",
+    "revision": "22aad52d435eb6dbaf354bdad9b0da84ce7d6156",
+    "weights_sha256": "8aa76ab2243c81747a1f832954586bc566090c83a0ac167df6f31f0fa917d74a",
+    "source_conditioning": "audio only; no supplied text",
+    "dependencies": {
+      "torch": "2.8.0",
+      "transformers": "4.57.1",
+      "numpy": "2.5.3",
+      "scipy": "1.18.1",
+      "soundfile": "0.14.0"
+    },
+    "spectral_grid_us": 10000,
+    "ctc_grid_us": 20000,
+    "device": "cpu",
+    "threads": 4
+  },
+  "cases": [
+    {
+      "case": "EN01",
+      "audio_seconds": 18.898062,
+      "process_seconds": 3.321075333005865,
+      "preprocessing_seconds": 0.07411175000015646,
+      "spectral_seconds": 0.009160749992588535,
+      "initialization_seconds": 0.03001966601004824,
+      "inference_seconds": 0.4148199999908684,
+      "peak_rss_bytes": 1410695168
+    },
+    {
+      "case": "JA01",
+      "audio_seconds": 16.0,
+      "process_seconds": 3.092393666986027,
+      "preprocessing_seconds": 0.049682291006320156,
+      "spectral_seconds": 0.005481416010297835,
+      "initialization_seconds": 0.02598316699732095,
+      "inference_seconds": 0.3396986250008922,
+      "peak_rss_bytes": 1376059392
+    },
+    {
+      "case": "EN02",
+      "audio_seconds": 12.319354,
+      "process_seconds": 3.0086948329990264,
+      "preprocessing_seconds": 0.06257374999404419,
+      "spectral_seconds": 0.004441875003976747,
+      "initialization_seconds": 0.053749707993119955,
+      "inference_seconds": 0.29707787500228733,
+      "peak_rss_bytes": 1242578944
+    },
+    {
+      "case": "EN03",
+      "audio_seconds": 14.372104,
+      "process_seconds": 3.0451010830001906,
+      "preprocessing_seconds": 0.0674542909982847,
+      "spectral_seconds": 0.005500416998984292,
+      "initialization_seconds": 0.02834820799762383,
+      "inference_seconds": 0.3185931670013815,
+      "peak_rss_bytes": 1264041984
+    },
+    {
+      "case": "JA03",
+      "audio_seconds": 13.090917,
+      "process_seconds": 2.9030039579956792,
+      "preprocessing_seconds": 0.04905770799086895,
+      "spectral_seconds": 0.0047407079982804134,
+      "initialization_seconds": 0.02632779198756907,
+      "inference_seconds": 0.27626395800325554,
+      "peak_rss_bytes": 1269710848
+    },
+    {
+      "case": "EN04",
+      "audio_seconds": 8.365208,
+      "process_seconds": 2.7492557910009054,
+      "preprocessing_seconds": 0.05039674999716226,
+      "spectral_seconds": 0.003190833012922667,
+      "initialization_seconds": 0.025729583998327143,
+      "inference_seconds": 0.17255354100780096,
+      "peak_rss_bytes": 1074315264
+    },
+    {
+      "case": "EN05",
+      "audio_seconds": 10.507958,
+      "process_seconds": 2.7984968750097323,
+      "preprocessing_seconds": 0.04986895799811464,
+      "spectral_seconds": 0.004875500002526678,
+      "initialization_seconds": 0.026922708013444208,
+      "inference_seconds": 0.2141804170096293,
+      "peak_rss_bytes": 1124122624
+    },
+    {
+      "case": "JA04",
+      "audio_seconds": 14.4,
+      "process_seconds": 2.936846707991208,
+      "preprocessing_seconds": 0.047758707994944416,
+      "spectral_seconds": 0.005016791998059489,
+      "initialization_seconds": 0.025874500002828427,
+      "inference_seconds": 0.29851274999964517,
+      "peak_rss_bytes": 1312178176
+    },
+    {
+      "case": "JA05",
+      "audio_seconds": 19.764688,
+      "process_seconds": 2.9655373330024304,
+      "preprocessing_seconds": 0.05109554200316779,
+      "spectral_seconds": 0.006743833000655286,
+      "initialization_seconds": 0.02650049999647308,
+      "inference_seconds": 0.4066697919915896,
+      "peak_rss_bytes": 1475100672
+    }
+  ],
+  "additional_download_bytes": 0
+}
