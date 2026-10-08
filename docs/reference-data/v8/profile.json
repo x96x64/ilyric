@@ -1,0 +1,103 @@
+{
+  "profile_version": 8,
+  "scope": "Internal constrained static Latin paragraph integration; not a public project schema",
+  "previous_profile": "../v7/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "provenance": {
+    "source_ids": [
+      "S02",
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "case_alias": {
+      "S04B": "S04"
+    },
+    "source_media_public": false,
+    "integrity": "Private SHA-256 inventory established for these screenshots in this gate; unchanged after analysis",
+    "baseline_reproduction": "Four archived size-104.5 comparisons reproduced exactly"
+  },
+  "parameters": {
+    "size": {
+      "status": "fitted",
+      "value": 104.25,
+      "condition": "Observed line structure supplied"
+    },
+    "width": {
+      "status": "provisional",
+      "value": 987,
+      "qualification": "Inherited prior; 983, 987, and 991 tie with explicit observed structure"
+    },
+    "origin": {
+      "status": "fitted",
+      "origin_x": 96.08333333333333,
+      "first_baseline": 791.1645299145299,
+      "line_advance": 125.47863247863242
+    },
+    "line_structure": {
+      "status": "observed",
+      "source_semantics": "unknown"
+    },
+    "native_font_identity": {
+      "status": "unknown"
+    },
+    "local_font": {
+      "status": "environment provenance",
+      "name": ".SFNS-Bold"
+    }
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "static_integration": "supported conditionally on observed line structure",
+    "automatic_wrapping": "underidentified",
+    "native_fidelity": false,
+    "japanese_behavior_changed": false,
+    "production_renderer_changed": false,
+    "next_gate": "State-controlled Latin anchor and line-advance validation using existing recordings"
+  }
+}
