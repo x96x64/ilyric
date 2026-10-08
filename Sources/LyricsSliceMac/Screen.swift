@@ -9,9 +9,10 @@ public final class ScreenRenderer {
     public let screen: LyricsScreen
     public let lyrics: CompositionRenderer
     private let backdrop, artwork, fadeMask: CGImage
+    private var inactiveTiles: [Int:InactiveTiles] = [:]
     private let title: CTLine
     private let artist: CTLine
-    public init(_ screen: LyricsScreen) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false) throws {
         self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
         title=Self.line(screen.title,size:51,bold:true); artist=Self.line(screen.artist,size:49,bold:false)
         // Palette shared by the original artwork and background; no source artwork.
@@ -29,6 +30,11 @@ public final class ScreenRenderer {
         let bytes=(0..<2556).map { UInt8((LyricsScreen.fade(at:Double($0)+0.5)*255).rounded()) }
         fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        if calibratedInactive {
+            for (i,p) in screen.composition.paragraphs.enumerated() where p.input.paragraphStyle == .latinStatic {
+                inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0))))
+            }
+        }
     }
     private static func context(_ w:Int,_ h:Int) -> CGContext {
         CGContext(data:nil,width:w,height:h,bitsPerComponent:8,bytesPerRow:w*4,space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
@@ -51,6 +57,11 @@ public final class ScreenRenderer {
         let w=screen.composition.canvasWidth,c=Self.context(w,2556),v=LyricsScreen.viewport
         c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:fadeMask)
         for p in state.paragraphs {
+            if let tiles=inactiveTiles[p.index] {
+                let a=InactiveTreatment.evaluate(state.output,paragraph:p.index,events:screen.composition.events)
+                tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c)
+                continue
+            }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
             c.saveGState();c.setAlpha(p.opacity);c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556));c.restoreGState()
         }
