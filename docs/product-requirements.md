@@ -4,21 +4,29 @@
 
 This document records confirmed long-term goals and deferred decisions. It is not a feature declaration, implementation plan for any single engineering gate, or stabilized schema. Historical experiment reports remain authoritative for measured capabilities and limitations.
 
-The intended product is a scriptable command-line tool that creates animated Lyrics videos from user-supplied recordings, synchronized lyric data, artwork, and configuration. Rendering existing songs must eventually be possible; synthetic fixtures are engineering tests, not the final input workflow.
+The intended product is a scriptable command-line tool that creates animated Lyrics videos from user-supplied recordings, corresponding lyric text or synchronized lyric data, artwork, and configuration. Rendering existing songs must eventually be possible; synthetic fixtures are engineering tests, not the final input workflow.
 
 | Area | Current Status | Required Future Outcome |
 | --- | --- | --- |
 | Rendering | Deterministic experimental typography, appearance, composition, and audiovisual export | Supported user inputs and documented compatibility guarantees |
 | Fidelity | Qualified physical-reference reconstruction candidates | Stable canonical native-layout preset with explicit uncertainty |
-| Input and synchronization | Bounded experimental ordinary/enhanced LRC and TTML/audio workflows and private diagnostics | Reviewed compatibility, broader timing granularity, and correction workflow |
+| Input and synchronization | Bounded ordinary/enhanced LRC and TTML/audio imports; experimental reviewed alignment preparation | Mandatory automatic singing-audio alignment, measured accuracy, correction, and broader timing compatibility |
 | Configuration and CLI | Experimental developer invocations | Versioned project configuration and conventional scripting interface |
 | Materials, controls, and animation | Provisional backgrounds, original placeholders, bounded test events | Separately measured and tested presentation options |
+
+## Mandatory Automatic Synchronization
+
+Automatic alignment of user-supplied complete lyric text with the corresponding singing recording is the highest-priority prerequisite for a usable iLyric product. Users must not be required to timestamp every line, word, or character manually. Automatic transcription, online retrieval, and provider matching are not prerequisites when the user supplies the complete text. Optional acquisition remains deferred.
+
+The [automatic-alignment experiment](automatic-alignment.md) establishes an offline preparation prototype, not completion of this requirement. Product qualification requires independently annotated real singing, held-out English and Japanese recordings, explicit unmatched regions, measured onset/offset errors, practical runtime/memory, and an auditable correction path. A technically valid video or a successful speech-model invocation does not establish synchronization accuracy. Separate original text, pronunciation/model units, estimated boundaries, reviewed corrections, and deterministic rendering; preserve whole-paragraph shaping.
+
+SF Symbols, dynamic materials, full-screen visual refinement, edge-to-edge 9:16 adaptation, Lyrics Translation, detailed customization, public CLI stabilization, and release preparation remain deferred until automatic synchronization has a demonstrated practical path. This priority preserves those goals; it does not authorize their implementation or eliminate their separate evidence and rights gates.
 
 ## Recordings, Lyrics, and Timing
 
 Investigate TTML, ordinary LRC, enhanced LRC, and a versioned native project format through bounded import milestones. Preserve supplied line structure separately from inferred authored semantics. Do not stabilize field names or commands before format and compatibility studies.
 
-Potential workflows include user-authored or user-supplied timed lyrics, metadata-based matching, appropriately licensed synchronization providers, and optional audio-assisted alignment. Provider integration requires verification of actual accessible data, terms, permissions, attribution, caching, and redistribution constraints. Matching metadata does not establish lyric rights or timing accuracy.
+Potential workflows include user-authored or user-supplied timed lyrics, metadata-based matching, appropriately licensed synchronization providers, and automatic alignment of supplied lyric text to supplied singing audio. Provider integration requires verification of actual accessible data, terms, permissions, attribution, caching, and redistribution constraints. Matching metadata does not establish lyric rights or timing accuracy.
 
 Apple documents MusicKit `Song.hasLyrics` as an availability Boolean. It does not supply text or timestamps through that property. No complete synchronized-lyric retrieval capability is established by this review; an automated integration must independently verify its supported API and permissions. [Apple documentation](https://developer.apple.com/documentation/musickit/song/haslyrics).
 
@@ -32,7 +40,7 @@ The [Lyrics acquisition feasibility study](lyrics-acquisition-feasibility.md) es
 
 Record source identity, exact recording correspondence, retrieval or intake provenance, timing granularity, supplied versus estimated boundaries, conversion losses, and review decisions. Preserve permission evidence separately for retrieval, retention/cache, transformation, alignment, video embedding, publication, commercial use, and redistribution. Unknown permission is not authorization; user confirmation is an assertion, not verification, and cannot override an explicit provider prohibition. Source and model software licenses do not license lyric content.
 
-Matching a lyric record and aligning it to the supplied recording are separate validation steps. Ambiguous editions, unexplained duration differences, missing ends, overlapping vocals, unsupported Unicode/shaped support, and resource-limit violations require explicit diagnostics or review rather than silent repair. Preserve original files and correction history where retention is permitted. Provider credentials and restricted caches must remain outside shared projects and diagnostics. No provider interface, preparation schema, or automatic alignment capability is established by these requirements.
+Matching a lyric record and aligning it to the supplied recording are separate validation steps. Ambiguous editions, unexplained duration differences, missing ends, overlapping vocals, unsupported Unicode/shaped support, and resource-limit violations require explicit diagnostics or review rather than silent repair. Preserve original files and correction history where retention is permitted. Provider credentials and restricted caches must remain outside shared projects and diagnostics. These requirements do not stabilize a provider interface or public preparation schema. Experimental alignment capabilities and unresolved accuracy are recorded separately.
 
 ## Presentation and Delivery
 
