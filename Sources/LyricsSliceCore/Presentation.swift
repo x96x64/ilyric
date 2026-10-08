@@ -24,18 +24,39 @@ public struct SliceParameters: Codable, Equatable, Sendable {
     public var lineAdvance = 123.0, amplitude = 6.0, tau = 0.195, dimOpacity = 0.42
     public init() {}
 }
+/// Optional experimental spatial appearance; nil preserves the original hard wipe.
+/// Intervals remain explicit inputs, not inferred native lyric timestamps.
+public struct SoftAppearance: Codable, Equatable, Sendable {
+    public var intervalScale = 3.0, phaseOffset = 0.0, softness = 1.0, completedOpacity = 0.981
+    public init() {}
+    public func validate() throws {
+        guard [intervalScale,phaseOffset,softness,completedOpacity].allSatisfy({ $0.isFinite }),
+              (1...6).contains(intervalScale), (-1...1).contains(phaseOffset),
+              (0.25...3).contains(softness), (0.9...1).contains(completedOpacity) else {
+            throw SliceError.invalid("Experimental appearance bounds")
+        }
+    }
+    public func fraction(position: Double, phase: Double?) -> Double {
+        guard let phase else { return 0 }
+        let q = (phase-phaseOffset)/intervalScale
+        let v = min(1,max(0,0.5+(q+0.5-position)/softness))
+        return v*v*(3-2*v)
+    }
+}
 public struct SliceInput: Codable, Sendable {
     public let text: String
     public let canvasWidth: Int // 1179 screenshot or 1180 recording; no rescaling.
     public let breakEvidence: String
     public let parameters: SliceParameters
+    public let appearance: SoftAppearance?
     public let events: [AppearanceEvent]
-    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent]) {
+    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil) {
         self.text = text; self.canvasWidth = canvasWidth; breakEvidence = "observed-structure-source-semantics-unknown"
-        self.parameters = parameters; self.events = events
+        self.parameters = parameters; self.events = events; self.appearance = appearance
     }
     public func validate() throws {
         let p = parameters
+        try appearance?.validate()
         guard [1179,1180].contains(canvasWidth), text.utf16.count < 500,
               text.split(separator: "\n", omittingEmptySubsequences: false).count == 2,
               !text.hasPrefix("\n"), !text.hasSuffix("\n"),
@@ -59,19 +80,21 @@ public struct SliceInput: Codable, Sendable {
         let p = parameters
         let states = events.map { e -> SpanPresentation in
             let progress: Double
+            let phase: Double?
             if let begin = e.begin, let end = e.end {
                 let a = Time(begin.numerator,begin.denominator), b = Time(end.numerator,end.denominator)
+                phase = (time-a).seconds/(b-a).seconds-0.5
                 progress = time <= a ? 0 : time >= b ? 1 : (time-a).seconds/(b-a).seconds
-            } else { progress = 0 }
+            } else { progress = 0; phase = nil }
             let age = e.verticalEvent.map { (time-Time($0.numerator,$0.denominator)).seconds }
             let u = max(0,age ?? 0)/p.tau
             return SpanPresentation(start:e.start,length:e.length,progress:progress,
-                displacement:p.amplitude*(1+u)*exp(-u))
+                displacement:p.amplitude*(1+u)*exp(-u),phase:phase)
         }
         return SliceSnapshot(time:time,spans:states)
     }
     /// Original synthetic text and timings, independent of commercial references.
-    public static func synthetic(canvasWidth: Int = 1179) -> SliceInput {
+    public static func synthetic(canvasWidth: Int = 1179, softened: Bool = false) -> SliceInput {
         let text = "小さな紙に丸を描く\n青い点を二つ置く"
         var index = 0, order = 0; var events: [AppearanceEvent] = []
         for c in text {
@@ -84,12 +107,15 @@ public struct SliceInput: Codable, Sendable {
             }
             index += count
         }
-        return SliceInput(text:text,canvasWidth:canvasWidth,events:events)
+        var parameters = SliceParameters()
+        if softened { parameters.dimOpacity = 0.438 }
+        return SliceInput(text:text,canvasWidth:canvasWidth,parameters:parameters,events:events,appearance:softened ? SoftAppearance() : nil)
     }
 }
 public struct SpanPresentation: Equatable, Codable, Sendable {
     public let start, length: Int
     public let progress, displacement: Double
+    public let phase: Double?
 }
 public struct SliceSnapshot: Equatable, Sendable {
     public let time: Time

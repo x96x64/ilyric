@@ -98,6 +98,25 @@ public final class SliceParagraph {
             // Typography baselines remain explicit and are not altered by appearance.
             let top = (p.originY+Double(layer.line)*p.lineAdvance+span.displacement).rounded()
             let rect = CGRect(x:p.originX,y:2556-top-Double(maskHeight),width:Double(layer.image.width),height:Double(maskHeight))
+            if !coverage, let appearance = input.appearance {
+                // Multiply cached shaped support once; geometry and cluster mapping are unchanged.
+                var bytes = [UInt8](layer.image.dataProvider!.data! as Data)
+                for x in 0..<layer.image.width {
+                    let position = (Double(x)+0.5-layer.left)/(layer.right-layer.left)
+                    let fraction = appearance.fraction(position:position,phase:span.phase)
+                    let opacity = p.dimOpacity+(appearance.completedOpacity-p.dimOpacity)*fraction
+                    for y in 0..<layer.image.height {
+                        let offset = y*layer.image.bytesPerRow+x*4
+                        for channel in 0..<4 { bytes[offset+channel] = UInt8((Double(bytes[offset+channel])*opacity).rounded()) }
+                    }
+                }
+                let provider = CGDataProvider(data:Data(bytes) as CFData)!
+                let image = CGImage(width:layer.image.width,height:layer.image.height,bitsPerComponent:8,bitsPerPixel:32,
+                    bytesPerRow:layer.image.bytesPerRow,space:CGColorSpace(name:CGColorSpace.sRGB)!,
+                    bitmapInfo:CGBitmapInfo(rawValue:CGImageAlphaInfo.premultipliedLast.rawValue),provider:provider,
+                    decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+                context.draw(image,in:rect);continue
+            }
             if coverage || span.progress >= 1 { context.draw(layer.image,in:rect);continue }
             if span.progress <= 0 {
                 context.saveGState();context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState();continue

@@ -57,4 +57,30 @@ struct SliceTests {
                     AppearanceEvent(start:3,length:1,begin:nil,end:nil,verticalEvent:nil)]
         #expect(throws: SliceError.self) { try SliceParagraph(SliceInput(text:text,events:events)) }
     }
+    @Test func softenedAppearanceBoundaries() throws {
+        let model=SoftAppearance();try model.validate()
+        #expect(model.fraction(position:0.5,phase:nil) == 0)
+        #expect(model.fraction(position:0.5,phase:-1.5) == 0)
+        #expect(model.fraction(position:0.5,phase:0) == 0.5)
+        #expect(model.fraction(position:0.5,phase:1.5) == 1)
+        #expect(model.fraction(position:0.2,phase:0) > model.fraction(position:0.8,phase:0))
+        var invalid=model;invalid.softness=0
+        #expect(throws: SliceError.self) { try invalid.validate() }
+        let input=SliceInput.synthetic(softened:true)
+        #expect(input.evaluate(Time(1)).spans[0].phase == 0)
+        #expect(input.evaluate(Time(0)).spans[0].phase! < -0.5)
+    }
+    @Test func softenedAppearancePreservesGeometryAndRandomAccess() throws {
+        let plain=SliceInput.synthetic(),soft=SliceInput.synthetic(softened:true)
+        let a=try SliceParagraph(plain),b=try SliceParagraph(soft),fresh=try SliceParagraph(soft)
+        #expect(a.lines == b.lines)
+        let times=[Time(0),Time(9,10),Time(1),Time(11,10),Time(5)]
+        let pixels=try times.map { try b.raw($0) },states=times.map(soft.evaluate)
+        for i in [4,1,3,0,2,1] {
+            #expect(try b.raw(times[i],coverage:true) == a.raw(times[i],coverage:true))
+            #expect(try fresh.raw(times[i]) == pixels[i])
+            #expect(soft.evaluate(times[i]) == states[i])
+        }
+        #expect(pixels[1] != pixels[3])
+    }
 }
