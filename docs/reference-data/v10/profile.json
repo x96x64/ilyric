@@ -1,0 +1,77 @@
+{
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "profile_version": 10,
+  "scope": "Bounded Latin glyph-outline focus-motion diagnostic",
+  "previous_profile": "../v9/profile.json",
+  "provenance": {
+    "source_ids": [
+      "V01",
+      "V02",
+      "V03"
+    ],
+    "integrity": "Existing private SHA-256 values and complete source PTS lists verified before analysis; original hashes verified again afterward",
+    "source_media_public": false
+  },
+  "parameters": {
+    "status": "fitted",
+    "critical_time_constant_seconds": 0.081,
+    "time_constant_policy": "Frozen from v9; no motion-shape search",
+    "relative_candidate": "coefficient * (line_index - 1) * (1 - progress)",
+    "relative_coefficient_bounds": [
+      -10,
+      10
+    ],
+    "native_implementation": "Unknown"
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "renderer_change": false,
+    "classification": "Bounded approximation error and unresolved appearance-support and event-phase uncertainty; no demonstrated architectural limitation",
+    "next_gate": "First measured full-screen Lyrics composition"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "registration_window": {
+    "available": 3898,
+    "unavailable": 422,
+    "different": 0,
+    "maximum_difference": 0
+  },
+  "appearance_controls": {
+    "count": 288,
+    "available": 288,
+    "min_shift": -2,
+    "max_shift": 2
+  },
+  "contours": {
+    "V01": {
+      "early": {
+        "0": {
+          "mean_displacement": 4.4257713718283505,
+          "mean_column_coverage": 0.24875921013852048
+        },
+        "1": {
+          "mean_displacement": 0.21766018010758606,
+          "mean_column_coverage": 0.37378945447910966
+        },
+        "2": {
+          "mean_displacement": -3.1476951933598682,
+          "mean_column_coverage": 0.6148611111111111
+        }
+      },
+      "late": {
+        "0": {
+          "mean_displacement": -0.22150341038286875,
+          "mean_column_coverage": 0.7656174476864132
+        },
+        "1": {
+          "mean_displacement": -0.0021116158918134905,
+          "mean_column_coverage": 0.8329310344827586
+        },
+        "2": {
+          "mean_displacement": 0.0010136620285583725,
+          "mean_column_coverage": 0.8414032567049808
+        }
+      }
+    },
+    "V02": {
+      "early": {
+        "0": {
+          "mean_displacement": 4.574906215940888,
+          "mean_column_coverage": 0.25138815207780724
+        },
+        "1": {
+          "mean_displacement": 0.37635430573542245,
+          "mean_column_coverage": 0.43682311621966796
+        },
+        "2": {
+          "mean_displacement": -1.822972806906784,
+          "mean_column_coverage": 0.6330268199233716
+        }
+      },
+      "late": {
+        "0": {
+          "mean_displacement": 0.5965041224109122,
+          "mean_column_coverage": 0.7647627468317123
+        },
+        "1": {
+          "mean_displacement": -0.028348996987081786,
+          "mean_column_coverage": 0.8286672140120416
+        },
+        "2": {
+          "mean_displacement": -0.04388014763014763,
+          "mean_column_coverage": 0.8211206896551724
+        }
+      }
+    },
+    "V03": {
+      "early": {
+        "0": {
+          "mean_displacement": 4.731824180819018,
+          "mean_column_coverage": 0.24692012967875038
+        },
+        "1": {
+          "mean_displacement": 0.33190656584116235,
+          "mean_column_coverage": 0.43617131910235357
+        },
+        "2": {
+          "mean_displacement": -2.861600307902023,
+          "mean_column_coverage": 0.6254454022988506
+        }
+      },
+      "late": {
+        "0": {
+          "mean_displacement": 0.14336535813271747,
+          "mean_column_coverage": 0.7651046271735927
+        },
+        "1": {
+          "mean_displacement": -0.022904468534215943,
+          "mean_column_coverage": 0.8293541324575807
+        },
+        "2": {
+          "mean_displacement": -0.040736208236208236,
+          "mean_column_coverage": 0.820316091954023
+        }
+      }
+    }
+  },
+  "evidence_status": "Derived diagnostic summaries; appearance controls are synthetic transformations of private native support"
+}
