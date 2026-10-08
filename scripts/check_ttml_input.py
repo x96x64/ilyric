@@ -46,7 +46,8 @@ def check(destination=None):
     for i, content in enumerate(invalid.values()):
         file = folder/'bad.ttml'; file.write_text(content)
         invoke(['render', '--lyrics', str(file), '--audio', str(folder/'source.wav'), '--format', 'ttml'], folder/f'bad-{i}.mp4', 2)
-    for i, content in enumerate([b'\xff', b'A'*65537]):
+    alternate = '<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE tt [<!ENTITY e "expanded">]><tt xmlns="http://www.w3.org/ns/ttml" xml:space="preserve"><body><div><p begin="0s" end="1s">A</p></div></body></tt>'
+    for i, content in enumerate([b'\xff', b'A'*65537, alternate.encode('utf-16-le'), alternate.encode('utf-16-be')]):
         file = folder/'bad.ttml'; file.write_bytes(content)
         invoke(['render', '--lyrics', str(file), '--audio', str(folder/'source.wav'), '--format', 'ttml'], folder/f'bad-bytes-{i}.mp4', 2)
     for version in [1, 2]:
@@ -55,7 +56,7 @@ def check(destination=None):
         invoke(['project', '--project', str(file)], folder/f'bad-version-{version}.mp4', 2)
     assert not list(folder.glob('.*.mp4'))
     report = dict(status='passed', outputs=outputs, decoded_progression=progression,
-                  direct_command_validation=direct_validation, refusal_checks=len(invalid)+4)
+                  direct_command_validation=direct_validation, refusal_checks=len(invalid)+6)
     if temp: temp.cleanup()
     return report
 

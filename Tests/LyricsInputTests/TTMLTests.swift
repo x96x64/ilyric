@@ -32,6 +32,14 @@ struct TTMLTests {
         for bad in [Data([0xff]),Data(repeating:65,count:65537),Data("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\(doc)".utf8),Data(("<!DOCTYPE tt SYSTEM \"file:///unavailable\">"+doc).utf8),Data(("<!DOCTYPE tt [<!ENTITY e 'expanded'>]>"+doc).utf8),Data(("<?resource href=\"https://invalid.example/\"?>"+doc).utf8),Data(doc.replacingOccurrences(of:"Paper",with:"&missing;").utf8),Data(doc.replacingOccurrences(of:"http://www.w3.org/ns/ttml",with:"urn:unsupported").utf8),Data(doc.replacingOccurrences(of:"</tt>",with:"").utf8),Data((doc+doc).utf8),Data(doc.replacingOccurrences(of:"xml:space=\"preserve\"",with:"").utf8),Data(doc.replacingOccurrences(of:"xml:space=\"preserve\"",with:"xml:space=\"default\"").utf8)] {
             #expect(throws:InputError.self) {try TTMLParser.parse(bad)}
         }
+        // UTF-16 without a BOM contains ASCII/NUL bytes that can decode as a UTF-8 String.
+        // Refuse it before XML's automatic encoding recognition or declaration handling.
+        let alternate="<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE tt [<!ENTITY e \"expanded\">]>"+doc
+        for encoding in [String.Encoding.utf16LittleEndian,.utf16BigEndian] {
+            let bytes=alternate.data(using:encoding)!
+            #expect(String(data:bytes,encoding:.utf8) != nil)
+            #expect(throws:InputError.self) {try TTMLParser.parse(bytes)}
+        }
         let alias="<t:tt xmlns:t=\"http://www.w3.org/ns/ttml\" xmlns:q=\"http://www.w3.org/ns/ttml#parameter\" q:timeBase=\"media\" xml:space=\"preserve\"><t:body><t:div><t:p begin=\"0s\" dur=\"1s\">A&amp;B&#x301;</t:p></t:div></t:body></t:tt>"
         #expect(try TTMLParser.parse(Data(alias.utf8)).entries[0].text.utf8.elementsEqual("A&B\u{301}".utf8))
         #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"<span>",count:20)+"A"+String(repeating:"</span>",count:20)+"</p>")}

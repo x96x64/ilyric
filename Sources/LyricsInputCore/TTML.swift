@@ -7,7 +7,8 @@ import SpikeCore
 /// Bounded TTML2 content/timing import, not a general TTML presentation processor.
 public enum TTMLParser {
     public static func parse(_ data: Data) throws -> LocalLyrics {
-        guard data.count<=LRCParser.byteLimit, let source=String(data:data,encoding:.utf8) else {
+        guard data.count<=LRCParser.byteLimit, let source=String(data:data,encoding:.utf8),
+              !source.unicodeScalars.contains(where:{$0.value<32 && ![9,10,13].contains($0.value)}) else {
             throw InputError.invalid("TTML must be UTF-8 and no larger than 64 KiB")
         }
         guard !source.contains("<!DOCTYPE"),!source.contains("<!ENTITY") else {
