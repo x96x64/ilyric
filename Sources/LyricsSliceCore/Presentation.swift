@@ -43,8 +43,8 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
         return v*v*(3-2*v)
     }
 }
-/// Only static Latin layout is enabled; Japanese appearance parameters do not transfer.
-public enum ParagraphStyle: String, Codable, Sendable { case latinStatic }
+/// Static styles do not infer fine-grained timing from line-level inputs.
+public enum ParagraphStyle: String, Codable, Sendable { case latinStatic, japaneseStatic }
 public struct SliceInput: Codable, Sendable {
     public let text: String
     public let paragraphStyle: ParagraphStyle?
@@ -53,24 +53,24 @@ public struct SliceInput: Codable, Sendable {
     public let parameters: SliceParameters
     public let appearance: SoftAppearance?
     public let events: [AppearanceEvent]
-    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil) {
-        self.text = text; self.canvasWidth = canvasWidth; breakEvidence = "observed-structure-source-semantics-unknown"
+    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil, breakEvidence: String = "observed-structure-source-semantics-unknown") {
+        self.text = text; self.canvasWidth = canvasWidth; self.breakEvidence = breakEvidence
         self.parameters = parameters; self.events = events; self.appearance = appearance; self.paragraphStyle = paragraphStyle
     }
     public func validate() throws {
         let p = parameters
         try appearance?.validate()
         let count = text.split(separator:"\n",omittingEmptySubsequences:false).count
-        let structureValid = paragraphStyle == .latinStatic ? (1...4).contains(count) : count == 2
-        if paragraphStyle == .latinStatic {
+        let structureValid = paragraphStyle != nil ? (1...4).contains(count) : count == 2
+        if paragraphStyle != nil {
             guard events.isEmpty, appearance == nil, p.amplitude == 0 else {
-                throw SliceError.invalid("Latin integration is static; timed appearance and vertical treatment are unvalidated")
+                throw SliceError.invalid("Static paragraph integration; timed appearance and vertical treatment are unvalidated")
             }
         }
         guard [1179,1180].contains(canvasWidth), text.utf16.count < 500,
               structureValid, !text.isEmpty, !text.contains("\n\n"),
               !text.hasPrefix("\n"), !text.hasSuffix("\n"),
-              breakEvidence == "observed-structure-source-semantics-unknown",
+              ["observed-structure-source-semantics-unknown","supplied-explicit-structure"].contains(breakEvidence),
               [p.size,p.width,p.originX,p.originY,p.lineAdvance,p.amplitude,p.tau,p.dimOpacity].allSatisfy({ $0.isFinite }),
               (90...110).contains(p.size), (900...1000).contains(p.width),
               (0...150).contains(p.originX), (500...900).contains(p.originY),
@@ -109,6 +109,13 @@ public struct SliceInput: Codable, Sendable {
         p.size=104.25;p.width=987;p.originX=96;p.originY=687;p.lineAdvance=125.5
         p.amplitude=0;p.dimOpacity=1
         return SliceInput(text:text,parameters:p,events:[],paragraphStyle:.latinStatic)
+    }
+    /// Line-level local input keeps measured base metrics but supplies no glyph timing.
+    public static func supplied(text: String, japanese: Bool) -> SliceInput {
+        var p = japanese ? SliceParameters() : latin().parameters
+        p.amplitude=0;p.dimOpacity=1
+        return SliceInput(text:text,parameters:p,events:[],paragraphStyle:japanese ? .japaneseStatic : .latinStatic,
+            breakEvidence:"supplied-explicit-structure")
     }
     /// Original synthetic text and timings, independent of commercial references.
     public static func synthetic(canvasWidth: Int = 1179, softened: Bool = false) -> SliceInput {

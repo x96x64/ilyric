@@ -10,9 +10,11 @@ public final class ScreenRenderer {
     public let lyrics: CompositionRenderer
     private let backdrop, artwork, fadeMask: CGImage
     private var inactiveTiles: [Int:InactiveTiles] = [:]
+    private let diagnosticMarkers, calibratedInactive, boundedCache: Bool
     private let title: CTLine
     private let artist: CTLine
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false) throws {
+        self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
         self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
         title=Self.line(screen.title,size:51,bold:true); artist=Self.line(screen.artist,size:49,bold:false)
         // Palette shared by the original artwork and background; no source artwork.
@@ -30,7 +32,7 @@ public final class ScreenRenderer {
         let bytes=(0..<2556).map { UInt8((LyricsScreen.fade(at:Double($0)+0.5)*255).rounded()) }
         fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
-        if calibratedInactive {
+        if calibratedInactive && !boundedCache {
             for (i,p) in screen.composition.paragraphs.enumerated() where p.input.paragraphStyle == .latinStatic {
                 inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0))))
             }
@@ -57,6 +59,16 @@ public final class ScreenRenderer {
         let w=screen.composition.canvasWidth,c=Self.context(w,2556),v=LyricsScreen.viewport
         c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:fadeMask)
         for p in state.paragraphs {
+            if boundedCache {
+                let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
+                let top=input.parameters.originY+p.translationY-40
+                let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
+                if bottom<v.y || top>v.y+v.height { continue }
+                if calibratedInactive && input.paragraphStyle == .latinStatic && inactiveTiles[p.index]==nil {
+                    if inactiveTiles.count>=6,let key=inactiveTiles.keys.sorted().first { inactiveTiles.removeValue(forKey:key) }
+                    inactiveTiles[p.index]=InactiveTiles(try lyrics.paragraphs[p.index].render(input.evaluate(Time(0))))
+                }
+            }
             if let tiles=inactiveTiles[p.index] {
                 let a=InactiveTreatment.evaluate(state.output,paragraph:p.index,events:screen.composition.events)
                 tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c)
@@ -130,7 +142,7 @@ public final class ScreenRenderer {
         c.draw(try native(screen.evaluate(time)),in:CGRect(x:fit.x,y:fit.y,width:fit.width,height:fit.height))
         // Existing audiovisual diagnostic marker, separate from native scene content.
         let t=Time(time.numerator % (4*time.denominator),time.denominator)
-        if Timeline.markerTimes.contains(where:{t >= $0 && t < $0+Time(1,20)}) {
+        if diagnosticMarkers && Timeline.markerTimes.contains(where:{t >= $0 && t < $0+Time(1,20)}) {
             let marker=Fit(width:w,height:h);c.setFillColor(CGColor(gray:1,alpha:1))
             c.fill(CGRect(x:marker.x+35*marker.scale,y:h-843*marker.scale,width:20*marker.scale,height:20*marker.scale))
         }

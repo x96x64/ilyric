@@ -54,20 +54,21 @@ public struct LyricsComposition: Sendable {
     public let tau: Double
     private let segments: [FocusSegment]
     public init(paragraphs: [CompositionParagraph], events: [FocusEvent], clocks: [PlaybackAnchor] = [.init(output:Time(0),media:Time(0),running:true)], tau: Double = 0.081) throws {
-        guard (3...8).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
+        guard (1...64).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
               Set(events.map(\.order)).count==events.count, !events.isEmpty,
               !clocks.isEmpty, clocks[0].output==Time(0),
               zip(clocks,clocks.dropFirst()).allSatisfy({$0.output<$1.output}),
-              events.allSatisfy({$0.time>=Time(0) && paragraphs.indices.contains($0.paragraph)}) else { throw SliceError.invalid("Composition event constraints") }
+              events.allSatisfy({$0.time>=Time(0) && ($0.paragraph == -1 || paragraphs.indices.contains($0.paragraph))}) else { throw SliceError.invalid("Composition event constraints") }
         for p in paragraphs { try p.input.validate() }
         guard paragraphs.allSatisfy({ $0.input.canvasWidth==paragraphs[0].input.canvasWidth && $0.begin<$0.end && $0.position.isFinite }),
               zip(paragraphs,paragraphs.dropFirst()).allSatisfy({$0.position<$1.position}) else { throw SliceError.invalid("Ordered paragraph layout required") }
         let sorted=events.sorted { $0.time == $1.time ? $0.order<$1.order : $0.time<$1.time }
         guard sorted[0].time==Time(0) else { throw SliceError.invalid("Initial focus required") }
-        var compiled=[FocusSegment(start:Time(0),position:paragraphs[sorted[0].paragraph].position,velocity:0,target:paragraphs[sorted[0].paragraph].position,tau:tau)]
+        let firstTarget = sorted[0].paragraph == -1 ? paragraphs[0].position : paragraphs[sorted[0].paragraph].position
+        var compiled=[FocusSegment(start:Time(0),position:firstTarget,velocity:0,target:firstTarget,tau:tau)]
         for event in sorted.dropFirst() {
             let initial=compiled.last!.evaluate(event.time)
-            compiled.append(FocusSegment(start:event.time,position:initial.position,velocity:initial.velocity,target:paragraphs[event.paragraph].position,tau:tau))
+            compiled.append(FocusSegment(start:event.time,position:initial.position,velocity:initial.velocity,target:event.paragraph == -1 ? compiled.last!.target : paragraphs[event.paragraph].position,tau:tau))
         }
         self.paragraphs=paragraphs;self.events=sorted;self.clocks=clocks;self.canvasWidth=paragraphs[0].input.canvasWidth;self.tau=tau;segments=compiled
     }

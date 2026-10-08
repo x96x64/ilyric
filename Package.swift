@@ -16,6 +16,10 @@ let package = Package(
         .executableTarget(name: "LyricsCompositionProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .executableTarget(name: "LyricsScreenProbe", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .testTarget(name: "LyricsSliceTests", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
+        .target(name: "LyricsInputCore", dependencies: ["SpikeCore"]),
+        .target(name: "LyricsInputMac", dependencies: ["LyricsInputCore", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .executableTarget(name: "LyricsInputProbe", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .testTarget(name: "LyricsInputTests", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"])
     ],
     swiftLanguageModes: [.v5]

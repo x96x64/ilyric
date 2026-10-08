@@ -43,7 +43,7 @@ public final class SliceParagraph {
             let explicit = substring.hasSuffix("\n")
             let lineIndex = details.count
             details.append(SliceLine(start:start,length:length,width:width,baseline:p.size+Double(lineIndex)*p.lineAdvance,
-                breakKind:explicit ? "observed-explicit" : (start+length == attributed.length ? "end" : "automatic")))
+                breakKind:explicit ? (input.breakEvidence == "supplied-explicit-structure" ? "supplied-explicit" : "observed-explicit") : (start+length == attributed.length ? "end" : "automatic")))
             let runs = CTLineGetGlyphRuns(line) as! [CTRun]
             var boundaries = Set([start,start+length])
             for run in runs {
@@ -53,7 +53,7 @@ public final class SliceParagraph {
                 CTRunGetStringIndices(run,CFRange(location:0,length:0),&indices)
                 boundaries.formUnion(indices)
             }
-            if input.paragraphStyle == .latinStatic {
+            if input.paragraphStyle != nil {
                 let context = Self.context(width:Int(ceil(p.width)),height:height)
                 context.textPosition = CGPoint(x:0,y:Double(height)-p.size)
                 // Draw the complete typeset line; no word-wise or timed-unit shaping.
@@ -82,8 +82,8 @@ public final class SliceParagraph {
             }
             start += length
         }
-        if input.paragraphStyle == .latinStatic {
-            guard (1...4).contains(details.count) else { throw SliceError.invalid("Experimental Latin paragraph exceeds four lines") }
+        if input.paragraphStyle != nil {
+            guard (1...4).contains(details.count) else { throw SliceError.invalid("Experimental static paragraph exceeds four lines") }
         } else {
             guard details.count == 2, details[0].breakKind == "observed-explicit" else { throw SliceError.invalid("Observed two-line structure did not fit") }
         }
