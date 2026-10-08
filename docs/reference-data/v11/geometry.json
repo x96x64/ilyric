@@ -1,0 +1,761 @@
+{
+  "status": "measured",
+  "source_ids": [
+    "S02",
+    "S03",
+    "S04",
+    "S05",
+    "S07",
+    "S09"
+  ],
+  "source_hashes_verified": true,
+  "geometry": {
+    "artwork": {
+      "render_layout_bounds": [
+        96,
+        276,
+        312,
+        492
+      ],
+      "archived_bounds": [
+        96,
+        276,
+        312,
+        492
+      ],
+      "edge_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "reference_uncertainty": 2,
+      "evidence_status": "constraint comparison against archived measurement; not new physical measurement"
+    },
+    "handle": {
+      "render_layout_bounds": [
+        500,
+        198,
+        680,
+        210
+      ],
+      "archived_bounds": [
+        500,
+        198,
+        680,
+        210
+      ],
+      "edge_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "reference_uncertainty": 1,
+      "evidence_status": "constraint comparison against archived measurement; not new physical measurement"
+    },
+    "progress": {
+      "render_layout_bounds": [
+        96,
+        1683,
+        1083,
+        1704
+      ],
+      "archived_bounds": [
+        96,
+        1683,
+        1083,
+        1704
+      ],
+      "edge_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "reference_uncertainty": 1,
+      "evidence_status": "constraint comparison against archived measurement; not new physical measurement"
+    },
+    "volume": {
+      "render_layout_bounds": [
+        171,
+        2192,
+        982,
+        2214
+      ],
+      "archived_bounds": [
+        171,
+        2192,
+        982,
+        2214
+      ],
+      "edge_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "reference_uncertainty": 1,
+      "evidence_status": "constraint comparison against archived measurement; not new physical measurement"
+    },
+    "singExpanded": {
+      "render_layout_bounds": [
+        969,
+        1353,
+        1083,
+        1587
+      ],
+      "archived_bounds": [
+        969,
+        1353,
+        1083,
+        1587
+      ],
+      "edge_errors": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "reference_uncertainty": 3,
+      "evidence_status": "constraint comparison against archived measurement; not new physical measurement"
+    }
+  },
+  "synthetic_raster_bounds": {
+    "title": [
+      352,
+      338,
+      623,
+      385
+    ],
+    "artist": [
+      352,
+      398,
+      581,
+      434
+    ],
+    "handle": [
+      500,
+      198,
+      680,
+      210
+    ],
+    "progress": [
+      96,
+      1683,
+      1083,
+      1704
+    ],
+    "volume": [
+      171,
+      2192,
+      982,
+      2214
+    ]
+  },
+  "support": {
+    "S02": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            111,
+            1677,
+            887,
+            1692
+          ],
+          [
+            114,
+            1677,
+            858,
+            1688
+          ],
+          [
+            119,
+            1677,
+            777,
+            1685
+          ]
+        ],
+        "support_status": [
+          "not-visible-in-inspected-state",
+          "not-visible-in-inspected-state",
+          "not-visible-in-inspected-state"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            399,
+            2210,
+            410,
+            2220
+          ],
+          null,
+          null
+        ],
+        "support_status": [
+          "not-visible-in-inspected-state",
+          "not-visible-in-inspected-state",
+          "not-visible-in-inspected-state"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    },
+    "S03": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            171,
+            2186,
+            982,
+            2220
+          ],
+          [
+            171,
+            2186,
+            982,
+            2220
+          ],
+          [
+            171,
+            2186,
+            982,
+            2220
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "unreliable-window-boundary",
+          "unreliable-window-boundary"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    },
+    "S04": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            96,
+            1677,
+            1083,
+            1710
+          ],
+          [
+            96,
+            1677,
+            1083,
+            1710
+          ],
+          [
+            96,
+            1677,
+            1083,
+            1704
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "unreliable-window-boundary",
+          "unreliable-window-boundary"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            171,
+            2186,
+            988,
+            2220
+          ],
+          [
+            171,
+            2186,
+            988,
+            2220
+          ],
+          [
+            171,
+            2186,
+            982,
+            2220
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "unreliable-window-boundary",
+          "unreliable-window-boundary"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    },
+    "S05": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            192,
+            686,
+            216
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            96,
+            1677,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            171,
+            2192,
+            982,
+            2214
+          ],
+          [
+            171,
+            2192,
+            982,
+            2214
+          ],
+          [
+            171,
+            2192,
+            982,
+            2214
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    },
+    "S07": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            96,
+            1677,
+            1089,
+            1710
+          ],
+          [
+            96,
+            1677,
+            1089,
+            1710
+          ],
+          [
+            96,
+            1677,
+            1089,
+            1710
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "unreliable-window-boundary",
+          "unreliable-window-boundary"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            171,
+            2186,
+            988,
+            2220
+          ],
+          [
+            171,
+            2186,
+            988,
+            2220
+          ],
+          [
+            171,
+            2186,
+            983,
+            2220
+          ]
+        ],
+        "support_status": [
+          "unreliable-window-boundary",
+          "unreliable-window-boundary",
+          "unreliable-window-boundary"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    },
+    "S09": {
+      "handle": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ],
+          [
+            500,
+            198,
+            680,
+            210
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "progress": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ],
+          [
+            96,
+            1683,
+            1083,
+            1704
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      },
+      "volume": {
+        "thresholds": [
+          8,
+          12,
+          18
+        ],
+        "contrast_bounds": [
+          [
+            171,
+            2192,
+            982,
+            2214
+          ],
+          [
+            171,
+            2192,
+            982,
+            2214
+          ],
+          [
+            171,
+            2192,
+            982,
+            2214
+          ]
+        ],
+        "support_status": [
+          "supported-contrast-observation",
+          "supported-contrast-observation",
+          "supported-contrast-observation"
+        ],
+        "meaning": "color-managed local support; unavailable or partial support is not layout absence"
+      }
+    }
+  },
+  "limitations": [
+    "Shared native coordinates; no screenshot-specific registration",
+    "Control shapes and metadata content differ intentionally",
+    "Viewport boundary and fade remain provisional",
+    "S02 lower controls absent; visibility semantics supplied, not inferred"
+  ],
+  "evidence_status": "Layout constraints and color-managed support observations; unavailable/contaminated support is not a new layout measurement"
+}

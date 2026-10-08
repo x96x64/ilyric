@@ -53,3 +53,7 @@ The [motion-composition report](docs/motion-composition.md) records a determinis
 ## Latin Outline Motion Diagnostic
 
 The [Latin outline report](docs/latin-outline-motion.md) separates common movement, relative residuals, appearance-support bias, and phase sensitivity. The bounded experiment retains the existing renderer and recommends a measured full-screen composition with explicit uncertainty. [Diagnostic commands](docs/latin-outline-commands.md) keep reference-dependent analysis private.
+
+## Experimental Full-Screen Lyrics Composition
+
+The [full-screen report](docs/full-screen-composition.md) records measured component placement around the existing lyric composition, deterministic native-space rendering, and audiovisual export. Original artwork and controls, a provisional fade, and a static background remain qualified approximations. [Developer commands](docs/full-screen-commands.md) render the synthetic scene without private references. Native Music fidelity remains unvalidated.

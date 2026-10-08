@@ -1,0 +1,380 @@
+{
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "profile_version": 11,
+  "scope": "First experimental full-screen Lyrics composition",
+  "previous_profile": "../v10/profile.json",
+  "components": [
+    {
+      "bounds": {
+        "height": 2556,
+        "width": 1179,
+        "x": 0,
+        "y": 0
+      },
+      "clips": true,
+      "evidence": "original static palette gradient; provisional material",
+      "part": "background",
+      "visible": true,
+      "z": 0
+    },
+    {
+      "bounds": {
+        "height": 950,
+        "width": 1040,
+        "x": 72,
+        "y": 550
+      },
+      "clips": true,
+      "evidence": "provisional clip and fade; inherited fitted typography and motion",
+      "part": "lyrics",
+      "visible": true,
+      "z": 1
+    },
+    {
+      "bounds": {
+        "height": 216,
+        "width": 216,
+        "x": 96,
+        "y": 276
+      },
+      "clips": true,
+      "evidence": "measured bounds, approximately \u00b12 px; original artwork",
+      "part": "artwork",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 58,
+        "width": 650,
+        "x": 352,
+        "y": 338
+      },
+      "clips": true,
+      "evidence": "measured ink origin; provisional header typography and clipping",
+      "part": "title",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 58,
+        "width": 650,
+        "x": 352,
+        "y": 398
+      },
+      "clips": true,
+      "evidence": "measured ink origin; provisional header typography and clipping",
+      "part": "artist",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 12,
+        "width": 180,
+        "x": 500,
+        "y": 198
+      },
+      "clips": true,
+      "evidence": "measured bounds, approximately \u00b11 px",
+      "part": "handle",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 21,
+        "width": 987,
+        "x": 96,
+        "y": 1683
+      },
+      "clips": true,
+      "evidence": "measured bounds, approximately \u00b11 px; supplied media progress",
+      "part": "progress",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 48,
+        "width": 200,
+        "x": 96,
+        "y": 1730
+      },
+      "clips": true,
+      "evidence": "provisional time-label geometry",
+      "part": "elapsed",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 48,
+        "width": 200,
+        "x": 883,
+        "y": 1730
+      },
+      "clips": true,
+      "evidence": "provisional time-label geometry",
+      "part": "remaining",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 106,
+        "width": 106,
+        "x": 218,
+        "y": 1894
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "previous",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 106,
+        "width": 106,
+        "x": 537,
+        "y": 1894
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "playback",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 106,
+        "width": 106,
+        "x": 856,
+        "y": 1894
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "next",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 22,
+        "width": 811,
+        "x": 171,
+        "y": 2192
+      },
+      "clips": true,
+      "evidence": "measured bounds, approximately \u00b11 px; supplied level",
+      "part": "volume",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 40,
+        "width": 40,
+        "x": 96,
+        "y": 2183
+      },
+      "clips": true,
+      "evidence": "original symbol; provisional geometry",
+      "part": "volumeLow",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 40,
+        "width": 40,
+        "x": 1020,
+        "y": 2183
+      },
+      "clips": true,
+      "evidence": "original symbol; provisional geometry",
+      "part": "volumeHigh",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 72,
+        "width": 72,
+        "x": 212,
+        "y": 2323
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "bottomLeft",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 72,
+        "width": 72,
+        "x": 554,
+        "y": 2323
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "bottomCenter",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 72,
+        "width": 72,
+        "x": 896,
+        "y": 2323
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "bottomRight",
+      "visible": true,
+      "z": 2
+    },
+    {
+      "bounds": {
+        "height": 84,
+        "width": 84,
+        "x": 111,
+        "y": 1488
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "translation",
+      "visible": true,
+      "z": 3
+    },
+    {
+      "bounds": {
+        "height": 84,
+        "width": 84,
+        "x": 984,
+        "y": 1488
+      },
+      "clips": true,
+      "evidence": "provisional shape at approximate measured position",
+      "part": "singCompact",
+      "visible": false,
+      "z": 3
+    },
+    {
+      "bounds": {
+        "height": 234,
+        "width": 114,
+        "x": 969,
+        "y": 1353
+      },
+      "clips": true,
+      "evidence": "measured bounds, approximately \u00b13 px; original control placeholder only",
+      "part": "singExpanded",
+      "visible": false,
+      "z": 3
+    }
+  ],
+  "provenance": {
+    "geometry_baseline": "v1 static observations, with v8/v9/v10 typography and motion qualifications",
+    "source_ids": [
+      "S02",
+      "S03",
+      "S04",
+      "S05",
+      "S07",
+      "S09"
+    ],
+    "private_media_public": false,
+    "hash_scope": "S02\u2013S05 checked against existing private inventory; S07/S09 inventory established and checked before/after this comparison"
+  },
+  "delivery": {
+    "status": "calculated",
+    "policy": "contain",
+    "scale": 0.7511737089201878,
+    "x_margin": 97.18309859154931,
+    "output": [
+      1080,
+      1920
+    ],
+    "recording_extra_column": "Retained by composition input; source origin unknown"
+  },
+  "provisional": {
+    "status": "explicit synthetic presentation choices",
+    "viewport": [
+      72,
+      550,
+      1112,
+      1500
+    ],
+    "fade_native_pixels": 80,
+    "header_sizes": [
+      51,
+      49
+    ],
+    "background": "Static original palette gradient; temporal native material is not reconstructed",
+    "inactive_blur": "Not implemented; inherited opacity-only treatment",
+    "control_visibility": "Explicit output-time events; no inferred native interaction rules",
+    "sing": "Affordance only; no vocal processing or lyric-timing changes",
+    "system_chrome": "Omitted; no safe-area or display-occlusion inference"
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "result": "Retained with qualifications",
+    "next_gate": "State-controlled inactive-lyric appearance, preserving geometry and motion",
+    "native_fidelity": false
+  },
+  "component_snapshot_time": {
+    "numerator": 3,
+    "denominator": 2,
+    "status": "synthetic fixture state"
+  }
+}
