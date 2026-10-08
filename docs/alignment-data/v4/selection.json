@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "access_date": "2026-10-08",
+  "decision": "conditional technical selection; stop before provisioning",
+  "primary": {
+    "repository": "https://github.com/CPJKU/veracity",
+    "revision": "0983900f136173015f3c5d0b116be014edd33905",
+    "checkpoint": "dataset/jamendo/models/model_log_0mean/model.pt",
+    "repository_blob_sha1": "6d8a4434482615b142e45b8220ff5a0462a9fee6",
+    "listed_bytes": 7433173,
+    "local_checkpoint_sha256": null,
+    "source_license": "MIT",
+    "checkpoint_license": "unresolved: no explicit checkpoint-scoped declaration established",
+    "model_downloaded": false,
+    "model_executed": false,
+    "cpu_support": "Source provides CPU fallback; Apple Silicon execution unverified",
+    "local_dependency_probe": "torchaudio unavailable in existing isolated environment",
+    "temporal_grid": {
+      "hop_samples": 315,
+      "sample_rate": 22050,
+      "frames_per_second": 70,
+      "storage": "Preserve rational grid; do not accumulate rounded microseconds"
+    },
+    "reported_checkpoint_threshold": 0.51,
+    "default_median_frames": 56
+  },
+  "alternatives": [
+    {
+      "repository": "https://github.com/kyungyunlee/ismir2018-revisiting-svd",
+      "revision": "00de94f11f89f32e568d1da20303d3650a238aff",
+      "decision": "Not selected; no license file found in inspected tree, legacy runtime"
+    },
+    {
+      "documentation": "https://essentia.upf.edu/models.html",
+      "model_family": "voice_instrumental",
+      "documented_model_license": "CC BY-NC-SA 4.0 for MTG models",
+      "decision": "Not selected; embedding classifier rather than a qualified fine-boundary reference; runtime change not justified in this bounded screen"
+    }
+  ],
+  "prospective_corpus": {
+    "record": "https://zenodo.org/records/2585988",
+    "archive": "jamando.zip",
+    "published_size_MB": 327.2,
+    "archive_md5": "4d6b907b224c6df3a5ed3ffc3e98b8b1",
+    "acquired": false,
+    "limitations": [
+      "Individual recording permissions and singer partitions not verified",
+      "Voice label includes sung or spoken voice",
+      "Pretraining overlap must be checked before held-out designation",
+      "Japanese accompanied qualification unavailable"
+    ]
+  },
+  "provisioning_estimate_not_authorization": {
+    "checkpoint_MB_ceiling": 8,
+    "minimal_sources_dependencies_MB_allowance": 20,
+    "prospective_archive_MB": 327.2,
+    "extraction_MiB_cap": 400,
+    "analysis_MB_cap": 100,
+    "dependency_compatibility_verified": false,
+    "archive_expansion_verified": false,
+    "note": "Recalculate cumulative usage before any request. No historical deletion. Substantial downloads require explicit approval even within previous limits."
+  },
+  "held_out_metrics": {
+    "status": "unavailable",
+    "reason": "Checkpoint permission and independently verified additional-singer annotations unresolved; no new detector inference",
+    "frame_confusion": null,
+    "frame_precision_recall_f1": null,
+    "instrumental_gap_activation": null,
+    "onset_offset_errors": null,
+    "incremental_correspondence_decisions": null,
+    "runtime_memory": null
+  },
+  "operational_integration": false,
+  "automatic_acceptance": false,
+  "automatic_rejection": false,
+  "timestamps_modified": false,
+  "sources": [
+    "https://github.com/CPJKU/veracity/tree/0983900f136173015f3c5d0b116be014edd33905",
+    "https://github.com/CPJKU/veracity/blob/0983900f136173015f3c5d0b116be014edd33905/LICENSE",
+    "https://github.com/CPJKU/veracity/blob/0983900f136173015f3c5d0b116be014edd33905/svd/eval.py",
+    "https://github.com/CPJKU/veracity/blob/0983900f136173015f3c5d0b116be014edd33905/svd/core/audio.py",
+    "https://github.com/CPJKU/veracity/blob/0983900f136173015f3c5d0b116be014edd33905/svd/predict.py",
+    "https://essentia.upf.edu/models.html",
+    "https://zenodo.org/records/2585988"
+  ]
+}

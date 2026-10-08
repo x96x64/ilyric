@@ -1,0 +1,132 @@
+{
+  "status": "reproduced",
+  "model_assets_verified": 18,
+  "feature_records": [
+    {
+      "case": "EN01",
+      "semantic_equality": true,
+      "audio_sha256": "dc16403af1d72df42ba30c97213bb6d91f8bc38aca2cb5b58bc8fb74f34946e6",
+      "measurements": {
+        "preprocessing_seconds": 0.10592429200187325,
+        "spectral_seconds": 0.010655958001734689,
+        "initialization_seconds": 0.035911957995267585,
+        "inference_seconds": 0.49254558300890494,
+        "peak_rss_bytes": 1398439936
+      },
+      "process_seconds": 4.107694416
+    },
+    {
+      "case": "EN02",
+      "semantic_equality": true,
+      "audio_sha256": "b39c8586d623abe8922ca5a0bdb541cccf67eda0d64bdbe88f2ea1e57908e4c8",
+      "measurements": {
+        "preprocessing_seconds": 0.05972504199598916,
+        "spectral_seconds": 0.00423150000278838,
+        "initialization_seconds": 0.02682075000484474,
+        "inference_seconds": 0.25363199999264907,
+        "peak_rss_bytes": 1242464256
+      },
+      "process_seconds": 2.8496471670000005
+    },
+    {
+      "case": "EN03",
+      "semantic_equality": true,
+      "audio_sha256": "5d4beac9a1ceab86543b272eb477bd33ff6c328c262ce8db24029eb068423365",
+      "measurements": {
+        "preprocessing_seconds": 0.06349445799423847,
+        "spectral_seconds": 0.005133875005412847,
+        "initialization_seconds": 0.02687570899433922,
+        "inference_seconds": 0.2978562500065891,
+        "peak_rss_bytes": 1261207552
+      },
+      "process_seconds": 2.8841958329999997
+    },
+    {
+      "case": "JA01",
+      "semantic_equality": true,
+      "audio_sha256": "a17a9c7792a6763ff381460dd354c0147ff4dd7cba7313faa5d244c915cc8046",
+      "measurements": {
+        "preprocessing_seconds": 0.04876874999899883,
+        "spectral_seconds": 0.005540375001146458,
+        "initialization_seconds": 0.026219874998787418,
+        "inference_seconds": 0.3270870419946732,
+        "peak_rss_bytes": 1375928320
+      },
+      "process_seconds": 2.8764567089999993
+    },
+    {
+      "case": "JA03",
+      "semantic_equality": true,
+      "audio_sha256": "dad0952167465d2835bb3679f1d197f203e00134b5c0fbe2e639c55640c3e210",
+      "measurements": {
+        "preprocessing_seconds": 0.04594416699546855,
+        "spectral_seconds": 0.004681582999182865,
+        "initialization_seconds": 0.0261135830078274,
+        "inference_seconds": 0.26566579200152773,
+        "peak_rss_bytes": 1269170176
+      },
+      "process_seconds": 2.831461333000002
+    },
+    {
+      "case": "EN04",
+      "semantic_equality": true,
+      "audio_sha256": "f03c694e15ccafc121866cd54ef27542ad6e2daf817162b2d1359cc73201c7de",
+      "measurements": {
+        "preprocessing_seconds": 0.04464012500829995,
+        "spectral_seconds": 0.003214166994439438,
+        "initialization_seconds": 0.026606125000398606,
+        "inference_seconds": 0.17263641700264998,
+        "peak_rss_bytes": 1074364416
+      },
+      "process_seconds": 2.743816458999998
+    },
+    {
+      "case": "EN05",
+      "semantic_equality": true,
+      "audio_sha256": "dae2fd405ad0a553bc7c2a7778e41b6d6b903ab480e3316744f4a17ae40b5daf",
+      "measurements": {
+        "preprocessing_seconds": 0.04814566599088721,
+        "spectral_seconds": 0.004874707999988459,
+        "initialization_seconds": 0.027024666997021995,
+        "inference_seconds": 0.21775033298763447,
+        "peak_rss_bytes": 1123860480
+      },
+      "process_seconds": 2.957249667000003
+    },
+    {
+      "case": "JA04",
+      "semantic_equality": true,
+      "audio_sha256": "63059e64ef244f06a1316cf238a66611717bbd97aa5651ca388bec093399f097",
+      "measurements": {
+        "preprocessing_seconds": 0.048729625006671995,
+        "spectral_seconds": 0.005062584008555859,
+        "initialization_seconds": 0.026572625007247552,
+        "inference_seconds": 0.30659391700464766,
+        "peak_rss_bytes": 1312325632
+      },
+      "process_seconds": 2.8903870000000005
+    },
+    {
+      "case": "JA05",
+      "semantic_equality": true,
+      "audio_sha256": "5b4866395d813aa8b47c03d42b2b21765b7366c3c367034a6e292f42104ce6ca",
+      "measurements": {
+        "preprocessing_seconds": 0.051238334010122344,
+        "spectral_seconds": 0.006804083997849375,
+        "initialization_seconds": 0.02703924999514129,
+        "inference_seconds": 0.4077836250071414,
+        "peak_rss_bytes": 1475035136
+      },
+      "process_seconds": 2.9866729999999997
+    }
+  ],
+  "archived_activity_comparisons_equal": 18,
+  "control_records_equal": 76,
+  "frozen_thresholds_unchanged": true,
+  "annotation_manifest_sha256": "2181cb33b409bd58b6108ab40124fd45744804a78e2b07f4f9c81cea68059e4e",
+  "new_singing_detector_inference": false,
+  "original_recordings_verified": 9,
+  "evidence": "Fresh audio-only feature inference and frozen decision recomputation; not a new singing detector evaluation",
+  "historical_records": "Unmodified; runtime and peak memory are excluded from semantic comparison",
+  "tifa_source_python_fingerprint": "e05742f6c2bf250537bb6582461467c7b39b2d13ef705d9505767c55fe1e9bd8"
+}

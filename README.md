@@ -97,3 +97,7 @@ The [product requirements](docs/product-requirements.md) distinguish long-term u
 ## Independent Acoustic Coverage Validation
 
 The [coverage report](docs/independent-acoustic-coverage.md) compares audio-only CTC evidence and a spectral proxy against reserved mismatch controls. The [diagnostic commands](docs/acoustic-coverage-commands.md) preserve input artifacts and mandatory review. Limited incremental detections do not establish reliable lyric correspondence; automatic acceptance and full-song synchronization remain unqualified.
+
+## Singing-Aware Activity Evaluation
+
+The [singing-activity report](docs/singing-vocal-activity.md) reproduces the frozen activity baselines and records a bounded candidate screen. Checkpoint-specific licensing and independently verified additional-singer annotations remain unresolved; no new model was provisioned or evaluated. The prospective protocol preserves mandatory review and does not qualify automatic full-song synchronization.

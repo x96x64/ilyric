@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "status": "prospective; no candidate inference performed",
+  "purpose": "Measure singing activity separately from lexical correspondence; no automatic acceptance, rejection, endpoint repair, or timestamp change",
+  "gates": {
+    "checkpoint_permission": "Explicit checkpoint-scoped evaluation permission or license required; source-code license alone is insufficient for this study",
+    "resource_limits": {
+      "cumulative_download_bytes": 2000000000,
+      "cumulative_storage_bytes": 6000000000,
+      "substantial_new_downloads": "Require explicit approval; previous ceilings are not a renewed allowance"
+    },
+    "execution": "One checkpoint only; isolated CPU environment; local inputs; no renderer or schema change"
+  },
+  "proposed_acceptance": {
+    "frame_precision_min": 0.9,
+    "frame_recall_min": 0.9,
+    "frame_f1_min": 0.9,
+    "nonvocal_false_positive_rate_max": 0.1,
+    "vocal_interval_recall_min": 0.9,
+    "vocal_duration_coverage_min": 0.9,
+    "instrumental_gap_active_duration_fraction_max": 0.1,
+    "boundary_median_absolute_error_ms_max": 100,
+    "boundary_p95_absolute_error_ms_max": 250,
+    "boundary_fraction_over_500_ms_max": 0.05,
+    "warm_runtime_audio_ratio_max": 10,
+    "peak_rss_bytes_max": 4294967296
+  },
+  "criteria_classification": "Proposed engineering screen, not validated product acceptance or a population guarantee. All criteria required; no aggregate score compensates for a failed gap or new-singer stratum.",
+  "partitions": {
+    "legacy_audit": [
+      "EN01",
+      "EN02",
+      "EN03",
+      "EN04",
+      "EN05",
+      "JA01",
+      "JA03",
+      "JA04",
+      "JA05"
+    ],
+    "development": "At least two independently annotated accompanied excerpts from one singer excluded from validation and final testing",
+    "validation": "Separate singer and at least two excerpts; select any permitted calibration once, then freeze",
+    "held_out": "At least two further singers and four accompanied excerpts, each 20–60 seconds; at least one singer absent from the historical alignment corpus; no singer overlap with development or validation",
+    "language": "English and Japanese where lawful independently annotated mixtures exist; isolated PJS is an auxiliary stratum and cannot establish Japanese mixture performance",
+    "features": "Require sustained vowels, short phrases, audible pauses, reverb, prominent instruments and at least 20 clear onsets and offsets plus 10 nonvocal gaps across held-out data",
+    "manifest_status": "Not frozen: qualifying new singer/audio permissions and verified vocal labels have not been acquired. Do not run candidate inference before freezing identities, hashes, regions, singer groups, and roles."
+  },
+  "annotation": {
+    "independence": "Listener or published human VAD annotation, verified without candidate, CTC, or forced-alignment output",
+    "positive": "Audible sung vocal production, including unvoiced sung consonants and sustained vowels; tag lead, backing, overlapping, humming and ad-lib separately",
+    "negative": "Verified absence of sung production; annotate instrumental and silence strata separately",
+    "unknown": "Breaths, spoken interjections, indistinguishable reverberation tails, and disputed boundaries are explicit unknown regions; do not score as negatives",
+    "uncertainty": "Store earliest/latest plausible onset and offset. Score boundary error as distance outside that interval; report unknown duration and sensitivity with strict/permissive annotation masks",
+    "verification": "Second independent review of all held-out boundaries; unresolved disagreements remain unknown"
+  },
+  "metrics": {
+    "frame_grid": "Common 10-ms centers; use exact rational comparisons with native model samples; no video-frame rounding; unknown centers excluded",
+    "counts": "TP=predicted vocal/reference vocal, FP=predicted vocal/reference nonvocal, TN=predicted nonvocal/reference nonvocal, FN=predicted nonvocal/reference vocal",
+    "definitions": "Precision=TP/(TP+FP); recall=TP/(TP+FN); F1=2TP/(2TP+FP+FN); FPR=FP/(FP+TN); FNR=FN/(FN+TP). Undefined denominators remain unavailable.",
+    "duration": "Exact intersection/union arithmetic on half-open intervals after excluding unknown support; report reference duration covered independently of grid counts",
+    "interval": "One-to-one maximum total overlap pairing with IoU >= 0.5; ties resolved chronologically. Report unmatched reference and predicted intervals; merging two phrases cannot count as two matches.",
+    "boundaries": "Onset and offset median, linearly interpolated p95, maximum and >500-ms count for matched uncensored boundaries, with unmatched counts alongside; never use independent phase registration",
+    "gaps": "Active-duration fraction per annotated instrumental gap and count with any activation >=100 ms; separate pauses and silence",
+    "uncertainty": "Report per-recording and per-singer results plus recording-cluster bootstrap intervals only if enough independent recordings; frame counts are correlated, not independent sample sizes"
+  },
+  "inference": {
+    "first_run": "Pinned documented default preprocessing and postprocessing before any calibration",
+    "veracity_documented_recipe": "22,050 Hz; 1,024-sample magnitude STFT; 315-sample hop; 80 mel bands; log scaling; 115-frame context; default evaluation median window 56 frames; supplied-checkpoint documented threshold 0.51. No silent replacement with unsmoothed 0.5.",
+    "calibration": "At most thresholds 0.41/0.51/0.61 and smoothing 0/28/56 frames on development/validation only; preserve default results. No minimum-duration rules or recording-specific offsets.",
+    "sensitivity": "After primary scoring, fixed gain +/-6 dB, alternate resampling implementation and one AAC encode/decode; report changes without selecting winners on held-out material",
+    "reproducibility": "Pin input, source, checkpoint, configuration and dependency hashes. Preserve native rational grid; scores are not calibrated probabilities. Exclude runtime/memory only from semantic equality."
+  },
+  "incremental_analysis": "Standalone VAD first. Then compare unexplained vocal intervals with original aligned intervals without changing estimates. Backing voices and ad-libs need not correspond to supplied lead lyrics. Correct occurrence, repetitions and different words with equal vocal support remain unresolved. Keep lexical decisions separate; no fitted ensemble.",
+  "current_candidate_metrics": null,
+  "operational_integration": false
+}

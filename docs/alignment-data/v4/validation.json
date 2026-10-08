@@ -1,0 +1,133 @@
+{
+  "evidence": "Software verification and resource inventory; new singing-detector evaluation unavailable",
+  "baseline_commit": "7ae124921f843a7e58929a3dddfc3d68bfe93821",
+  "public_tests": {
+    "swift": 61,
+    "python": 112,
+    "release_build": "passed",
+    "new_application_code": false,
+    "new_tests": 0
+  },
+  "determinism": {
+    "reference_probe_evaluations": 8,
+    "reference_probe_unique_timestamps": 4,
+    "renderer_two_invocations_equal": true,
+    "random_order_raw_raster": "Existing Swift tests passed"
+  },
+  "preparation_media": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.999920524353107,
+    "content_gain": 0.7068517293572892,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "ttml": {
+    "status": "passed",
+    "refusal_checks": 36,
+    "modes": [
+      "enabled",
+      "disabled"
+    ],
+    "direct_media": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.999920524353107,
+      "content_gain": 0.7068517293572892,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    }
+  },
+  "fresh_public_checkout": {
+    "swift": 61,
+    "python": 112,
+    "release_build": "passed",
+    "private_media_present": false,
+    "model_weights_present": false,
+    "media": {
+      "status": "passed",
+      "width": 1080,
+      "height": 1920,
+      "frames": 601,
+      "seconds": 10.016666666666667,
+      "video_time_base": "1/600",
+      "color_range": "tv",
+      "audio_samples_trimmed": 480800,
+      "audio_decoded_padding": 416,
+      "audio_priming_samples": 2112,
+      "content_correlation": 0.9999205243531306,
+      "content_gain": 0.7068517293573156,
+      "content_lag_samples": 0,
+      "marker_errors_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "video_timestamps": "all passed"
+    },
+    "optional_unavailable": [
+      {
+        "status": "unavailable",
+        "reason": "Local audio or optional model unavailable"
+      },
+      {
+        "status": "unavailable",
+        "reason": "Private acoustic-control manifest unavailable"
+      }
+    ],
+    "reference_unavailable": {
+      "status": "unavailable",
+      "reason": "Private screenshots or recordings are absent"
+    }
+  },
+  "resource_budget": {
+    "cumulative_download_ceiling_bytes": 2000000000,
+    "cumulative_storage_ceiling_bytes": 6000000000,
+    "retained_prior_download_MiB_approximate": 1065.3,
+    "new_model_dependency_dataset_download_bytes": 0,
+    "new_research_metadata_stored_bytes": 29397,
+    "continuing_assets_outputs_four_checkouts_allocated_bytes": 4975693824,
+    "continuing_assets_outputs_four_checkouts_MiB": 4745.19140625,
+    "note": "Documentation accessed through research tools is additional small metadata; prior download tally is approximate. No historical assets deleted."
+  },
+  "candidate_performance": null,
+  "candidate_accuracy": null,
+  "privacy": "Reference media, transcriptions, model weights, analysis features and generated outputs remain ignored; public changes contain documentation and sanitized evidence only.",
+  "historical_records": "Unmodified",
+  "renderer": "Unmodified"
+}
