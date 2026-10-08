@@ -1,0 +1,56 @@
+{
+  "format": "ilyric-audio-anchors-1",
+  "audio": {
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "duration_us": 10003000
+  },
+  "language": "en",
+  "timebase_hz": 100,
+  "provenance": {
+    "producer": "original-synthetic-fixture",
+    "revision": "0000000000000000000000000000000000000000",
+    "model": "no-inference",
+    "weights_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "origin": "synthetic",
+    "decoding": {
+      "lyric_prompt": false,
+      "previous_text_context": false,
+      "translation": false
+    }
+  },
+  "observations": [
+    {
+      "id": "o0",
+      "window": 0,
+      "text": "Bright wind",
+      "begin_tick": 100,
+      "end_tick": 180,
+      "uncertainty": []
+    },
+    {
+      "id": "o1",
+      "window": 0,
+      "text": "Soft river",
+      "begin_tick": 210,
+      "end_tick": 290,
+      "uncertainty": []
+    },
+    {
+      "id": "o2",
+      "window": 0,
+      "text": "Bright wind",
+      "begin_tick": 600,
+      "end_tick": 680,
+      "uncertainty": []
+    },
+    {
+      "id": "o3",
+      "window": 0,
+      "text": "Soft river",
+      "begin_tick": 710,
+      "end_tick": 790,
+      "uncertainty": []
+    }
+  ],
+  "resolution_ticks": 1
+}
