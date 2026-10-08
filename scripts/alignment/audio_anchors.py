@@ -92,7 +92,7 @@ def validate(record):
 
 def lexical(text):
     """English-only words and exact local UTF-16 ranges; unsupported spans remain diagnostic."""
-    if any((c.isalnum() and not ('A'<=c<='Z' or 'a'<=c<='z')) or unicodedata.category(c)[0] in 'SM' for c in text):
+    if any((c.isalnum() and not ('A'<=c<='Z' or 'a'<=c<='z')) or unicodedata.category(c)[0] in 'SMC' for c in text):
         return None
     result = []
     for m in re.finditer(r"[A-Za-z]+(?:['’][A-Za-z]+)*", text):

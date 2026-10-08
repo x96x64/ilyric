@@ -106,6 +106,11 @@ class AudioAnchorTests(unittest.TestCase):
         self.assertEqual(len(out['rejected_observations']),2)
         self.assertEqual(match(source(b'Bright wind'),anchors([]))['decisions'][0]['state'],'unresolved')
         self.assertEqual(match(source(b'Wind'),anchors([('Wind',100,200)]))['decisions'][0]['state'],'unresolved')
+        for text in ['Br\u200dight wind','Bright wind\ufe0f','Bright wi\u0301nd','Bright wind 👩‍🚀']:
+            original=anchors([(text,100,200)])
+            checked=match(source(b'Bright wind'),original)
+            self.assertEqual(checked['rejected_observations'][0]['reason'],'unsupported_recognition_text')
+            self.assertEqual(checked['anchors'],original)
 
     def test_strict_schema_and_unconditioned_provenance(self):
         a=anchors([('Bright wind',100,200)])
