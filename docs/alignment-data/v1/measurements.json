@@ -1,0 +1,1261 @@
+{
+  "evidence": "Direct local model evaluation against external human annotations; no model tuning",
+  "cases": [
+    {
+      "case": "EN01",
+      "engine": "ctc",
+      "role": "development",
+      "language": "en",
+      "source_audio_sha256": "84e344829620711e39f9c189f15671f7ffd184946cf03e269c23c6061c05e1eb",
+      "excerpt_audio_sha256": "dc16403af1d72df42ba30c97213bb6d91f8bc38aca2cb5b58bc8fb74f34946e6",
+      "source_text_sha256": "65307390c21359382648c254595350e3ba913d38e63eb8ba1604cecc053d3659",
+      "duration_seconds": 18.898062,
+      "endpoint_censored_last_offset": false,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -700000,
+          41428,
+          -486545
+        ],
+        "offset": [
+          -412817,
+          -348914,
+          -45649
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 486.545,
+          "p95_ms": 678.654,
+          "mae_ms": 409.324,
+          "maximum_ms": 700.0,
+          "over_500_ms_fraction": 0.333333
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 348.914,
+          "p95_ms": 406.427,
+          "mae_ms": 269.127,
+          "maximum_ms": 412.817,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 24,
+          "median_ms": 84.641,
+          "p95_ms": 865.826,
+          "mae_ms": 263.16,
+          "maximum_ms": 1090.008,
+          "over_500_ms_fraction": 0.208333
+        },
+        "offset": {
+          "count": 24,
+          "median_ms": 193.429,
+          "p95_ms": 662.74,
+          "mae_ms": 242.756,
+          "maximum_ms": 756.296,
+          "over_500_ms_fraction": 0.166667
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          -700000,
+          -179930,
+          -97539,
+          1090008,
+          -19304,
+          65,
+          41428,
+          71743,
+          7313,
+          -32178,
+          113645,
+          53671,
+          8524,
+          -17130,
+          -17262,
+          11074,
+          -34174,
+          -486545,
+          -101446,
+          380514,
+          700800,
+          876296,
+          806498,
+          468744
+        ],
+        "offset": [
+          -319930,
+          9136,
+          -269992,
+          -305107,
+          -219935,
+          -412817,
+          -108257,
+          -132687,
+          -72180,
+          -86355,
+          -26329,
+          -95127,
+          -189596,
+          -197262,
+          -4109,
+          -28461,
+          -348914,
+          -641446,
+          200514,
+          540800,
+          756296,
+          666498,
+          148744,
+          -45649
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 3.739,
+      "model_initialization_seconds": 0.033,
+      "inference_including_initialization_seconds": 2.717,
+      "peak_rss_MiB": 1335.91
+    },
+    {
+      "case": "EN02",
+      "engine": "ctc",
+      "role": "held-out",
+      "language": "en",
+      "source_audio_sha256": "24090af9ca4886bb0551f7c1896c249af3311cce1c585092054ed5c428834d44",
+      "excerpt_audio_sha256": "b39c8586d623abe8922ca5a0bdb541cccf67eda0d64bdbe88f2ea1e57908e4c8",
+      "source_text_sha256": "3e74f8670199f3e6812f55f9062fe2f07103e6d4951a259c1589085359101ac2",
+      "duration_seconds": 12.319354,
+      "endpoint_censored_last_offset": true,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          200000,
+          84172,
+          -3205780
+        ],
+        "offset": [
+          -135828,
+          -264060,
+          -59342
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 200.0,
+          "p95_ms": 2905.202,
+          "mae_ms": 1163.317,
+          "maximum_ms": 3205.78,
+          "over_500_ms_fraction": 0.333333
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 135.828,
+          "p95_ms": 251.237,
+          "mae_ms": 153.077,
+          "maximum_ms": 264.06,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 14,
+          "median_ms": 40.559,
+          "p95_ms": 1339.321,
+          "mae_ms": 304.323,
+          "maximum_ms": 3205.78,
+          "over_500_ms_fraction": 0.071429
+        },
+        "offset": {
+          "count": 14,
+          "median_ms": 112.834,
+          "p95_ms": 231.576,
+          "mae_ms": 114.473,
+          "maximum_ms": 264.06,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          200000,
+          52984,
+          -7769,
+          84172,
+          -28134,
+          -3014,
+          199704,
+          2320,
+          85916,
+          12609,
+          334305,
+          -3205780,
+          20570,
+          23248
+        ],
+        "offset": [
+          -127016,
+          -151316,
+          -135828,
+          -68134,
+          -183014,
+          -88278,
+          -106237,
+          -214084,
+          72040,
+          -5695,
+          -264060,
+          -119430,
+          -8143,
+          -59342
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 2.679,
+      "model_initialization_seconds": 0.024,
+      "inference_including_initialization_seconds": 1.629,
+      "peak_rss_MiB": 1173.19
+    },
+    {
+      "case": "EN03",
+      "engine": "ctc",
+      "role": "held-out",
+      "language": "en",
+      "source_audio_sha256": "beefa48e4520bb290e739faa7c0a91e4e7296fb239577966b2129934ccf86b31",
+      "excerpt_audio_sha256": "5d4beac9a1ceab86543b272eb477bd33ff6c328c262ce8db24029eb068423365",
+      "source_text_sha256": "b3812defec94b2fb17acc24d562e294d8d74a0f9ef854c052ac02c0b7563e420",
+      "duration_seconds": 14.372104,
+      "endpoint_censored_last_offset": false,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -60000,
+          -2245,
+          175643
+        ],
+        "offset": [
+          -105727,
+          -144357,
+          -46544
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 60.0,
+          "p95_ms": 164.079,
+          "mae_ms": 79.296,
+          "maximum_ms": 175.643,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 105.727,
+          "p95_ms": 140.494,
+          "mae_ms": 98.876,
+          "maximum_ms": 144.357,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 14,
+          "median_ms": 124.769,
+          "p95_ms": 256.125,
+          "mae_ms": 128.209,
+          "maximum_ms": 257.718,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 14,
+          "median_ms": 106.679,
+          "p95_ms": 183.913,
+          "mae_ms": 95.277,
+          "maximum_ms": 250.28,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          -60000,
+          257718,
+          -2245,
+          119818,
+          143610,
+          255268,
+          117402,
+          175643,
+          151379,
+          187701,
+          72369,
+          129720,
+          95332,
+          26721
+        ],
+        "offset": [
+          -148177,
+          -105727,
+          -182,
+          56087,
+          55268,
+          -142598,
+          -144357,
+          11379,
+          127701,
+          -107631,
+          -250280,
+          -24668,
+          -113279,
+          -46544
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 2.716,
+      "model_initialization_seconds": 0.025,
+      "inference_including_initialization_seconds": 1.673,
+      "peak_rss_MiB": 1189.22
+    },
+    {
+      "case": "JA01",
+      "engine": "tifa",
+      "role": "development",
+      "language": "ja",
+      "source_audio_sha256": "cbd14289cea8c5cd2e7a859076a2448f852143f8e5868b7cb655270764cf4f3a",
+      "excerpt_audio_sha256": "a17a9c7792a6763ff381460dd354c0147ff4dd7cba7313faa5d244c915cc8046",
+      "source_text_sha256": "f9a8b419494b18def4c89353f77d57bc45600b2ac768d400a992dcccc23ce44a",
+      "duration_seconds": 16.0,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -4127
+        ],
+        "offset": [
+          -2019
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 1,
+          "median_ms": 4.127,
+          "p95_ms": 4.127,
+          "mae_ms": 4.127,
+          "maximum_ms": 4.127,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 1,
+          "median_ms": 2.019,
+          "p95_ms": 2.019,
+          "mae_ms": 2.019,
+          "maximum_ms": 2.019,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 0,
+      "wall_seconds": 17.242,
+      "model_initialization_seconds": 0.138,
+      "inference_including_initialization_seconds": 15.933,
+      "peak_rss_MiB": 1074.34
+    },
+    {
+      "case": "JA02",
+      "engine": "tifa",
+      "role": "development",
+      "language": "ja",
+      "source_audio_sha256": "38c4dd447f561a044fa7ab1fabe9883da4209bc5f87954cc8789b43aff5c3e93",
+      "excerpt_audio_sha256": "882a16fb757ee2552697097500c1c97c6e71778fd721de9e794a78fa353ff6da",
+      "source_text_sha256": "523dc25b3a42c24eab2fe86a7f4586f71abeb0896a7f8910775e7d6590b2b12d",
+      "duration_seconds": 20.0,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 1,
+      "line_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 1,
+      "wall_seconds": 18.771,
+      "model_initialization_seconds": 0.179,
+      "inference_including_initialization_seconds": 17.119,
+      "peak_rss_MiB": 1058.73
+    },
+    {
+      "case": "JA03",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "ja",
+      "source_audio_sha256": "b737f83c68a346a5cfeccb7d813276521eb235995d4498349c8e2fe61c24f2f4",
+      "excerpt_audio_sha256": "dad0952167465d2835bb3679f1d197f203e00134b5c0fbe2e639c55640c3e210",
+      "source_text_sha256": "35fadda2c671b958b14ff4ab4fd2aba6024b1481940b2903756c2aafefc53f9f",
+      "duration_seconds": 13.090917,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          13946
+        ],
+        "offset": [
+          10204
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 1,
+          "median_ms": 13.946,
+          "p95_ms": 13.946,
+          "mae_ms": 13.946,
+          "maximum_ms": 13.946,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 1,
+          "median_ms": 10.204,
+          "p95_ms": 10.204,
+          "mae_ms": 10.204,
+          "maximum_ms": 10.204,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 0,
+      "wall_seconds": 18.168,
+      "model_initialization_seconds": 0.146,
+      "inference_including_initialization_seconds": 16.848,
+      "peak_rss_MiB": 1056.67
+    },
+    {
+      "case": "JA04",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "ja",
+      "source_audio_sha256": "e7dbc8ecce8f9979cbe3ee5003dcec396dd9079666d190268505e3d9e638dda8",
+      "excerpt_audio_sha256": "63059e64ef244f06a1316cf238a66611717bbd97aa5651ca388bec093399f097",
+      "source_text_sha256": "199e19beab4b8d3f6c5a6d768e504a94e13e8d448914b80cdba1cff6cba04e12",
+      "duration_seconds": 14.4,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          17846
+        ],
+        "offset": [
+          2269
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 1,
+          "median_ms": 17.846,
+          "p95_ms": 17.846,
+          "mae_ms": 17.846,
+          "maximum_ms": 17.846,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 1,
+          "median_ms": 2.269,
+          "p95_ms": 2.269,
+          "mae_ms": 2.269,
+          "maximum_ms": 2.269,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 0,
+      "wall_seconds": 17.45,
+      "model_initialization_seconds": 0.118,
+      "inference_including_initialization_seconds": 16.084,
+      "peak_rss_MiB": 1062.16
+    },
+    {
+      "case": "JA05",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "ja",
+      "source_audio_sha256": "7e8cc232bd8f10f852463ffd2868390b2317428f5dbb8beda680e2c513cfe4a2",
+      "excerpt_audio_sha256": "5b4866395d813aa8b47c03d42b2b21765b7366c3c367034a6e292f42104ce6ca",
+      "source_text_sha256": "12a60e5b6dab07802f21c19a0b4cd79f9557ba36714ff53338a4160b326e08c0",
+      "duration_seconds": 19.764688,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          476
+        ],
+        "offset": [
+          6848
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 1,
+          "median_ms": 0.476,
+          "p95_ms": 0.476,
+          "mae_ms": 0.476,
+          "maximum_ms": 0.476,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 1,
+          "median_ms": 6.848,
+          "p95_ms": 6.848,
+          "mae_ms": 6.848,
+          "maximum_ms": 6.848,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 0,
+      "wall_seconds": 17.71,
+      "model_initialization_seconds": 0.124,
+      "inference_including_initialization_seconds": 16.379,
+      "peak_rss_MiB": 1100.22
+    },
+    {
+      "case": "JA06",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "ja",
+      "source_audio_sha256": "a9f515921821a57c510c1e7d8648fa95069b30c2c729a623394f182c4669ed58",
+      "excerpt_audio_sha256": "ba8fa02b962f165d12c7d7c59a008e67a4b8e2421862aebd9dd912f64ec88bcc",
+      "source_text_sha256": "37a49c466027dd43735ad2dee2b6f9861d7043d096e046fec682e89b70123c79",
+      "duration_seconds": 11.999979,
+      "endpoint_censored_last_offset": false,
+      "line_count": 1,
+      "unmatched_lines": 1,
+      "line_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        },
+        "offset": {
+          "count": 0,
+          "median_ms": null,
+          "p95_ms": null,
+          "mae_ms": null,
+          "over_500_ms_fraction": null
+        }
+      },
+      "word_errors_us": {
+        "onset": [],
+        "offset": []
+      },
+      "word_status": "not measured: Japanese morphological and phone units differ from written characters",
+      "unresolved_count": 1,
+      "wall_seconds": 13.733,
+      "model_initialization_seconds": 0.121,
+      "inference_including_initialization_seconds": 12.635,
+      "peak_rss_MiB": 869.08
+    },
+    {
+      "case": "EN01",
+      "engine": "tifa",
+      "role": "development",
+      "language": "en",
+      "source_audio_sha256": "84e344829620711e39f9c189f15671f7ffd184946cf03e269c23c6061c05e1eb",
+      "excerpt_audio_sha256": "dc16403af1d72df42ba30c97213bb6d91f8bc38aca2cb5b58bc8fb74f34946e6",
+      "source_text_sha256": "65307390c21359382648c254595350e3ba913d38e63eb8ba1604cecc053d3659",
+      "duration_seconds": 18.898062,
+      "endpoint_censored_last_offset": false,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -70000,
+          -608572,
+          -36545
+        ],
+        "offset": [
+          47183,
+          -138914,
+          -15649
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 70.0,
+          "p95_ms": 554.715,
+          "mae_ms": 238.372,
+          "maximum_ms": 608.572,
+          "over_500_ms_fraction": 0.333333
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 47.183,
+          "p95_ms": 129.741,
+          "mae_ms": 67.249,
+          "maximum_ms": 138.914,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 24,
+          "median_ms": 48.561,
+          "p95_ms": 418.694,
+          "mae_ms": 98.617,
+          "maximum_ms": 608.572,
+          "over_500_ms_fraction": 0.041667
+        },
+        "offset": {
+          "count": 24,
+          "median_ms": 40.432,
+          "p95_ms": 137.346,
+          "mae_ms": 59.948,
+          "maximum_ms": 451.256,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          -70000,
+          -9930,
+          -107539,
+          -49992,
+          -99304,
+          40065,
+          -608572,
+          -8257,
+          -42687,
+          -92178,
+          33645,
+          -6329,
+          -81476,
+          -47130,
+          -77262,
+          -68926,
+          -234174,
+          -36545,
+          -41446,
+          -9486,
+          40800,
+          66296,
+          -43502,
+          -451256
+        ],
+        "offset": [
+          -9930,
+          19136,
+          -49992,
+          -55107,
+          40065,
+          47183,
+          -8257,
+          -42687,
+          -12180,
+          33645,
+          -6329,
+          34873,
+          30404,
+          -77262,
+          35891,
+          -128461,
+          -138914,
+          -41446,
+          -9486,
+          40800,
+          66296,
+          -43502,
+          -451256,
+          -15649
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 17.134,
+      "model_initialization_seconds": 0.139,
+      "inference_including_initialization_seconds": 15.982,
+      "peak_rss_MiB": 1086.89
+    },
+    {
+      "case": "EN02",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "en",
+      "source_audio_sha256": "24090af9ca4886bb0551f7c1896c249af3311cce1c585092054ed5c428834d44",
+      "excerpt_audio_sha256": "b39c8586d623abe8922ca5a0bdb541cccf67eda0d64bdbe88f2ea1e57908e4c8",
+      "source_text_sha256": "3e74f8670199f3e6812f55f9062fe2f07103e6d4951a259c1589085359101ac2",
+      "duration_seconds": 12.319354,
+      "endpoint_censored_last_offset": true,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -320000,
+          -345828,
+          -155780
+        ],
+        "offset": [
+          -345828,
+          995940,
+          -9342
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 320.0,
+          "p95_ms": 343.245,
+          "mae_ms": 273.869,
+          "maximum_ms": 345.828,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 345.828,
+          "p95_ms": 930.929,
+          "mae_ms": 450.37,
+          "maximum_ms": 995.94,
+          "over_500_ms_fraction": 0.333333
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 14,
+          "median_ms": 100.574,
+          "p95_ms": 607.795,
+          "mae_ms": 190.416,
+          "maximum_ms": 1094.305,
+          "over_500_ms_fraction": 0.071429
+        },
+        "offset": {
+          "count": 14,
+          "median_ms": 62.901,
+          "p95_ms": 936.377,
+          "mae_ms": 196.721,
+          "maximum_ms": 995.94,
+          "over_500_ms_fraction": 0.142857
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          -320000,
+          32984,
+          -187769,
+          -345828,
+          -98134,
+          -103014,
+          29704,
+          -77680,
+          15916,
+          -67391,
+          1094305,
+          -155780,
+          20570,
+          -116752
+        ],
+        "offset": [
+          32984,
+          8684,
+          -345828,
+          -98134,
+          -103014,
+          81722,
+          53763,
+          15916,
+          72040,
+          904305,
+          995940,
+          20570,
+          11857,
+          -9342
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 16.52,
+      "model_initialization_seconds": 0.113,
+      "inference_including_initialization_seconds": 15.379,
+      "peak_rss_MiB": 1044.53
+    },
+    {
+      "case": "EN03",
+      "engine": "tifa",
+      "role": "held-out",
+      "language": "en",
+      "source_audio_sha256": "beefa48e4520bb290e739faa7c0a91e4e7296fb239577966b2129934ccf86b31",
+      "excerpt_audio_sha256": "5d4beac9a1ceab86543b272eb477bd33ff6c328c262ce8db24029eb068423365",
+      "source_text_sha256": "b3812defec94b2fb17acc24d562e294d8d74a0f9ef854c052ac02c0b7563e420",
+      "duration_seconds": 14.372104,
+      "endpoint_censored_last_offset": false,
+      "line_count": 3,
+      "unmatched_lines": 0,
+      "line_errors_us": {
+        "onset": [
+          -100000,
+          -72245,
+          95643
+        ],
+        "offset": [
+          -325727,
+          95643,
+          -46544
+        ]
+      },
+      "line_metrics": {
+        "onset": {
+          "count": 3,
+          "median_ms": 95.643,
+          "p95_ms": 99.564,
+          "mae_ms": 89.296,
+          "maximum_ms": 100.0,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 3,
+          "median_ms": 95.643,
+          "p95_ms": 302.719,
+          "mae_ms": 155.971,
+          "maximum_ms": 325.727,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_metrics": {
+        "onset": {
+          "count": 14,
+          "median_ms": 80.599,
+          "p95_ms": 160.349,
+          "mae_ms": 81.567,
+          "maximum_ms": 165.268,
+          "over_500_ms_fraction": 0.0
+        },
+        "offset": {
+          "count": 14,
+          "median_ms": 88.511,
+          "p95_ms": 241.461,
+          "mae_ms": 113.247,
+          "maximum_ms": 325.727,
+          "over_500_ms_fraction": 0.0
+        }
+      },
+      "word_errors_us": {
+        "onset": [
+          -100000,
+          87718,
+          -72245,
+          79818,
+          83610,
+          165268,
+          -42598,
+          95643,
+          81379,
+          157701,
+          -77631,
+          79720,
+          15332,
+          -3279
+        ],
+        "offset": [
+          -158177,
+          -325727,
+          79818,
+          196087,
+          165268,
+          -42598,
+          95643,
+          81379,
+          157701,
+          -77631,
+          -140280,
+          15332,
+          -3279,
+          -46544
+        ]
+      },
+      "word_status": "Exact ordered normalized word correspondence; missing reference offsets excluded",
+      "unresolved_count": 0,
+      "wall_seconds": 16.473,
+      "model_initialization_seconds": 0.175,
+      "inference_including_initialization_seconds": 15.332,
+      "peak_rss_MiB": 1056.69
+    }
+  ],
+  "aggregates": [
+    {
+      "engine": "ctc",
+      "language": "en",
+      "split": "development",
+      "cases": 1,
+      "unmatched_lines": 0,
+      "line_onset": {
+        "count": 3,
+        "median_ms": 486.545,
+        "p95_ms": 678.654,
+        "mae_ms": 409.324,
+        "maximum_ms": 700.0,
+        "over_500_ms_fraction": 0.333333
+      },
+      "line_offset": {
+        "count": 3,
+        "median_ms": 348.914,
+        "p95_ms": 406.427,
+        "mae_ms": 269.127,
+        "maximum_ms": 412.817,
+        "over_500_ms_fraction": 0.0
+      },
+      "word_onset": {
+        "count": 24,
+        "median_ms": 84.641,
+        "p95_ms": 865.826,
+        "mae_ms": 263.16,
+        "maximum_ms": 1090.008,
+        "over_500_ms_fraction": 0.208333
+      },
+      "word_offset": {
+        "count": 24,
+        "median_ms": 193.429,
+        "p95_ms": 662.74,
+        "mae_ms": 242.756,
+        "maximum_ms": 756.296,
+        "over_500_ms_fraction": 0.166667
+      }
+    },
+    {
+      "engine": "ctc",
+      "language": "en",
+      "split": "held-out",
+      "cases": 2,
+      "unmatched_lines": 0,
+      "line_onset": {
+        "count": 6,
+        "median_ms": 129.907,
+        "p95_ms": 2454.335,
+        "mae_ms": 621.307,
+        "maximum_ms": 3205.78,
+        "over_500_ms_fraction": 0.166667
+      },
+      "line_offset": {
+        "count": 5,
+        "median_ms": 135.828,
+        "p95_ms": 240.119,
+        "mae_ms": 139.303,
+        "maximum_ms": 264.06,
+        "over_500_ms_fraction": 0.0
+      },
+      "word_onset": {
+        "count": 28,
+        "median_ms": 90.624,
+        "p95_ms": 307.5,
+        "mae_ms": 216.266,
+        "maximum_ms": 3205.78,
+        "over_500_ms_fraction": 0.035714
+      },
+      "word_offset": {
+        "count": 27,
+        "median_ms": 107.631,
+        "p95_ms": 239.421,
+        "mae_ms": 106.561,
+        "maximum_ms": 264.06,
+        "over_500_ms_fraction": 0.0
+      }
+    },
+    {
+      "engine": "tifa",
+      "language": "en",
+      "split": "development",
+      "cases": 1,
+      "unmatched_lines": 0,
+      "line_onset": {
+        "count": 3,
+        "median_ms": 70.0,
+        "p95_ms": 554.715,
+        "mae_ms": 238.372,
+        "maximum_ms": 608.572,
+        "over_500_ms_fraction": 0.333333
+      },
+      "line_offset": {
+        "count": 3,
+        "median_ms": 47.183,
+        "p95_ms": 129.741,
+        "mae_ms": 67.249,
+        "maximum_ms": 138.914,
+        "over_500_ms_fraction": 0.0
+      },
+      "word_onset": {
+        "count": 24,
+        "median_ms": 48.561,
+        "p95_ms": 418.694,
+        "mae_ms": 98.617,
+        "maximum_ms": 608.572,
+        "over_500_ms_fraction": 0.041667
+      },
+      "word_offset": {
+        "count": 24,
+        "median_ms": 40.432,
+        "p95_ms": 137.346,
+        "mae_ms": 59.948,
+        "maximum_ms": 451.256,
+        "over_500_ms_fraction": 0.0
+      }
+    },
+    {
+      "engine": "tifa",
+      "language": "en",
+      "split": "held-out",
+      "cases": 2,
+      "unmatched_lines": 0,
+      "line_onset": {
+        "count": 6,
+        "median_ms": 127.89,
+        "p95_ms": 339.371,
+        "mae_ms": 181.583,
+        "maximum_ms": 345.828,
+        "over_500_ms_fraction": 0.0
+      },
+      "line_offset": {
+        "count": 5,
+        "median_ms": 325.727,
+        "p95_ms": 865.918,
+        "mae_ms": 361.936,
+        "maximum_ms": 995.94,
+        "over_500_ms_fraction": 0.2
+      },
+      "word_onset": {
+        "count": 28,
+        "median_ms": 82.495,
+        "p95_ms": 336.788,
+        "mae_ms": 135.992,
+        "maximum_ms": 1094.305,
+        "over_500_ms_fraction": 0.035714
+      },
+      "word_offset": {
+        "count": 27,
+        "median_ms": 81.379,
+        "p95_ms": 736.762,
+        "mae_ms": 160.379,
+        "maximum_ms": 995.94,
+        "over_500_ms_fraction": 0.074074
+      }
+    },
+    {
+      "engine": "tifa",
+      "language": "ja",
+      "split": "development",
+      "cases": 2,
+      "unmatched_lines": 1,
+      "line_onset": {
+        "count": 1,
+        "median_ms": 4.127,
+        "p95_ms": 4.127,
+        "mae_ms": 4.127,
+        "maximum_ms": 4.127,
+        "over_500_ms_fraction": 0.0
+      },
+      "line_offset": {
+        "count": 1,
+        "median_ms": 2.019,
+        "p95_ms": 2.019,
+        "mae_ms": 2.019,
+        "maximum_ms": 2.019,
+        "over_500_ms_fraction": 0.0
+      },
+      "word_onset": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "mae_ms": null,
+        "over_500_ms_fraction": null
+      },
+      "word_offset": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "mae_ms": null,
+        "over_500_ms_fraction": null
+      }
+    },
+    {
+      "engine": "tifa",
+      "language": "ja",
+      "split": "held-out",
+      "cases": 4,
+      "unmatched_lines": 1,
+      "line_onset": {
+        "count": 3,
+        "median_ms": 13.946,
+        "p95_ms": 17.456,
+        "mae_ms": 10.756,
+        "maximum_ms": 17.846,
+        "over_500_ms_fraction": 0.0
+      },
+      "line_offset": {
+        "count": 3,
+        "median_ms": 6.848,
+        "p95_ms": 9.868,
+        "mae_ms": 6.44,
+        "maximum_ms": 10.204,
+        "over_500_ms_fraction": 0.0
+      },
+      "word_onset": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "mae_ms": null,
+        "over_500_ms_fraction": null
+      },
+      "word_offset": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "mae_ms": null,
+        "over_500_ms_fraction": null
+      }
+    }
+  ]
+}

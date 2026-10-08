@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "evidence": "Proposed acceptance criteria fixed before inference; not measured native timing",
+  "scope": "Complete local excerpts no longer than 60 seconds; line-level preparation first",
+  "candidates": [
+    "TIFA 1.0 ST, CPU, default skip penalty 0.5",
+    "facebook/wav2vec2-base-960h, CPU, CTC Viterbi without fitted phase correction"
+  ],
+  "selection": {
+    "Japanese": "PJS 001\u2013006, independent human relabeling; 001\u2013002 development, 003\u2013006 held out",
+    "English": "JamendoLyrics: first three complete annotated lines from Lower Loveday (development), Rxbyn and Cortez (held out), two-second context margins",
+    "exclusions": "No selection based on model performance. Report any unavailable or rejected example. No per-recording tuning. Corpus annotation boundaries define evaluation excerpts, limiting full-song generality."
+  },
+  "line_boundary_targets": {
+    "median_absolute_ms": 100,
+    "p95_absolute_ms": 250,
+    "fraction_over_500_ms": 0.05,
+    "unmatched_lines": 0
+  },
+  "operational_targets": {
+    "warm_runtime_factor_max": 10,
+    "peak_rss_GiB_max": 4,
+    "initialization": "Report separately"
+  },
+  "secondary": "Report English word and Japanese phone onset/offset errors where correspondence is unambiguous. No general fine-grained qualification from line-level success.",
+  "uncertainty": "Single Japanese singer; English accompaniment and different singers; TIFA undisclosed private training overlap unknown. Human annotations have unquantified inter-annotator uncertainty.",
+  "corpus_correction": "Before corrected inference, trailing context was bounded by the midpoint to the next annotated line; initial two-second margins contained omitted following words. Initial measurements are retained separately as mismatch diagnostics. No parameter adjustment. EN02 has no interline gap; its final offset is at the excerpt endpoint and cannot independently qualify offset accuracy."
+}

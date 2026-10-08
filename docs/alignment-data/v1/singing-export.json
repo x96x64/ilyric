@@ -1,0 +1,32 @@
+{
+  "EN03": {
+    "status": "passed",
+    "frames": 863,
+    "seconds": 14.383333333333333,
+    "width": 1080,
+    "height": 1920,
+    "fps": 60,
+    "color_range": "tv",
+    "audio": "48-kHz mono AAC",
+    "audio_correlation": 0.9994129553587222,
+    "audio_lag_samples": 0,
+    "lag_search_step_samples": 16,
+    "all_video_pts": "passed",
+    "acoustic_alignment_accuracy": "Evaluated separately; container agreement is not lyric accuracy"
+  },
+  "JA03": {
+    "status": "passed",
+    "frames": 786,
+    "seconds": 13.1,
+    "width": 1080,
+    "height": 1920,
+    "fps": 60,
+    "color_range": "tv",
+    "audio": "48-kHz mono AAC",
+    "audio_correlation": 0.9993407798691958,
+    "audio_lag_samples": 0,
+    "lag_search_step_samples": 16,
+    "all_video_pts": "passed",
+    "acoustic_alignment_accuracy": "Evaluated separately; container agreement is not lyric accuracy"
+  }
+}
