@@ -1,0 +1,965 @@
+{
+  "status": "measured",
+  "evidence_status": "Fitted appearance reconstructions and measured conditional held-out errors",
+  "color_interpretation": "Full-range Rec.709 converted to sRGB; nonlinear channel-average diagnostic code values",
+  "geometry": "Frozen v5 parameters and v6 shaped support; no local registration",
+  "region_definition": "Column-aggregated shared-interior contrast ratio, endpoints 0.44/0.98; boundary fraction 0.1 to 0.9",
+  "comparisons": {
+    "V09": {
+      "baseline": {
+        "scale": 1,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.440755285712399,
+        "bright": 1,
+        "training": 10.853855743246775,
+        "phase_holdout": {
+          "rms": 10.838238067988524,
+          "boundary": 39.38503453044945,
+          "upcoming": 3.1085068061846077,
+          "completed": 7.874777201063921
+        },
+        "held_out": {
+          "rms": 10.81100552539385,
+          "boundary": 39.97628188235685,
+          "upcoming": 3.47185310214169,
+          "completed": 7.622050248273782
+        }
+      },
+      "spatial": {
+        "scale": 3,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.4424352165745229,
+        "bright": 0.9806797630234652,
+        "training": 6.8646047901055995,
+        "phase_holdout": {
+          "rms": 6.88132773941458,
+          "boundary": 17.388722241287155,
+          "upcoming": 3.445967677096079,
+          "completed": 7.22455800311815
+        },
+        "held_out": {
+          "rms": 6.88071146131514,
+          "boundary": 17.301216781123703,
+          "upcoming": 3.938890027549481,
+          "completed": 7.040922403597064
+        }
+      },
+      "temporal": {
+        "scale": 4,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.442988956873964,
+        "bright": 0.9809208370860606,
+        "training": 8.808042110750916,
+        "phase_holdout": {
+          "rms": 8.862584594968947,
+          "boundary": 26.188799451602605,
+          "upcoming": 5.691530274300818,
+          "completed": 7.449444002199101
+        },
+        "held_out": {
+          "rms": 8.968100739878818,
+          "boundary": 26.262584028502705,
+          "upcoming": 6.315855216839279,
+          "completed": 7.347830882623793
+        }
+      },
+      "sampling": {
+        "training_frames": 199,
+        "held_out_frames": 199,
+        "training_pts": [
+          4803,
+          6779
+        ],
+        "held_out_pts": [
+          4802,
+          6779
+        ]
+      }
+    },
+    "V10": {
+      "baseline": {
+        "scale": 1,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.4321160402560651,
+        "bright": 1,
+        "training": 10.833067480316146,
+        "phase_holdout": {
+          "rms": 10.90749292538367,
+          "boundary": 40.649568752206974,
+          "upcoming": 2.947244793386027,
+          "completed": 7.6189831854633825
+        },
+        "held_out": {
+          "rms": 11.035535323456156,
+          "boundary": 40.10979212388872,
+          "upcoming": 3.727787613129312,
+          "completed": 7.830750873111055
+        }
+      },
+      "spatial": {
+        "scale": 3,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.43286881112992287,
+        "bright": 0.981912952612086,
+        "training": 6.73057569641831,
+        "phase_holdout": {
+          "rms": 6.758542315160756,
+          "boundary": 17.64094184682349,
+          "upcoming": 3.261401443479037,
+          "completed": 7.003676573980124
+        },
+        "held_out": {
+          "rms": 6.976287351308638,
+          "boundary": 17.718042954715543,
+          "upcoming": 3.797722345037718,
+          "completed": 7.171376661499357
+        }
+      },
+      "temporal": {
+        "scale": 4,
+        "offset": 0,
+        "softness": 1,
+        "dim": 0.43335404636768926,
+        "bright": 0.982123350894935,
+        "training": 8.835099863815604,
+        "phase_holdout": {
+          "rms": 8.893456781392226,
+          "boundary": 26.861130256307693,
+          "upcoming": 5.779305546229128,
+          "completed": 7.2884972627959765
+        },
+        "held_out": {
+          "rms": 8.916940303156906,
+          "boundary": 26.539400924394368,
+          "upcoming": 5.762738248026425,
+          "completed": 7.4149737379062906
+        }
+      },
+      "sampling": {
+        "training_frames": 199,
+        "held_out_frames": 199,
+        "training_pts": [
+          4802,
+          6779
+        ],
+        "held_out_pts": [
+          4803,
+          6779
+        ]
+      }
+    }
+  },
+  "sensitivity": {
+    "V09": {
+      "threshold-35": {
+        "baseline": {
+          "rms": 11.658017854463335,
+          "boundary": 39.70941373429359,
+          "upcoming": 4.7072087518252745,
+          "completed": 9.039283943979799
+        },
+        "spatial": {
+          "rms": 7.960998869895228,
+          "boundary": 18.144291593740896,
+          "upcoming": 5.101531901697648,
+          "completed": 8.244200913556192
+        },
+        "temporal": {
+          "rms": 9.82673584777394,
+          "boundary": 26.35878758950859,
+          "upcoming": 7.183880297119221,
+          "completed": 8.487638207111528
+        }
+      },
+      "threshold-65": {
+        "baseline": {
+          "rms": 10.11792146687367,
+          "boundary": 40.52548805819135,
+          "upcoming": 2.882253387881154,
+          "completed": 6.1413615193018565
+        },
+        "spatial": {
+          "rms": 5.952933846385739,
+          "boundary": 16.76367954943477,
+          "upcoming": 3.4050925037964745,
+          "completed": 5.722400525294995
+        },
+        "temporal": {
+          "rms": 8.27380321685035,
+          "boundary": 26.388878948453534,
+          "upcoming": 5.939926668783955,
+          "completed": 6.134020868169518
+        }
+      },
+      "border-4": {
+        "baseline": {
+          "rms": 10.80762158920257,
+          "boundary": 39.994047428029454,
+          "upcoming": 3.431113390286158,
+          "completed": 7.622075193638252
+        },
+        "spatial": {
+          "rms": 6.870658337840316,
+          "boundary": 17.30641303220418,
+          "upcoming": 3.8972402116271243,
+          "completed": 7.041192830482482
+        },
+        "temporal": {
+          "rms": 8.960836361654746,
+          "boundary": 26.28088035057405,
+          "upcoming": 6.284134063103318,
+          "completed": 7.348633709088614
+        }
+      },
+      "border-12": {
+        "baseline": {
+          "rms": 10.813014403368605,
+          "boundary": 39.97220885594534,
+          "upcoming": 3.499769526124425,
+          "completed": 7.622056887752141
+        },
+        "spatial": {
+          "rms": 6.886736005522114,
+          "boundary": 17.2967195292514,
+          "upcoming": 3.966817927288506,
+          "completed": 7.0406658975514524
+        },
+        "temporal": {
+          "rms": 8.972532389611162,
+          "boundary": 26.25508444204918,
+          "upcoming": 6.335797751794231,
+          "completed": 7.347659005280147
+        }
+      },
+      "phase-minus-10": {
+        "baseline": {
+          "rms": 10.939952090958766,
+          "boundary": 40.79528463431962,
+          "upcoming": 3.2714492660497525,
+          "completed": 7.622386114552158
+        },
+        "spatial": {
+          "rms": 6.988811024947107,
+          "boundary": 18.56697576292606,
+          "upcoming": 3.5926317106664043,
+          "completed": 7.085602910342125
+        },
+        "temporal": {
+          "rms": 9.020958258444855,
+          "boundary": 27.402546311645732,
+          "upcoming": 5.332003235349079,
+          "completed": 7.724755746587204
+        }
+      },
+      "phase-plus-10": {
+        "baseline": {
+          "rms": 11.296261394053513,
+          "boundary": 41.34110204367971,
+          "upcoming": 4.838394197893353,
+          "completed": 7.622050248273782
+        },
+        "spatial": {
+          "rms": 7.507484849155155,
+          "boundary": 20.312239527821355,
+          "upcoming": 4.780271883296101,
+          "completed": 7.034198670945653
+        },
+        "temporal": {
+          "rms": 9.360439286776366,
+          "boundary": 26.573065296773013,
+          "upcoming": 7.588877028503153,
+          "completed": 7.145789370131569
+        }
+      },
+      "registration-minus-1": {
+        "baseline": {
+          "rms": 11.081144150760512,
+          "boundary": 40.136578736103324,
+          "upcoming": 3.4911835970036367,
+          "completed": 8.277333321723436
+        },
+        "spatial": {
+          "rms": 7.4296551830197535,
+          "boundary": 17.27318339403261,
+          "upcoming": 3.927234534454422,
+          "completed": 8.085369621632365
+        },
+        "temporal": {
+          "rms": 9.401046551347651,
+          "boundary": 26.300699478224598,
+          "upcoming": 6.31483513006586,
+          "completed": 8.341767713240632
+        }
+      },
+      "registration-plus-1": {
+        "baseline": {
+          "rms": 11.897967931566773,
+          "boundary": 40.51297224567168,
+          "upcoming": 4.929206752711269,
+          "completed": 9.929832914244706
+        },
+        "spatial": {
+          "rms": 8.808025273363018,
+          "boundary": 18.305325770521613,
+          "upcoming": 5.241708691370571,
+          "completed": 9.812456746156728
+        },
+        "temporal": {
+          "rms": 10.486924920985851,
+          "boundary": 27.14267566947228,
+          "upcoming": 7.089413771213905,
+          "completed": 10.066862022705067
+        }
+      },
+      "local_grid": {
+        "scale": 3,
+        "offset": 0.125,
+        "softness": 1.25,
+        "dim": 0.44266102247510253,
+        "bright": 0.9829350338292231,
+        "training": 6.784598343604502,
+        "phase_holdout": {
+          "rms": 6.816273606871699,
+          "boundary": 16.76417753974065,
+          "upcoming": 3.5868236530663156,
+          "completed": 7.196017376201036
+        },
+        "held_out": {
+          "rms": 6.858570010042268,
+          "boundary": 16.808404825112003,
+          "upcoming": 4.132972237658841,
+          "completed": 7.022201744723425
+        }
+      }
+    },
+    "V10": {
+      "threshold-35": {
+        "baseline": {
+          "rms": 11.795147715179514,
+          "boundary": 39.87570286309269,
+          "upcoming": 4.521049728277826,
+          "completed": 9.235271760543254
+        },
+        "spatial": {
+          "rms": 7.947128720916345,
+          "boundary": 18.497411745258702,
+          "upcoming": 4.604658305021317,
+          "completed": 8.397800424984272
+        },
+        "temporal": {
+          "rms": 9.70231316274296,
+          "boundary": 26.662859363656256,
+          "upcoming": 6.404945136374192,
+          "completed": 8.585686378004356
+        }
+      },
+      "threshold-65": {
+        "baseline": {
+          "rms": 10.360051983333303,
+          "boundary": 40.72566505014083,
+          "upcoming": 3.4008892882959487,
+          "completed": 6.32761013517823
+        },
+        "spatial": {
+          "rms": 6.066287499784273,
+          "boundary": 17.09862513296741,
+          "upcoming": 3.4833357252013433,
+          "completed": 5.798475584044614
+        },
+        "temporal": {
+          "rms": 8.22493140879558,
+          "boundary": 26.674656758593056,
+          "upcoming": 5.493310398764539,
+          "completed": 6.139432901144607
+        }
+      },
+      "border-4": {
+        "baseline": {
+          "rms": 11.034897203607036,
+          "boundary": 40.12166386160082,
+          "upcoming": 3.7252723316774117,
+          "completed": 7.831207117890184
+        },
+        "spatial": {
+          "rms": 6.974266334963629,
+          "boundary": 17.714705420521597,
+          "upcoming": 3.7941900489117604,
+          "completed": 7.171407624237509
+        },
+        "temporal": {
+          "rms": 8.917506630553598,
+          "boundary": 26.545316224867417,
+          "upcoming": 5.764569436463341,
+          "completed": 7.416193623199172
+        }
+      },
+      "border-12": {
+        "baseline": {
+          "rms": 11.033601347005677,
+          "boundary": 40.122664717343106,
+          "upcoming": 3.7219509216090794,
+          "completed": 7.829756225777395
+        },
+        "spatial": {
+          "rms": 6.973129934643269,
+          "boundary": 17.714262595324882,
+          "upcoming": 3.7927778129636778,
+          "completed": 7.170320459175946
+        },
+        "temporal": {
+          "rms": 8.915578182114038,
+          "boundary": 26.54125932474997,
+          "upcoming": 5.764164023774578,
+          "completed": 7.413957460406476
+        }
+      },
+      "phase-minus-10": {
+        "baseline": {
+          "rms": 11.179158574611503,
+          "boundary": 40.982409850011315,
+          "upcoming": 3.5501933395610363,
+          "completed": 7.8348545054661445
+        },
+        "spatial": {
+          "rms": 7.135127475990088,
+          "boundary": 19.242768497229008,
+          "upcoming": 3.568736723670117,
+          "completed": 7.174384947658795
+        },
+        "temporal": {
+          "rms": 9.018782028163113,
+          "boundary": 27.802553141695995,
+          "upcoming": 4.878239010029575,
+          "completed": 7.73710133570774
+        }
+      },
+      "phase-plus-10": {
+        "baseline": {
+          "rms": 11.486848085797053,
+          "boundary": 41.18954595098214,
+          "upcoming": 5.117717856448497,
+          "completed": 7.830750873111055
+        },
+        "spatial": {
+          "rms": 7.555322084630835,
+          "boundary": 20.672931815837323,
+          "upcoming": 4.4512670669458405,
+          "completed": 7.170887657350234
+        },
+        "temporal": {
+          "rms": 9.265015671734815,
+          "boundary": 26.79681895570036,
+          "upcoming": 6.9509377860666826,
+          "completed": 7.252474191588217
+        }
+      },
+      "registration-minus-1": {
+        "baseline": {
+          "rms": 11.256831854359834,
+          "boundary": 40.30669526746502,
+          "upcoming": 3.813074426655536,
+          "completed": 8.354251186829204
+        },
+        "spatial": {
+          "rms": 7.464438627820726,
+          "boundary": 17.787075514456035,
+          "upcoming": 3.868969807053517,
+          "completed": 8.065031850994675
+        },
+        "temporal": {
+          "rms": 9.309355544341813,
+          "boundary": 26.65014964513847,
+          "upcoming": 5.816686026479065,
+          "completed": 8.277886176330025
+        }
+      },
+      "registration-plus-1": {
+        "baseline": {
+          "rms": 12.117831903258745,
+          "boundary": 40.68814789519137,
+          "upcoming": 5.275096210244124,
+          "completed": 10.050713264487735
+        },
+        "spatial": {
+          "rms": 8.885768469942784,
+          "boundary": 18.68776261296932,
+          "upcoming": 5.333407454160314,
+          "completed": 9.849342069103038
+        },
+        "temporal": {
+          "rms": 10.453318470559191,
+          "boundary": 27.427433126413398,
+          "upcoming": 6.766804337168333,
+          "completed": 10.060824160822074
+        }
+      },
+      "local_grid": {
+        "scale": 3,
+        "offset": 0.125,
+        "softness": 1,
+        "dim": 0.43429744467775894,
+        "bright": 0.9831892362530291,
+        "training": 6.690372556610773,
+        "phase_holdout": {
+          "rms": 6.7348615129786795,
+          "boundary": 17.790925565487203,
+          "upcoming": 3.063179800977391,
+          "completed": 6.997858273200424
+        },
+        "held_out": {
+          "rms": 6.911351074535964,
+          "boundary": 17.775090822596468,
+          "upcoming": 3.513312325817121,
+          "completed": 7.160964048031089
+        }
+      }
+    }
+  },
+  "measurements": {
+    "V09": {
+      "evidence_status": "Measured shared-support contrast proxies with bracket uncertainty",
+      "width_midpoints": {
+        "count": 14,
+        "minimum": 49.0,
+        "median": 64.0,
+        "maximum": 68.0
+      },
+      "duration_midpoints": {
+        "count": 13,
+        "minimum": 0.1,
+        "median": 0.18333333333333335,
+        "maximum": 0.5
+      },
+      "unavailable_durations": 2,
+      "spatial_brackets": [
+        {
+          "pts": 4882,
+          "line": 0,
+          "cell": 0,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 4982,
+          "line": 0,
+          "cell": 1,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 5102,
+          "line": 0,
+          "cell": 2,
+          "lower": 65,
+          "upper": 67
+        },
+        {
+          "pts": 5222,
+          "line": 0,
+          "cell": 3,
+          "lower": 62,
+          "upper": 64
+        },
+        {
+          "pts": 5332,
+          "line": 0,
+          "cell": 4,
+          "lower": 61,
+          "upper": 63
+        },
+        {
+          "pts": 5342,
+          "line": 0,
+          "cell": 4,
+          "lower": 61,
+          "upper": 63
+        },
+        {
+          "pts": 5452,
+          "line": 0,
+          "cell": 5,
+          "lower": 64,
+          "upper": 66
+        },
+        {
+          "pts": 5851,
+          "line": 1,
+          "cell": 0,
+          "lower": 62,
+          "upper": 64
+        },
+        {
+          "pts": 5861,
+          "line": 1,
+          "cell": 0,
+          "lower": 59,
+          "upper": 61
+        },
+        {
+          "pts": 6081,
+          "line": 1,
+          "cell": 2,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 6270,
+          "line": 1,
+          "cell": 3,
+          "lower": 67,
+          "upper": 69
+        },
+        {
+          "pts": 6580,
+          "line": 1,
+          "cell": 4,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 6600,
+          "line": 1,
+          "cell": 4,
+          "lower": 66,
+          "upper": 68
+        },
+        {
+          "pts": 6749,
+          "line": 1,
+          "cell": 5,
+          "lower": 48,
+          "upper": 50
+        }
+      ],
+      "temporal_brackets": [
+        {
+          "line": 0,
+          "cell": 0,
+          "lower_seconds": 0.1,
+          "upper_seconds": 0.13166666666666665
+        },
+        {
+          "line": 0,
+          "cell": 1,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        },
+        {
+          "line": 0,
+          "cell": 2,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        },
+        {
+          "line": 0,
+          "cell": 3,
+          "lower_seconds": 0.15,
+          "upper_seconds": 0.18333333333333332
+        },
+        {
+          "line": 0,
+          "cell": 4,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        },
+        {
+          "line": 0,
+          "cell": 5,
+          "lower_seconds": 0.14833333333333334,
+          "upper_seconds": 0.18166666666666667
+        },
+        {
+          "line": 0,
+          "cell": 6,
+          "lower_seconds": 0.2833333333333333,
+          "upper_seconds": 0.31666666666666665
+        },
+        {
+          "line": 0,
+          "cell": 7,
+          "lower_seconds": 0.08333333333333333,
+          "upper_seconds": 0.11666666666666667
+        },
+        {
+          "line": 1,
+          "cell": 0,
+          "lower_seconds": 0.08333333333333333,
+          "upper_seconds": 0.11666666666666667
+        },
+        {
+          "line": 1,
+          "cell": 1,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        },
+        {
+          "line": 1,
+          "cell": 2,
+          "lower_seconds": 0.265,
+          "upper_seconds": 0.29833333333333334
+        },
+        {
+          "line": 1,
+          "cell": 3,
+          "lower_seconds": 0.21666666666666667,
+          "upper_seconds": 0.25
+        },
+        {
+          "line": 1,
+          "cell": 4,
+          "lower_seconds": 0.48333333333333334,
+          "upper_seconds": 0.5166666666666667
+        }
+      ]
+    },
+    "V10": {
+      "evidence_status": "Measured shared-support contrast proxies with bracket uncertainty",
+      "width_midpoints": {
+        "count": 20,
+        "minimum": 24.0,
+        "median": 63.0,
+        "maximum": 67.0
+      },
+      "duration_midpoints": {
+        "count": 14,
+        "minimum": 0.08333333333333334,
+        "median": 0.18166666666666667,
+        "maximum": 0.49833333333333335
+      },
+      "unavailable_durations": 1,
+      "spatial_brackets": [
+        {
+          "pts": 4862,
+          "line": 0,
+          "cell": 0,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 4872,
+          "line": 0,
+          "cell": 0,
+          "lower": 64,
+          "upper": 66
+        },
+        {
+          "pts": 4952,
+          "line": 0,
+          "cell": 1,
+          "lower": 62,
+          "upper": 64
+        },
+        {
+          "pts": 4962,
+          "line": 0,
+          "cell": 1,
+          "lower": 60,
+          "upper": 62
+        },
+        {
+          "pts": 5082,
+          "line": 0,
+          "cell": 2,
+          "lower": 65,
+          "upper": 67
+        },
+        {
+          "pts": 5092,
+          "line": 0,
+          "cell": 2,
+          "lower": 56,
+          "upper": 58
+        },
+        {
+          "pts": 5192,
+          "line": 0,
+          "cell": 3,
+          "lower": 66,
+          "upper": 68
+        },
+        {
+          "pts": 5202,
+          "line": 0,
+          "cell": 3,
+          "lower": 62,
+          "upper": 64
+        },
+        {
+          "pts": 5312,
+          "line": 0,
+          "cell": 4,
+          "lower": 61,
+          "upper": 63
+        },
+        {
+          "pts": 5322,
+          "line": 0,
+          "cell": 4,
+          "lower": 61,
+          "upper": 63
+        },
+        {
+          "pts": 5841,
+          "line": 1,
+          "cell": 0,
+          "lower": 58,
+          "upper": 60
+        },
+        {
+          "pts": 5941,
+          "line": 1,
+          "cell": 1,
+          "lower": 62,
+          "upper": 64
+        },
+        {
+          "pts": 5951,
+          "line": 1,
+          "cell": 1,
+          "lower": 54,
+          "upper": 56
+        },
+        {
+          "pts": 6060,
+          "line": 1,
+          "cell": 2,
+          "lower": 64,
+          "upper": 66
+        },
+        {
+          "pts": 6250,
+          "line": 1,
+          "cell": 3,
+          "lower": 65,
+          "upper": 67
+        },
+        {
+          "pts": 6260,
+          "line": 1,
+          "cell": 3,
+          "lower": 60,
+          "upper": 62
+        },
+        {
+          "pts": 6560,
+          "line": 1,
+          "cell": 4,
+          "lower": 63,
+          "upper": 65
+        },
+        {
+          "pts": 6570,
+          "line": 1,
+          "cell": 4,
+          "lower": 64,
+          "upper": 66
+        },
+        {
+          "pts": 6580,
+          "line": 1,
+          "cell": 4,
+          "lower": 64,
+          "upper": 66
+        },
+        {
+          "pts": 6779,
+          "line": 1,
+          "cell": 6,
+          "lower": 23,
+          "upper": 25
+        }
+      ],
+      "temporal_brackets": [
+        {
+          "line": 0,
+          "cell": 0,
+          "lower_seconds": 0.1,
+          "upper_seconds": 0.13333333333333333
+        },
+        {
+          "line": 0,
+          "cell": 1,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        },
+        {
+          "line": 0,
+          "cell": 2,
+          "lower_seconds": 0.15,
+          "upper_seconds": 0.18333333333333332
+        },
+        {
+          "line": 0,
+          "cell": 3,
+          "lower_seconds": 0.15,
+          "upper_seconds": 0.18333333333333332
+        },
+        {
+          "line": 0,
+          "cell": 4,
+          "lower_seconds": 0.165,
+          "upper_seconds": 0.19833333333333333
+        },
+        {
+          "line": 0,
+          "cell": 5,
+          "lower_seconds": 0.13333333333333333,
+          "upper_seconds": 0.16666666666666666
+        },
+        {
+          "line": 0,
+          "cell": 6,
+          "lower_seconds": 0.3,
+          "upper_seconds": 0.3333333333333333
+        },
+        {
+          "line": 0,
+          "cell": 7,
+          "lower_seconds": 0.06666666666666667,
+          "upper_seconds": 0.1
+        },
+        {
+          "line": 1,
+          "cell": 0,
+          "lower_seconds": 0.08333333333333333,
+          "upper_seconds": 0.11666666666666667
+        },
+        {
+          "line": 1,
+          "cell": 1,
+          "lower_seconds": 0.165,
+          "upper_seconds": 0.19833333333333333
+        },
+        {
+          "line": 1,
+          "cell": 2,
+          "lower_seconds": 0.26666666666666666,
+          "upper_seconds": 0.3
+        },
+        {
+          "line": 1,
+          "cell": 3,
+          "lower_seconds": 0.21666666666666667,
+          "upper_seconds": 0.25
+        },
+        {
+          "line": 1,
+          "cell": 4,
+          "lower_seconds": 0.4816666666666667,
+          "upper_seconds": 0.515
+        },
+        {
+          "line": 1,
+          "cell": 5,
+          "lower_seconds": 0.16666666666666666,
+          "upper_seconds": 0.2
+        }
+      ]
+    }
+  }
+}

@@ -37,3 +37,7 @@ The [glyph-outline report](docs/glyph-outline-validation.md) supports a bounded 
 ## Experimental Japanese Lyrics Slice
 
 The [measured-slice report](docs/lyrics-slice.md) records a separate deterministic native-space paragraph renderer and V09/V10 integration comparisons. Shared geometry is retained; progressive appearance remains provisional. [Developer commands](docs/lyrics-slice-commands.md) exercise an original synthetic fixture without private references. The existing `ilyric` scene and export path are unchanged.
+
+## Progressive Appearance Calibration
+
+The [appearance report](docs/progressive-appearance.md) records a shared softened progression candidate, reverse-recording holdouts, and unchanged Japanese geometry. The improvement remains experimental; native appearance and general timing fidelity are unvalidated. [Developer commands](docs/appearance-commands.md) preserve the prior hard-wipe path and provide an optional synthetic softened fixture.

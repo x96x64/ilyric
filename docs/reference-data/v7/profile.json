@@ -1,0 +1,109 @@
+{
+  "profile_version": 7,
+  "scope": "Internal progressive-appearance calibration; not a public project schema",
+  "previous_profile": "../v6/profile.json",
+  "device": {
+    "status": "reported",
+    "model": "iPhone 16",
+    "os": "iOS 27.0.1",
+    "build": {
+      "status": "unknown",
+      "value": "Unknown"
+    },
+    "configuration": {
+      "display_zoom": "Default",
+      "text_size": "4/7, smallest selectable size counted as 1/7",
+      "bold_text": false,
+      "reduce_motion": false,
+      "reduce_transparency": false,
+      "increase_contrast": false,
+      "appearance": "Light",
+      "system_language": "English",
+      "music_language": "English"
+    }
+  },
+  "coordinates": {
+    "status": "definition",
+    "origin": "top-left",
+    "unit": "native capture pixel",
+    "y_direction": "down",
+    "recording_dimensions": [
+      1180,
+      2556
+    ],
+    "screenshot_dimensions": [
+      1179,
+      2556
+    ],
+    "extra_recording_column_origin": "unknown",
+    "comparison_space": "sRGB after interpreting input ICC/stream metadata"
+  },
+  "environment": {
+    "hardware": "Apple M4",
+    "os": "macOS 27.0.1",
+    "swift": "6.4 swiftlang-6.4.0.30.4",
+    "sdk": "macOS 27.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "pillow": "12.3.0",
+    "ffmpeg": "8.1.2"
+  },
+  "provenance": {
+    "new_recordings": [],
+    "correspondence": {
+      "status": "observed",
+      "V09": "S09",
+      "V10": "S09"
+    },
+    "sing": {
+      "status": "reported",
+      "enabled": false
+    },
+    "configuration_unchanged": {
+      "status": "reported",
+      "value": true
+    },
+    "prior_correspondence": {
+      "status": "reported confirmation of existing observations",
+      "V05": "S08",
+      "V06": "S08",
+      "V07": "S10",
+      "V08": "S10"
+    },
+    "source_integrity": "SHA-256 unchanged before and after analysis; hashes private",
+    "source_media_public": false,
+    "reused_recordings": [
+      "V09",
+      "V10"
+    ]
+  },
+  "parameters": {
+    "geometry": {
+      "status": "fitted",
+      "provenance": "Frozen v5/v6 parameters; coverage unchanged"
+    },
+    "appearance": {
+      "status": "fitted",
+      "interval_scale": 3,
+      "phase_offset": 0,
+      "softness_in_shaped_range_advances": 1,
+      "dim_values": [
+        0.4424352165745229,
+        0.43286881112992287
+      ],
+      "completed_values": [
+        0.9806797630234652,
+        0.981912952612086
+      ],
+      "interpretation": "White-over-local-background reconstruction in nonlinear sRGB; not native alpha",
+      "event_semantics": "Supplied appearance intervals based on observed brackets; native lyric timing unknown"
+    }
+  },
+  "disposition": {
+    "status": "engineering_inference",
+    "appearance_improvement": "supported within inspected sharp S09 states",
+    "native_fidelity": false,
+    "production_renderer_changed": false,
+    "next_gate": "Bounded Latin typography integration with explicit wrap-boundary validation"
+  }
+}
