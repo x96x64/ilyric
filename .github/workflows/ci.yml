@@ -35,9 +35,30 @@ jobs:
       - name: Test Lyrics slice
         timeout-minutes: 40
         run: swift test --disable-xctest --filter LyricsSliceTests
-      - name: Test Lyrics input
-        timeout-minutes: 40
-        run: swift test --disable-xctest --filter LyricsInputTests
+      - name: Test Lyrics input InputTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.InputTests
+      - name: Test Lyrics input EnhancedTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.EnhancedTests
+      - name: Test Lyrics input TTMLTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.TTMLTests
+      - name: Test Lyrics input ProjectTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.ProjectTests
+      - name: Test Lyrics input ProgressionTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.ProgressionTests
+      - name: Test Lyrics input AudioSceneTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.AudioSceneTests
 
   python:
     name: Python Public Validation Tests
