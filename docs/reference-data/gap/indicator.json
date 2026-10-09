@@ -1,0 +1,13 @@
+{
+ "evidence": "Private iPhone 16 recordings V12, V14, V16 (reported iOS 27.0.1, exact build Unknown), playing through instrumental gaps of 16.5, 10.8, and 20.9 seconds; 30- and 60-fps crops around the dot row",
+ "geometry_native_px": {"dot_diameter": 42, "center_spacing": 67, "first_center_x": 107, "focused_center_y": [760, 760, 762], "slot_to_next_paragraph": 226},
+ "appearance": {"unlit_to_lit_contrast_ratio": [0.157, 0.130, 0.129, 0.149, 0.152, 0.161, 0.152, 0.127, 0.127], "lit_contrast_code_values": [185, 174, 197]},
+ "fill_model": {"form": "dot k ramps linearly over a fraction ramp of the k-th third of [0, duration - lead)", "lead_s": 2.22, "ramp": 0.72, "rmse_normalized": 0.040,
+   "holdout": {"V12": {"lead_s": 2.16, "ramp": 0.75, "rmse": 0.046}, "V14": {"lead_s": 2.30, "ramp": 0.74, "rmse": 0.046}, "V16": {"lead_s": 2.23, "ramp": 0.66, "rmse": 0.038}},
+   "rejected_proportional_model": {"fraction": 0.849, "ramp": 0.76, "holdout_rmse": {"V12": 0.047, "V14": 0.102, "V16": 0.089}}},
+ "pulse_model": {"form": "group scale 1 + A sin(2 pi t / P + phi) about the middle dot, t from gap start",
+   "fits": {"V12": {"period_s": 5.14, "amplitude": 0.110, "phase_rad": -0.62, "rmse": 0.0223}, "V14": {"period_s": 4.92, "amplitude": 0.108, "phase_rad": -0.36, "rmse": 0.0234}, "V16": {"period_s": 4.00, "amplitude": 0.114, "phase_rad": -0.41, "rmse": 0.0181}},
+   "default": {"period_s": 4.92, "amplitude": 0.11, "phase_rad": -0.46}},
+ "entry_exit_s": {"fade_in": 0.4, "fade_out": 0.15},
+ "unresolved": ["cause of song-dependent pulse period", "minimum gap duration that shows the indicator", "behavior while paused", "behavior for gaps shorter than about four seconds"]
+}

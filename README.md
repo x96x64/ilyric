@@ -175,3 +175,7 @@ The [motion report](docs/artwork-background-motion.md) shows that the background
 ## M2 Locked Evaluation
 
 The [locked evaluation](docs/m2-locked-evaluation.md) tested the frozen separated-vocal pipeline on fourteen unseen, human-annotated JamendoLyrics recordings. No song passed M2: 406 of 637 lines were placed and 231 left unresolved, with zero displaced estimates. Most rejected lines had correct raw proposals, and offsets end early; both define the next development gate.
+
+## Instrumental-Gap Indicator
+
+The [gap-indicator report](docs/gap-indicator.md) records a fitted three-dot indicator that fills across supplied instrumental gaps, completing a fixed 2.22 seconds before each gap ends, with a ±11% group pulse, and records the observed pause state.
