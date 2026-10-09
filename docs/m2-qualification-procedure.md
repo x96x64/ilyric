@@ -21,7 +21,7 @@ The text is copyright-bearing and remains private.
 
 ## Reference Annotation
 
-Open `scripts/annotation/line-annotator.html` in a browser, load the original recording and the lyrics file, and mark each line. The tool loads no predictions and uploads nothing.
+Browsers generally cannot play the 96-kHz Apple Lossless originals. Lossless 48-kHz FLAC listening copies are therefore stored as `reference-private/m2/EN-Q0N.listen.flac`; their durations equal the originals', and the originals' hashes and modification times were verified unchanged after conversion. Open `scripts/annotation/line-annotator.html` in a browser, load the listening copy and the lyrics file, and mark each line. The tool loads no predictions and uploads nothing.
 
 1. Press `J` at the first sung sound of the current line and `K` at the last sung sound; `K` advances to the next line. Reduced playback speed is permitted.
 2. Press `U` for a line whose boundary is genuinely ambiguous, such as overlapping vocals or a line that merges into the next.
