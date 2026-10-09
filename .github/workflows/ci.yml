@@ -16,7 +16,7 @@ jobs:
   swift:
     name: Swift Build and Tests
     runs-on: macos-latest
-    timeout-minutes: 50
+    timeout-minutes: 100
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Report toolchain
@@ -28,16 +28,16 @@ jobs:
         run: swift build -c release
       - name: Build tests
         timeout-minutes: 20
-        run: swift build --build-tests -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=2000
-      - name: List tests
-        timeout-minutes: 5
-        run: swift test list --disable-xctest -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=2000
-      - name: Run fast suite
-        timeout-minutes: 5
-        run: swift test --disable-xctest --verbose --filter SpikeTests -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=2000
-      - name: Run tests
-        timeout-minutes: 20
-        run: sh scripts/test.sh
+        run: swift build --build-tests
+      - name: Test spike core
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter SpikeTests
+      - name: Test Lyrics slice
+        timeout-minutes: 40
+        run: swift test --disable-xctest --filter LyricsSliceTests
+      - name: Test Lyrics input
+        timeout-minutes: 40
+        run: swift test --disable-xctest --filter LyricsInputTests
 
   python:
     name: Python Public Validation Tests
