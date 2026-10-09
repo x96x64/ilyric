@@ -22,7 +22,11 @@ def save(file,value):
     with file.open('x') as f:json.dump(value,f,ensure_ascii=False,indent=2,allow_nan=False)
 
 
-def infer(audio,lyrics,runtime,model,ctc,work):
+def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word"):
+    if anchor_mode not in ["word","segment"]:raise AlignmentError("Unsupported experimental anchor mode")
+    from .segment_anchors import SEGMENT_DECODING, convert_segments, segment_evidence, project
+    decoding=DECODING if anchor_mode=="word" else SEGMENT_DECODING
+    segment_windows=[]
     started=time.perf_counter()
     if not audio.is_file() or not lyrics.is_file():raise Unavailable('Local audio or complete lyrics unavailable')
     if audio.stat().st_size>256*1024*1024 or lyrics.stat().st_size>65536:raise AlignmentError('Input resource limit')
@@ -58,7 +62,7 @@ def infer(audio,lyrics,runtime,model,ctc,work):
         name=f"window-{w['id']:02d}";wav=work/(name+'.wav');base=work/name
         sf.write(wav,signal[w['start_sample']:w['end_sample']],16000,subtype='PCM_16')
         command=['/usr/bin/sandbox-exec','-p','(version 1)(allow default)(deny network*)',str(runtime.resolve()),
-                 '-m',str(model.resolve()),'-f',str(wav.resolve()),'-of',str(base.resolve())]+DECODING
+                 '-m',str(model.resolve()),'-f',str(wav.resolve()),'-of',str(base.resolve())]+decoding
         tick=time.perf_counter()
         with (work/(name+'.log')).open('x') as log:
             try:subprocess.run(command,stdout=log,stderr=log,check=True,timeout=300)
@@ -66,9 +70,17 @@ def infer(audio,lyrics,runtime,model,ctc,work):
         times.append(time.perf_counter()-tick)
         output=work/(name+'.json')
         if not output.is_file() or output.stat().st_size>4*1024*1024:raise AlignmentError('Whisper output unavailable or oversized')
-        raw=json.loads(output.read_text());items,failures=convert(raw,w,duration)
-        observed.extend(items);rejected.extend(failures)
-    record=anchors(identity,duration,observed);save(work/'anchors.json',record)
+        raw=json.loads(output.read_text())
+        if anchor_mode=='segment':segment_windows.append(convert_segments(raw,w,duration))
+        else:
+            items,failures=convert(raw,w,duration)
+            observed.extend(items);rejected.extend(failures)
+    if anchor_mode=='segment':
+        evidence=segment_evidence(identity,duration,segment_windows)
+        save(work/'segments.json',evidence)
+        record,rejected=project(evidence)
+    else:record=anchors(identity,duration,observed)
+    save(work/'anchors.json',record)
     save(work/'recognition-rejections.json',rejected)
     tick=time.perf_counter();result=match(src,record);matching=time.perf_counter()-tick
     save(work/'correspondence.json',result)
@@ -102,10 +114,11 @@ def infer(audio,lyrics,runtime,model,ctc,work):
         refinements.append(dict(occurrence=i,window_us=[a,b],seconds=time.perf_counter()-t))
     reject_overlaps(prepared);refinement=time.perf_counter()-tick
     engine=dict(prepared['engine'],id='whisper-anchors-bounded-ctc',analysis_samples=len(signal),
-        assets=assets,decoding=DECODING,ctc='facebook/wav2vec2-base-960h',
+        assets=assets,decoding=decoding,ctc='facebook/wav2vec2-base-960h',
         ctc_revision='22aad52d435eb6dbaf354bdad9b0da84ce7d6156',ctc_weights_sha256=file_hash(ctc/'model.safetensors'),
         interpretation='Heuristic Whisper anchors plus speech CTC boundaries; review required; no calibrated confidence',
         dependencies={k:importlib.metadata.version(k) for k in ['torch','transformers','numpy','scipy','soundfile']})
+    if anchor_mode=='segment':engine.update(anchor_granularity='segment',segment_evidence_sha256=fingerprint(evidence))
     prepared=artifact(src,identity,duration,engine,plan,prepared['lines'])
     if file_hash(audio)!=identity or source(lyrics.read_bytes())!=src:raise AlignmentError('Original input changed')
     measurements=dict(preprocessing_seconds=preprocessing,whisper_window_seconds=times,whisper_total_seconds=sum(times),
