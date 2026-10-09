@@ -10,6 +10,7 @@ public final class ScreenRenderer {
     public let lyrics: CompositionRenderer
     private let backdrop, artwork, fadeMask: CGImage
     private var inactiveTiles: [Int:InactiveTiles] = [:]
+    private let dynamicBackdrop: ArtworkBackdrop?
     private let diagnosticMarkers, calibratedInactive, boundedCache: Bool
     private let title: CTLine
     private let artist: CTLine
@@ -39,6 +40,9 @@ public final class ScreenRenderer {
         let bytes=(0..<2556).map { UInt8((LyricsScreen.fade(at:Double($0)+0.5)*255).rounded()) }
         fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        if let model=screen.background {
+            dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:2556)
+        } else { dynamicBackdrop=nil }
         if calibratedInactive && !boundedCache {
             for (i,p) in screen.composition.paragraphs.enumerated() where (p.input.paragraphStyle == .latinStatic || p.input.paragraphStyle == .latinTimed) {
                 inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0)),coverage:p.input.paragraphStyle == .latinTimed))
@@ -103,7 +107,9 @@ public final class ScreenRenderer {
             if part.clips { c.clip(to:r) }
             c.setFillColor(CGColor(gray:1,alpha:0.9));c.setStrokeColor(CGColor(gray:1,alpha:0.85));c.setLineWidth(5)
             switch part.part {
-            case .background: c.draw(backdrop,in:r)
+            case .background:
+                if let dynamicBackdrop { c.interpolationQuality = .high;c.draw(dynamicBackdrop.image(at:state.lyrics.output),in:r) }
+                else { c.draw(backdrop,in:r) }
             case .lyrics: c.draw(try lyricLayer(state.lyrics),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
             case .artwork:
                 c.addPath(CGPath(roundedRect:r,cornerWidth:14,cornerHeight:14,transform:nil));c.clip();c.draw(artwork,in:r)

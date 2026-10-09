@@ -24,18 +24,37 @@ import RenderMac
                 print(String(data:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys]),encoding:.utf8)!)
                 return
             }
-            guard args.count>=3 else { throw SliceError.invalid("Usage: LyricsScreenProbe timeline | native[-inactive]|still[-inactive] numerator denominator output.png | video[-inactive][-progression] output.mp4") }
+            if args.count==5 && args[1]=="background-frames" {
+                // Development parity check: background-only frames from a supplied artwork, 5 fps, raw RGB at 295×639.
+                guard let source=CGImageSourceCreateWithURL(URL(fileURLWithPath:args[2]) as CFURL,nil),
+                      let art=CGImageSourceCreateImageAtIndex(source,0,nil),let seconds=Int(args[3]),(1...60).contains(seconds) else {
+                    throw SliceError.invalid("background-frames ARTWORK.png SECONDS OUTPUT.raw") }
+                let backdrop=ArtworkBackdrop(.fitted,artwork:art,canvasWidth:1180,canvasHeight:2556)
+                var bytes=Data()
+                for i in 0..<(seconds*5) {
+                    let image=backdrop.image(at:Time(Int64(i),5))
+                    let c=CGContext(data:nil,width:295,height:639,bitsPerComponent:8,bytesPerRow:295*4,space:CGColorSpace(name:CGColorSpace.sRGB)!,
+                                    bitmapInfo:CGImageAlphaInfo.noneSkipLast.rawValue)!
+                    c.interpolationQuality = .high;c.draw(image,in:CGRect(x:0,y:0,width:295,height:639))
+                    let rgba=[UInt8](Data(bytes:c.data!,count:295*639*4))
+                    for p in 0..<(295*639) { bytes.append(contentsOf:rgba[(p*4)..<(p*4+3)]) }
+                }
+                try bytes.write(to:URL(fileURLWithPath:args[4]),options:.withoutOverwriting)
+                return
+            }
+            guard args.count>=3 else { throw SliceError.invalid("Usage: LyricsScreenProbe timeline | native[-inactive][-background]|still[-inactive][-background] numerator denominator output.png | video[-inactive][-progression][-background] output.mp4") }
             let output=URL(fileURLWithPath:args.last!).standardizedFileURL
             let root=URL(fileURLWithPath:FileManager.default.currentDirectoryPath).appendingPathComponent("artifacts").resolvingSymlinksInPath()
             let parent=output.deletingLastPathComponent().resolvingSymlinksInPath()
             guard parent.path==root.path || parent.path.hasPrefix(root.path+"/"),
                   FileManager.default.fileExists(atPath:parent.path), !FileManager.default.fileExists(atPath:output.path) else { throw SliceError.invalid("Use a new output in an existing artifacts directory") }
-            guard ["native","still","video"].flatMap({ base in ["", "-inactive", "-progression", "-inactive-progression"].map { base+$0 } }).contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
+            guard ["native","still","video"].flatMap({ base in ["", "-inactive", "-progression", "-inactive-progression"].flatMap { [base+$0, base+$0+"-background"] } }).contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
             let calibrated=args[1].contains("-inactive")
             let progression=args[1].contains("-progression")
-            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"")
+            let background=args[1].hasSuffix("-background") ? ArtworkBackground.fitted : nil
+            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"").replacingOccurrences(of:"-background",with:"")
             let scene=try progression ? LyricsScreen(composition:.progressionDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(8),volume:0.62,
-                events:[.init(Time(0),order:0,controls:.init())]) : .synthetic()
+                events:[.init(Time(0),order:0,controls:.init())],background:background) : .synthetic(background:background)
             let renderer=try ScreenRenderer(scene,calibratedInactive:calibrated)
             if ["still","native"].contains(command),args.count==5,let n=Int64(args[2]),let d=Int64(args[3]) {
                 let time=try SliceTime(n,d).validated(),image=try (command=="native" ? renderer.native(renderer.screen.evaluate(time)):renderer.frame(time))

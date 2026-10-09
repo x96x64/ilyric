@@ -74,11 +74,14 @@ public struct LyricsScreen: Sendable {
     public let volume: Double
     public let events: [ScreenEvent]
     public let visibility: ScreenVisibility
+    /// Optional deterministic artwork-derived background; nil retains the original static gradient.
+    public let background: ArtworkBackground?
     // Native boundaries remain unknown. This inset and smooth fade are provisional.
     public static let viewport = ScreenBounds(72,550,1040,950)
     public static let fadeLength = 80.0
     public init(composition: LyricsComposition, title: String, artist: String, duration: Time,
-                volume: Double, events: [ScreenEvent], visibility: ScreenVisibility = .init()) throws {
+                volume: Double, events: [ScreenEvent], visibility: ScreenVisibility = .init(),
+                background: ArtworkBackground? = nil) throws {
         guard duration>Time(0), volume.isFinite, (0...1).contains(volume),
               !title.isEmpty, !artist.isEmpty, title.utf16.count<=80, artist.utf16.count<=80,
               !events.isEmpty, Set(events.map(\.order)).count==events.count,
@@ -86,7 +89,7 @@ public struct LyricsScreen: Sendable {
         let sorted=events.sorted { $0.time == $1.time ? $0.order<$1.order : $0.time<$1.time }
         guard sorted[0].time==Time(0) else { throw SliceError.invalid("Initial screen controls required") }
         self.composition=composition; self.title=title; self.artist=artist; self.duration=duration
-        self.volume=volume; self.events=sorted;self.visibility=visibility
+        self.volume=volume; self.events=sorted;self.visibility=visibility;self.background=background
     }
     public static func fade(at y: Double) -> Double {
         let v=viewport, q=min(1,max(0,min(y-v.y,v.y+v.height-y)/fadeLength))
@@ -104,7 +107,9 @@ public struct LyricsScreen: Sendable {
         func add(_ id: ScreenPart,_ b: ScreenBounds,_ z: Int,_ visible: Bool = true,_ evidence: String = "provisional shape at approximate measured position") {
             parts.append(.init(part:id,bounds:b,z:z,visible:visible && visibility.permits(id),clips:true,evidence:evidence))
         }
-        add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,"original static palette gradient; provisional material")
+        add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,background == nil ?
+            "original static palette gradient; provisional material" :
+            "fitted artwork-derived layers, blur, and color transfer; statistical reconstruction, unmatched phase")
         add(.lyrics,Self.viewport,1,true,"provisional clip and fade; inherited fitted typography and motion")
         add(.artwork,.init(96,276,216,216),2,true,"measured bounds, approximately ±2 px; original artwork")
         add(.title,.init(352,338,650,58),2,true,"measured ink origin; provisional header typography and clipping")
@@ -128,11 +133,11 @@ public struct LyricsScreen: Sendable {
         return .init(lyrics:lyrics,components:parts,progress:media/duration.seconds,volume:volume,
                      elapsed:Int(media.rounded(.down)),remaining:Int(max(0,duration.seconds-media).rounded(.up)),playing:playing)
     }
-    public static func synthetic() throws -> LyricsScreen {
+    public static func synthetic(background: ArtworkBackground? = nil) throws -> LyricsScreen {
         try .init(composition:.synthetic(),title:"Paper Skies",artist:"Field Notes",duration:Time(180),volume:0.62,events:[
             .init(Time(0),order:0,controls:.init(translation:true)),
             .init(Time(2),order:1,controls:.init(translation:true,sing:.compact)),
             .init(Time(4),order:2,controls:.init(sing:.expanded)),
-            .init(Time(5),order:3,controls:.init(lower:false))])
+            .init(Time(5),order:3,controls:.init(lower:false))],background:background)
     }
 }
