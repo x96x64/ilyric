@@ -130,4 +130,49 @@ class FullSongTests(unittest.TestCase):
             self.assertEqual(result.returncode,2);self.assertEqual(out.read_text(),'preserved')
 
 
+
+
+class VocalRules(unittest.TestCase):
+    def rows(self,estimates,text='Bright wind'):
+        from alignment.full_song import text_targets
+        from alignment.core import source
+        rows=text_targets(source(text.encode()))[0]
+        for r,e in zip(rows,estimates):
+            r.update(proposal=e,estimate=list(e) if e else None,flags=[],quality={})
+        return rows
+
+    def test_short_estimates_are_withheld(self):
+        from alignment.full_song import apply_vocal_rules,MINIMUM_US_PER_CHARACTER
+        rows=self.rows([[0,MINIMUM_US_PER_CHARACTER*10-20000]])
+        apply_vocal_rules(rows,[0.0]*100,0.0)
+        self.assertIsNone(rows[0]['estimate']);self.assertIn('implausible_duration',rows[0]['flags'])
+        self.assertEqual(rows[0]['proposal'],[0,MINIMUM_US_PER_CHARACTER*10-20000])
+
+    def test_onset_moves_past_leading_inactivity_only(self):
+        from alignment.full_song import apply_vocal_rules
+        level=[-80.0]*50+[-10.0]*50
+        rows=self.rows([[0,2000000]]);apply_vocal_rules(rows,level,0.0)
+        self.assertEqual(rows[0]['estimate'],[1000000,2000000]);self.assertEqual(rows[0]['quality']['vocal_onset_trim_us'],1000000)
+        rows=self.rows([[1200000,2000000]]);apply_vocal_rules(rows,level,0.0)
+        self.assertEqual(rows[0]['estimate'],[1200000,2000000]);self.assertNotIn('vocal_onset_trim_us',rows[0]['quality'])
+
+    def test_inactive_estimates_are_withheld(self):
+        from alignment.full_song import apply_vocal_rules
+        rows=self.rows([[0,1000000]]);apply_vocal_rules(rows,[-80.0]*100,0.0)
+        self.assertIsNone(rows[0]['estimate']);self.assertIn('no_vocal_activity',rows[0]['flags'])
+
+    def test_unresolved_rows_are_unchanged(self):
+        from alignment.full_song import apply_vocal_rules
+        rows=self.rows([None]);apply_vocal_rules(rows,[0.0]*10,0.0)
+        self.assertIsNone(rows[0]['estimate']);self.assertEqual(rows[0]['flags'],[])
+
+    def test_activity_level_is_deterministic(self):
+        import numpy as np
+        from alignment.full_song import vocal_activity_db
+        x=np.concatenate([np.zeros(3200),np.full(3200,0.5)])
+        level,ref=vocal_activity_db(x)
+        self.assertEqual(len(level),20);self.assertAlmostEqual(level[-1],20*np.log10(0.5),6)
+        self.assertEqual((level,ref),vocal_activity_db(x))
+
+
 if __name__=='__main__':unittest.main()

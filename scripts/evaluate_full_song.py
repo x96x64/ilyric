@@ -25,7 +25,7 @@ def errors(values):
 
 def score(result, reference):
     if len(reference)!=len(result['lines']):raise AlignmentError('Reference occurrence count differs')
-    all_errors=[[],[]];supported=[[],[]];nonoverlap=wrong_repeat=0;flags={};missing=0
+    all_errors=[[],[]];supported=[[],[]];estimated=[[],[]];nonoverlap=wrong_repeat=0;flags={};missing=0
     for i,(row,ref) in enumerate(zip(result['lines'],reference)):
         if row['text']!=ref['text']:raise AlignmentError('Reference source text/order differs')
         a,b=ref['interval_us']
@@ -33,6 +33,9 @@ def score(result, reference):
             raise AlignmentError('Reference interval invalid')
         for f in row['flags']:flags[f]=flags.get(f,0)+1
         if row['proposal'] is None:missing+=1;continue
+        if row['estimate'] is not None:
+            # Estimates may differ from proposals after refinement rules; score them separately.
+            ex,ey=row['estimate'];estimated[0].append((ex-a)/1000);estimated[1].append((ey-b)/1000)
         x,y=row['proposal']
         for j,value in enumerate([(x-a)/1000,(y-b)/1000]):
             all_errors[j].append(value)
@@ -45,6 +48,7 @@ def score(result, reference):
                 unresolved=sum(r['estimate'] is None for r in result['lines']),flags=flags,
                 raw_onset=errors(all_errors[0]),raw_offset=errors(all_errors[1]),
                 supported_onset=errors(supported[0]),supported_offset=errors(supported[1]),
+                estimate_onset=errors(estimated[0]),estimate_offset=errors(estimated[1]),
                 proposals_without_reference_overlap=nonoverlap,wrong_repeated_reference_overlap=wrong_repeat,
                 interpretation='Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted')
 

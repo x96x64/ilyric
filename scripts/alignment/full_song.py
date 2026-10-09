@@ -138,6 +138,45 @@ def proposals(src, duration, emissions, tokens, owners, spans, vocab, blank=0):
     return rows
 
 
+# Vocal-stem rules, developed on EN-F01 through EN-F03 after the separated-vocal CTC gate.
+VOCAL_FRAME_US = 20000
+VOCAL_ACTIVITY_DB = 30.0
+MINIMUM_US_PER_CHARACTER = 40000
+
+
+def vocal_activity_db(samples, rate=16000):
+    """Per-20-ms RMS level in dB and the 99th-percentile reference level of a mono vocal stem."""
+    import numpy as np
+    frame=rate*VOCAL_FRAME_US//1000000;count=len(samples)//frame
+    if count==0:raise AlignmentError('Vocal stem shorter than one activity frame')
+    level=20*np.log10(np.sqrt((np.asarray(samples[:count*frame],dtype=np.float64).reshape(count,frame)**2).mean(1)+1e-12))
+    return level.tolist(),float(np.percentile(level,99))
+
+
+def apply_vocal_rules(rows, level, reference):
+    """Withhold implausibly short estimates and move onsets past leading vocal inactivity.
+
+    Onsets only move later and offsets never change; proposals are preserved. Thresholds
+    were selected on development recordings and require locked-set qualification.
+    """
+    threshold=reference-VOCAL_ACTIVITY_DB
+    for row in rows:
+        if row['estimate'] is None:continue
+        a,b=row['estimate'];characters=len(row['alignment_text'])
+        if (b-a)<MINIMUM_US_PER_CHARACTER*characters:
+            row['flags'].append('implausible_duration');row['estimate']=None;continue
+        first=a//VOCAL_FRAME_US;last=-(-b//VOCAL_FRAME_US)
+        active=[i for i in range(first,min(last,len(level))) if level[i]>threshold]
+        if not active:
+            row['flags'].append('no_vocal_activity');row['estimate']=None;continue
+        onset=max(a,active[0]*VOCAL_FRAME_US)
+        if onset>=b:
+            row['flags'].append('no_vocal_activity');row['estimate']=None;continue
+        if onset>a:row['quality']['vocal_onset_trim_us']=onset-a
+        row['estimate']=[onset,b]
+    return rows
+
+
 def fingerprint(result):
     immutable={k:result[k] for k in ['format','source','audio','engine','windows']}
     immutable['lines']=[{k:v for k,v in row.items() if k not in ['correction','review']} for row in result['lines']]
