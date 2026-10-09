@@ -163,3 +163,7 @@ The [background report](docs/artwork-background.md) records an opt-in determinis
 ## Vocal-Activity Boundary and Duration Rules
 
 The [rules report](docs/vocal-activity-rules.md) withholds implausibly short estimates and trims leading vocal inactivity on separated stems. On the development recordings this removes the observed displacement and introductory-audio absorption; qualification on new locked recordings remains required.
+
+## Runtime Control Symbols
+
+The [control-symbol report](docs/control-symbols.md) records an opt-in runtime SF Symbols icon set fitted to reference screenshots; rendered ink bounds match the measured controls within two native pixels. Symbols are never bundled, and public fixtures continue to use original icons.
