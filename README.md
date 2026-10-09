@@ -155,3 +155,7 @@ The [separation report](docs/vocal-separation-recognition.md) evaluates pinned D
 ## Complete-Sequence CTC Alignment on Separated Vocals
 
 The [separated-vocal alignment report](docs/separated-vocal-ctc-alignment.md) aligns complete supplied lyrics to Demucs vocal stems. Retained estimates doubled from 53 to 106 of 140 occurrences and unresolved occurrences fell from 87 to 34; one unflagged short-line displacement prevents an M1 pass. Separated-vocal CTC is now the lead synchronization architecture, pending failure-detection and boundary work and a new locked evaluation set.
+
+## Artwork-Derived Dynamic Background
+
+The [background report](docs/artwork-background.md) records an opt-in deterministic reconstruction of the blurred, moving artwork-derived Lyrics background. Color, spatial structure, and vertical gradient generalize to held-out songs; motion remains provisional pending paused-playback captures.
