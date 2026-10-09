@@ -5,102 +5,241 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>iLyric Line Annotator</title>
 <style>
-  :root { --bg:#f6f6f4; --fg:#1c1c1c; --muted:#6b6b6b; --accent:#0a62c9; --mark:#e9f0fb; --line:#d9d9d6; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#161616; --fg:#ececec; --muted:#9a9a9a; --accent:#5aa2ff; --mark:#1f2a3a; --line:#333; } }
+  :root { --bg:#f6f6f4; --fg:#1c1c1c; --muted:#6b6b6b; --accent:#0a62c9; --mark:#e9f0fb; --line:#d9d9d6; --wave:#8a8a86; --start:#0a8a3a; --end:#c4361d; --skip:#b0b0ab; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161616; --fg:#ececec; --muted:#9a9a9a; --accent:#5aa2ff; --mark:#1f2a3a; --line:#333; --wave:#6d6d6a; --start:#3fcf72; --end:#ff6a4f; --skip:#555; } }
+  * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 -apple-system, system-ui, sans-serif; }
-  main { max-width:880px; margin:0 auto; padding:16px; }
-  h1 { font-size:20px; margin:4px 0 12px; }
-  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:8px 0; }
-  audio { width:100%; }
-  ol { padding-left:2.4em; }
-  li { padding:3px 6px; border-radius:6px; }
-  li.current { background:var(--mark); outline:1px solid var(--accent); }
-  li .t { color:var(--muted); font-variant-numeric:tabular-nums; margin-left:8px; font-size:13px; }
-  li.uncertain .t::after { content:" (uncertain)"; color:#c47a00; }
-  kbd { border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:13px; }
+  main { max-width:980px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:4px 0 8px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin:6px 0; }
   .help { color:var(--muted); font-size:13px; }
-  button, select { font:inherit; }
+  kbd { border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:12px; }
+  canvas { width:100%; display:block; border:1px solid var(--line); border-radius:6px; background:transparent; }
+  #overview { height:56px; cursor:pointer; }
+  #detail { height:170px; cursor:crosshair; }
+  .mode button { padding:4px 10px; }
+  .mode button.on { background:var(--accent); color:white; border-color:var(--accent); }
+  ol { padding-left:2.6em; margin:8px 0; }
+  li { padding:3px 6px; border-radius:6px; display:flex; gap:8px; align-items:baseline; }
+  li.current { background:var(--mark); outline:1px solid var(--accent); }
+  li.skip .text { color:var(--skip); text-decoration:line-through; }
+  li .text { flex:1; outline:none; }
+  li .t { color:var(--muted); font-variant-numeric:tabular-nums; font-size:12px; white-space:nowrap; }
+  li .tools button { font-size:11px; padding:0 5px; }
+  li.para { margin-top:10px; }
+  button, select, input { font:inherit; }
 </style>
 </head>
 <body>
 <main>
   <h1>iLyric Line Annotator</h1>
-  <p class="help">Blind reference annotation: no predictions are loaded or displayed. Files stay in this browser tab; nothing is uploaded.</p>
+  <p class="help">Blind reference annotation: no predictions are loaded or displayed. Files stay in this tab; nothing is uploaded. Work is autosaved in this browser.</p>
   <div class="row">
-    <label>Audio <input type="file" id="audioFile" accept="audio/*"></label>
-    <label>Lyrics (UTF-8 text) <input type="file" id="lyricsFile" accept=".txt,text/plain"></label>
-    <label>Speed <select id="speed"><option>1</option><option>0.85</option><option>0.75</option><option>0.5</option></select></label>
+    <label>Audio <input type="file" id="audioFile" accept="audio/*,.flac"></label>
+    <label>Vocal stem (optional, for display) <input type="file" id="stemFile" accept="audio/*,.flac"></label>
+    <label>Lyrics <input type="file" id="lyricsFile" accept=".txt,text/plain"></label>
   </div>
-  <audio id="audio" controls preload="auto"></audio>
-  <p class="help">
-    <kbd>J</kbd> mark onset of current line · <kbd>K</kbd> mark offset and advance · <kbd>U</kbd> toggle uncertain ·
-    <kbd>↑</kbd>/<kbd>↓</kbd> select line · <kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> seek 2 s ·
-    <kbd>Backspace</kbd> clear current line. Mark the start of the first sung sound and the end of the last sung sound of each line.
+  <audio id="audio" preload="auto"></audio>
+  <div class="row mode">
+    <button id="tapMode" class="on">1. Tap starts</button>
+    <button id="refineMode">2. Refine on waveform</button>
+    <span id="clock" class="help"></span>
+    <label class="help">Speed <select id="speed"><option>1</option><option>0.85</option><option>0.75</option></select></label>
+  </div>
+  <p id="helpTap" class="help">
+    Play with <kbd>Space</kbd>. Press <kbd>Enter</kbd> when the current line starts; it advances. <kbd>Backspace</kbd> undoes the last tap and rewinds 3 s.
+    Edit a line by clicking its text; use the row buttons to insert, delete, or mark a line as not sung. Exact precision is not needed in this pass.
   </p>
+  <p id="helpRefine" class="help" hidden>
+    Select a line. <b>Click</b> the waveform to set its start, <b>Shift-click</b> to set its end. <kbd>P</kbd> plays the line, <kbd>Space</kbd> plays/pauses from the cursor,
+    <kbd>↑</kbd>/<kbd>↓</kbd> change line, <kbd>[</kbd>/<kbd>]</kbd> nudge start, <kbd>{</kbd>/<kbd>}</kbd> nudge end (20 ms), <kbd>U</kbd> marks uncertain.
+    Set the start at the first sung sound and the end at the last sung sound of the line.
+  </p>
+  <canvas id="overview"></canvas>
+  <canvas id="detail" hidden></canvas>
   <div class="row">
-    <button id="export">Export reference JSON</button>
+    <button id="export">Export corrected lyrics and reference</button>
     <span id="status" class="help"></span>
   </div>
   <ol id="lines"></ol>
 </main>
 <script>
 "use strict";
-const audio = document.getElementById("audio");
-const list = document.getElementById("lines");
-const status = document.getElementById("status");
-let lines = [], current = 0, audioName = "", lyricsName = "";
+const $ = id => document.getElementById(id);
+const audio = $("audio"), list = $("lines"), status = $("status");
+let lines = [], current = 0, mode = "tap", audioName = "", lyricsName = "", originalText = "";
+let mix = null, stem = null; // {peaks: Float32Array, rate: number, duration: number}
+const PEAK_RATE = 200; // waveform envelope samples per second
 
-// Mirrors scripts/alignment/core.py: paragraphs split on blank lines; each nonblank line is one occurrence.
+// Paragraph and line splitting mirror scripts/alignment/core.py.
 function parse(text) {
-  const display = text.replace(/^﻿/, "").replace(/\r\n/g, "\n");
-  return display.replace(/^\n+|\n+$/g, "").split(/\n\n+/).flatMap(p => p.split("\n")).filter(l => l.trim() !== "");
+  const out = []; let para = 0;
+  text.replace(/^﻿/, "").replace(/\r\n/g, "\n").replace(/^\n+|\n+$/g, "").split(/\n\n+/).forEach(p => {
+    p.split("\n").filter(l => l.trim() !== "").forEach(l => out.push({text: l, para, start: null, end: null, uncertain: false, skip: false}));
+    para++;
+  });
+  return out;
 }
-function fmt(us) { return us == null ? "—" : (us / 1e6).toFixed(3) + " s"; }
+const sung = () => lines.filter(l => !l.skip);
+const fmt = s => s == null ? "—" : s.toFixed(2);
+function save() { try { localStorage.setItem("ilyric-annotator:" + lyricsName, JSON.stringify({lines, current})); } catch {} }
+function restore() {
+  try { const v = JSON.parse(localStorage.getItem("ilyric-annotator:" + lyricsName)); if (v && v.lines?.length) { lines = v.lines; current = v.current || 0; return true; } } catch {}
+  return false;
+}
+
+async function envelope(file) {
+  const buf = await file.arrayBuffer();
+  const ctx = new OfflineAudioContext(1, 1, 44100);
+  const decoded = await ctx.decodeAudioData(buf);
+  const ch = decoded.getChannelData(0), hop = Math.round(decoded.sampleRate / PEAK_RATE);
+  const peaks = new Float32Array(Math.ceil(ch.length / hop));
+  for (let i = 0; i < peaks.length; i++) { let m = 0; for (let j = i * hop, e = Math.min(ch.length, j + hop); j < e; j++) m = Math.max(m, Math.abs(ch[j])); peaks[i] = m; }
+  return {peaks, duration: decoded.duration};
+}
+
 function render() {
   list.replaceChildren(...lines.map((l, i) => {
     const li = document.createElement("li");
-    li.className = (i === current ? "current " : "") + (l.uncertain ? "uncertain" : "");
-    li.textContent = l.text;
-    const t = document.createElement("span"); t.className = "t"; t.textContent = fmt(l.onset) + " → " + fmt(l.offset);
-    li.append(t); li.onclick = () => { current = i; render(); };
+    li.className = (i === current ? "current " : "") + (l.skip ? "skip " : "") + (i > 0 && l.para !== lines[i - 1].para ? "para" : "");
+    const text = document.createElement("span"); text.className = "text"; text.textContent = l.text; text.contentEditable = "plaintext-only";
+    text.oninput = () => { l.text = text.textContent.replace(/\n/g, " "); save(); };
+    text.onfocus = () => { current = i; drawAll(); markCurrent(); };
+    const t = document.createElement("span"); t.className = "t"; t.textContent = `${fmt(l.start)} → ${fmt(l.end)}${l.uncertain ? " ?" : ""}`;
+    const tools = document.createElement("span"); tools.className = "tools";
+    const b = (label, title, fn) => { const x = document.createElement("button"); x.textContent = label; x.title = title; x.onclick = e => { e.stopPropagation(); fn(); save(); render(); }; tools.append(x); };
+    b("+", "Insert a line below", () => { lines.splice(i + 1, 0, {text: "", para: l.para, start: null, end: null, uncertain: false, skip: false}); current = i + 1; });
+    b("¶", "Start a new paragraph here", () => { for (let j = i; j < lines.length; j++) lines[j].para += 0.5; renumber(); });
+    b(l.skip ? "sung" : "not sung", "Toggle whether this line is sung on the recording", () => { l.skip = !l.skip; });
+    b("✕", "Delete this line", () => { lines.splice(i, 1); current = Math.min(current, lines.length - 1); });
+    li.append(text, t, tools); li.onclick = () => { current = i; if (mode === "refine" && l.start != null) audio.currentTime = Math.max(0, l.start - 0.5); render(); };
     return li;
   }));
-  const done = lines.filter(l => l.onset != null && l.offset != null).length;
-  status.textContent = lines.length ? `${done}/${lines.length} lines complete` : "";
-  list.children[current]?.scrollIntoView({block: "nearest"});
+  const done = sung().filter(l => l.start != null && l.end != null).length;
+  status.textContent = lines.length ? `${done}/${sung().length} sung lines have start and end` : "";
+  markCurrent(); drawAll();
 }
-function now() { return Math.round(audio.currentTime * 1e6); }
-document.getElementById("audioFile").onchange = e => {
-  const f = e.target.files[0]; if (!f) return; audioName = f.name; audio.src = URL.createObjectURL(f);
+function renumber() { let p = -1, last = null; for (const l of lines) { if (l.para !== last) { p++; last = l.para; } l.para = p; } }
+function markCurrent() { list.children[current]?.scrollIntoView({block: "nearest"}); }
+
+function nextIndex(i) { for (let j = i + 1; j < lines.length; j++) if (!lines[j].skip) return j; return -1; }
+function prevIndex(i) { for (let j = i - 1; j >= 0; j--) if (!lines[j].skip) return j; return -1; }
+
+// Waveform drawing
+function drawWave(canvas, env, t0, t1, markers) {
+  const dpr = devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  const c = canvas.getContext("2d"); c.scale(dpr, dpr); c.clearRect(0, 0, w, h);
+  const css = getComputedStyle(document.documentElement), col = n => css.getPropertyValue(n).trim();
+  if (env) {
+    c.fillStyle = col("--wave"); const max = Math.max(1e-6, ...env.peaks.subarray(0, Math.min(env.peaks.length, 200 * 600)));
+    for (let x = 0; x < w; x++) {
+      const a = Math.floor((t0 + (t1 - t0) * x / w) * PEAK_RATE), b = Math.max(a + 1, Math.floor((t0 + (t1 - t0) * (x + 1) / w) * PEAK_RATE));
+      let m = 0; for (let i = a; i < b && i < env.peaks.length; i++) if (i >= 0) m = Math.max(m, env.peaks[i]);
+      const y = Math.sqrt(m / max) * (h / 2 - 4); c.fillRect(x, h / 2 - y, 1, 2 * y);
+    }
+  }
+  const X = s => (s - t0) / (t1 - t0) * w;
+  for (const m of markers) { c.fillStyle = col(m.color); c.globalAlpha = m.alpha ?? 1; c.fillRect(X(m.t) - (m.width ?? 1) / 2, 0, m.width ?? 1, h); }
+  c.globalAlpha = 1; c.fillStyle = col("--accent"); c.fillRect(X(audio.currentTime) - 1, 0, 2, h);
+}
+function detailRange() {
+  const l = lines[current]; if (!l) return [0, 6];
+  const n = nextIndex(current), s = l.start ?? audio.currentTime, e = l.end ?? (n >= 0 && lines[n].start != null ? lines[n].start : s + 4);
+  return [Math.max(0, s - 1.5), e + 1.5];
+}
+function drawAll() {
+  const env = stem || mix, dur = env?.duration || audio.duration || 1;
+  const markers = [];
+  lines.forEach((l, i) => { if (l.skip) return; if (l.start != null) markers.push({t: l.start, color: "--start", alpha: i === current ? 1 : 0.5, width: i === current ? 2 : 1}); if (l.end != null) markers.push({t: l.end, color: "--end", alpha: i === current ? 1 : 0.4}); });
+  drawWave($("overview"), env, 0, dur, markers);
+  if (mode === "refine") {
+    const [t0, t1] = detailRange(), l = lines[current], m = [];
+    if (l?.start != null) m.push({t: l.start, color: "--start", width: 3});
+    if (l?.end != null) m.push({t: l.end, color: "--end", width: 3});
+    lines.forEach((o, i) => { if (i !== current && !o.skip && o.start != null) m.push({t: o.start, color: "--start", alpha: 0.35}); });
+    drawWave($("detail"), env, t0, t1, m);
+  }
+  $("clock").textContent = audio.duration ? `${audio.currentTime.toFixed(2)} / ${audio.duration.toFixed(2)} s` : "";
+}
+let stopAt = null;
+(function tick() { if (!audio.paused) drawAll(); if (stopAt != null && audio.currentTime >= stopAt) { audio.pause(); stopAt = null; } requestAnimationFrame(tick); })();
+
+function setMode(m) {
+  mode = m; $("tapMode").classList.toggle("on", m === "tap"); $("refineMode").classList.toggle("on", m === "refine");
+  $("detail").hidden = m !== "refine"; $("helpTap").hidden = m !== "tap"; $("helpRefine").hidden = m !== "refine";
+  if (m === "refine") {
+    // Default ends: shortly before the next sung line starts; refine visually.
+    lines.forEach((l, i) => { if (l.skip || l.start == null || l.end != null) return; const n = nextIndex(i); l.end = n >= 0 && lines[n].start != null ? Math.max(l.start + 0.2, lines[n].start - 0.1) : l.start + 3; if (audio.duration) l.end = Math.min(l.end, audio.duration); });
+    save();
+  }
+  render();
+}
+$("tapMode").onclick = () => setMode("tap");
+$("refineMode").onclick = () => setMode("refine");
+
+$("overview").onclick = e => { const r = e.target.getBoundingClientRect(), dur = (stem || mix)?.duration || audio.duration; audio.currentTime = (e.clientX - r.left) / r.width * dur; drawAll(); };
+$("detail").onclick = e => {
+  const r = e.target.getBoundingClientRect(), [t0, t1] = detailRange(), t = t0 + (e.clientX - r.left) / r.width * (t1 - t0), l = lines[current];
+  if (!l) return;
+  if (e.shiftKey) l.end = t; else l.start = t;
+  if (l.start != null && l.end != null && l.end <= l.start) { if (e.shiftKey) l.end = l.start + 0.05; else l.start = Math.max(0, l.end - 0.05); }
+  audio.currentTime = Math.max(0, (e.shiftKey ? t - 1 : t)); save(); render();
 };
-document.getElementById("lyricsFile").onchange = async e => {
-  const f = e.target.files[0]; if (!f) return; lyricsName = f.name;
-  lines = parse(await f.text()).map(text => ({text, onset: null, offset: null, uncertain: false})); current = 0; render();
+
+$("audioFile").onchange = async e => { const f = e.target.files[0]; if (!f) return; audioName = f.name; audio.src = URL.createObjectURL(f); status.textContent = "Decoding audio…"; try { mix = await envelope(f); } catch { status.textContent = "This browser cannot decode the audio file"; return; } render(); };
+$("stemFile").onchange = async e => { const f = e.target.files[0]; if (!f) return; status.textContent = "Decoding stem…"; try { stem = await envelope(f); } catch { status.textContent = "This browser cannot decode the stem"; return; } render(); };
+$("lyricsFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return; lyricsName = f.name; originalText = await f.text();
+  if (!(restore() && confirm("Resume the autosaved annotation for this lyrics file?"))) { lines = parse(originalText); current = 0; }
+  render();
 };
-document.getElementById("speed").onchange = e => { audio.playbackRate = Number(e.target.value); };
+$("speed").onchange = e => { audio.playbackRate = Number(e.target.value); };
+
 document.addEventListener("keydown", e => {
-  if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+  if (e.target.isContentEditable || ["INPUT", "SELECT"].includes(e.target.tagName)) return;
   const l = lines[current];
-  if (e.key === " ") { e.preventDefault(); audio.paused ? audio.play() : audio.pause(); }
-  else if (e.key === "ArrowLeft") { audio.currentTime = Math.max(0, audio.currentTime - 2); }
-  else if (e.key === "ArrowRight") { audio.currentTime += 2; }
-  else if (e.key === "ArrowUp") { e.preventDefault(); current = Math.max(0, current - 1); render(); }
+  if (e.key === " ") { e.preventDefault(); stopAt = null; audio.paused ? audio.play() : audio.pause(); return; }
+  if (!l) return;
+  if (mode === "tap") {
+    if (e.key === "Enter") { e.preventDefault(); if (l.skip) { const n = nextIndex(current); if (n < 0) return; current = n; } lines[current].start = audio.currentTime; lines[current].end = null; const n = nextIndex(current); if (n >= 0) current = n; save(); render(); }
+    else if (e.key === "Backspace") { e.preventDefault(); const p = prevIndex(current) ; const target = lines[current].start != null ? current : p; if (target < 0) return; lines[target].start = null; current = target; audio.currentTime = Math.max(0, audio.currentTime - 3); save(); render(); }
+    else if (e.key === "ArrowUp") { current = Math.max(0, current - 1); render(); }
+    else if (e.key === "ArrowDown") { current = Math.min(lines.length - 1, current + 1); render(); }
+    return;
+  }
+  const step = 0.02;
+  if (e.key === "ArrowUp") { e.preventDefault(); current = Math.max(0, current - 1); render(); }
   else if (e.key === "ArrowDown") { e.preventDefault(); current = Math.min(lines.length - 1, current + 1); render(); }
-  else if (!l) return;
-  else if (e.key === "j") { l.onset = now(); render(); }
-  else if (e.key === "k") { l.offset = now(); current = Math.min(lines.length - 1, current + 1); render(); }
-  else if (e.key === "u") { l.uncertain = !l.uncertain; render(); }
-  else if (e.key === "Backspace") { l.onset = l.offset = null; l.uncertain = false; render(); }
+  else if (e.key === "p" && l.start != null) { audio.currentTime = l.start; stopAt = l.end ?? l.start + 4; audio.play(); }
+  else if (e.key === "[" && l.start != null) { l.start = Math.max(0, l.start - step); save(); render(); }
+  else if (e.key === "]" && l.start != null) { l.start += step; save(); render(); }
+  else if (e.key === "{" && l.end != null) { l.end -= step; save(); render(); }
+  else if (e.key === "}" && l.end != null) { l.end += step; save(); render(); }
+  else if (e.key === "u") { l.uncertain = !l.uncertain; save(); render(); }
 });
-document.getElementById("export").onclick = () => {
-  const bad = lines.findIndex(l => l.onset == null || l.offset == null || !(l.onset < l.offset));
-  if (bad >= 0) { status.textContent = `Line ${bad + 1} lacks a valid onset/offset pair`; current = bad; render(); return; }
-  const out = {format: "ilyric-line-reference-1", audio_file: audioName, lyrics_file: lyricsName,
-    convention: "first to last sung sound per supplied line; manual tap timing", annotated_at: new Date().toISOString(),
-    reference: lines.map(l => ({text: l.text, interval_us: [l.onset, l.offset], uncertain: l.uncertain}))};
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], {type: "application/json"}));
-  a.download = (lyricsName.replace(/\.[^.]+$/, "") || "reference") + ".reference.json"; a.click();
+
+function download(name, text, type) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; a.click();
+}
+$("export").onclick = () => {
+  const keep = lines.filter(l => !l.skip && l.text.trim() !== "");
+  const bad = keep.findIndex(l => l.start == null || l.end == null || !(l.start < l.end) || (audio.duration && l.end > audio.duration));
+  if (bad >= 0) { current = lines.indexOf(keep[bad]); status.textContent = `Line ${current + 1} lacks a valid start and end`; render(); return; }
+  if (/[^\x20-\x7e]/.test(keep.map(l => l.text).join(""))) { status.textContent = "Lyrics must use English ASCII characters for the current aligner"; return; }
+  // Corrected lyrics: sung lines only; paragraphs keep their grouping and split at four lines.
+  const paras = []; let last = null;
+  for (const l of keep) { if (l.para !== last || paras[paras.length - 1].length === 4) { paras.push([]); last = l.para; } paras[paras.length - 1].push(l.text.trim()); }
+  const corrected = paras.map(p => p.join("\n")).join("\n\n") + "\n";
+  const base = lyricsName.replace(/\.[^.]+$/, "") || "lyrics";
+  const us = s => Math.round(s * 1e6);
+  const reference = {format: "ilyric-line-reference-2", audio_file: audioName, lyrics_file: base + ".sung.txt", source_lyrics_file: lyricsName,
+    convention: "first to last sung sound per sung line; tapped then refined on a waveform", annotated_at: new Date().toISOString(),
+    edits: {lines: lines.length, not_sung: lines.filter(l => l.skip).length, source_changed: lines.map(l => l.text).join("\n") !== parse(originalText).map(l => l.text).join("\n")},
+    reference: keep.map(l => ({text: l.text.trim(), interval_us: [us(l.start), us(l.end)], uncertain: l.uncertain}))};
+  download(base + ".sung.txt", corrected, "text/plain");
+  setTimeout(() => download(base + ".reference.json", JSON.stringify(reference, null, 1), "application/json"), 300);
+  status.textContent = "Exported corrected lyrics and reference";
 };
 </script>
 </body>
