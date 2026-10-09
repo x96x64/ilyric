@@ -6,6 +6,7 @@ schemas and the 60-second excerpt artifact remain unchanged.
 import copy
 import json
 import math
+import statistics
 import re
 from difflib import SequenceMatcher
 from xml.sax.saxutils import escape
@@ -138,10 +139,22 @@ def proposals(src, duration, emissions, tokens, owners, spans, vocab, blank=0):
     return rows
 
 
-# Vocal-stem rules, developed on EN-F01 through EN-F03 after the separated-vocal CTC gate.
+# Vocal-stem rules for separated-vocal CTC. Version 2 parameters were selected by leave-one-song-out
+# cross-validation on seventeen human-annotated development recordings (docs/separated-vocal-acceptance.md).
+VOCAL_RULES_VERSION = 2
 VOCAL_FRAME_US = 20000
 VOCAL_ACTIVITY_DB = 30.0
+OFFSET_ACTIVITY_DB = 20.0
+MAXIMUM_OFFSET_EXTENSION_US = 600000
 MINIMUM_US_PER_CHARACTER = 40000
+MAXIMUM_US_PER_CHARACTER = 400000
+MINIMUM_SEPARATED_SUPPORT = -3.5
+MINIMUM_SEPARATED_SIMILARITY = 0.15
+UNCERTAIN_RATE_RATIO = 1.75
+VOCAL_RULES = dict(version=VOCAL_RULES_VERSION, frame_us=VOCAL_FRAME_US, onset_activity_db_below_p99=VOCAL_ACTIVITY_DB,
+                   offset_activity_db_below_p99=OFFSET_ACTIVITY_DB, maximum_offset_extension_us=MAXIMUM_OFFSET_EXTENSION_US,
+                   us_per_character=[MINIMUM_US_PER_CHARACTER, MAXIMUM_US_PER_CHARACTER], minimum_support=MINIMUM_SEPARATED_SUPPORT,
+                   minimum_similarity=MINIMUM_SEPARATED_SIMILARITY, uncertain_rate_ratio=UNCERTAIN_RATE_RATIO)
 
 
 def vocal_activity_db(samples, rate=16000):
@@ -154,26 +167,45 @@ def vocal_activity_db(samples, rate=16000):
 
 
 def apply_vocal_rules(rows, level, reference):
-    """Withhold implausibly short estimates and move onsets past leading vocal inactivity.
+    """Decide acceptance from separated-stem evidence, then refine boundaries with vocal activity.
 
-    Onsets only move later and offsets never change; proposals are preserved. Thresholds
-    were selected on development recordings and require locked-set qualification.
+    Proposals are preserved. Onsets only move later, past leading inactivity; offsets only extend
+    through continuing activity, by at most 0.6 s and never past the next proposal. Earlier speech-model
+    flags remain as diagnostics but no longer decide acceptance on separated vocals.
     """
-    threshold=reference-VOCAL_ACTIVITY_DB
+    onset_threshold=reference-VOCAL_ACTIVITY_DB;offset_threshold=reference-OFFSET_ACTIVITY_DB
+    rates={}
     for row in rows:
+        row['estimate']=None
+        if row['proposal'] is None:continue
+        a,b=row['proposal'];rate=(b-a)/len(row['alignment_text']);quality=row['quality']
+        reasons=[]
+        if quality.get('forced_mean_log_support',-math.inf)<MINIMUM_SEPARATED_SUPPORT:reasons.append('weak_separated_support')
+        if quality.get('greedy_similarity',0)<MINIMUM_SEPARATED_SIMILARITY:reasons.append('weak_separated_lexical_agreement')
+        if rate<MINIMUM_US_PER_CHARACTER:reasons.append('implausible_duration')
+        if rate>MAXIMUM_US_PER_CHARACTER:reasons.append('implausible_rate')
+        if reasons:row['flags'].extend(reasons);continue
+        row['estimate']=[a,b];rates[row['id']]=rate
+    median=statistics.median(rates.values()) if rates else None
+    for position,row in enumerate(rows):
         if row['estimate'] is None:continue
-        a,b=row['estimate'];characters=len(row['alignment_text'])
-        if (b-a)<MINIMUM_US_PER_CHARACTER*characters:
-            row['flags'].append('implausible_duration');row['estimate']=None;continue
+        a,b=row['estimate']
         first=a//VOCAL_FRAME_US;last=-(-b//VOCAL_FRAME_US)
-        active=[i for i in range(first,min(last,len(level))) if level[i]>threshold]
+        active=[i for i in range(first,min(last,len(level))) if level[i]>onset_threshold]
         if not active:
             row['flags'].append('no_vocal_activity');row['estimate']=None;continue
         onset=max(a,active[0]*VOCAL_FRAME_US)
-        if onset>=b:
+        following=next((r['proposal'][0] for r in rows[position+1:] if r['proposal'] is not None),None)
+        limit=min(b+MAXIMUM_OFFSET_EXTENSION_US,following if following is not None else b+MAXIMUM_OFFSET_EXTENSION_US)
+        frame=last
+        while frame<len(level) and frame*VOCAL_FRAME_US<limit and level[frame]>offset_threshold:frame+=1
+        offset=min(max(b,frame*VOCAL_FRAME_US),max(b,limit))
+        if onset>=offset:
             row['flags'].append('no_vocal_activity');row['estimate']=None;continue
         if onset>a:row['quality']['vocal_onset_trim_us']=onset-a
-        row['estimate']=[onset,b]
+        if offset>b:row['quality']['vocal_offset_extension_us']=offset-b
+        if median and rates[row['id']]>UNCERTAIN_RATE_RATIO*median:row['flags'].append('uncertain_boundary')
+        row['estimate']=[onset,offset]
     return rows
 
 

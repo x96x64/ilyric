@@ -12,7 +12,7 @@ import wave
 from fractions import Fraction
 from .core import AlignmentError
 from .worker import Unavailable, file_hash
-from .full_song import GRID_US, artifact, path, proposals, text_targets, windows, owned_frames, vocal_activity_db, apply_vocal_rules, VOCAL_FRAME_US, VOCAL_ACTIVITY_DB, MINIMUM_US_PER_CHARACTER
+from .full_song import GRID_US, artifact, path, proposals, text_targets, windows, owned_frames, vocal_activity_db, apply_vocal_rules, VOCAL_RULES
 
 
 def infer(audio, src, model, work, separator=None):
@@ -88,7 +88,7 @@ def infer(audio, src, model, work, separator=None):
                 preprocessing='FFmpeg mono 48-kHz PCM16, scipy resample_poly 1/3, processor per-window normalization; 30 s windows, 4 s overlap, central ownership',
                 dependencies={k:importlib.metadata.version(k) for k in ['torch','transformers','numpy','scipy','soundfile']},
                 interpretation='Forced line-level proposals; shared-model greedy diagnostics are not independent lexical evidence; no vocal detector or automatic acceptance')
-    if separation:engine.update(vocal_rules=dict(version=1,frame_us=VOCAL_FRAME_US,activity_db_below_p99=VOCAL_ACTIVITY_DB,minimum_us_per_character=MINIMUM_US_PER_CHARACTER),ctc_input='separated_vocals',separation={k:v for k,v in separation.items() if k!='measurements'})
+    if separation:engine.update(vocal_rules=dict(VOCAL_RULES),ctc_input='separated_vocals',separation={k:v for k,v in separation.items() if k!='measurements'})
     result=artifact(src,identity,duration,engine,plan,rows)
     result['measurements']=dict(preprocessing_seconds=preprocessing,initialization_seconds=initialization,
                                separation=separation['measurements'] if separation else None,inference_seconds=inference,reconciliation_seconds=reconciliation,

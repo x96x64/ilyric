@@ -133,33 +133,60 @@ class FullSongTests(unittest.TestCase):
 
 
 class VocalRules(unittest.TestCase):
-    def rows(self,estimates,text='Bright wind'):
+    def rows(self,proposals,text='Bright wind',support=-1.0,similarity=0.8):
         from alignment.full_song import text_targets
         from alignment.core import source
         rows=text_targets(source(text.encode()))[0]
-        for r,e in zip(rows,estimates):
-            r.update(proposal=e,estimate=list(e) if e else None,flags=[],quality={})
+        for r,p in zip(rows,proposals):
+            r.update(proposal=p,estimate=list(p) if p else None,flags=[],
+                     quality=dict(forced_mean_log_support=support,greedy_similarity=similarity))
         return rows
 
-    def test_short_estimates_are_withheld(self):
-        from alignment.full_song import apply_vocal_rules,MINIMUM_US_PER_CHARACTER
-        rows=self.rows([[0,MINIMUM_US_PER_CHARACTER*10-20000]])
-        apply_vocal_rules(rows,[0.0]*100,0.0)
-        self.assertIsNone(rows[0]['estimate']);self.assertIn('implausible_duration',rows[0]['flags'])
-        self.assertEqual(rows[0]['proposal'],[0,MINIMUM_US_PER_CHARACTER*10-20000])
+    def test_acceptance_uses_separated_evidence(self):
+        from alignment.full_song import apply_vocal_rules
+        ok=self.rows([[0,1000000]]);apply_vocal_rules(ok,[0.0]*50+[-80.0]*50,0.0)
+        self.assertEqual(ok[0]['estimate'],[0,1000000])
+        for kwargs,flag in [(dict(support=-3.6),'weak_separated_support'),(dict(similarity=0.1),'weak_separated_lexical_agreement')]:
+            r=self.rows([[0,1000000]],**kwargs);apply_vocal_rules(r,[0.0]*100,0.0)
+            self.assertIsNone(r[0]['estimate']);self.assertIn(flag,r[0]['flags']);self.assertEqual(r[0]['proposal'],[0,1000000])
+
+    def test_rate_bounds_withhold_estimates(self):
+        from alignment.full_song import apply_vocal_rules,MINIMUM_US_PER_CHARACTER,MAXIMUM_US_PER_CHARACTER
+        short=self.rows([[0,MINIMUM_US_PER_CHARACTER*10-20000]]);apply_vocal_rules(short,[0.0]*400,0.0)
+        self.assertIsNone(short[0]['estimate']);self.assertIn('implausible_duration',short[0]['flags'])
+        long=self.rows([[0,MAXIMUM_US_PER_CHARACTER*10+20000]]);apply_vocal_rules(long,[0.0]*400,0.0)
+        self.assertIsNone(long[0]['estimate']);self.assertIn('implausible_rate',long[0]['flags'])
 
     def test_onset_moves_past_leading_inactivity_only(self):
         from alignment.full_song import apply_vocal_rules
         level=[-80.0]*50+[-10.0]*50
         rows=self.rows([[0,2000000]]);apply_vocal_rules(rows,level,0.0)
-        self.assertEqual(rows[0]['estimate'],[1000000,2000000]);self.assertEqual(rows[0]['quality']['vocal_onset_trim_us'],1000000)
+        self.assertEqual(rows[0]['estimate'][0],1000000);self.assertEqual(rows[0]['quality']['vocal_onset_trim_us'],1000000)
         rows=self.rows([[1200000,2000000]]);apply_vocal_rules(rows,level,0.0)
-        self.assertEqual(rows[0]['estimate'],[1200000,2000000]);self.assertNotIn('vocal_onset_trim_us',rows[0]['quality'])
+        self.assertEqual(rows[0]['estimate'][0],1200000);self.assertNotIn('vocal_onset_trim_us',rows[0]['quality'])
+
+    def test_offset_extends_through_activity_within_bounds(self):
+        from alignment.full_song import apply_vocal_rules,MAXIMUM_OFFSET_EXTENSION_US
+        level=[-5.0]*60+[-80.0]*40
+        rows=self.rows([[0,1000000]]);apply_vocal_rules(rows,level,0.0)
+        self.assertEqual(rows[0]["estimate"],[0,1200000])
+        loud=[-5.0]*200
+        rows=self.rows([[0,1000000]]);apply_vocal_rules(rows,loud,0.0)
+        self.assertEqual(rows[0]['estimate'][1],1000000+MAXIMUM_OFFSET_EXTENSION_US)
+        two=self.rows([[0,1000000],[1100000,2000000]],text='Bright wind\nSoft river');apply_vocal_rules(two,loud,0.0)
+        self.assertEqual(two[0]['estimate'][1],1100000)
 
     def test_inactive_estimates_are_withheld(self):
         from alignment.full_song import apply_vocal_rules
         rows=self.rows([[0,1000000]]);apply_vocal_rules(rows,[-80.0]*100,0.0)
         self.assertIsNone(rows[0]['estimate']);self.assertIn('no_vocal_activity',rows[0]['flags'])
+
+    def test_slow_lines_are_flagged_but_kept(self):
+        from alignment.full_song import apply_vocal_rules
+        rows=self.rows([[0,500000],[600000,1100000],[1200000,4000000]],text='Bright wind\nSoft river\nBright wind')
+        apply_vocal_rules(rows,[0.0]*400,0.0)
+        self.assertIn('uncertain_boundary',rows[2]['flags']);self.assertIsNotNone(rows[2]['estimate'])
+        self.assertNotIn('uncertain_boundary',rows[0]['flags'])
 
     def test_unresolved_rows_are_unchanged(self):
         from alignment.full_song import apply_vocal_rules
