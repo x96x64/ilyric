@@ -48,14 +48,20 @@ import RenderMac
             let parent=output.deletingLastPathComponent().resolvingSymlinksInPath()
             guard parent.path==root.path || parent.path.hasPrefix(root.path+"/"),
                   FileManager.default.fileExists(atPath:parent.path), !FileManager.default.fileExists(atPath:output.path) else { throw SliceError.invalid("Use a new output in an existing artifacts directory") }
-            guard ["native","still","video"].flatMap({ base in ["", "-inactive", "-progression", "-inactive-progression"].flatMap { [base+$0, base+$0+"-background"] } }).contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
+            var commands:Set<String>=[]
+            for base in ["native","still","video"] { for mode in ["","-inactive","-progression","-inactive-progression"] {
+                for suffix in ["","-background","-symbols","-background-symbols"] { commands.insert(base+mode+suffix) }
+            }}
+            guard commands.contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
             let calibrated=args[1].contains("-inactive")
             let progression=args[1].contains("-progression")
-            let background=args[1].hasSuffix("-background") ? ArtworkBackground.fitted : nil
-            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"").replacingOccurrences(of:"-background",with:"")
+            let background=args[1].contains("-background") ? ArtworkBackground.fitted : nil
+            let icons:ScreenIconSet=args[1].hasSuffix("-symbols") ? .systemSymbols : .original
+            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"").replacingOccurrences(of:"-background",with:"").replacingOccurrences(of:"-symbols",with:"")
             let scene=try progression ? LyricsScreen(composition:.progressionDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(8),volume:0.62,
                 events:[.init(Time(0),order:0,controls:.init())],background:background) : .synthetic(background:background)
-            let renderer=try ScreenRenderer(scene,calibratedInactive:calibrated)
+            let renderer=try ScreenRenderer(scene,calibratedInactive:calibrated,icons:icons)
+            if icons == .systemSymbols { FileHandle.standardError.write(Data("LyricsScreenProbe: SF Symbols are resolved at runtime; Apple terms do not expressly license them in exported videos.\n".utf8)) }
             if ["still","native"].contains(command),args.count==5,let n=Int64(args[2]),let d=Int64(args[3]) {
                 let time=try SliceTime(n,d).validated(),image=try (command=="native" ? renderer.native(renderer.screen.evaluate(time)):renderer.frame(time))
                 guard let writer=CGImageDestinationCreateWithURL(output as CFURL,UTType.png.identifier as CFString,1,nil) else { throw SliceError.invalid("PNG output") }

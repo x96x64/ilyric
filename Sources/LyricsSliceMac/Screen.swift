@@ -11,10 +11,13 @@ public final class ScreenRenderer {
     private let backdrop, artwork, fadeMask: CGImage
     private var inactiveTiles: [Int:InactiveTiles] = [:]
     private let dynamicBackdrop: ArtworkBackdrop?
+    public let icons: ScreenIconSet
+    private let symbols = SystemSymbols()
     private let diagnosticMarkers, calibratedInactive, boundedCache: Bool
     private let title: CTLine
     private let artist: CTLine
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original) throws {
+        self.icons=icons
         self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
         self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
         title=Self.line(screen.title,size:51,bold:true); artist=Self.line(screen.artist,size:49,bold:false)
@@ -103,6 +106,10 @@ public final class ScreenRenderer {
     public func native(_ state:ScreenSnapshot) throws -> CGImage {
         let c=Self.context(screen.composition.canvasWidth,2556)
         for part in state.components.sorted(by:{$0.z<$1.z}) where part.visible {
+            // Measured symbol placement may exceed the provisional component rectangle, so it is not clipped.
+            if icons == .systemSymbols,let symbol=ControlSymbols.symbol(for:part.part,playing:state.playing) {
+                try symbols.draw(symbol,canvasHeight:2556,into:c);continue
+            }
             c.saveGState();let r=rect(part.bounds)
             if part.clips { c.clip(to:r) }
             c.setFillColor(CGColor(gray:1,alpha:0.9));c.setStrokeColor(CGColor(gray:1,alpha:0.85));c.setLineWidth(5)
