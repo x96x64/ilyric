@@ -1,0 +1,140 @@
+{
+  "baseline_reproduction": {
+    "cases": 3,
+    "semantic_equal_excluding_measurements": [
+      "anchors.json",
+      "correspondence.json",
+      "prepared.json"
+    ]
+  },
+  "repeated_development_run": "EN-F01 prepared artifact identical after excluding measurements",
+  "python_tests": {
+    "count": 186,
+    "result": "passed",
+    "runs": [
+      "working tree",
+      "fresh public checkout"
+    ]
+  },
+  "swift_tests": {
+    "count": 61,
+    "result": "passed",
+    "runs": [
+      "working tree",
+      "fresh public checkout"
+    ]
+  },
+  "release_build": "passed",
+  "raw_bgra_determinism": "passed in working tree and fresh public checkout",
+  "synthetic_export": {
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "classification": "Synthetic software correctness, not singing accuracy"
+  },
+  "environment": {
+    "hardware": "Apple M4, 16 GiB",
+    "os": "macOS 27.0.1",
+    "swift": "6.4",
+    "isolated_python": "3.12.14",
+    "system_test_python": "3.14.7"
+  },
+  "performance": [
+    {
+      "case": "EN-F01",
+      "preprocessing_seconds": 0.7072735419933451,
+      "whisper_total_seconds": 19.74921679199906,
+      "matching_seconds": 0.014715500001329929,
+      "ctc_initialization_seconds": 1.9937059590010904,
+      "refinement_seconds": 1.7844607919978444,
+      "total_seconds": 24.647700957997586,
+      "parent_peak_rss_bytes": 1154760704,
+      "child_peak_rss_bytes": 670728192,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    },
+    {
+      "case": "EN-F02",
+      "preprocessing_seconds": 0.7485824580071494,
+      "whisper_total_seconds": 26.825628541002516,
+      "matching_seconds": 0.07423891600046773,
+      "ctc_initialization_seconds": 1.9768001670017838,
+      "refinement_seconds": 3.4806538749980973,
+      "total_seconds": 33.593646500012255,
+      "parent_peak_rss_bytes": 1221509120,
+      "child_peak_rss_bytes": 670744576,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    },
+    {
+      "case": "EN-F03",
+      "preprocessing_seconds": 0.7784576249978272,
+      "whisper_total_seconds": 60.186507956983405,
+      "matching_seconds": 0.08612100000027567,
+      "ctc_initialization_seconds": 3.023299082997255,
+      "refinement_seconds": 13.217273334012134,
+      "total_seconds": 77.89081212499877,
+      "parent_peak_rss_bytes": 1413169152,
+      "child_peak_rss_bytes": 670744576,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    }
+  ],
+  "resources": {
+    "ceiling_bytes": 17000000000,
+    "download_ceiling_bytes": 2100000000,
+    "new_downloads_bytes": 0,
+    "start": {
+      "total_bytes": 15921377280,
+      "roots": [
+        {
+          "root": "artifacts",
+          "bytes": 5724434432
+        },
+        {
+          "root": "reference-private",
+          "bytes": 4862353408
+        },
+        {
+          "root": ".build",
+          "bytes": 987422720
+        },
+        {
+          "root": "verification-checkout:ilyric-alignment-public-20261008",
+          "bytes": 487297024
+        },
+        {
+          "root": "verification-checkout:ilyric-coverage-public-20261008",
+          "bytes": 472731648
+        },
+        {
+          "root": "verification-checkout:ilyric-passage-public-20261009",
+          "bytes": 688562176
+        },
+        {
+          "root": "verification-checkout:ilyric-personal-public-20261009",
+          "bytes": 637083648
+        },
+        {
+          "root": "verification-checkout:ilyric-public-check",
+          "bytes": 307220480
+        },
+        {
+          "root": "verification-checkout:ilyric-refinement-public-20261008",
+          "bytes": 472436736
+        },
+        {
+          "root": "verification-checkout:ilyric-typography-public-check",
+          "bytes": 320745472
+        },
+        {
+          "root": "verification-checkout:ilyric-vad-public-20261008",
+          "bytes": 472702976
+        },
+        {
+          "root": "verification-checkout:ilyric-veracity-public-20261009",
+          "bytes": 488386560
+        }
+      ]
+    },
+    "post_documentation_total_bytes": 16774549504,
+    "note": "Comprehensive allocated inventory; includes artifacts, private references, main build, and nine retained verification checkouts. Build growth reflects verification rebuilds."
+  }
+}

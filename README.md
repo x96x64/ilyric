@@ -137,3 +137,7 @@ The [passage-search report](docs/tifa-passage-search.md) evaluates automatic ove
 ## Audio-Derived Correspondence Evaluation
 
 The [bounded Whisper evaluation](docs/audio-derived-correspondence-evaluation.md) records failed M1 coverage criteria, reproducible offline preparation, and the next narrowly scoped corrective experiment. It does not establish automatic synchronization or release readiness.
+
+## Segment-Level Anchor Comparison
+
+The [segment-level comparison](docs/segment-level-anchor-comparison.md) retains native Whisper segment text when heuristic word timestamps are unusable. Correct-region availability remained below 90% on every recording, and recognized lexical content was unchanged; M1 remains a no-go. The report identifies vocal separation before recognition as the next single architectural change.

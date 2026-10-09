@@ -1,0 +1,56 @@
+{
+  "utc": "2026-10-09T00:34:52.036272+00:00",
+  "development_case": "EN-F01",
+  "frozen_before": [
+    "EN-F02",
+    "EN-F03"
+  ],
+  "files": {
+    "scripts/alignment/audio_anchors.py": "ac8ac17a12fcaddcadff366466a0228a2a16eed97403c4b12e94b46490c7850f",
+    "scripts/alignment/full_song.py": "d052f9d745edd9b9d11a1a85ac0e693c38df24261e3427c9565ac48c98f27f6b",
+    "scripts/alignment/passage_search.py": "bb0fc75f24963bacc73cc2909c2627a8b0c9cbe55e82f4690a3b63acb0567061",
+    "scripts/alignment/whisper_anchors.py": "bbcbe5534408b6b6a4e185c50f2c5fdfe1f5d04f699d43c0a1780d8593454d34",
+    "scripts/alignment/segment_anchors.py": "590175348f34624b364d57179717395c695b8437f7fd3d3adb9544ab59df7cec",
+    "scripts/alignment/audio_anchor_worker.py": "bacb54cd91d3d26c7a85688d4252ac90dc5ad2df38b0910da98ee71efe936131",
+    "scripts/prepare_audio_correspondence.py": "707a02fd5537dd5678d72f42087bee1bf9caa8eba6335a12e6625065c3879706",
+    "scripts/evaluate_segment_anchors.py": "8db2b380e9de99b7aae7ad3f0c5187e8b76fbda4bb5e94b3b85454508e31a0a8"
+  },
+  "decoding": [
+    "-l",
+    "en",
+    "-t",
+    "4",
+    "-p",
+    "1",
+    "-ng",
+    "-mc",
+    "0",
+    "-bo",
+    "1",
+    "-bs",
+    "1",
+    "-tp",
+    "0",
+    "-tpi",
+    "0",
+    "-nf",
+    "-ml",
+    "0",
+    "-sow",
+    "-ojf"
+  ],
+  "matching": {
+    "version": 1,
+    "minimum_matches": 2,
+    "maximum_edit_percent": 30,
+    "maximum_line_us": 25000000,
+    "maximum_internal_gap_us": 3000000,
+    "ambiguity_margin": 10,
+    "maximum_tokens": 10000,
+    "maximum_candidates": 4000,
+    "maximum_cells": 20000000,
+    "maximum_reconciliation_work": 100000000
+  },
+  "ctc_padding_us": 1000000,
+  "development_tuning": "None; only native segment representation compared"
+}

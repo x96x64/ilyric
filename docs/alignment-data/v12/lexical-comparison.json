@@ -1,0 +1,50 @@
+{
+  "interpretation": "Raw recognized lexical tokens are identical between word-split and native-segment decoding; segment retention changes timing representation only",
+  "cases": [
+    {
+      "case": "EN-F01",
+      "windows": 7,
+      "identical_raw_lexical_windows": 7,
+      "old_raw_tokens": 242,
+      "new_raw_tokens": 242,
+      "old_raw_lexical_reference_window_coverage": 21,
+      "new_raw_lexical_reference_window_coverage": 21,
+      "segments": 39,
+      "segment_timing_states": {
+        "valid": 38,
+        "out_of_window": 1
+      },
+      "valid_segments_with_invalid_token_timing": 7
+    },
+    {
+      "case": "EN-F02",
+      "windows": 9,
+      "identical_raw_lexical_windows": 9,
+      "old_raw_tokens": 488,
+      "new_raw_tokens": 488,
+      "old_raw_lexical_reference_window_coverage": 57,
+      "new_raw_lexical_reference_window_coverage": 57,
+      "segments": 69,
+      "segment_timing_states": {
+        "valid": 67,
+        "out_of_window": 2
+      },
+      "valid_segments_with_invalid_token_timing": 22
+    },
+    {
+      "case": "EN-F03",
+      "windows": 10,
+      "identical_raw_lexical_windows": 10,
+      "old_raw_tokens": 427,
+      "new_raw_tokens": 427,
+      "old_raw_lexical_reference_window_coverage": 33,
+      "new_raw_lexical_reference_window_coverage": 33,
+      "segments": 60,
+      "segment_timing_states": {
+        "valid": 57,
+        "out_of_window": 3
+      },
+      "valid_segments_with_invalid_token_timing": 16
+    }
+  ]
+}
