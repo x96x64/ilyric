@@ -141,3 +141,7 @@ The [bounded Whisper evaluation](docs/audio-derived-correspondence-evaluation.md
 ## Segment-Level Anchor Comparison
 
 The [segment-level comparison](docs/segment-level-anchor-comparison.md) retains native Whisper segment text when heuristic word timestamps are unusable. Correct-region availability remained below 90% on every recording, and recognized lexical content was unchanged; M1 remains a no-go. The report identifies vocal separation before recognition as the next single architectural change.
+
+## Release and Fidelity Decisions
+
+The [decision record](docs/release-and-fidelity-decisions.md) establishes automatic synchronization and native Music Lyrics screen reproduction as equal primary objectives, selects Apache-2.0 for source code, and defines staged releases with parallel synchronization and visual-fidelity tracks. The [SF Symbols rights assessment](docs/sf-symbols-rights-assessment.md) records that exported-video use is not expressly licensed and defines a runtime-only policy.
