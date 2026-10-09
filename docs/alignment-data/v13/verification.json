@@ -1,0 +1,70 @@
+{
+  "unchanged_mixture_regression": "EN-F01 without --separator reproduced anchors, correspondence, and prepared artifacts exactly (excluding measurements)",
+  "python_tests": {
+    "count": 194,
+    "result": "passed",
+    "runs": [
+      "working tree",
+      "fresh public checkout"
+    ]
+  },
+  "dependency_unavailable_exit": 3,
+  "environment": {
+    "hardware": "Apple M4, 16 GiB",
+    "os": "macOS 27.0.1",
+    "isolated_python": "3.12.14",
+    "torch": "2.8.0",
+    "demucs": "4.1.0",
+    "julius": "0.2.8"
+  },
+  "performance": [
+    {
+      "case": "EN-F01",
+      "separation": {
+        "load_seconds": 0.565949666997767,
+        "separation_seconds": 109.40511854099168,
+        "total_seconds": 110.13809879199835
+      },
+      "total_seconds": 161.80785295800888,
+      "whisper_total_seconds": 39.90302800001518,
+      "refinement_seconds": 7.047120750008617,
+      "parent_peak_rss_bytes": 2481061888,
+      "child_peak_rss_bytes": 671154176,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    },
+    {
+      "case": "EN-F02",
+      "separation": {
+        "load_seconds": 0.5584772919974057,
+        "separation_seconds": 169.50805074999516,
+        "total_seconds": 170.397739832988
+      },
+      "total_seconds": 290.62845716699667,
+      "whisper_total_seconds": 92.68777341599343,
+      "refinement_seconds": 19.921391417010454,
+      "parent_peak_rss_bytes": 2295529472,
+      "child_peak_rss_bytes": 671318016,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    },
+    {
+      "case": "EN-F03",
+      "separation": {
+        "load_seconds": 0.5620398330065655,
+        "separation_seconds": 193.27583091700217,
+        "total_seconds": 194.20380724999995
+      },
+      "total_seconds": 317.68842783299624,
+      "whisper_total_seconds": 104.03428741602693,
+      "refinement_seconds": 13.474487500003306,
+      "parent_peak_rss_bytes": 2450423808,
+      "child_peak_rss_bytes": 671268864,
+      "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+    }
+  ],
+  "resources": {
+    "storage_ceiling_bytes": 18000000000,
+    "download_ceiling_bytes": 2200000000,
+    "inventory_after_runs_bytes": 17122041856,
+    "note": "Comprehensive allocated inventory including artifacts, private references, main build, and retained verification checkouts; concurrent background-model fitting shared the CPU during EN-F02/03."
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "utc": "2026-10-09T01:26:39.381415+00:00",
+  "development_case": "EN-F01",
+  "frozen_before": [
+    "EN-F02",
+    "EN-F03"
+  ],
+  "files": {
+    "scripts/alignment/audio_anchors.py": "ac8ac17a12fcaddcadff366466a0228a2a16eed97403c4b12e94b46490c7850f",
+    "scripts/alignment/full_song.py": "d052f9d745edd9b9d11a1a85ac0e693c38df24261e3427c9565ac48c98f27f6b",
+    "scripts/alignment/whisper_anchors.py": "bbcbe5534408b6b6a4e185c50f2c5fdfe1f5d04f699d43c0a1780d8593454d34",
+    "scripts/alignment/audio_anchor_worker.py": "06f37c8dfcca4e80014f3d294bca4eac671c352993854c5b9ebad9e4d2234090",
+    "scripts/alignment/vocal_separation.py": "36a625ff48456e38a25b633a50c966a5c42720509456b736b5d898d19b23e989",
+    "scripts/prepare_audio_correspondence.py": "de284fa819b29cf715655f359084200dd56d9c7c30f52aa5d5746b6f92fb1954",
+    "scripts/evaluate_vocal_separation.py": "22dfa0a12d1e1379876062538ea6c1c50f3f75f00a9a478d3e1c63a9eb2bba92"
+  },
+  "separation": {
+    "model": "htdemucs",
+    "file": "955717e8-8726e21a.th",
+    "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+    "demucs": "4.1.0",
+    "julius": "0.2.8",
+    "policy": {
+      "shifts": 0,
+      "split": true,
+      "overlap": 0.25,
+      "device": "cpu",
+      "threads": 4,
+      "stem": "vocals",
+      "downmix": "mean"
+    },
+    "recognition_input": "mono mean of separated vocals, polyphase 44.1 to 16 kHz",
+    "ctc_input": "original mixture (unchanged)"
+  },
+  "decoding": [
+    "-l",
+    "en",
+    "-t",
+    "4",
+    "-p",
+    "1",
+    "-ng",
+    "-mc",
+    "0",
+    "-bo",
+    "1",
+    "-bs",
+    "1",
+    "-tp",
+    "0",
+    "-tpi",
+    "0",
+    "-nf",
+    "-ml",
+    "1",
+    "-sow",
+    "-ojf"
+  ],
+  "development_tuning": "None; separation policy fixed before EN-F01 and unchanged"
+}

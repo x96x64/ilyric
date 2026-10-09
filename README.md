@@ -147,3 +147,7 @@ The [segment-level comparison](docs/segment-level-anchor-comparison.md) retains 
 ## Release and Fidelity Decisions
 
 The [decision record](docs/release-and-fidelity-decisions.md) establishes automatic synchronization and native Music Lyrics screen reproduction as equal primary objectives, selects Apache-2.0 for source code, and defines staged releases with parallel synchronization and visual-fidelity tracks. The [SF Symbols rights assessment](docs/sf-symbols-rights-assessment.md) records that exported-video use is not expressly licensed and defines a runtime-only policy.
+
+## Vocal Separation Before Recognition
+
+The [separation report](docs/vocal-separation-recognition.md) evaluates pinned Demucs vocal separation before Whisper recognition. Availability rose from 93 to 104 of 140 occurrences but remained below 90% on every recording, and lexical recognition coverage barely changed; M1 remains a no-go. Complete-sequence CTC alignment on separated vocals is the next single experiment.

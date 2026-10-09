@@ -1,0 +1,40 @@
+{
+  "approved": "2026-10-09 by the maintainer; download ceiling 2,200,000,000 bytes; storage ceiling 18,000,000,000 bytes",
+  "artifacts": [
+    {
+      "name": "htdemucs checkpoint",
+      "file": "955717e8-8726e21a.th",
+      "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th",
+      "bytes": 84141911,
+      "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+      "license": "No separate weight license stated; distributed by Meta alongside MIT-licensed Demucs code. Training data: MUSDB18-HQ and 800 non-public songs, per upstream README."
+    },
+    {
+      "name": "demucs wheel",
+      "file": "demucs-4.1.0-py3-none-any.whl",
+      "bytes": 100567,
+      "sha256": "4916a804702033ce934a6cdfa7e38dde03f7a7a6e85f41d0120eefe9e2966758",
+      "license": "MIT"
+    },
+    {
+      "name": "julius wheel",
+      "file": "julius-0.2.8-py3-none-any.whl",
+      "bytes": 21819,
+      "sha256": "6891235cbc355e629d839f87489bff8ca46e57a0e7cc35abb909c7a2aa538c25",
+      "license": "MIT"
+    }
+  ],
+  "transfer_bytes": 84264297,
+  "transfer_planning_charge_bytes": 85264297,
+  "cumulative_planned_download_bytes": 2149536570,
+  "installation": "Offline --no-index --no-deps into the existing isolated research environment; no global package changes",
+  "not_installed": [
+    "lameenc",
+    "sphn",
+    "torchaudio"
+  ],
+  "sources": {
+    "demucs": "https://github.com/adefossez/demucs (maintained fork; upstream facebookresearch/demucs archived January 1, 2025)",
+    "accessed": "2026-10-09"
+  }
+}
