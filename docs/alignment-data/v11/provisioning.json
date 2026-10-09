@@ -1,0 +1,18 @@
+{
+  "verified_source_files": 202,
+  "payload_bytes": 547272273,
+  "transfer_charge_bytes": 548272273,
+  "metadata_transport_allowance_bytes": 1000000,
+  "runtime_sha256": "d499c9a20ad27b6b01651f167c9d229036c49888f0981d82a474a3c1467669e7",
+  "source_revision": "d1be6fde11ac6e0407606b4e42fe72d34add8037",
+  "model_sha256": "1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b",
+  "build": {
+    "configuration": "Release",
+    "cpu_only": true,
+    "accelerate": true,
+    "blas_backend": false,
+    "shared_libraries": false,
+    "jobs": 2,
+    "network": "denied"
+  }
+}

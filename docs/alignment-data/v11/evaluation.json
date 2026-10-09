@@ -1,0 +1,401 @@
+{
+  "status": "M1_no_go",
+  "cases": [
+    {
+      "case": "EN-F01",
+      "correspondence": {
+        "occurrences": 26,
+        "eligible_candidate_reference_overlap": 19,
+        "candidate_availability_fraction": 0.7307692307692307,
+        "supported_regions": 18,
+        "unresolved_regions": 8,
+        "supported_reference_nonoverlap": 0,
+        "new_supported_reference_nonoverlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "coarse_region_onset": {
+          "n": 18,
+          "median_absolute_ms": 647.587,
+          "p95_absolute_ms": 1444.9104999999988,
+          "maximum_absolute_ms": 2130.699,
+          "over_500_ms": 10
+        },
+        "coarse_region_offset": {
+          "n": 18,
+          "median_absolute_ms": 260.8275,
+          "p95_absolute_ms": 662.5845999999992,
+          "maximum_absolute_ms": 1139.183,
+          "over_500_ms": 5
+        },
+        "baseline_unresolved": 24,
+        "baseline_supported_reference_nonoverlap": 0,
+        "m1_temporal_screen_pass": false,
+        "m1_lexical_correctness": "unmeasured; interval overlap is necessary but not sufficient",
+        "timing_refinement": "not evaluated",
+        "interpretation": "Coarse candidate-region errors are not final acoustic boundary accuracy"
+      },
+      "refinement": {
+        "occurrences": 26,
+        "raw_proposals": 18,
+        "estimated": 3,
+        "unresolved": 23,
+        "flags": {
+          "missing_candidate_coverage": 2,
+          "audio_correspondence_requires_review": 18,
+          "weak_acoustic_support": 12,
+          "weak_lexical_agreement": 15,
+          "boundary_censored": 2,
+          "chronological_conflict": 6
+        },
+        "raw_onset": {
+          "n": 18,
+          "median_absolute_ms": 666.3615,
+          "p95_absolute_ms": 1921.0884499999995,
+          "maximum_absolute_ms": 2323.889,
+          "over_500_ms": 11
+        },
+        "raw_offset": {
+          "n": 18,
+          "median_absolute_ms": 774.7605,
+          "p95_absolute_ms": 1588.435149999999,
+          "maximum_absolute_ms": 2184.439,
+          "over_500_ms": 11
+        },
+        "supported_onset": {
+          "n": 3,
+          "median_absolute_ms": 27.812,
+          "p95_absolute_ms": 40.457,
+          "maximum_absolute_ms": 41.862,
+          "over_500_ms": 0
+        },
+        "supported_offset": {
+          "n": 3,
+          "median_absolute_ms": 287.708,
+          "p95_absolute_ms": 393.50749999999994,
+          "maximum_absolute_ms": 405.263,
+          "over_500_ms": 0
+        },
+        "proposals_without_reference_overlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "new_supported_temporal_conflicts": [],
+      "supported_temporal_conflicts": [],
+      "observations": 242,
+      "recognized_tokens": 206,
+      "candidates": 209,
+      "eligible_candidates": 56,
+      "recognition_exclusions": {
+        "outside_central_window_ownership": 27,
+        "recognition_uncertainty": 9
+      },
+      "invalid_recognition_intervals": 20,
+      "measurements": {
+        "preprocessing_seconds": 0.9845330419921083,
+        "whisper_window_seconds": [
+          2.4832543340016855,
+          4.663017208004021,
+          4.566556207995745,
+          4.62646866599971,
+          2.945281749998685,
+          6.47460833399964,
+          2.365596583011211
+        ],
+        "whisper_total_seconds": 28.124783083010698,
+        "matching_seconds": 0.018162624997785315,
+        "ctc_initialization_seconds": 2.4226020839996636,
+        "refinement_seconds": 2.644769542006543,
+        "total_seconds": 34.64984229199763,
+        "parent_peak_rss_bytes": 1288192000,
+        "child_peak_rss_bytes": 670711808,
+        "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+      },
+      "whisper_internal_timers_seconds": {
+        "load": 0.9946899999999999,
+        "mel": 0.08062,
+        "sample": 0.11624,
+        "encode": 23.541800000000002,
+        "decode": 2.39545,
+        "batchd": 0.19282,
+        "prompt": 0.0,
+        "total": 27.501820000000002
+      },
+      "failure_localization": {
+        "missing_eligible": 7,
+        "missing_raw_candidate": 7,
+        "single_window_without_ownership_support": 2,
+        "empty_output_segments": 11,
+        "nonempty_zero_duration_segments": 8,
+        "nonempty_beyond_window_segments": 1,
+        "raw_text_support_in_reference_selected_windows": 2,
+        "qualification": "Reference-selected 30-second contexts are diagnostic only; text support does not locate the correct occurrence or supply timing"
+      }
+    },
+    {
+      "case": "EN-F02",
+      "correspondence": {
+        "occurrences": 72,
+        "eligible_candidate_reference_overlap": 43,
+        "candidate_availability_fraction": 0.5972222222222222,
+        "supported_regions": 40,
+        "unresolved_regions": 32,
+        "supported_reference_nonoverlap": 0,
+        "new_supported_reference_nonoverlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "coarse_region_onset": {
+          "n": 40,
+          "median_absolute_ms": 216.8145,
+          "p95_absolute_ms": 781.1545499999997,
+          "maximum_absolute_ms": 1013.048,
+          "over_500_ms": 7
+        },
+        "coarse_region_offset": {
+          "n": 40,
+          "median_absolute_ms": 423.687,
+          "p95_absolute_ms": 2112.8501499999998,
+          "maximum_absolute_ms": 2430.455,
+          "over_500_ms": 16
+        },
+        "baseline_unresolved": 50,
+        "baseline_supported_reference_nonoverlap": 0,
+        "m1_temporal_screen_pass": false,
+        "m1_lexical_correctness": "unmeasured; interval overlap is necessary but not sufficient",
+        "timing_refinement": "not evaluated",
+        "interpretation": "Coarse candidate-region errors are not final acoustic boundary accuracy"
+      },
+      "refinement": {
+        "occurrences": 72,
+        "raw_proposals": 40,
+        "estimated": 10,
+        "unresolved": 62,
+        "flags": {
+          "audio_correspondence_requires_review": 40,
+          "weak_lexical_agreement": 28,
+          "chronological_conflict": 19,
+          "refinement_overlap": 2,
+          "weak_acoustic_support": 2,
+          "missing_candidate_coverage": 9,
+          "competing_occurrence_paths": 4
+        },
+        "raw_onset": {
+          "n": 40,
+          "median_absolute_ms": 125.53999999999999,
+          "p95_absolute_ms": 1211.1413999999993,
+          "maximum_absolute_ms": 1531.58,
+          "over_500_ms": 15
+        },
+        "raw_offset": {
+          "n": 40,
+          "median_absolute_ms": 563.0965,
+          "p95_absolute_ms": 2858.3948499999997,
+          "maximum_absolute_ms": 3280.455,
+          "over_500_ms": 21
+        },
+        "supported_onset": {
+          "n": 10,
+          "median_absolute_ms": 98.4185,
+          "p95_absolute_ms": 975.7387999999997,
+          "maximum_absolute_ms": 1099.784,
+          "over_500_ms": 2
+        },
+        "supported_offset": {
+          "n": 10,
+          "median_absolute_ms": 247.17900000000003,
+          "p95_absolute_ms": 903.1098999999988,
+          "maximum_absolute_ms": 1330.465,
+          "over_500_ms": 1
+        },
+        "proposals_without_reference_overlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "new_supported_temporal_conflicts": [],
+      "supported_temporal_conflicts": [],
+      "observations": 452,
+      "recognized_tokens": 360,
+      "candidates": 516,
+      "eligible_candidates": 192,
+      "recognition_exclusions": {
+        "recognition_uncertainty": 22,
+        "outside_central_window_ownership": 70
+      },
+      "invalid_recognition_intervals": 72,
+      "measurements": {
+        "preprocessing_seconds": 0.7600929589971201,
+        "whisper_window_seconds": [
+          3.5441725830023643,
+          3.9401567080058157,
+          4.074286792005296,
+          3.921110374998534,
+          4.127257542000734,
+          2.4928081669932,
+          5.264762874998269,
+          2.586654583006748,
+          2.597648416995071
+        ],
+        "whisper_total_seconds": 32.54885804200603,
+        "matching_seconds": 0.108644916996127,
+        "ctc_initialization_seconds": 2.636607583001023,
+        "refinement_seconds": 8.537569082996924,
+        "total_seconds": 45.15556087499135,
+        "parent_peak_rss_bytes": 1205878784,
+        "child_peak_rss_bytes": 670842880,
+        "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+      },
+      "whisper_internal_timers_seconds": {
+        "load": 1.17081,
+        "mel": 0.07771,
+        "sample": 0.16094,
+        "encode": 26.27553,
+        "decode": 4.14488,
+        "batchd": 0.14372,
+        "prompt": 0.0,
+        "total": 32.16182
+      },
+      "failure_localization": {
+        "missing_eligible": 29,
+        "missing_raw_candidate": 28,
+        "single_window_without_ownership_support": 3,
+        "empty_output_segments": 14,
+        "nonempty_zero_duration_segments": 54,
+        "nonempty_beyond_window_segments": 5,
+        "raw_text_support_in_reference_selected_windows": 14,
+        "qualification": "Reference-selected 30-second contexts are diagnostic only; text support does not locate the correct occurrence or supply timing"
+      }
+    },
+    {
+      "case": "EN-F03",
+      "correspondence": {
+        "occurrences": 42,
+        "eligible_candidate_reference_overlap": 31,
+        "candidate_availability_fraction": 0.7380952380952381,
+        "supported_regions": 23,
+        "unresolved_regions": 19,
+        "supported_reference_nonoverlap": 0,
+        "new_supported_reference_nonoverlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "coarse_region_onset": {
+          "n": 23,
+          "median_absolute_ms": 290.627,
+          "p95_absolute_ms": 1140.2096999999999,
+          "maximum_absolute_ms": 1241.226,
+          "over_500_ms": 7
+        },
+        "coarse_region_offset": {
+          "n": 23,
+          "median_absolute_ms": 297.958,
+          "p95_absolute_ms": 1111.9210999999998,
+          "maximum_absolute_ms": 1387.75,
+          "over_500_ms": 9
+        },
+        "baseline_unresolved": 13,
+        "baseline_supported_reference_nonoverlap": 0,
+        "m1_temporal_screen_pass": false,
+        "m1_lexical_correctness": "unmeasured; interval overlap is necessary but not sufficient",
+        "timing_refinement": "not evaluated",
+        "interpretation": "Coarse candidate-region errors are not final acoustic boundary accuracy"
+      },
+      "refinement": {
+        "occurrences": 42,
+        "raw_proposals": 23,
+        "estimated": 6,
+        "unresolved": 36,
+        "flags": {
+          "missing_candidate_coverage": 9,
+          "weak_acoustic_support": 2,
+          "weak_lexical_agreement": 10,
+          "audio_correspondence_requires_review": 23,
+          "refinement_overlap": 8,
+          "competing_occurrence_paths": 4,
+          "chronological_conflict": 6,
+          "boundary_censored": 2
+        },
+        "raw_onset": {
+          "n": 23,
+          "median_absolute_ms": 873.737,
+          "p95_absolute_ms": 1913.6181999999997,
+          "maximum_absolute_ms": 2001.226,
+          "over_500_ms": 13
+        },
+        "raw_offset": {
+          "n": 23,
+          "median_absolute_ms": 362.104,
+          "p95_absolute_ms": 1461.6325999999997,
+          "maximum_absolute_ms": 2327.75,
+          "over_500_ms": 7
+        },
+        "supported_onset": {
+          "n": 6,
+          "median_absolute_ms": 378.5415,
+          "p95_absolute_ms": 1331.5125,
+          "maximum_absolute_ms": 1467.953,
+          "over_500_ms": 3
+        },
+        "supported_offset": {
+          "n": 6,
+          "median_absolute_ms": 242.1735,
+          "p95_absolute_ms": 358.43525,
+          "maximum_absolute_ms": 363.763,
+          "over_500_ms": 0
+        },
+        "proposals_without_reference_overlap": 0,
+        "wrong_repeated_reference_overlap": 0,
+        "interpretation": "Temporal reference-overlap conflicts, not independently verified lexical mismatches; supported is not accepted"
+      },
+      "new_supported_temporal_conflicts": [],
+      "supported_temporal_conflicts": [],
+      "observations": 410,
+      "recognized_tokens": 357,
+      "candidates": 552,
+      "eligible_candidates": 98,
+      "recognition_exclusions": {
+        "recognition_uncertainty": 1,
+        "outside_central_window_ownership": 53
+      },
+      "invalid_recognition_intervals": 33,
+      "measurements": {
+        "preprocessing_seconds": 1.1137774160015397,
+        "whisper_window_seconds": [
+          5.042208624989144,
+          5.515881874991464,
+          5.502371458002017,
+          5.219635500005097,
+          5.173545166006079,
+          4.952495459001511,
+          4.6884083340119105,
+          4.691618124998058,
+          2.5368087910028407,
+          3.566167625001981
+        ],
+        "whisper_total_seconds": 46.8891409580101,
+        "matching_seconds": 0.09225800000422169,
+        "ctc_initialization_seconds": 3.047205833005137,
+        "refinement_seconds": 3.4710816250008065,
+        "total_seconds": 55.24229712500528,
+        "parent_peak_rss_bytes": 1407172608,
+        "child_peak_rss_bytes": 670957568,
+        "memory_scope": "macOS peak RSS: parent and maximum child separately; not simultaneous process-tree peak"
+      },
+      "whisper_internal_timers_seconds": {
+        "load": 1.49037,
+        "mel": 0.13178000000000004,
+        "sample": 0.17840000000000003,
+        "encode": 40.530919999999995,
+        "decode": 3.59714,
+        "batchd": 0.23321,
+        "prompt": 0.0,
+        "total": 46.414809999999996
+      },
+      "failure_localization": {
+        "missing_eligible": 11,
+        "missing_raw_candidate": 11,
+        "single_window_without_ownership_support": 2,
+        "empty_output_segments": 18,
+        "nonempty_zero_duration_segments": 11,
+        "nonempty_beyond_window_segments": 5,
+        "raw_text_support_in_reference_selected_windows": 2,
+        "qualification": "Reference-selected 30-second contexts are diagnostic only; text support does not locate the correct occurrence or supply timing"
+      }
+    }
+  ],
+  "reference_role": "Scoring only; no inference or parameter selection on EN-F02/03"
+}

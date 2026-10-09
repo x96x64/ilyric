@@ -1,0 +1,72 @@
+{
+  "python_tests": 172,
+  "new_python_tests": 9,
+  "swift_tests": 61,
+  "public_source_python_tests": 172,
+  "public_source_swift_tests": 61,
+  "release_build": "passed in working and fresh public source checkouts",
+  "raw_raster_determinism": "passed in both checkouts",
+  "initial_swift_failure": "One TTML raw-raster equality assertion failed during concurrent verification; unchanged rerun and fresh checkout passed; cause unresolved",
+  "repeated_development_semantics": {
+    "anchors.json": true,
+    "correspondence.json": true,
+    "prepared.json": true
+  },
+  "synthetic_export": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.9999189933072695,
+    "content_gain": 0.7068585872278985,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "public_synthetic_export": {
+    "status": "passed",
+    "width": 1080,
+    "height": 1920,
+    "frames": 601,
+    "seconds": 10.016666666666667,
+    "video_time_base": "1/600",
+    "color_range": "tv",
+    "audio_samples_trimmed": 480800,
+    "audio_decoded_padding": 416,
+    "audio_priming_samples": 2112,
+    "content_correlation": 0.9999189933072703,
+    "content_gain": 0.7068585872278889,
+    "content_lag_samples": 0,
+    "marker_errors_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "video_timestamps": "all passed"
+  },
+  "synthetic_export_qualification": "Explicit original synthetic corrections; no real-singing accuracy claim",
+  "runtime_only_python_dependencies": {
+    "torch": "2.8.0",
+    "transformers": "4.57.1",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "soundfile": "0.14.0"
+  },
+  "implementation_commit": "fa354bc31de17ada1b784448fff8c2c950ef021c"
+}

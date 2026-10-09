@@ -1,0 +1,61 @@
+{
+  "start_allocated_bytes": 14619537408,
+  "allocated_bytes": 15921377280,
+  "additional_bytes": 1301839872,
+  "cumulative_download_planning_charge_bytes": 2064272273,
+  "approved_task_transfer_cap_bytes": 560000000,
+  "payload_bytes": 547272273,
+  "task_transfer_planning_charge_bytes": 548272273,
+  "download_qualification": "Historical cumulative usage is a conservative planning charge; current payload is measured; 1 MB allowance covers metadata and transfer overhead",
+  "free_filesystem_bytes": 38727630848,
+  "roots": [
+    {
+      "root": "artifacts",
+      "bytes": 5724434432
+    },
+    {
+      "root": "reference-private",
+      "bytes": 4862353408
+    },
+    {
+      "root": ".build",
+      "bytes": 987422720
+    },
+    {
+      "root": "ilyric-alignment-public-20261008",
+      "bytes": 487297024
+    },
+    {
+      "root": "ilyric-coverage-public-20261008",
+      "bytes": 472731648
+    },
+    {
+      "root": "ilyric-passage-public-20261009",
+      "bytes": 688562176
+    },
+    {
+      "root": "ilyric-personal-public-20261009",
+      "bytes": 637083648
+    },
+    {
+      "root": "ilyric-public-check",
+      "bytes": 307220480
+    },
+    {
+      "root": "ilyric-refinement-public-20261008",
+      "bytes": 472436736
+    },
+    {
+      "root": "ilyric-typography-public-check",
+      "bytes": 320745472
+    },
+    {
+      "root": "ilyric-vad-public-20261008",
+      "bytes": 472702976
+    },
+    {
+      "root": "ilyric-veracity-public-20261009",
+      "bytes": 488386560
+    }
+  ]
+}

@@ -133,3 +133,7 @@ The [review-first full-song prototype](docs/review-first-full-song.md) processes
 ## Bounded TIFA Passage Search
 
 The [passage-search report](docs/tifa-passage-search.md) evaluates automatic overlapping candidates and chronological reconciliation against the frozen complete-song CTC results. Explicit skip and ambiguity states preserve reviewability, but TIFA support does not establish lyric correspondence. The separate [experimental commands](docs/tifa-passage-commands.md) preserve the existing renderer and correction workflow. Automatic synchronization remains incomplete.
+
+## Audio-Derived Correspondence Evaluation
+
+The [bounded Whisper evaluation](docs/audio-derived-correspondence-evaluation.md) records failed M1 coverage criteria, reproducible offline preparation, and the next narrowly scoped corrective experiment. It does not establish automatic synchronization or release readiness.

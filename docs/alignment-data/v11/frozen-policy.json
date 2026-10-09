@@ -1,0 +1,54 @@
+{
+  "frozen_before_cases": [
+    "EN-F02",
+    "EN-F03"
+  ],
+  "development_case": "EN-F01",
+  "utc": "2026-10-09T00:12:31.340007+00:00",
+  "files": {
+    "scripts/alignment/audio_anchors.py": "ac8ac17a12fcaddcadff366466a0228a2a16eed97403c4b12e94b46490c7850f",
+    "scripts/alignment/full_song.py": "d052f9d745edd9b9d11a1a85ac0e693c38df24261e3427c9565ac48c98f27f6b",
+    "scripts/alignment/passage_search.py": "bb0fc75f24963bacc73cc2909c2627a8b0c9cbe55e82f4690a3b63acb0567061",
+    "scripts/alignment/whisper_anchors.py": "bbcbe5534408b6b6a4e185c50f2c5fdfe1f5d04f699d43c0a1780d8593454d34",
+    "scripts/alignment/audio_anchor_worker.py": "09f4ddbb0b0dc4ffa447f1004360bef8c19417fe88471cba06169b610a6d510a",
+    "scripts/prepare_audio_correspondence.py": "ace397f0ac04da6dac597a03eb43ca22020ba95f9ed3a72a6506a395866b30ca"
+  },
+  "matching": {
+    "version": 1,
+    "minimum_matches": 2,
+    "maximum_edit_percent": 30,
+    "maximum_line_us": 25000000,
+    "maximum_internal_gap_us": 3000000,
+    "ambiguity_margin": 10,
+    "maximum_tokens": 10000,
+    "maximum_candidates": 4000,
+    "maximum_cells": 20000000,
+    "maximum_reconciliation_work": 100000000
+  },
+  "decoding": [
+    "-l",
+    "en",
+    "-t",
+    "4",
+    "-p",
+    "1",
+    "-ng",
+    "-mc",
+    "0",
+    "-bo",
+    "1",
+    "-bs",
+    "1",
+    "-tp",
+    "0",
+    "-tpi",
+    "0",
+    "-nf",
+    "-ml",
+    "1",
+    "-sow",
+    "-ojf"
+  ],
+  "refinement_padding_us": 1000000,
+  "development_change": "None; first EN-F01 run retained without threshold or matcher tuning"
+}
