@@ -13,9 +13,10 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ['audio','lyrics','runtime','model','ctc','work']:p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--anchor-mode',choices=['word','segment'],default='word')
+    p.add_argument('--separator',type=Path,help='Optional pinned htdemucs checkpoint; separated vocals feed recognition only')
     a=p.parse_args()
     try:
-        print(json.dumps(infer(a.audio,a.lyrics,a.runtime,a.model,a.ctc,a.work,a.anchor_mode)));return 0
+        print(json.dumps(infer(a.audio,a.lyrics,a.runtime,a.model,a.ctc,a.work,a.anchor_mode,a.separator)));return 0
     except Unavailable as e:print(json.dumps(dict(status='unavailable',reason=str(e))),file=sys.stderr);return 3
     except (AlignmentError,OSError,ValueError,KeyError,TypeError,RecursionError) as e:
         p.exit(2,'Audio-derived preparation failed: '+str(e)+'\n')

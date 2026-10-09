@@ -22,7 +22,7 @@ def save(file,value):
     with file.open('x') as f:json.dump(value,f,ensure_ascii=False,indent=2,allow_nan=False)
 
 
-def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word"):
+def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word",separator=None):
     if anchor_mode not in ["word","segment"]:raise AlignmentError("Unsupported experimental anchor mode")
     from .segment_anchors import SEGMENT_DECODING, convert_segments, segment_evidence, project
     decoding=DECODING if anchor_mode=="word" else SEGMENT_DECODING
@@ -32,6 +32,8 @@ def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word"):
     if audio.stat().st_size>256*1024*1024 or lyrics.stat().st_size>65536:raise AlignmentError('Input resource limit')
     src=source(lyrics.read_bytes());text_targets(src)
     assets=require_assets(runtime,model)
+    from .vocal_separation import require_separator, separate
+    separation=require_separator(separator)
     if sys.platform!='darwin' or not Path('/usr/bin/sandbox-exec').is_file():
         raise Unavailable('This pinned CPU experiment requires macOS network isolation')
     if work.exists():raise AlignmentError('Use a new work directory; saved evidence is never overwritten')
@@ -57,10 +59,14 @@ def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word"):
     if not 1200<=len(signal)<=48000*600:raise AlignmentError('Source exceeds 25 ms–600 seconds; no silent truncation')
     duration=round(Fraction(len(signal)*1000000,48000));signal=resample_poly(signal,1,3).astype(np.float32)
     plan=windows(len(signal));preprocessing=time.perf_counter()-tick;observed=[];rejected=[];times=[]
+    # Separated vocals change only the recognition input; CTC refinement keeps the original mixture.
+    recognition=signal
+    if separation:
+        recognition,details=separate(audio,work,separator,len(signal),duration);separation.update(details)
     # Each process resets Whisper context; words are never passed as prompts.
     for w in plan:
         name=f"window-{w['id']:02d}";wav=work/(name+'.wav');base=work/name
-        sf.write(wav,signal[w['start_sample']:w['end_sample']],16000,subtype='PCM_16')
+        sf.write(wav,recognition[w['start_sample']:w['end_sample']],16000,subtype='PCM_16')
         command=['/usr/bin/sandbox-exec','-p','(version 1)(allow default)(deny network*)',str(runtime.resolve()),
                  '-m',str(model.resolve()),'-f',str(wav.resolve()),'-of',str(base.resolve())]+decoding
         tick=time.perf_counter()
@@ -119,10 +125,11 @@ def infer(audio,lyrics,runtime,model,ctc,work,anchor_mode="word"):
         interpretation='Heuristic Whisper anchors plus speech CTC boundaries; review required; no calibrated confidence',
         dependencies={k:importlib.metadata.version(k) for k in ['torch','transformers','numpy','scipy','soundfile']})
     if anchor_mode=='segment':engine.update(anchor_granularity='segment',segment_evidence_sha256=fingerprint(evidence))
+    if separation:engine.update(recognition_input='separated_vocals',separation={k:v for k,v in separation.items() if k!='measurements'})
     prepared=artifact(src,identity,duration,engine,plan,prepared['lines'])
     if file_hash(audio)!=identity or source(lyrics.read_bytes())!=src:raise AlignmentError('Original input changed')
     measurements=dict(preprocessing_seconds=preprocessing,whisper_window_seconds=times,whisper_total_seconds=sum(times),
-        matching_seconds=matching,ctc_initialization_seconds=initialization,refinement_seconds=refinement,
+        separation=separation['measurements'] if separation else None,matching_seconds=matching,ctc_initialization_seconds=initialization,refinement_seconds=refinement,
         refinement_windows=refinements,total_seconds=time.perf_counter()-started,
         parent_peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         child_peak_rss_bytes=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
