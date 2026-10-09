@@ -42,9 +42,9 @@ public struct ArtworkBackground: Equatable, Sendable {
     }
 
     /// Current experimental parameter set; see docs/artwork-background.md for its provenance.
-    /// Fitted jointly to three private recordings sets (docs/reference-data/background/fit.json, fold "all").
-    /// Appearance parameters generalize to held-out songs; temporal rates remain provisional.
-    public static let fitted = try! ArtworkBackground(scale:1.697,orbit:0.1300,orbitRate:0.1133,rotationRate:0.02231,
+    /// Appearance from docs/reference-data/background/fit.json (fold "all"); orbit and rotation refitted to
+    /// paused-playback recordings with matched durations (docs/reference-data/background/motion.json).
+    public static let fitted = try! ArtworkBackground(scale:1.697,orbit:0.0865,orbitRate:0.1233,rotationRate:-0.0259,
                                                        blur:139.1,saturation:1.900,gain:0.8225,gradient:0.4739)
 
     /// Fixed layer phases and directions. Two counter-moving layers avoid a single rigid rotation.
