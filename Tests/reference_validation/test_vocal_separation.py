@@ -56,5 +56,24 @@ class VocalSeparation(unittest.TestCase):
         self.assertIn("processor(signal[",text)
         self.assertNotIn("processor(recognition[",text)
 
+    def test_ctc_alignment_accepts_optional_separator(self):
+        import subprocess
+        root=Path(__file__).resolve().parents[2]
+        help_text=subprocess.run([sys.executable,str(root/'scripts/align_full_song.py'),'align','--help'],capture_output=True,text=True).stdout
+        self.assertIn('--separator',help_text)
+        worker=(root/'scripts/alignment/full_song_worker.py').read_text()
+        self.assertIn('require_separator(separator)',worker)
+        self.assertIn("ctc_input='separated_vocals'",worker)
+
+    def test_missing_separator_dependencies_fail_before_alignment(self):
+        import subprocess
+        root=Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as d:
+            d=Path(d);(d/'lyrics.txt').write_text('Bright wind\n');(d/'audio.wav').write_bytes(b'RIFF')
+            (d/'model').mkdir()
+            r=subprocess.run([sys.executable,str(root/'scripts/align_full_song.py'),'align','--audio',str(d/'audio.wav'),'--lyrics',str(d/'lyrics.txt'),
+                              '--model',str(d/'model'),'--output',str(d/'out.json'),'--separator',str(d/vs.MODEL_FILE)],capture_output=True,text=True)
+            self.assertEqual(r.returncode,3);self.assertFalse((d/'out.json').exists())
+
 
 if __name__=='__main__':unittest.main()

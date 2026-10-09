@@ -15,7 +15,7 @@ from .worker import Unavailable, file_hash
 from .full_song import GRID_US, artifact, path, proposals, text_targets, windows, owned_frames
 
 
-def infer(audio, src, model, work):
+def infer(audio, src, model, work, separator=None):
     started=time.perf_counter();_,tokens,owners=text_targets(src)
     if not audio.is_file() or audio.stat().st_size>256*1024*1024:
         raise AlignmentError('Supply local audio no larger than 256 MiB')
@@ -26,6 +26,8 @@ def infer(audio, src, model, work):
         if not p.is_file():raise Unavailable('Pinned local English CTC asset unavailable')
         if p.stat().st_size!=asset['bytes'] or file_hash(p)!=asset['sha256']:
             raise AlignmentError('Pinned CTC asset identity differs')
+    from .vocal_separation import require_separator, separate
+    separation=require_separator(separator)
     os.environ.update(HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',TOKENIZERS_PARALLELISM='false')
     def deny(event,args):
         if event in ('socket.connect','socket.getaddrinfo'):raise Unavailable('Full-song inference forbids network access')
@@ -49,6 +51,9 @@ def infer(audio, src, model, work):
     duration=round(Fraction(source_samples*1000000,48000))
     signal,rate=sf.read(decoded,dtype='float32')
     signal=resample_poly(signal,1,3).astype(np.float32)
+    if separation:
+        # Separated vocals replace the mixture as the CTC input; source identity and timing remain the original's.
+        signal,details=separate(audio,work,separator,len(signal),duration);separation.update(details)
     if ((len(signal)-400)//320+1)*(2*len(tokens)+1)>120000000:
         raise AlignmentError('Full-song CTC trace would exceed 120 MB; input remains unchanged')
     preprocessing=time.perf_counter()-t;t=time.perf_counter()
@@ -81,9 +86,10 @@ def infer(audio, src, model, work):
                 preprocessing='FFmpeg mono 48-kHz PCM16, scipy resample_poly 1/3, processor per-window normalization; 30 s windows, 4 s overlap, central ownership',
                 dependencies={k:importlib.metadata.version(k) for k in ['torch','transformers','numpy','scipy','soundfile']},
                 interpretation='Forced line-level proposals; shared-model greedy diagnostics are not independent lexical evidence; no vocal detector or automatic acceptance')
+    if separation:engine.update(ctc_input='separated_vocals',separation={k:v for k,v in separation.items() if k!='measurements'})
     result=artifact(src,identity,duration,engine,plan,rows)
     result['measurements']=dict(preprocessing_seconds=preprocessing,initialization_seconds=initialization,
-                               inference_seconds=inference,reconciliation_seconds=reconciliation,
+                               separation=separation['measurements'] if separation else None,inference_seconds=inference,reconciliation_seconds=reconciliation,
                                window_inference_seconds=window_times,total_seconds=time.perf_counter()-started,
                                peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*(1 if sys.platform=='darwin' else 1024))
     return result

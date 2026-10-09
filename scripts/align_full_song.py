@@ -22,6 +22,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);sub=parser.add_subparsers(dest='command',required=True)
     align=sub.add_parser('align')
     for name in ['audio','lyrics','model','output']:align.add_argument('--'+name,type=Path,required=True)
+    align.add_argument('--separator',type=Path,help='Optional pinned htdemucs checkpoint; separated vocals become the CTC input')
     check=sub.add_parser('validate');check.add_argument('artifact',type=Path)
     edit=sub.add_parser('review');edit.add_argument('artifact',type=Path)
     edit.add_argument('--decisions',type=Path,required=True);edit.add_argument('--output',type=Path,required=True)
@@ -37,7 +38,7 @@ def main():
             src=source(a.lyrics.read_bytes())
             from alignment.full_song_worker import infer
             with tempfile.TemporaryDirectory(prefix='full-song-',dir=output.parent) as tmp:
-                result=infer(a.audio,src,a.model,Path(tmp))
+                result=infer(a.audio,src,a.model,Path(tmp),a.separator)
         else:
             result=load(a.artifact)
             if a.command=='review':
