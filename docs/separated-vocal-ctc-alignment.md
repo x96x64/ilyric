@@ -40,7 +40,7 @@ The remaining failures are boundary and failure-detection problems rather than c
 
 1. **Unflagged short-line displacement.** A very short estimate for a multi-character line was accepted.
 2. **Leading-audio absorption.** EN-F01's first line began approximately 13.2 seconds early, absorbing introductory audio; it remained unflagged.
-3. **Systematic offset lateness.** Median offset error is 217–243 ms on every recording, while median onset error is 48–50 ms. This may reflect CTC trailing-blank behavior or a difference in annotation convention; its cause is not established.
+3. **Systematic early offsets.** Median absolute offset error is 217–243 ms on every recording, while median absolute onset error is 48–50 ms. Signed development analysis shows that estimates end before the reference: median signed offset error is −243, −155, and −235 ms. This may reflect CTC emission timing on sustained final vowels or a difference in annotation convention; its cause is not established.
 4. **Residual unresolved lines.** EN-F02 retains 28 unresolved occurrences, mostly with weak lexical agreement.
 
 Against the prospective M2 targets, onset medians already satisfy the 100-ms condition, but onset p95, offset median, unresolved fraction on EN-F01 and EN-F02, and the absence of unflagged errors above two seconds do not. EN-F02 and EN-F03 have now been observed with this architecture and can no longer serve as unbiased holdouts.
