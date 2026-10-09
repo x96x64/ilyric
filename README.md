@@ -151,3 +151,7 @@ The [decision record](docs/release-and-fidelity-decisions.md) establishes automa
 ## Vocal Separation Before Recognition
 
 The [separation report](docs/vocal-separation-recognition.md) evaluates pinned Demucs vocal separation before Whisper recognition. Availability rose from 93 to 104 of 140 occurrences but remained below 90% on every recording, and lexical recognition coverage barely changed; M1 remains a no-go. Complete-sequence CTC alignment on separated vocals is the next single experiment.
+
+## Complete-Sequence CTC Alignment on Separated Vocals
+
+The [separated-vocal alignment report](docs/separated-vocal-ctc-alignment.md) aligns complete supplied lyrics to Demucs vocal stems. Retained estimates doubled from 53 to 106 of 140 occurrences and unresolved occurrences fell from 87 to 34; one unflagged short-line displacement prevents an M1 pass. Separated-vocal CTC is now the lead synchronization architecture, pending failure-detection and boundary work and a new locked evaluation set.

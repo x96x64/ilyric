@@ -1,0 +1,60 @@
+{
+  "unchanged_mixture_regression": "EN-F01 without --separator reproduced the frozen complete-sequence CTC artifact exactly (excluding measurements)",
+  "python_tests": {
+    "count": 196,
+    "result": "passed"
+  },
+  "environment": {
+    "hardware": "Apple M4, 16 GiB",
+    "os": "macOS 27.0.1",
+    "isolated_python": "3.12.14",
+    "torch": "2.8.0",
+    "demucs": "4.1.0"
+  },
+  "performance": [
+    {
+      "case": "EN-F01",
+      "preprocessing_seconds": 144.3523092079995,
+      "initialization_seconds": 0.0613561249920167,
+      "separation": {
+        "load_seconds": 0.9659770419966662,
+        "separation_seconds": 142.40756379099912,
+        "total_seconds": 143.5629296249972
+      },
+      "inference_seconds": 10.780034292009077,
+      "reconciliation_seconds": 3.084571542000049,
+      "total_seconds": 164.2989775419992,
+      "peak_rss_bytes": 2508177408
+    },
+    {
+      "case": "EN-F02",
+      "preprocessing_seconds": 198.9749246660067,
+      "initialization_seconds": 0.1215252080000937,
+      "separation": {
+        "load_seconds": 0.672867542001768,
+        "separation_seconds": 197.38418445800198,
+        "total_seconds": 198.3411530000012
+      },
+      "inference_seconds": 18.079338583003846,
+      "reconciliation_seconds": 8.781144667009357,
+      "total_seconds": 231.1880348329869,
+      "peak_rss_bytes": 2803499008
+    },
+    {
+      "case": "EN-F03",
+      "preprocessing_seconds": 221.8116675830097,
+      "initialization_seconds": 0.06180070799018722,
+      "separation": {
+        "load_seconds": 0.7305766659992514,
+        "separation_seconds": 220.10649425000884,
+        "total_seconds": 221.13286808300472
+      },
+      "inference_seconds": 16.21038854199287,
+      "reconciliation_seconds": 7.8362786670040805,
+      "total_seconds": 251.06833695799287,
+      "peak_rss_bytes": 2963914752
+    }
+  ],
+  "note": "EN-F02 and EN-F03 ran concurrently with each other and with background-model fitting; timings are upper bounds",
+  "new_downloads_bytes": 0
+}

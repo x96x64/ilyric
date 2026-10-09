@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-09T01:38:18.887508+00:00",
+  "development_case": "EN-F01",
+  "frozen_before": [
+    "EN-F02",
+    "EN-F03"
+  ],
+  "files": {
+    "scripts/alignment/full_song.py": "d052f9d745edd9b9d11a1a85ac0e693c38df24261e3427c9565ac48c98f27f6b",
+    "scripts/alignment/full_song_worker.py": "78ffdecd75eeb5501a32f08727c962260f5a14078bcdb1344d776d5d034027d0",
+    "scripts/alignment/vocal_separation.py": "36a625ff48456e38a25b633a50c966a5c42720509456b736b5d898d19b23e989",
+    "scripts/align_full_song.py": "9ea9f73cc2f894e9872e1a02f5b544f2f639439b46a1b7987aee421dd8a635c9",
+    "scripts/evaluate_full_song.py": "cdb326ef5f912c53af9503e7e7cd1194b0575865d616f90b4f615df519fa921e"
+  },
+  "change": "Complete-sequence windowed English CTC input replaced by separated vocals; windows, ownership, path, proposal rules, and model unchanged",
+  "development_tuning": "None"
+}
