@@ -2,6 +2,8 @@
 
 ## Current Limits and Accounting Scope
 
+Subsequently on October 9, 2026, the maintainer raised the cumulative download ceiling to **2,300,000,000 bytes** to acquire fourteen English JamendoLyrics recordings with human line annotations for the locked M2 set. The measured transfer was 73,990,975 bytes at dataset revision `de188c963fd4539bc769b3feb83582e5a9595e36`; every audio file matched its published SHA-256 object identifier. The cumulative planned download charge is approximately 2.224 GB, including small index and license metadata.
+
 Later on October 9, 2026, the maintainer raised the comprehensive evaluation-storage ceiling to **20,000,000,000 bytes (20 GB; approximately 18.626 GiB)** for M2 listening copies and locked evaluation runs, after the inventory reached approximately 17.94 GB. The download ceiling remains 2,200,000,000 bytes. No deletion was authorized.
 
 Earlier on October 9, 2026, after the segment-level anchor comparison, the explicitly approved cumulative local evaluation-storage ceiling is **18,000,000,000 bytes (18 GB; approximately 16.764 GiB)** and the cumulative download ceiling is **2,200,000,000 bytes**. The maintainer approved these increases for the A1 vocal-separation experiment, which may provision only the pinned Demucs `htdemucs` checkpoint (84,141,911 bytes), the `demucs` 4.1.0 wheel (100,567 bytes), and the `julius` 0.2.8 wheel (21,819 bytes), recorded in the [separation provisioning record](alignment-data/v13/provisioning.json). No deletion was authorized.
