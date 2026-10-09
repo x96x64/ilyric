@@ -50,15 +50,16 @@ import RenderMac
                   FileManager.default.fileExists(atPath:parent.path), !FileManager.default.fileExists(atPath:output.path) else { throw SliceError.invalid("Use a new output in an existing artifacts directory") }
             var commands:Set<String>=[]
             for base in ["native","still","video"] { for mode in ["","-inactive","-progression","-inactive-progression"] {
-                for suffix in ["","-background","-symbols","-background-symbols"] { commands.insert(base+mode+suffix) }
+                for suffix in ["","-background","-symbols","-background-symbols"] { commands.insert(base+mode+suffix);commands.insert(base+mode+"-gap"+suffix) }
             }}
             guard commands.contains(args[1]) else { throw SliceError.invalid("Invalid experimental command") }
             let calibrated=args[1].contains("-inactive")
-            let progression=args[1].contains("-progression")
+            let progression=args[1].contains("-progression"),gap=args[1].contains("-gap")
             let background=args[1].contains("-background") ? ArtworkBackground.fitted : nil
             let icons:ScreenIconSet=args[1].hasSuffix("-symbols") ? .systemSymbols : .original
-            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"").replacingOccurrences(of:"-background",with:"").replacingOccurrences(of:"-symbols",with:"")
-            let scene=try progression ? LyricsScreen(composition:.progressionDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(8),volume:0.62,
+            let command=args[1].replacingOccurrences(of:"-inactive",with:"").replacingOccurrences(of:"-progression",with:"").replacingOccurrences(of:"-background",with:"").replacingOccurrences(of:"-symbols",with:"").replacingOccurrences(of:"-gap",with:"")
+            let scene=try gap ? LyricsScreen(composition:.gapDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(14),volume:0.62,
+                events:[.init(Time(0),order:0,controls:.init())],background:background) : progression ? LyricsScreen(composition:.progressionDemonstration(),title:"Paper Skies",artist:"Field Notes",duration:Time(8),volume:0.62,
                 events:[.init(Time(0),order:0,controls:.init())],background:background) : .synthetic(background:background)
             let renderer=try ScreenRenderer(scene,calibratedInactive:calibrated,icons:icons)
             if icons == .systemSymbols { FileHandle.standardError.write(Data("LyricsScreenProbe: SF Symbols are resolved at runtime; Apple terms do not expressly license them in exported videos.\n".utf8)) }

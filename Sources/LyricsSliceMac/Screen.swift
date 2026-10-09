@@ -101,7 +101,17 @@ public final class ScreenRenderer {
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
             c.saveGState();c.setAlpha(p.opacity);c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556));c.restoreGState()
         }
+        for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
         return c.makeImage()!
+    }
+    /// Three white dots scaled as a group about the middle dot; native coordinates, top-left origin.
+    static func drawGap(_ s:GapIndicatorState,centerY:Double,into c:CGContext) {
+        let middle=GapIndicator.firstCenterX+GapIndicator.spacing,d=GapIndicator.diameter*s.scale,y=2556-centerY
+        for (k,opacity) in s.opacities.enumerated() {
+            let x=middle+(Double(k)-1)*GapIndicator.spacing*s.scale
+            c.setFillColor(CGColor(gray:1,alpha:opacity*s.visibility))
+            c.fillEllipse(in:CGRect(x:x-d/2,y:y-d/2,width:d,height:d))
+        }
     }
     public func native(_ state:ScreenSnapshot) throws -> CGImage {
         let c=Self.context(screen.composition.canvasWidth,2556)
