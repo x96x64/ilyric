@@ -159,3 +159,7 @@ The [separated-vocal alignment report](docs/separated-vocal-ctc-alignment.md) al
 ## Artwork-Derived Dynamic Background
 
 The [background report](docs/artwork-background.md) records an opt-in deterministic reconstruction of the blurred, moving artwork-derived Lyrics background. Color, spatial structure, and vertical gradient generalize to held-out songs; motion remains provisional pending paused-playback captures.
+
+## Vocal-Activity Boundary and Duration Rules
+
+The [rules report](docs/vocal-activity-rules.md) withholds implausibly short estimates and trims leading vocal inactivity on separated stems. On the development recordings this removes the observed displacement and introductory-audio absorption; qualification on new locked recordings remains required.
