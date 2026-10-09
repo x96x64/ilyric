@@ -179,3 +179,7 @@ The [locked evaluation](docs/m2-locked-evaluation.md) tested the frozen separate
 ## Instrumental-Gap Indicator
 
 The [gap-indicator report](docs/gap-indicator.md) records a fitted three-dot indicator that fills across supplied instrumental gaps, completing a fixed 2.22 seconds before each gap ends, with a ±11% group pulse, and records the observed pause state.
+
+## Separated-Vocal Acceptance and Boundary Rules
+
+The [acceptance report](docs/separated-vocal-acceptance.md) replaces the lexical gate with separated-stem evidence and extends offsets through vocal activity. Cross-validation over seventeen annotated recordings estimates 90.5% correct placement with near-zero displacement and median onset and offset errors of 42 and 65 ms; unseen requalification remains required.

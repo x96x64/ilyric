@@ -1,0 +1,859 @@
+{
+ "status": "development_cross_validation",
+ "development_set": "EN-F01-EN-F03 and EN-J01-EN-J14 (17 human-annotated JamendoLyrics recordings); EN-J was observed in the locked M2 run and is now development material",
+ "cross_validation": {
+  "status": "cross_validated",
+  "placement": {
+   "lines": 777,
+   "accepted": 705,
+   "correct": 703
+  },
+  "boundaries": {
+   "n": 705,
+   "onset_median_ms": 42.191,
+   "onset_p95_ms": 334.9625999999985,
+   "onset_over_500": 0.04539007092198582,
+   "offset_median_ms": 65.081,
+   "offset_p95_ms": 713.0251999999997,
+   "offset_over_500": 0.06950354609929078,
+   "errors_over_2s": 21,
+   "nonoverlap": 2
+  },
+  "gate_choices": [
+   [
+    "(-3.5, 0.15, 40, 400)",
+    15
+   ],
+   [
+    "(-3.5, 0.1, 40, 400)",
+    1
+   ],
+   [
+    "(-3.5, 0.15, 40, 1000)",
+    1
+   ]
+  ],
+  "boundary_choices": [
+   [
+    "(30.0, 20.0, 600000)",
+    16
+   ],
+   [
+    "(30.0, 20.0, 1000000)",
+    1
+   ]
+  ]
+ },
+ "rules": {
+  "version": 2,
+  "minimum_support": -3.5,
+  "minimum_similarity": 0.15,
+  "us_per_character": [
+   40000,
+   400000
+  ],
+  "onset_activity_db_below_p99": 30,
+  "offset_activity_db_below_p99": 20,
+  "maximum_offset_extension_us": 600000,
+  "uncertain_rate_ratio": 1.75
+ },
+ "uncertain_boundary_flag": {
+  "cross_validated_flagged": 52,
+  "large_errors_flagged": 11,
+  "large_errors_unflagged": 4,
+  "estimates": 700,
+  "note": "From the development analysis of the selected rule; ratio chosen in 17 of 17 folds"
+ },
+ "end_to_end_in_sample": {
+  "status": "measured",
+  "summary": {
+   "songs": 17,
+   "passing_songs": 0,
+   "occurrences": 777,
+   "correct": 700,
+   "unresolved": 77,
+   "retained_nonoverlap": 0,
+   "condition_pass_counts": {
+    "correct_occurrence_at_least_95": 6,
+    "unresolved_at_most_5": 6,
+    "no_unflagged_displacement": 17,
+    "onset_median_100": 15,
+    "onset_p95_250": 8,
+    "onset_over_500_at_most_5": 10,
+    "offset_median_100": 11,
+    "offset_p95_250": 1,
+    "offset_over_500_at_most_5": 8,
+    "no_unflagged_error_over_2s": 8,
+    "preparation_at_most_twice_duration": 17
+   }
+  },
+  "cases": [
+   {
+    "case": "EN-J01",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 58,
+     "correct_occurrence": 49,
+     "unresolved": 9,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 23.11,
+     "signed_offset_median_ms": 15.873,
+     "onset": {
+      "n": 49,
+      "median_absolute_ms": 53.584,
+      "p95_absolute_ms": 523.8963999999971,
+      "maximum_absolute_ms": 982.988,
+      "over_500_ms": 3
+     },
+     "offset": {
+      "n": 49,
+      "median_absolute_ms": 139.048,
+      "p95_absolute_ms": 832.1903999999978,
+      "maximum_absolute_ms": 1105.714,
+      "over_500_ms": 7
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 66.30931450000207,
+     "duration_seconds": 233.625,
+     "peak_rss_bytes": 2875686912,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J02",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 27,
+     "correct_occurrence": 27,
+     "unresolved": 0,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 19.814,
+     "signed_offset_median_ms": -41.995,
+     "onset": {
+      "n": 27,
+      "median_absolute_ms": 29.618,
+      "p95_absolute_ms": 123.49229999999997,
+      "maximum_absolute_ms": 3135.11,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 27,
+      "median_absolute_ms": 58.277,
+      "p95_absolute_ms": 131.905,
+      "maximum_absolute_ms": 3785.714,
+      "over_500_ms": 1
+     },
+     "errors_over_2s": 2,
+     "preparation_seconds": 54.01322245899064,
+     "duration_seconds": 189.84,
+     "peak_rss_bytes": 2624258048,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": true,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J03",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 46,
+     "correct_occurrence": 46,
+     "unresolved": 0,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 4.371,
+     "signed_offset_median_ms": -81.0205,
+     "onset": {
+      "n": 46,
+      "median_absolute_ms": 19.8365,
+      "p95_absolute_ms": 120.77499999999999,
+      "maximum_absolute_ms": 209.87,
+      "over_500_ms": 0
+     },
+     "offset": {
+      "n": 46,
+      "median_absolute_ms": 114.21799999999999,
+      "p95_absolute_ms": 265.4765,
+      "maximum_absolute_ms": 751.701,
+      "over_500_ms": 1
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 66.38101758300036,
+     "duration_seconds": 209.033875,
+     "peak_rss_bytes": 2712223744,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J04",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 42,
+     "correct_occurrence": 30,
+     "unresolved": 12,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 103.78,
+     "signed_offset_median_ms": 44.5805,
+     "onset": {
+      "n": 30,
+      "median_absolute_ms": 113.286,
+      "p95_absolute_ms": 641.1165499999994,
+      "maximum_absolute_ms": 807.569,
+      "over_500_ms": 3
+     },
+     "offset": {
+      "n": 30,
+      "median_absolute_ms": 87.1685,
+      "p95_absolute_ms": 2177.1106499999996,
+      "maximum_absolute_ms": 3399.683,
+      "over_500_ms": 4
+     },
+     "errors_over_2s": 3,
+     "preparation_seconds": 81.59649579199322,
+     "duration_seconds": 242.556917,
+     "peak_rss_bytes": 2903752704,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": false,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J05",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 37,
+     "correct_occurrence": 34,
+     "unresolved": 3,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 143.77949999999998,
+     "signed_offset_median_ms": 5.5555,
+     "onset": {
+      "n": 34,
+      "median_absolute_ms": 145.4675,
+      "p95_absolute_ms": 267.88014999999973,
+      "maximum_absolute_ms": 884.766,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 34,
+      "median_absolute_ms": 50.8165,
+      "p95_absolute_ms": 789.5693499999969,
+      "maximum_absolute_ms": 2241.134,
+      "over_500_ms": 2
+     },
+     "errors_over_2s": 1,
+     "preparation_seconds": 75.79781316699518,
+     "duration_seconds": 221.978458,
+     "peak_rss_bytes": 2755756032,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": false,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J06",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 30,
+     "correct_occurrence": 27,
+     "unresolved": 3,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 51.469,
+     "signed_offset_median_ms": 2.857,
+     "onset": {
+      "n": 27,
+      "median_absolute_ms": 63.62,
+      "p95_absolute_ms": 840.7147999999994,
+      "maximum_absolute_ms": 1307.987,
+      "over_500_ms": 2
+     },
+     "offset": {
+      "n": 27,
+      "median_absolute_ms": 68.707,
+      "p95_absolute_ms": 424.76199999999994,
+      "maximum_absolute_ms": 764.49,
+      "over_500_ms": 1
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 55.98569891600346,
+     "duration_seconds": 171.0,
+     "peak_rss_bytes": 2573910016,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J07",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 82,
+     "correct_occurrence": 81,
+     "unresolved": 1,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 11.47,
+     "signed_offset_median_ms": 1.134,
+     "onset": {
+      "n": 81,
+      "median_absolute_ms": 27.722,
+      "p95_absolute_ms": 84.113,
+      "maximum_absolute_ms": 160.406,
+      "over_500_ms": 0
+     },
+     "offset": {
+      "n": 81,
+      "median_absolute_ms": 40.317,
+      "p95_absolute_ms": 256.961,
+      "maximum_absolute_ms": 367.982,
+      "over_500_ms": 0
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 64.33280887499859,
+     "duration_seconds": 192.8,
+     "peak_rss_bytes": 2688876544,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J08",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 20,
+     "correct_occurrence": 12,
+     "unresolved": 8,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 33.561,
+     "signed_offset_median_ms": -101.746,
+     "onset": {
+      "n": 12,
+      "median_absolute_ms": 72.85300000000001,
+      "p95_absolute_ms": 1086.9992499999985,
+      "maximum_absolute_ms": 2181.238,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 12,
+      "median_absolute_ms": 184.7165,
+      "p95_absolute_ms": 962.8099999999993,
+      "maximum_absolute_ms": 1523.81,
+      "over_500_ms": 2
+     },
+     "errors_over_2s": 1,
+     "preparation_seconds": 87.04062629200052,
+     "duration_seconds": 262.4,
+     "peak_rss_bytes": 2892693504,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J09",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 50,
+     "correct_occurrence": 41,
+     "unresolved": 9,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 12.339,
+     "signed_offset_median_ms": -4.218,
+     "onset": {
+      "n": 41,
+      "median_absolute_ms": 35.126,
+      "p95_absolute_ms": 147.046,
+      "maximum_absolute_ms": 1259.733,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 41,
+      "median_absolute_ms": 29.751,
+      "p95_absolute_ms": 460.091,
+      "maximum_absolute_ms": 1530.34,
+      "over_500_ms": 2
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 103.02157129099942,
+     "duration_seconds": 283.930208,
+     "peak_rss_bytes": 2956312576,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J10",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 43,
+     "correct_occurrence": 39,
+     "unresolved": 4,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": -1.03,
+     "signed_offset_median_ms": 37.143,
+     "onset": {
+      "n": 39,
+      "median_absolute_ms": 36.165,
+      "p95_absolute_ms": 124.88510000000012,
+      "maximum_absolute_ms": 1620.42,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 39,
+      "median_absolute_ms": 116.587,
+      "p95_absolute_ms": 751.7366000000002,
+      "maximum_absolute_ms": 1155.556,
+      "over_500_ms": 5
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 77.15916887500498,
+     "duration_seconds": 219.995688,
+     "peak_rss_bytes": 2769158144,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J11",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 31,
+     "correct_occurrence": 27,
+     "unresolved": 4,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 23.222,
+     "signed_offset_median_ms": -32.245,
+     "onset": {
+      "n": 27,
+      "median_absolute_ms": 31.039,
+      "p95_absolute_ms": 104.11729999999999,
+      "maximum_absolute_ms": 134.175,
+      "over_500_ms": 0
+     },
+     "offset": {
+      "n": 27,
+      "median_absolute_ms": 118.367,
+      "p95_absolute_ms": 1689.5102999999995,
+      "maximum_absolute_ms": 2295.51,
+      "over_500_ms": 4
+     },
+     "errors_over_2s": 1,
+     "preparation_seconds": 78.68672695900023,
+     "duration_seconds": 229.224771,
+     "peak_rss_bytes": 2770518016,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J12",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 72,
+     "correct_occurrence": 60,
+     "unresolved": 12,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 15.07,
+     "signed_offset_median_ms": -6.7345,
+     "onset": {
+      "n": 60,
+      "median_absolute_ms": 34.565,
+      "p95_absolute_ms": 1375.9503499999998,
+      "maximum_absolute_ms": 5046.614,
+      "over_500_ms": 6
+     },
+     "offset": {
+      "n": 60,
+      "median_absolute_ms": 43.1975,
+      "p95_absolute_ms": 720.1318999999999,
+      "maximum_absolute_ms": 12481.633,
+      "over_500_ms": 5
+     },
+     "errors_over_2s": 3,
+     "preparation_seconds": 85.07813516700116,
+     "duration_seconds": 240.046271,
+     "peak_rss_bytes": 2894528512,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J13",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 53,
+     "correct_occurrence": 53,
+     "unresolved": 0,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 9.841,
+     "signed_offset_median_ms": -23.3,
+     "onset": {
+      "n": 53,
+      "median_absolute_ms": 40.681,
+      "p95_absolute_ms": 173.71339999999992,
+      "maximum_absolute_ms": 3112.869,
+      "over_500_ms": 2
+     },
+     "offset": {
+      "n": 53,
+      "median_absolute_ms": 72.698,
+      "p95_absolute_ms": 480.19059999999985,
+      "maximum_absolute_ms": 2269.206,
+      "over_500_ms": 3
+     },
+     "errors_over_2s": 2,
+     "preparation_seconds": 78.48645537500852,
+     "duration_seconds": 220.714292,
+     "peak_rss_bytes": 2725003264,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-J14",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 46,
+     "correct_occurrence": 42,
+     "unresolved": 4,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": -0.7739999999999999,
+     "signed_offset_median_ms": -37.1425,
+     "onset": {
+      "n": 42,
+      "median_absolute_ms": 38.375,
+      "p95_absolute_ms": 104.79139999999998,
+      "maximum_absolute_ms": 109.584,
+      "over_500_ms": 0
+     },
+     "offset": {
+      "n": 42,
+      "median_absolute_ms": 84.227,
+      "p95_absolute_ms": 269.9906,
+      "maximum_absolute_ms": 2315.102,
+      "over_500_ms": 1
+     },
+     "errors_over_2s": 1,
+     "preparation_seconds": 69.6606939159974,
+     "duration_seconds": 192.921667,
+     "peak_rss_bytes": 2674671616,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": true,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-F01",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 26,
+     "correct_occurrence": 25,
+     "unresolved": 1,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 23.248,
+     "signed_offset_median_ms": -65.036,
+     "onset": {
+      "n": 25,
+      "median_absolute_ms": 46.007,
+      "p95_absolute_ms": 269.89059999999944,
+      "maximum_absolute_ms": 553.848,
+      "over_500_ms": 1
+     },
+     "offset": {
+      "n": 25,
+      "median_absolute_ms": 114.513,
+      "p95_absolute_ms": 278.54899999999986,
+      "maximum_absolute_ms": 294.556,
+      "over_500_ms": 0
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 67.42742087499937,
+     "duration_seconds": 180.0615,
+     "peak_rss_bytes": 2594799616,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": true,
+      "offset_median_100": false,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-F02",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 72,
+     "correct_occurrence": 66,
+     "unresolved": 6,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 22.186500000000002,
+     "signed_offset_median_ms": 39.3635,
+     "onset": {
+      "n": 66,
+      "median_absolute_ms": 48.18,
+      "p95_absolute_ms": 469.1725,
+      "maximum_absolute_ms": 2759.526,
+      "over_500_ms": 4
+     },
+     "offset": {
+      "n": 66,
+      "median_absolute_ms": 93.9705,
+      "p95_absolute_ms": 708.36625,
+      "maximum_absolute_ms": 1573.064,
+      "over_500_ms": 5
+     },
+     "errors_over_2s": 1,
+     "preparation_seconds": 83.91310725000221,
+     "duration_seconds": 216.55525,
+     "peak_rss_bytes": 2684878848,
+     "conditions": {
+      "correct_occurrence_at_least_95": false,
+      "unresolved_at_most_5": false,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": false,
+      "no_unflagged_error_over_2s": false,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   },
+   {
+    "case": "EN-F03",
+    "nonlexical": false,
+    "license": null,
+    "separated": {
+     "occurrences": 42,
+     "correct_occurrence": 41,
+     "unresolved": 1,
+     "retained_nonoverlap": 0,
+     "signed_onset_median_ms": 32.047,
+     "signed_offset_median_ms": -9.523,
+     "onset": {
+      "n": 41,
+      "median_absolute_ms": 49.189,
+      "p95_absolute_ms": 600.669,
+      "maximum_absolute_ms": 1338.967,
+      "over_500_ms": 3
+     },
+     "offset": {
+      "n": 41,
+      "median_absolute_ms": 42.191,
+      "p95_absolute_ms": 262.452,
+      "maximum_absolute_ms": 700.669,
+      "over_500_ms": 1
+     },
+     "errors_over_2s": 0,
+     "preparation_seconds": 93.17252337500395,
+     "duration_seconds": 240.561646,
+     "peak_rss_bytes": 2866708480,
+     "conditions": {
+      "correct_occurrence_at_least_95": true,
+      "unresolved_at_most_5": true,
+      "no_unflagged_displacement": true,
+      "onset_median_100": true,
+      "onset_p95_250": false,
+      "onset_over_500_at_most_5": false,
+      "offset_median_100": true,
+      "offset_p95_250": false,
+      "offset_over_500_at_most_5": true,
+      "no_unflagged_error_over_2s": true,
+      "preparation_at_most_twice_duration": true
+     },
+     "passes": false
+    }
+   }
+  ]
+ },
+ "interpretation": "Cross-validated figures are the primary estimate. End-to-end figures use parameters chosen with every song and verify implementation equivalence; they are optimistic. The M2 evaluator counts all errors above two seconds, including flagged ones."
+}
