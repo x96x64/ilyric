@@ -50,9 +50,18 @@ struct EnhancedTests {
         #expect(try parse("[00:00]<00:00>\(unicode)<00:01>").entries[0].text.utf8.elementsEqual(unicode.utf8))
         #expect(throws:InputError.self) { try EnhancedLRCParser.parse(Data([0xff])) }
         #expect(throws:InputError.self) { try EnhancedLRCParser.parse(Data(repeating:65,count:65537)) }
-        #expect(throws:InputError.self) { try parse("[00:00]"+(0...129).map { String(format:"<00:%02d.%03d>%@",$0/10,$0%10*100,$0==129 ? "" : "a") }.joined()) }
+        func segments(_ last:Int) -> String {
+            var text="[00:00]"
+            for index in 0...last {
+                let suffix:String=index==last ? "" : "a"
+                text+=String(format:"<00:%02d.%03d>%@",index/10,index%10*100,suffix)
+            }
+            return text
+        }
+        let tooManySegments=segments(129)
+        #expect(throws:InputError.self) { try parse(tooManySegments) }
         #expect(throws:InputError.self) { try parse(String(repeating:"[00:00]",count:1000)+"A") }
-        let row="[00:00]"+(0...128).map { String(format:"<00:%02d.%03d>%@",$0/10,$0%10*100,$0==128 ? "" : "a") }.joined()
+        let row=segments(128)
         #expect(throws:InputError.self) { try parse(Array(repeating:row,count:5).joined(separator:"\n")) }
     }
     @Test func projectCompatibility() throws {
