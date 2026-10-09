@@ -167,3 +167,7 @@ The [rules report](docs/vocal-activity-rules.md) withholds implausibly short est
 ## Runtime Control Symbols
 
 The [control-symbol report](docs/control-symbols.md) records an opt-in runtime SF Symbols icon set fitted to reference screenshots; rendered ink bounds match the measured controls within two native pixels. Symbols are never bundled, and public fixtures continue to use original icons.
+
+## Artwork Background Motion
+
+The [motion report](docs/artwork-background-motion.md) shows that the background keeps moving while playback is paused, corrects a sequence-length mismatch in the earlier evaluation, and refits orbit and rotation so that paused-capture motion statistics generalize to held-out songs.
