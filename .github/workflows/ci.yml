@@ -16,7 +16,7 @@ jobs:
   swift:
     name: Swift Build and Tests
     runs-on: macos-latest
-    timeout-minutes: 30
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Report toolchain
@@ -26,7 +26,11 @@ jobs:
           swift --version
       - name: Build release products
         run: swift build -c release
+      - name: Build tests
+        timeout-minutes: 20
+        run: swift build --build-tests -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=2000
       - name: Run tests
+        timeout-minutes: 20
         run: sh scripts/test.sh
 
   python:
