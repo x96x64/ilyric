@@ -76,6 +76,11 @@ def render(art, t, p, w=W, h=H):
 
 # Recording identifiers follow analyze.py's sorted inventory. Songs group repeated captures.
 SONGS = {'A': ['V01', 'V02', 'V03'], 'B': ['V05', 'V06'], 'C': ['V07', 'V08', 'V09', 'V10']}
+# Paused-playback captures isolate background motion from lyric scrolling.
+PAUSED = {'A': 'V11', 'B': 'V13', 'C': 'V15'}
+PLAYING = {'A': 'V12', 'B': 'V14', 'C': 'V16'}
+MOTION_KEYS = ['ac1', 'ac2', 'ac4', 'rot']
+MOTION_TOLERANCE = np.array([.03, .05, .08, .01])
 KEYS = ['L', 'C', 'sL', 'tb', 'ac1', 'ac2', 'ac4', 'rx', 'ry', 'rot']
 # Tolerance floors used when repeated captures agree more closely than measurement noise.
 FLOORS = np.array([1.5, 2, 1, 2, .05, .05, .08, .05, .08, .01])
@@ -103,9 +108,11 @@ def targets(root, out):
     result = {}
     for index, path in enumerate(recordings, 1):
         name = f'V{index:02}'
-        if not any(name in v for v in SONGS.values()):
+        if not any(name in v for v in SONGS.values()) and name not in PAUSED.values() and name not in PLAYING.values():
             continue
-        result[name] = stats(np.stack([field(f) for f in frames(path)]))
+        decoded = frames(path)
+        result[name] = stats(np.stack([field(f) for f in decoded]))
+        result[name]['duration_s'] = len(decoded)/10
     (out/'targets.json').write_text(json.dumps(result, indent=1)+'\n')
     return result
 
@@ -148,6 +155,32 @@ def fit(root, out, mode, evaluations):
     return result
 
 
+def fit_motion(root, out, mode, evaluations):
+    """Refit orbit and rotation on paused captures; model duration matches each recording,
+    because mean-removed autocorrelation depends on sequence length."""
+    from scipy.optimize import minimize
+    T = json.loads((out/'targets.json').read_text())
+    base = json.loads((out/'fit-all.json').read_text())['params']
+    arts = {s: artwork(root, s) for s in PAUSED}
+
+    def song_loss(s, x, fps=5):
+        p = dict(base, r=x[0], nu=x[1], om=x[2])
+        count = int(fps*T[PAUSED[s]]['duration_s'])
+        st = stats(np.stack([field(render(arts[s], i/fps, p)) for i in range(count)]), fps)
+        e = (np.array([st[k] for k in MOTION_KEYS])-np.array([T[PAUSED[s]][k] for k in MOTION_KEYS]))/MOTION_TOLERANCE
+        return float((e**2).sum()), st
+    train = [s for s in PAUSED if s != mode] if mode in PAUSED else list(PAUSED)
+
+    def loss(x):
+        return 1e6 if not 0 <= x[0] <= 0.5 else sum(song_loss(s, x)[0] for s in train)
+    r = minimize(loss, np.array([base['r'], base['nu'], -abs(base['om'])]), method='Nelder-Mead',
+                 options=dict(maxfev=evaluations, xatol=1e-3, fatol=1e-2))
+    result = dict(mode=mode, train=train, params=dict(base, r=r.x[0], nu=r.x[1], om=r.x[2]), loss=r.fun,
+                  per_song={s: dict(zip(['loss', 'stats'], song_loss(s, r.x))) for s in PAUSED})
+    (out/f'motion-{mode}.json').write_text(json.dumps(result, indent=1, default=float)+'\n')
+    return result
+
+
 def main():
     root = private_root(Path(__file__).resolve().parents[2]/'reference-private')
     out = root/'analysis'/'background'
@@ -158,8 +191,11 @@ def main():
     elif command == 'fit' and len(sys.argv) == 4:
         r = fit(root, out, sys.argv[2], int(sys.argv[3]))
         print(json.dumps({k: r[k] for k in ['mode', 'params', 'train_loss']}, default=float))
+    elif command == 'motion' and len(sys.argv) == 4:
+        r = fit_motion(root, out, sys.argv[2], int(sys.argv[3]))
+        print(json.dumps({k: r[k] for k in ['mode', 'params', 'loss']}, default=float))
     else:
-        raise SystemExit('Usage: background.py targets | fit all|A|B|C EVALUATIONS')
+        raise SystemExit('Usage: background.py targets | fit all|A|B|C EVALUATIONS | motion all|A|B|C EVALUATIONS')
 
 
 if __name__ == '__main__':
