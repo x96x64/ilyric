@@ -111,6 +111,26 @@ def greedy(ids, alphabet, blank=0):
     return ''.join(result).replace('|',' ')
 
 
+WORD_PATTERN = r"[A-Za-z]+(?:['’][A-Za-z]+)*"
+
+
+def word_proposals(row, indices, spans, duration):
+    """Group a line's forced character spans into words with UTF-16 source ranges.
+
+    Words follow the same pattern that built the CTC targets, so their order matches the token runs.
+    """
+    runs=[];current=[]
+    for i in indices:
+        if current and i!=current[-1]+1:runs.append(current);current=[]
+        current.append(i)
+    if current:runs.append(current)
+    matches=list(re.finditer(WORD_PATTERN,row['text']))
+    if len(matches)!=len(runs):raise AlignmentError('Word segmentation differs from alignment targets')
+    utf16=lambda k:len(row['text'][:k].encode('utf-16-le'))//2
+    return [dict(start_utf16=utf16(m.start()),length_utf16=utf16(m.end())-utf16(m.start()),
+                 proposal=[spans[r[0]][0]*GRID_US,min(duration,spans[r[-1]][1]*GRID_US)]) for m,r in zip(matches,runs)]
+
+
 def proposals(src, duration, emissions, tokens, owners, spans, vocab, blank=0):
     rows=text_targets(src)[0];alphabet={v:k for k,v in vocab.items()}
     repeated={r['alignment_text'] for r in rows if sum(x['alignment_text']==r['alignment_text'] for x in rows)>1}
@@ -123,6 +143,7 @@ def proposals(src, duration, emissions, tokens, owners, spans, vocab, blank=0):
             row['flags'].append('no_complete_path');continue
         a,b=spans[indices[0]][0],spans[indices[-1]][1]
         proposal=[a*GRID_US,min(duration,b*GRID_US)]
+        row['words']=word_proposals(row,indices,spans,duration)
         local=greedy(best[a:b],alphabet,blank)
         observed=canonical(local)[0]
         support=sum(sum(emissions[t][vocab[tokens[i]]] for t in range(*spans[i]))/(spans[i][1]-spans[i][0]) for i in indices)/len(indices)
@@ -206,7 +227,21 @@ def apply_vocal_rules(rows, level, reference):
         if offset>b:row['quality']['vocal_offset_extension_us']=offset-b
         if median and rates[row['id']]>UNCERTAIN_RATE_RATIO*median:row['flags'].append('uncertain_boundary')
         row['estimate']=[onset,offset]
+        row['word_estimates']=word_estimates(row.get('words'),onset,offset)
     return rows
+
+
+def word_estimates(words, onset, offset):
+    """Clamp forced word spans into the refined line interval; the first word starts at the line onset
+    and the last word ends at the line offset. Returns None when a word would vanish."""
+    if not words:return None
+    out=[];previous=onset
+    for k,w in enumerate(words):
+        a,b=w['proposal']
+        a=onset if k==0 else max(a,previous);b=offset if k==len(words)-1 else min(max(b,a),offset)
+        if not a<b:return None
+        out.append(dict(start_utf16=w['start_utf16'],length_utf16=w['length_utf16'],interval_us=[a,b]));previous=b
+    return out
 
 
 def fingerprint(result):
@@ -275,6 +310,15 @@ def validate(result, ready=False):
             if row['review']!='pending':
                 if not any(x.get('line')==row['id'] and x.get('action')==row['review'] and x.get('interval_us')==interval(row) and x.get('note') for x in result['history']):
                     raise AlignmentError('Missing matching review history')
+            words=row.get('word_estimates')
+            if words is not None:
+                if not isinstance(words,list) or not words or len(words)>128 or row['estimate'] is None:raise AlignmentError('Invalid word estimates')
+                end=row['estimate'][0];limit=len(row['text'].encode('utf-16-le'))//2;offset=0
+                for w in words:
+                    a,b=w['interval_us'];start,length=w['start_utf16'],w['length_utf16']
+                    if any(type(x) is not int for x in [a,b,start,length]) or not end<=a<b<=row['estimate'][1] or start<offset or length<1 or start+length>limit:
+                        raise AlignmentError('Word estimates must be ordered within the line estimate')
+                    end=b;offset=start+length
             value=interval(row)
             if value:
                 if value[0]<prior:raise AlignmentError('Effective intervals overlap or reverse occurrence order')
@@ -316,13 +360,34 @@ def review(result, decisions):
     return validate(out)
 
 
-def to_ttml(result):
+def to_ttml(result, granularity='paragraph'):
+    """Export reviewed intervals as TTML.
+
+    'paragraph' emits one timed paragraph per source paragraph. 'line' emits one per sung line, the unit
+    in which the native screen advances focus. 'word' additionally times each word with parent-relative
+    spans when the line keeps its automatic estimate; corrected lines and lines without word estimates
+    remain line-timed. Each span carries its word and the following separator text.
+    """
     validate(result,ready=True)
-    def stamp(t):return f'{t//1000000}.{t%1000000:06d}s'
+    if granularity not in ['paragraph','line','word']:raise AlignmentError('Unsupported TTML granularity')
+    def stamp(t):
+        whole,fraction=divmod(t,1000000)
+        return f'{whole}.{fraction:06d}'.rstrip('0').rstrip('.')+'s'
     paragraphs=[]
-    for p,text in enumerate(result['source']['paragraphs']):
-        lines=[r for r in result['lines'] if r['paragraph']==p]
-        paragraphs.append(f'<p begin="{stamp(interval(lines[0])[0])}" end="{stamp(interval(lines[-1])[1])}">'+ '<br/>'.join(escape(x) for x in text.split('\n'))+'</p>')
+    if granularity=='paragraph':
+        for p,text in enumerate(result['source']['paragraphs']):
+            lines=[r for r in result['lines'] if r['paragraph']==p]
+            paragraphs.append(f'<p begin="{stamp(interval(lines[0])[0])}" end="{stamp(interval(lines[-1])[1])}">'+ '<br/>'.join(escape(x) for x in text.split('\n'))+'</p>')
+    for row in result['lines'] if granularity!='paragraph' else []:
+        a,b=interval(row);words=row.get('word_estimates') if granularity=='word' and row['correction'] is None else None
+        if not words:
+            paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">{escape(row["text"])}</p>');continue
+        units=[0];k=0
+        for ch in row['text']:k+=len(ch.encode('utf-16-le'))//2;units.append(k)
+        index={u:i for i,u in enumerate(units)}
+        cuts=[0]+[index[w['start_utf16']] for w in words[1:]]+[len(row['text'])]
+        spans=[f'<span begin="{stamp(w["interval_us"][0]-a)}" end="{stamp(w["interval_us"][1]-a)}">{escape(row["text"][cuts[i]:cuts[i+1]])}</span>' for i,w in enumerate(words)]
+        paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">'+''.join(spans)+'</p>')
     xml='<tt xmlns="http://www.w3.org/ns/ttml" xml:space="preserve"><body><div>'+''.join(paragraphs)+'</div></body></tt>\n'
     if len(xml.encode())>65536:raise AlignmentError('Prepared TTML exceeds the existing importer limit')
     return xml

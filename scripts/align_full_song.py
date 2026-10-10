@@ -28,6 +28,7 @@ def main():
     edit.add_argument('--decisions',type=Path,required=True);edit.add_argument('--output',type=Path,required=True)
     export=sub.add_parser('export');export.add_argument('artifact',type=Path)
     export.add_argument('--audio',type=Path,required=True);export.add_argument('--output',type=Path,required=True)
+    export.add_argument('--granularity',choices=['paragraph','line','word'],default='paragraph')
     a=parser.parse_args()
     try:
         output=getattr(a,'output',None)
@@ -50,7 +51,7 @@ def main():
             if not a.audio.is_file():raise Unavailable('Original audio unavailable')
             if file_hash(a.audio)!=result['audio']['sha256']:raise AlignmentError('Export audio identity differs')
         if output:
-            content=to_ttml(result) if a.command=='export' else json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
+            content=to_ttml(result,a.granularity) if a.command=='export' else json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
             with output.open('x',encoding='utf-8') as stream:stream.write(content)
         print(json.dumps(dict(status='review_required' if any(r['review']=='pending' for r in result['lines']) else 'reviewed',
                               occurrences=len(result['lines']),estimated=sum(r['estimate'] is not None for r in result['lines']),

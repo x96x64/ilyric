@@ -202,4 +202,51 @@ class VocalRules(unittest.TestCase):
         self.assertEqual((level,ref),vocal_activity_db(x))
 
 
+class WordTiming(unittest.TestCase):
+    def fixture(self,text=b"Go now\n\nDon't stay\n"):
+        from alignment.full_song import fingerprint,word_estimates
+        src=source(text);_,tokens,owners=text_targets(src)
+        vocab={c:i+1 for i,c in enumerate(sorted(set(tokens)))};vocab['']=0
+        blank=[0.]+[-9.]*(len(vocab)-1);emissions=[blank]*5
+        for c in tokens:
+            e=[-9.]*len(vocab);e[vocab[c]]=0.;emissions+= [e,e,blank]
+        emissions+=[blank]*10
+        spans=path(emissions,[vocab[x] for x in tokens]);duration=len(emissions)*20000
+        rows=proposals(src,duration,emissions,tokens,owners,spans,vocab)
+        for r in rows:r['word_estimates']=word_estimates(r['words'],*r['estimate'])
+        result=artifact(src,'a'*64,duration,dict(model_grid_us=20000),windows(duration*16000//1000000),rows)
+        result['proposal_sha256']=fingerprint(result)
+        return review(result,[dict(line=x['id'],note='Synthetic review assertion') for x in result['lines']])
+
+    def test_words_follow_targets_with_utf16_ranges(self):
+        r=self.fixture()
+        self.assertEqual([(w['start_utf16'],w['length_utf16']) for w in r['lines'][1]['words']],[(0,5),(6,4)])
+        for row in r['lines']:
+            w=row['word_estimates'];self.assertEqual(w[0]['interval_us'][0],row['estimate'][0]);self.assertEqual(w[-1]['interval_us'][1],row['estimate'][1])
+            self.assertTrue(all(a['interval_us'][1]<=b['interval_us'][0] for a,b in zip(w,w[1:])))
+
+    def test_word_estimates_clamp_or_withdraw(self):
+        from alignment.full_song import word_estimates
+        words=[dict(start_utf16=0,length_utf16=2,proposal=[100,300]),dict(start_utf16=3,length_utf16=3,proposal=[250,500])]
+        self.assertEqual([w['interval_us'] for w in word_estimates(words,150,450)],[[150,300],[300,450]])
+        self.assertIsNone(word_estimates(words,150,300));self.assertIsNone(word_estimates(None,0,1))
+
+    def test_validation_rejects_malformed_word_estimates(self):
+        from alignment.full_song import fingerprint
+        for change in [lambda w:w.reverse(),lambda w:w[0].update(interval_us=[0,1]),lambda w:w[0].update(length_utf16=0)]:
+            r=copy.deepcopy(self.fixture());change(r['lines'][1]['word_estimates']);r['proposal_sha256']=fingerprint(r)
+            with self.assertRaises(AlignmentError):validate(r)
+
+    def test_line_and_word_ttml(self):
+        r=self.fixture()
+        self.assertEqual(to_ttml(r,'line').count('<p '),2);self.assertNotIn('<span',to_ttml(r,'line'))
+        xml=to_ttml(r,'word');self.assertEqual(xml.count('<span '),4)
+        self.assertIn('>Don&#x27;t </span>',xml.replace('&apos;','&#x27;').replace("'",'&#x27;'))
+        first=r['lines'][1]['word_estimates'][1]['interval_us'][0]-r['lines'][1]['estimate'][0]
+        self.assertIn(f'<span begin="{first/1e6:g}s"',xml)
+        out=review(r,[dict(line=1,interval_us=[r['lines'][1]['estimate'][0],r['lines'][1]['estimate'][1]+20000],note='Synthetic correction')])
+        self.assertEqual(to_ttml(out,'word').count('<span '),2)
+        with self.assertRaises(AlignmentError):to_ttml(r,'syllable')
+
+
 if __name__=='__main__':unittest.main()
