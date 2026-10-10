@@ -19,14 +19,18 @@ public struct LocalPresentation: Sendable {
     public var marquee: TitleMarquee?
     /// Soft fill, lift, and emphasis of supplied Latin word timing; nil keeps the hard wipe.
     public var wordMotion: WordMotion?
+    /// Word fill begins this long before each supplied word interval; focus timing is unaffected.
+    public var fillLead: Time = Time(0)
+    /// Native word fill leads the sung onset by 0.22 s relative to iLyric's estimates (docs/word-fill-lead.md).
+    public static let measuredFillLead = Time(22,100)
     /// Hide lower controls at this time and extend the lyrics to the bottom edge; nil keeps them visible.
     public var hideControls: Time?
     /// Native controls disappear 3.78 s after playback starts in the reference capture (docs/control-auto-hide.md).
-    public static let measuredControlHide = Time(378,100)
+    public static let measuredControlHide = Time(379,100)
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
-                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, hideControls: Time? = nil) {
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, fillLead: Time = Time(0), hideControls: Time? = nil) {
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
-        self.marquee=marquee;self.wordMotion=wordMotion;self.hideControls=hideControls
+        self.marquee=marquee;self.wordMotion=wordMotion;self.fillLead=fillLead;self.hideControls=hideControls
     }
     /// Reference-measured presentation: 0.90-second focus lead and staggered motion
     /// (docs/lyrics-motion-timing.md, lead corrected in docs/reference-clock-and-word-motion.md).
@@ -57,8 +61,12 @@ public final class LocalScene {
             }
             if entry.text.isEmpty { events.append(.init(entry.time,order:i+1,paragraph:-1));continue }
             let japanese=entry.text.unicodeScalars.contains { (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value) || (0xff66...0xff9d).contains($0.value) }
-            let timed=entry.segments.map { AppearanceEvent(start:$0.start,length:$0.length,
-                begin:SliceTime($0.begin.numerator,$0.begin.denominator),end:SliceTime($0.end.numerator,$0.end.denominator),verticalEvent:nil) }
+            let lead=presentation.fillLead
+            let timed=entry.segments.map { s -> AppearanceEvent in
+                let begin=max(Time(0),s.begin-lead),end=max(begin+Time(1,1000),s.end-lead)
+                return AppearanceEvent(start:s.start,length:s.length,begin:SliceTime(begin.numerator,begin.denominator),
+                    end:SliceTime(end.numerator,end.denominator),verticalEvent:nil)
+            }
             let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed,motion:presentation.wordMotion)
             // Validate supplied cluster boundaries even when their visualization is disabled.
             if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }

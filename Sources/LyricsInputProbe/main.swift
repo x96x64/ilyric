@@ -33,7 +33,7 @@ import SpikeCore
                 focusLead:measured ? LocalPresentation.measuredMotion.focusLead : Time(0),
                 stagger:measured ? LocalPresentation.measuredMotion.stagger : .rigid,
                 marquee:options["--marquee"]=="measured" ? .measured : nil,
-                wordMotion:measured ? .measured : nil,
+                wordMotion:measured ? .measured : nil,fillLead:measured ? LocalPresentation.measuredFillLead : Time(0),
                 hideControls:options["--controls"]=="auto-hide" ? LocalPresentation.measuredControlHide : nil)
             if presentation.icons == .systemSymbols { FileHandle.standardError.write(Data("LyricsInputProbe: SF Symbols are resolved at runtime; Apple terms do not expressly license them in exported videos.\n".utf8)) }
             let output=URL(fileURLWithPath:path).standardizedFileURL,parent=output.deletingLastPathComponent()

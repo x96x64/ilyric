@@ -88,6 +88,13 @@ struct TTMLTests {
         }
         #expect(states[4].lyrics.paragraphs[0].appearance.spans.allSatisfy{$0.progress==1} && states[4].lyrics.focus==0)
         #expect(a.renderer.lyrics.paragraphs[0].lines==off.renderer.lyrics.paragraphs[0].lines)
+        // A fill lead moves supplied word intervals earlier without changing focus or layout.
+        let early=try LocalScene(lyrics:ttml,audio:audio,presentation:.init(fillLead:Time(22,100)))
+        let shifted=early.renderer.screen.composition.paragraphs[0].input.events[0],original=a.renderer.screen.composition.paragraphs[0].input.events[0]
+        let sb=try shifted.begin!.validated().seconds,ob=try original.begin!.validated().seconds
+        let se=try shifted.end!.validated().seconds,oe=try original.end!.validated().seconds
+        #expect(abs(sb-max(0,ob-0.22))<1e-9 && abs(se-(oe-0.22))<1e-9)
+        #expect(early.renderer.screen.evaluate(Time(1)).lyrics.focus==states[2].lyrics.focus && early.renderer.lyrics.paragraphs[0].lines==a.renderer.lyrics.paragraphs[0].lines)
         let gap=try parse("<p begin=\"0s\" end=\"1s\">Paper</p><p begin=\"2s\" end=\"3s\">Skies</p>")
         let scene=try LocalScene(lyrics:gap,audio:audio)
         #expect(scene.renderer.screen.evaluate(Time(1)).lyrics.focus == -1)
