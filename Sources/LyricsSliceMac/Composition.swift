@@ -20,8 +20,7 @@ public final class CompositionRenderer {
         c.saveGState();c.clip(to:CGRect(x:viewport.minX,y:2556-viewport.maxY,width:viewport.width,height:viewport.height))
         for p in state.paragraphs {
             let image=try paragraphs[p.index].render(p.appearance)
-            c.saveGState();c.setAlpha(p.opacity)
-            c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(width),height:2556));c.restoreGState()
+            c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(width),height:2556),alpha:p.opacity)
         }
         c.restoreGState();return c.makeImage()!
     }
