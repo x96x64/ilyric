@@ -360,16 +360,32 @@ def review(result, decisions):
     return validate(out)
 
 
-def to_ttml(result, granularity='paragraph'):
+VOCABLE = re.compile(r'(?:h?m+(?:h?m+)*|mh?m+|a+h*|o+h*|u+h+|e+y+|a+y+|la+|na+|da+|whoa+|ha+)')
+
+
+def nonlexical(text):
+    """True when every word of a line is a vocable such as mm, hmm, aah, ey, ooh, or la; hyphenated
+    forms such as Mm-hmm count word by word. Lines mixing vocables with lexical words are lexical."""
+    words=re.findall(r'[A-Za-z]+',text)
+    return bool(words) and all(VOCABLE.fullmatch(w.lower()) for w in words)
+
+
+def to_ttml(result, granularity='paragraph', drop_nonlexical=True):
     """Export reviewed intervals as TTML.
 
     'paragraph' emits one timed paragraph per source paragraph. 'line' emits one per sung line, the unit
     in which the native screen advances focus. 'word' additionally times each word with parent-relative
     spans when the line keeps its automatic estimate; corrected lines and lines without word estimates
     remain line-timed. Each span carries its word and the following separator text.
+
+    With line or word granularity, lines consisting only of vocables are omitted by default, because
+    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval.
     """
-    validate(result,ready=True)
     if granularity not in ['paragraph','line','word']:raise AlignmentError('Unsupported TTML granularity')
+    drop=drop_nonlexical and granularity!='paragraph'
+    validate(result,ready=not drop)
+    if drop and any(not nonlexical(r['text']) and (interval(r) is None or r['review']=='pending') for r in result['lines']):
+        raise AlignmentError('Every occurrence requires a reviewed interval before complete export')
     def stamp(t):
         whole,fraction=divmod(t,1000000)
         return f'{whole}.{fraction:06d}'.rstrip('0').rstrip('.')+'s'
@@ -379,6 +395,7 @@ def to_ttml(result, granularity='paragraph'):
             lines=[r for r in result['lines'] if r['paragraph']==p]
             paragraphs.append(f'<p begin="{stamp(interval(lines[0])[0])}" end="{stamp(interval(lines[-1])[1])}">'+ '<br/>'.join(escape(x) for x in text.split('\n'))+'</p>')
     for row in result['lines'] if granularity!='paragraph' else []:
+        if drop and nonlexical(row['text']):continue
         a,b=interval(row);words=row.get('word_estimates') if granularity=='word' and row['correction'] is None else None
         if not words:
             paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">{escape(row["text"])}</p>');continue

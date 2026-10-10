@@ -248,5 +248,14 @@ class WordTiming(unittest.TestCase):
         self.assertEqual(to_ttml(out,'word').count('<span '),2)
         with self.assertRaises(AlignmentError):to_ttml(r,'syllable')
 
+    def test_standalone_vocable_lines_are_dropped(self):
+        from alignment.full_song import nonlexical
+        for t in ['Mm-hmm... Aah-ey, mmm','Ooh','La la la','Whoa-oh']:self.assertTrue(nonlexical(t))
+        for t in ['Oh, I love you','Yeah','Make that change','']:self.assertFalse(nonlexical(t))
+        r=self.fixture(b"Mm-hmm\n\nGo now\n\nDon't stay\n")
+        self.assertEqual(to_ttml(r,'line').count('<p '),2);self.assertNotIn('hmm',to_ttml(r,'word'))
+        self.assertEqual(to_ttml(r,'line',drop_nonlexical=False).count('<p '),3)
+        self.assertIn('hmm',to_ttml(r,'paragraph'))
+
 
 if __name__=='__main__':unittest.main()
