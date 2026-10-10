@@ -1,0 +1,297 @@
+{
+ "format": "ilyric-word-timing-evaluation-1",
+ "status": "development estimate",
+ "pipeline": "separated-vocal CTC with version 2 vocal rules; word intervals from forced character spans clamped to the line estimate",
+ "reference": "JamendoLyrics human word annotations, revision de188c963fd4539bc769b3feb83582e5a9595e36",
+ "recordings": 17,
+ "counts": {
+  "lines": 777,
+  "compared": 699,
+  "unestimated": 78,
+  "word_count_mismatch": 0
+ },
+ "onset": {
+  "n": 4365,
+  "median_absolute_ms": 41.932,
+  "p90_absolute_ms": 164.4852,
+  "p95_absolute_ms": 238.1632,
+  "signed_median_ms": 30.9377,
+  "within_100_ms": 0.794,
+  "within_200_ms": 0.9262
+ },
+ "offset": {
+  "n": 4365,
+  "median_absolute_ms": 66.2498,
+  "p90_absolute_ms": 203.3748,
+  "p95_absolute_ms": 315.1753,
+  "signed_median_ms": -51.4461,
+  "within_100_ms": 0.6777,
+  "within_200_ms": 0.8958
+ },
+ "even_split_onset": {
+  "n": 4365,
+  "median_absolute_ms": 175.2926,
+  "p90_absolute_ms": 741.8298,
+  "p95_absolute_ms": 1033.7372,
+  "signed_median_ms": 123.5768,
+  "within_100_ms": 0.3514,
+  "within_200_ms": 0.5368
+ },
+ "cases": [
+  {
+   "case": "EN-F01",
+   "lines": 26,
+   "compared": 25,
+   "unestimated": 1,
+   "onset": {
+    "n": 206,
+    "median_absolute_ms": 50.5542,
+    "p90_absolute_ms": 147.1224,
+    "p95_absolute_ms": 172.8741,
+    "signed_median_ms": 36.7323,
+    "within_100_ms": 0.7816,
+    "within_200_ms": 0.9563
+   }
+  },
+  {
+   "case": "EN-F02",
+   "lines": 72,
+   "compared": 66,
+   "unestimated": 6,
+   "onset": {
+    "n": 421,
+    "median_absolute_ms": 39.2521,
+    "p90_absolute_ms": 134.9598,
+    "p95_absolute_ms": 219.5683,
+    "signed_median_ms": 29.0492,
+    "within_100_ms": 0.829,
+    "within_200_ms": 0.9406
+   }
+  },
+  {
+   "case": "EN-F03",
+   "lines": 42,
+   "compared": 41,
+   "unestimated": 1,
+   "onset": {
+    "n": 353,
+    "median_absolute_ms": 49.1918,
+    "p90_absolute_ms": 175.1775,
+    "p95_absolute_ms": 215.9384,
+    "signed_median_ms": 39.5164,
+    "within_100_ms": 0.7535,
+    "within_200_ms": 0.932
+   }
+  },
+  {
+   "case": "EN-J01",
+   "lines": 58,
+   "compared": 48,
+   "unestimated": 10,
+   "onset": {
+    "n": 274,
+    "median_absolute_ms": 55.4512,
+    "p90_absolute_ms": 167.133,
+    "p95_absolute_ms": 265.4638,
+    "signed_median_ms": 36.2147,
+    "within_100_ms": 0.7956,
+    "within_200_ms": 0.927
+   }
+  },
+  {
+   "case": "EN-J02",
+   "lines": 27,
+   "compared": 27,
+   "unestimated": 0,
+   "onset": {
+    "n": 175,
+    "median_absolute_ms": 28.6806,
+    "p90_absolute_ms": 99.4919,
+    "p95_absolute_ms": 127.3321,
+    "signed_median_ms": 16.1375,
+    "within_100_ms": 0.9029,
+    "within_200_ms": 0.9714
+   }
+  },
+  {
+   "case": "EN-J03",
+   "lines": 46,
+   "compared": 46,
+   "unestimated": 0,
+   "onset": {
+    "n": 238,
+    "median_absolute_ms": 29.2872,
+    "p90_absolute_ms": 166.1395,
+    "p95_absolute_ms": 227.4664,
+    "signed_median_ms": 21.0185,
+    "within_100_ms": 0.8151,
+    "within_200_ms": 0.9328
+   }
+  },
+  {
+   "case": "EN-J04",
+   "lines": 42,
+   "compared": 30,
+   "unestimated": 12,
+   "onset": {
+    "n": 135,
+    "median_absolute_ms": 156.1069,
+    "p90_absolute_ms": 807.5686,
+    "p95_absolute_ms": 1711.8724,
+    "signed_median_ms": 145.8296,
+    "within_100_ms": 0.3037,
+    "within_200_ms": 0.5778
+   }
+  },
+  {
+   "case": "EN-J05",
+   "lines": 37,
+   "compared": 34,
+   "unestimated": 3,
+   "onset": {
+    "n": 207,
+    "median_absolute_ms": 128.1232,
+    "p90_absolute_ms": 254.0261,
+    "p95_absolute_ms": 347.5894,
+    "signed_median_ms": 125.8922,
+    "within_100_ms": 0.3623,
+    "within_200_ms": 0.7874
+   }
+  },
+  {
+   "case": "EN-J06",
+   "lines": 30,
+   "compared": 27,
+   "unestimated": 3,
+   "onset": {
+    "n": 167,
+    "median_absolute_ms": 30.9023,
+    "p90_absolute_ms": 140.1438,
+    "p95_absolute_ms": 203.5982,
+    "signed_median_ms": 25.5,
+    "within_100_ms": 0.8323,
+    "within_200_ms": 0.9461
+   }
+  },
+  {
+   "case": "EN-J07",
+   "lines": 82,
+   "compared": 81,
+   "unestimated": 1,
+   "onset": {
+    "n": 510,
+    "median_absolute_ms": 32.719,
+    "p90_absolute_ms": 88.3143,
+    "p95_absolute_ms": 123.8294,
+    "signed_median_ms": 19.3725,
+    "within_100_ms": 0.9235,
+    "within_200_ms": 0.9863
+   }
+  },
+  {
+   "case": "EN-J08",
+   "lines": 20,
+   "compared": 12,
+   "unestimated": 8,
+   "onset": {
+    "n": 73,
+    "median_absolute_ms": 60.0391,
+    "p90_absolute_ms": 405.7908,
+    "p95_absolute_ms": 1288.7961,
+    "signed_median_ms": 59.7783,
+    "within_100_ms": 0.6438,
+    "within_200_ms": 0.7945
+   }
+  },
+  {
+   "case": "EN-J09",
+   "lines": 50,
+   "compared": 41,
+   "unestimated": 9,
+   "onset": {
+    "n": 253,
+    "median_absolute_ms": 36.7193,
+    "p90_absolute_ms": 181.0431,
+    "p95_absolute_ms": 247.0251,
+    "signed_median_ms": 32.2345,
+    "within_100_ms": 0.7747,
+    "within_200_ms": 0.9209
+   }
+  },
+  {
+   "case": "EN-J10",
+   "lines": 43,
+   "compared": 39,
+   "unestimated": 4,
+   "onset": {
+    "n": 247,
+    "median_absolute_ms": 41.9215,
+    "p90_absolute_ms": 166.3674,
+    "p95_absolute_ms": 220.9841,
+    "signed_median_ms": 27.747,
+    "within_100_ms": 0.7854,
+    "within_200_ms": 0.9474
+   }
+  },
+  {
+   "case": "EN-J11",
+   "lines": 31,
+   "compared": 27,
+   "unestimated": 4,
+   "onset": {
+    "n": 151,
+    "median_absolute_ms": 36.5822,
+    "p90_absolute_ms": 167.5344,
+    "p95_absolute_ms": 240.2724,
+    "signed_median_ms": 32.5934,
+    "within_100_ms": 0.7682,
+    "within_200_ms": 0.9205
+   }
+  },
+  {
+   "case": "EN-J12",
+   "lines": 72,
+   "compared": 60,
+   "unestimated": 12,
+   "onset": {
+    "n": 418,
+    "median_absolute_ms": 30.4631,
+    "p90_absolute_ms": 122.0709,
+    "p95_absolute_ms": 1383.2855,
+    "signed_median_ms": 23.8999,
+    "within_100_ms": 0.8756,
+    "within_200_ms": 0.9187
+   }
+  },
+  {
+   "case": "EN-J13",
+   "lines": 53,
+   "compared": 53,
+   "unestimated": 0,
+   "onset": {
+    "n": 288,
+    "median_absolute_ms": 40.9798,
+    "p90_absolute_ms": 108.3869,
+    "p95_absolute_ms": 150.076,
+    "signed_median_ms": 32.3307,
+    "within_100_ms": 0.875,
+    "within_200_ms": 0.9757
+   }
+  },
+  {
+   "case": "EN-J14",
+   "lines": 46,
+   "compared": 42,
+   "unestimated": 4,
+   "onset": {
+    "n": 249,
+    "median_absolute_ms": 37.5481,
+    "p90_absolute_ms": 105.0784,
+    "p95_absolute_ms": 134.1024,
+    "signed_median_ms": 16.5128,
+    "within_100_ms": 0.8956,
+    "within_200_ms": 0.9799
+   }
+  }
+ ]
+}
