@@ -8,7 +8,7 @@ import SpikeCore
 public final class ScreenRenderer {
     public let screen: LyricsScreen
     public let lyrics: CompositionRenderer
-    private let backdrop, artwork, fadeMask: CGImage
+    private let backdrop, artwork, fadeMask, expandedFadeMask: CGImage
     private var inactiveTiles: [Int:InactiveTiles] = [:]
     private let dynamicBackdrop: ArtworkBackdrop?
     public let icons: ScreenIconSet
@@ -56,9 +56,13 @@ public final class ScreenRenderer {
                 width:Double(image.width)*scale,height:Double(image.height)*scale))
             artwork=target.makeImage()!
         } else { artwork=art.makeImage()! }
-        let bytes=(0..<2556).map { UInt8((LyricsScreen.fade(at:Double($0)+0.5)*255).rounded()) }
-        fadeMask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
-            space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        func mask(_ fade:(Double)->Double) -> CGImage {
+            let bytes=(0..<2556).map { UInt8((fade(Double($0)+0.5)*255).rounded()) }
+            return CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
+                space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        }
+        fadeMask=mask { LyricsScreen.fade(at:$0) }
+        expandedFadeMask=mask { LyricsScreen.fade(at:$0,viewport:LyricsScreen.expandedViewport,bottomFade:LyricsScreen.expandedBottomFade) }
         if let model=screen.background {
             dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:2556)
         } else { dynamicBackdrop=nil }
@@ -96,9 +100,9 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    public func lyricLayer(_ state:CompositionSnapshot) throws -> CGImage {
-        let w=screen.composition.canvasWidth,c=Self.context(w,2556),v=LyricsScreen.viewport
-        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:fadeMask)
+    public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds=LyricsScreen.viewport) throws -> CGImage {
+        let w=screen.composition.canvasWidth,c=Self.context(w,2556)
+        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:v == LyricsScreen.expandedViewport ? expandedFadeMask : fadeMask)
         for p in state.paragraphs {
             if boundedCache {
                 let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
@@ -106,7 +110,7 @@ public final class ScreenRenderer {
                 let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
                 if bottom<v.y || top>v.y+v.height { continue }
                 if calibratedInactive && (input.paragraphStyle == .latinStatic || input.paragraphStyle == .latinTimed) && inactiveTiles[p.index]==nil {
-                    if inactiveTiles.count>=6,let key=inactiveTiles.keys.sorted().first { inactiveTiles.removeValue(forKey:key) }
+                    if inactiveTiles.count>=12,let key=inactiveTiles.keys.sorted().first { inactiveTiles.removeValue(forKey:key) }
                     inactiveTiles[p.index]=InactiveTiles(try lyrics.paragraphs[p.index].render(input.evaluate(Time(0)),coverage:input.paragraphStyle == .latinTimed))
                 }
             }
@@ -156,7 +160,7 @@ public final class ScreenRenderer {
             case .background:
                 if let dynamicBackdrop { c.interpolationQuality = .high;c.draw(dynamicBackdrop.image(at:state.lyrics.output),in:r) }
                 else { c.draw(backdrop,in:r) }
-            case .lyrics: c.draw(try lyricLayer(state.lyrics),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
+            case .lyrics: c.draw(try lyricLayer(state.lyrics,viewport:part.bounds),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
             case .artwork:
                 c.addPath(CGPath(roundedRect:r,cornerWidth:14,cornerHeight:14,transform:nil));c.clip();c.draw(artwork,in:r)
             case .title,.artist:

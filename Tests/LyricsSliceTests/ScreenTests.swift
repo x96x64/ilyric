@@ -45,6 +45,20 @@ struct ScreenTests {
         // The bright fill occupies columns up to 575 and the dimmer track begins at 576.
         #expect(luma(574)>luma(577)+60 && abs(luma(577)-luma(600))<10)
     }
+    @Test func hiddenControlsExpandLyricsOnlyWhenOptedIn() throws {
+        let base=try LyricsScreen.synthetic()
+        func screen(_ expands:Bool) throws -> LyricsScreen {
+            try LyricsScreen(composition:base.composition,title:base.title,artist:base.artist,duration:base.duration,volume:0.5,
+                events:[.init(Time(0),order:0,controls:.init()),.init(Time(4),order:1,controls:.init(lower:false))],expandsLyrics:expands)
+        }
+        func lyrics(_ s:LyricsScreen,_ t:Time) -> ScreenBounds { s.evaluate(t).components.first{$0.part == .lyrics}!.bounds }
+        let on=try screen(true),off=try screen(false)
+        #expect(lyrics(on,Time(3)) == LyricsScreen.viewport && lyrics(on,Time(4)) == LyricsScreen.expandedViewport)
+        #expect(lyrics(off,Time(4)) == LyricsScreen.viewport)
+        let v=LyricsScreen.expandedViewport,f={ (y:Double) in LyricsScreen.fade(at:y,viewport:v,bottomFade:LyricsScreen.expandedBottomFade) }
+        #expect(f(549)==0 && f(1500)==1 && f(2256)==1 && f(2406)==0.5 && f(2556)==0)
+        #expect(LyricsScreen.fade(at:1460)==LyricsScreen.fade(at:1460,viewport:LyricsScreen.viewport,bottomFade:LyricsScreen.fadeLength))
+    }
     @Test func nativeCoordinatesAndFade() {
         let a=LyricsScreen.contain(width:1080,height:1920,canvasWidth:1179)
         let b=LyricsScreen.contain(width:1080,height:1920,canvasWidth:1180)

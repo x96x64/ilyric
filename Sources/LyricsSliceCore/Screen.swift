@@ -79,12 +79,18 @@ public struct LyricsScreen: Sendable {
     // Native boundaries remain unknown. This inset and smooth fade are provisional.
     public static let viewport = ScreenBounds(72,550,1040,950)
     public static let fadeLength = 80.0
+    /// While lower controls are hidden, native lyrics extend to the bottom edge and fade over about
+    /// 300 pixels (docs/control-auto-hide.md); the top edge is unchanged.
+    public static let expandedViewport = ScreenBounds(72,550,1040,2006)
+    public static let expandedBottomFade = 300.0
+    /// Opt-in: use the expanded viewport whenever lower controls are hidden.
+    public let expandsLyrics: Bool
     /// Volume fill measured in eight reference screenshots: the fill ends at x = 576 on the bar [171, 982),
     /// that is 405 of 811 pixels, slightly below one half.
     public static let referenceVolume = 405.0/811.0
     public init(composition: LyricsComposition, title: String, artist: String, duration: Time,
                 volume: Double, events: [ScreenEvent], visibility: ScreenVisibility = .init(),
-                background: ArtworkBackground? = nil) throws {
+                background: ArtworkBackground? = nil, expandsLyrics: Bool = false) throws {
         guard duration>Time(0), volume.isFinite, (0...1).contains(volume),
               !title.isEmpty, !artist.isEmpty, title.utf16.count<=80, artist.utf16.count<=80,
               !events.isEmpty, Set(events.map(\.order)).count==events.count,
@@ -93,9 +99,11 @@ public struct LyricsScreen: Sendable {
         guard sorted[0].time==Time(0) else { throw SliceError.invalid("Initial screen controls required") }
         self.composition=composition; self.title=title; self.artist=artist; self.duration=duration
         self.volume=volume; self.events=sorted;self.visibility=visibility;self.background=background
+        self.expandsLyrics=expandsLyrics
     }
-    public static func fade(at y: Double) -> Double {
-        let v=viewport, q=min(1,max(0,min(y-v.y,v.y+v.height-y)/fadeLength))
+    public static func fade(at y: Double) -> Double { fade(at:y,viewport:viewport,bottomFade:fadeLength) }
+    public static func fade(at y: Double, viewport v: ScreenBounds, bottomFade: Double) -> Double {
+        let q=min(1,max(0,min((y-v.y)/fadeLength,(v.y+v.height-y)/bottomFade)))
         return q*q*(3-2*q)
     }
     public static func contain(width: Double, height: Double, canvasWidth: Int) -> ScreenBounds {
@@ -113,7 +121,9 @@ public struct LyricsScreen: Sendable {
         add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,background == nil ?
             "original static palette gradient; provisional material" :
             "fitted artwork-derived layers, blur, and color transfer; statistical reconstruction, unmatched phase")
-        add(.lyrics,Self.viewport,1,true,"provisional clip and fade; inherited fitted typography and motion")
+        let expanded=expandsLyrics && !ui.lower
+        add(.lyrics,expanded ? Self.expandedViewport : Self.viewport,1,true,expanded ?
+            "measured expanded extent with controls hidden; provisional fade" : "provisional clip and fade; inherited fitted typography and motion")
         add(.artwork,.init(96,276,216,216),2,true,"measured bounds, approximately ±2 px; original artwork")
         add(.title,.init(352,338,650,58),2,true,"measured ink origin; provisional header typography and clipping")
         add(.artist,.init(352,398,650,58),2,true,"measured ink origin; provisional header typography and clipping")

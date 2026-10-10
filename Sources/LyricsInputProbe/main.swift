@@ -10,11 +10,11 @@ import SpikeCore
         var exporting=false
         do {
             let args=Array(CommandLine.arguments.dropFirst())
-            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc|ttml --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4; either mode accepts [--background fitted|static] [--icons original|system-symbols] [--gaps auto|none] [--motion measured|rigid] [--marquee measured|none]"
+            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc|ttml --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4; either mode accepts [--background fitted|static] [--icons original|system-symbols] [--gaps auto|none] [--motion measured|rigid] [--marquee measured|none] [--controls auto-hide|visible]"
             if args==["--help"] { print(help);return }
             let projectMode=args.first=="project"
             guard args.first=="render" || projectMode,args.count%2==1 else { throw InputError.invalid(help) }
-            let presentationOptions=["--background","--icons","--gaps","--motion","--marquee"]
+            let presentationOptions=["--background","--icons","--gaps","--motion","--marquee","--controls"]
             let allowed=(projectMode ? ["--project","--output"] : ["--lyrics","--audio","--output","--format","--highlighting"])+presentationOptions
             var options:[String:String]=[:]
             for i in stride(from:1,to:args.count,by:2) {
@@ -24,7 +24,8 @@ import SpikeCore
             guard let path=options["--output"] else { throw InputError.invalid(help) }
             guard ["fitted","static",nil].contains(options["--background"]),["original","system-symbols",nil].contains(options["--icons"]),
                   ["auto","none",nil].contains(options["--gaps"]),["measured","rigid",nil].contains(options["--motion"]),
-                  ["measured","none",nil].contains(options["--marquee"]) else { throw InputError.invalid(help) }
+                  ["measured","none",nil].contains(options["--marquee"]),
+                  ["auto-hide","visible",nil].contains(options["--controls"]) else { throw InputError.invalid(help) }
             let measured=options["--motion"]=="measured"
             let presentation=LocalPresentation(background:options["--background"]=="fitted" ? .fitted : nil,
                 icons:options["--icons"]=="system-symbols" ? .systemSymbols : .original,
@@ -32,7 +33,8 @@ import SpikeCore
                 focusLead:measured ? LocalPresentation.measuredMotion.focusLead : Time(0),
                 stagger:measured ? LocalPresentation.measuredMotion.stagger : .rigid,
                 marquee:options["--marquee"]=="measured" ? .measured : nil,
-                wordMotion:measured ? .measured : nil)
+                wordMotion:measured ? .measured : nil,
+                hideControls:options["--controls"]=="auto-hide" ? LocalPresentation.measuredControlHide : nil)
             if presentation.icons == .systemSymbols { FileHandle.standardError.write(Data("LyricsInputProbe: SF Symbols are resolved at runtime; Apple terms do not expressly license them in exported videos.\n".utf8)) }
             let output=URL(fileURLWithPath:path).standardizedFileURL,parent=output.deletingLastPathComponent()
             var directory:ObjCBool=false

@@ -19,10 +19,14 @@ public struct LocalPresentation: Sendable {
     public var marquee: TitleMarquee?
     /// Soft fill, lift, and emphasis of supplied Latin word timing; nil keeps the hard wipe.
     public var wordMotion: WordMotion?
+    /// Hide lower controls at this time and extend the lyrics to the bottom edge; nil keeps them visible.
+    public var hideControls: Time?
+    /// Native controls disappear 3.78 s after playback starts in the reference capture (docs/control-auto-hide.md).
+    public static let measuredControlHide = Time(378,100)
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
-                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil) {
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, hideControls: Time? = nil) {
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
-        self.marquee=marquee;self.wordMotion=wordMotion
+        self.marquee=marquee;self.wordMotion=wordMotion;self.hideControls=hideControls
     }
     /// Reference-measured presentation: 0.90-second focus lead and staggered motion
     /// (docs/lyrics-motion-timing.md, lead corrected in docs/reference-clock-and-word-motion.md).
@@ -77,7 +81,9 @@ public final class LocalScene {
         let controls=ScreenControls(translation:v?.translation ?? false,handle:v?.handle ?? true,
             sing:SingControl(rawValue:v?.sing ?? "hidden")!)
         let screen=try LyricsScreen(composition:composition,title:project?.title ?? "Local Lyrics",artist:project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:LyricsScreen.referenceVolume,
-            events:[.init(Time(0),order:0,controls:controls)],visibility:visibility,background:presentation.background)
+            events:[.init(Time(0),order:0,controls:controls)]+(presentation.hideControls.map { [.init($0,order:1,
+                controls:ScreenControls(lower:false,translation:false,handle:controls.handle,sing:.hidden))] } ?? []),
+            visibility:visibility,background:presentation.background,expandsLyrics:presentation.hideControls != nil)
         renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee)
     }
 }
