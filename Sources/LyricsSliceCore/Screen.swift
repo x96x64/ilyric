@@ -65,6 +65,22 @@ public struct ScreenSnapshot: Equatable, Sendable {
     public let progress, volume: Double
     public let elapsed, remaining: Int
     public let playing: Bool
+    /// Downward offset in pixels and opacity of the lower controls while they hide.
+    public var lowerOffset = 0.0, lowerOpacity = 1.0
+    /// Visibility of lyrics in the area that the lower controls vacate, from 0 to 1.
+    public var lyricsReveal = 0.0
+}
+/// Lower-control hide transition sampled frame by frame from the reference capture at 60 fps
+/// (docs/control-auto-hide.md); values between samples are interpolated linearly.
+public enum ControlTransition {
+    public static let interval = 1.0/60
+    public static let offsets: [Double] = [0,29,79,141,208,267,323,372,413,460,500,530,550]
+    public static let opacities: [Double] = [1,0.85,0.65,0.46,0.31,0.21,0.13,0.08,0.05,0.03,0.02,0.01,0]
+    public static var duration: Double { Double(offsets.count-1)*interval }
+    public static func sample(_ t: Double) -> (offset: Double, opacity: Double) {
+        let x=min(max(0,t/interval),Double(offsets.count-1)),i=min(Int(x),offsets.count-2),f=x-Double(i)
+        return (offsets[i]+(offsets[i+1]-offsets[i])*f,opacities[i]+(opacities[i+1]-opacities[i])*f)
+    }
 }
 /// Small fixed Music-like experimental composition, not a generic UI tree.
 public struct LyricsScreen: Sendable {
@@ -111,7 +127,16 @@ public struct LyricsScreen: Sendable {
         return .init((width-Double(canvasWidth)*s)/2,(height-2556*s)/2,Double(canvasWidth)*s,2556*s)
     }
     public func evaluate(_ time: Time) -> ScreenSnapshot {
-        let lyrics=composition.evaluate(time),ui=(events.last(where:{$0.time<=time}) ?? events[0]).controls
+        let lyrics=composition.evaluate(time),current=events.lastIndex(where:{$0.time<=time}) ?? 0
+        var ui=events[current].controls,lowerOffset=0.0,lowerOpacity=1.0
+        // While the opt-in hide transition runs, the lower controls stay drawn and move out of view.
+        let hiding=expandsLyrics && !ui.lower && current>0 && events[current-1].controls.lower &&
+            (time-events[current].time).seconds<ControlTransition.duration
+        if hiding {
+            let s=ControlTransition.sample((time-events[current].time).seconds)
+            lowerOffset=s.offset;lowerOpacity=s.opacity
+            ui=ScreenControls(lower:true,translation:events[current-1].controls.translation,handle:ui.handle,sing:events[current-1].controls.sing)
+        }
         let media=max(0,min(duration.seconds,lyrics.media.seconds))
         let playing=(composition.clocks.last(where:{$0.output<=time}) ?? composition.clocks[0]).running
         var parts=[ScreenComponent]()
@@ -121,7 +146,7 @@ public struct LyricsScreen: Sendable {
         add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,background == nil ?
             "original static palette gradient; provisional material" :
             "fitted artwork-derived layers, blur, and color transfer; statistical reconstruction, unmatched phase")
-        let expanded=expandsLyrics && !ui.lower
+        let expanded=expandsLyrics && (!ui.lower || hiding)
         add(.lyrics,expanded ? Self.expandedViewport : Self.viewport,1,true,expanded ?
             "measured expanded extent with controls hidden; provisional fade" : "provisional clip and fade; inherited fitted typography and motion")
         add(.artwork,.init(96,276,216,216),2,true,"measured bounds, approximately ±2 px; original artwork")
@@ -143,8 +168,11 @@ public struct LyricsScreen: Sendable {
         add(.translation,.init(111,1488,84,84),3,ui.translation)
         add(.singCompact,.init(984,1488,84,84),3,ui.sing == .compact)
         add(.singExpanded,.init(969,1353,114,234),3,ui.sing == .expanded,"measured bounds, approximately ±3 px; original control placeholder only")
-        return .init(lyrics:lyrics,components:parts,progress:media/duration.seconds,volume:volume,
-                     elapsed:Int(media.rounded(.down)),remaining:Int(max(0,duration.seconds-media).rounded(.up)),playing:playing)
+        // The native elapsed label rounds to the nearest second (docs/reference-clock-and-word-motion.md).
+        var snapshot=ScreenSnapshot(lyrics:lyrics,components:parts,progress:media/duration.seconds,volume:volume,
+                     elapsed:Int(media.rounded()),remaining:Int(max(0,duration.seconds-media).rounded()),playing:playing)
+        snapshot.lowerOffset=lowerOffset;snapshot.lowerOpacity=lowerOpacity;snapshot.lyricsReveal=expanded ? 1-lowerOpacity*(hiding ? 1:0) : 0
+        return snapshot
     }
     public static func synthetic(background: ArtworkBackground? = nil) throws -> LyricsScreen {
         try .init(composition:.synthetic(),title:"Paper Skies",artist:"Field Notes",duration:Time(180),volume:0.62,events:[

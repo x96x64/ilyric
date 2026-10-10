@@ -1,0 +1,40 @@
+import Testing
+import Foundation
+import CoreGraphics
+import SpikeCore
+import LyricsSliceCore
+import LyricsSliceMac
+
+struct SmoothnessTests {
+    /// A one-row white image drawn at a fractional row splits its coverage between two rows.
+    @Test func subpixelDrawingInterpolatesRows() {
+        let src=CGContext(data:nil,width:4,height:1,bitsPerComponent:8,bytesPerRow:16,space:CGColorSpace(name:CGColorSpace.sRGB)!,
+                          bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
+        src.setFillColor(CGColor(gray:1,alpha:1));src.fill(CGRect(x:0,y:0,width:4,height:1))
+        let image=src.makeImage()!
+        func alphas(_ y:Double) -> [Int] {
+            let c=CGContext(data:nil,width:4,height:8,bitsPerComponent:8,bytesPerRow:16,space:CGColorSpace(name:CGColorSpace.sRGB)!,
+                            bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
+            c.drawSubpixel(image,in:CGRect(x:0,y:y,width:4,height:1))
+            let bytes=[UInt8](Data(bytes:c.data!,count:4*8*4))
+            return (0..<8).map { Int(bytes[$0*16+3]) }   // memory rows run top to bottom
+        }
+        let whole=alphas(3),quarter=alphas(3.25)
+        #expect(whole.filter { $0>0 }.count==1)
+        // Row 3 (from the bottom) keeps 75% and row 4 receives 25%.
+        #expect(abs(quarter[8-1-3]-191)<=2 && abs(quarter[8-1-4]-64)<=2)
+    }
+    @Test func controlsSlideAndFadeWhileHiding() throws {
+        let base=try LyricsScreen.synthetic()
+        let screen=try LyricsScreen(composition:base.composition,title:base.title,artist:base.artist,duration:base.duration,volume:0.5,
+            events:[.init(Time(0),order:0,controls:.init()),.init(Time(4),order:1,controls:.init(lower:false))],expandsLyrics:true)
+        func part(_ s:ScreenSnapshot,_ id:ScreenPart) -> ScreenComponent { s.components.first{$0.part==id}! }
+        let before=screen.evaluate(Time(399,100)),mid=screen.evaluate(Time(4)+Time(1,20)),after=screen.evaluate(Time(5))
+        #expect(before.lowerOpacity==1 && before.lyricsReveal==0 && part(before,.progress).visible)
+        #expect(part(mid,.progress).visible && mid.lowerOpacity<0.5 && mid.lowerOffset>100 && mid.lyricsReveal>0.5)
+        #expect(!part(after,.progress).visible && after.lyricsReveal==1)
+        #expect(ControlTransition.sample(0)==(0,1) && ControlTransition.sample(10).opacity==0)
+        // The elapsed label rounds to the nearest second.
+        #expect(screen.evaluate(Time(3,2)).elapsed==2 && screen.evaluate(Time(7,5)).elapsed==1)
+    }
+}

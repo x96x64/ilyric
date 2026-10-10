@@ -100,9 +100,19 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds=LyricsScreen.viewport) throws -> CGImage {
+    public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds=LyricsScreen.viewport,reveal:Double=1) throws -> CGImage {
         let w=screen.composition.canvasWidth,c=Self.context(w,2556)
-        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:v == LyricsScreen.expandedViewport ? expandedFadeMask : fadeMask)
+        var mask=v == LyricsScreen.expandedViewport ? expandedFadeMask : fadeMask
+        if v == LyricsScreen.expandedViewport && reveal<1 {
+            // During the hide transition the vacated area fades in: max(original fade, revealed expanded fade).
+            let bytes=(0..<2556).map { y -> UInt8 in
+                let yy=Double(y)+0.5,e=LyricsScreen.fade(at:yy,viewport:v,bottomFade:LyricsScreen.expandedBottomFade)
+                return UInt8((max(LyricsScreen.fade(at:yy),e*reveal)*255).rounded())
+            }
+            mask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,space:CGColorSpaceCreateDeviceGray(),
+                bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        }
+        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:mask)
         for p in state.paragraphs {
             if boundedCache {
                 let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
@@ -123,14 +133,14 @@ public final class ScreenRenderer {
                     tiles.draw(a.blur,opacity:a.opacity*(1-weight),translation:p.translationY,into:c)
                     if weight>0 {
                         let image=try lyrics.paragraphs[p.index].render(p.appearance)
-                        c.setAlpha(a.opacity*weight);c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556))
+                        c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556),alpha:a.opacity*weight)
                     }
                     c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
                 } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
-            c.saveGState();c.setAlpha(p.opacity);c.draw(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556));c.restoreGState()
+            c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556),alpha:p.opacity)
         }
         for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
         return c.makeImage()!
@@ -146,7 +156,12 @@ public final class ScreenRenderer {
     }
     public func native(_ state:ScreenSnapshot) throws -> CGImage {
         let c=Self.context(screen.composition.canvasWidth,2556)
+        let lowerGroup:Set<ScreenPart>=[.progress,.elapsed,.remaining,.previous,.playback,.next,.volume,.volumeLow,.volumeHigh,
+                                         .bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact,.singExpanded]
         for part in state.components.sorted(by:{$0.z<$1.z}) where part.visible {
+            let moving=state.lowerOpacity<1 && lowerGroup.contains(part.part)
+            if moving { c.saveGState();c.translateBy(x:0,y:-state.lowerOffset);c.setAlpha(state.lowerOpacity) }
+            defer { if moving { c.restoreGState() } }
             // Measured symbol placement may exceed the provisional component rectangle, so it is not clipped.
             if icons == .systemSymbols,let symbol=ControlSymbols.symbol(for:part.part,playing:state.playing) {
                 try symbols.draw(symbol,canvasHeight:2556,into:c);continue
@@ -160,7 +175,7 @@ public final class ScreenRenderer {
             case .background:
                 if let dynamicBackdrop { c.interpolationQuality = .high;c.draw(dynamicBackdrop.image(at:state.lyrics.output),in:r) }
                 else { c.draw(backdrop,in:r) }
-            case .lyrics: c.draw(try lyricLayer(state.lyrics,viewport:part.bounds),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
+            case .lyrics: c.draw(try lyricLayer(state.lyrics,viewport:part.bounds,reveal:state.lyricsReveal),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
             case .artwork:
                 c.addPath(CGPath(roundedRect:r,cornerWidth:14,cornerHeight:14,transform:nil));c.clip();c.draw(artwork,in:r)
             case .title,.artist:
