@@ -183,3 +183,7 @@ The [gap-indicator report](docs/gap-indicator.md) records a fitted three-dot ind
 ## Separated-Vocal Acceptance and Boundary Rules
 
 The [acceptance report](docs/separated-vocal-acceptance.md) replaces the lexical gate with separated-stem evidence and extends offsets through vocal activity. Cross-validation over seventeen annotated recordings estimates 90.5% correct placement with near-zero displacement and median onset and offset errors of 42 and 65 ms; unseen requalification remains required.
+
+## First Complete Real-Song Video
+
+The [real-song milestone](docs/first-real-song-video.md) records the first complete video produced from supplied lyrics and audio with automatic synchronization, the fitted background, runtime symbols, and gap insertion, and lists the integration defects that define the supported command.
