@@ -54,4 +54,15 @@ struct BackgroundTests {
         #expect(original.evaluate(Time(0)).components[0].evidence.contains("static"))
         #expect(try Self.screen(Self.model()).evaluate(Time(0)).components[0].evidence.contains("unmatched phase"))
     }
+    @Test func saturationAdaptsToArtworkChroma() throws {
+        // Neutral pixels have near-zero chroma with the 4-digit matrix; sRGB red has CIELAB chroma of about 104.55.
+        #expect(ArtworkBackground.meanChroma(rgb:[128,128,128,255,255,255]) < 0.02)
+        #expect(abs(ArtworkBackground.meanChroma(rgb:[255,0,0])-104.55)<0.1)
+        let m=try ArtworkBackground(scale:1.5,orbit:0.1,orbitRate:0.1,rotationRate:-0.03,blur:100,saturation:4,gain:0.4,
+                                    gradient:0.4,lift:0.2,chromaHalf:10)
+        #expect(m.saturation(artworkChroma:10)==2 && m.saturation(artworkChroma:0)==0 && m.saturation(artworkChroma:1000)>3.9)
+        #expect(try ArtworkBackground(scale:1.5,orbit:0.1,orbitRate:0.1,rotationRate:0,blur:100,saturation:2,gain:1,gradient:0).saturation(artworkChroma:3)==2)
+        #expect(throws:SliceError.self) { try ArtworkBackground(scale:1.5,orbit:0.1,orbitRate:0,rotationRate:0,blur:100,saturation:2,gain:0,gradient:0,lift:0.1) }
+        #expect(throws:SliceError.self) { try ArtworkBackground(scale:1.5,orbit:0.1,orbitRate:0,rotationRate:0,blur:100,saturation:2,gain:1,gradient:0,chromaHalf:-1) }
+    }
 }

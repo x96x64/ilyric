@@ -12,12 +12,21 @@ public final class ArtworkBackdrop {
     let model: ArtworkBackground
     let artwork: CGImage
     let width, height: Int
+    /// Saturation after adaptation to the artwork's mean chroma, sampled at 192×192 as in the fitting model.
+    let saturation: Double
     private let context = CIContext(options:[.useSoftwareRenderer:true,.workingColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!,
                                              .outputColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!])
 
     public init(_ model: ArtworkBackground, artwork: CGImage, canvasWidth: Int, canvasHeight: Int) {
         self.model=model;self.artwork=artwork
         width=max(1,canvasWidth/Self.reduction);height=max(1,canvasHeight/Self.reduction)
+        let side=192,c=CGContext(data:nil,width:side,height:side,bitsPerComponent:8,bytesPerRow:side*4,
+                                  space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.noneSkipLast.rawValue)!
+        c.interpolationQuality = .high;c.draw(artwork,in:CGRect(x:0,y:0,width:side,height:side))
+        let rgba=[UInt8](Data(bytes:c.data!,count:side*side*4))
+        var rgb=[UInt8]();rgb.reserveCapacity(side*side*3)
+        for p in 0..<(side*side) { rgb.append(contentsOf:rgba[(p*4)..<(p*4+3)]) }
+        saturation=model.saturation(artworkChroma:ArtworkBackground.meanChroma(rgb:rgb))
     }
 
     public func image(at time: Time) -> CGImage {
@@ -36,14 +45,15 @@ public final class ArtworkBackdrop {
         let base=CIImage(cgImage:c.makeImage()!),extent=base.extent
         let blurred=base.clampedToExtent().applyingGaussianBlur(sigma:model.blur/Double(Self.reduction)).cropped(to:extent)
         // Saturation about Rec. 709 luma: x' = s·x + (1−s)·luma(x), applied to encoded sRGB values.
-        let s=model.saturation,l=(0.2126,0.7152,0.0722)
+        let s=saturation,l=(0.2126,0.7152,0.0722),bias=model.gain>0 ? model.lift/model.gain : 0
         func row(_ i:Int) -> CIVector {
             let own=[s,s,s][i]
             return CIVector(x:(i==0 ? own:0)+(1-s)*l.0,y:(i==1 ? own:0)+(1-s)*l.1,z:(i==2 ? own:0)+(1-s)*l.2,w:0)
         }
         let saturated=blurred.applyingFilter("CIColorMatrix",parameters:["inputRVector":row(0),"inputGVector":row(1),
-            "inputBVector":row(2),"inputAVector":CIVector(x:0,y:0,z:0,w:1),"inputBiasVector":CIVector(x:0,y:0,z:0,w:0)])
-        // Vertical gain: gain at the top edge, gain·(1−gradient) at the bottom edge.
+            "inputBVector":row(2),"inputAVector":CIVector(x:0,y:0,z:0,w:1),"inputBiasVector":CIVector(x:bias,y:bias,z:bias,w:0)])
+        // Vertical gain: gain at the top edge, gain·(1−gradient) at the bottom edge; with the bias above,
+        // the result is (x·gain + lift)·(1 − gradient·y).
         let top=model.gain,bottom=model.gain*(1-model.gradient)
         let ramp=CIFilter(name:"CILinearGradient",parameters:["inputPoint0":CIVector(x:0,y:h),"inputPoint1":CIVector(x:0,y:0),
             "inputColor0":CIColor(red:top,green:top,blue:top),"inputColor1":CIColor(red:bottom,green:bottom,blue:bottom)])!.outputImage!.cropped(to:extent)

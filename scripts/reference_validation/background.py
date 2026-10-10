@@ -3,7 +3,8 @@
 Requires ffmpeg, NumPy, Pillow, and SciPy. Inputs are the ignored reference-private
 recordings and screenshot artwork crops; every output stays under reference-private/analysis.
 The fitted model is an iLyric reconstruction matched to phase-independent statistics, not
-Apple's implementation. Commands: targets | fit MODE EVALUATIONS | evaluate MODE
+Apple's implementation. Commands: targets | fit MODE EVALUATIONS | motion MODE EVALUATIONS |
+appearance MODE EVALUATIONS
 """
 import json
 import subprocess
@@ -38,6 +39,7 @@ def stats(F,fps=10):
     Lb=lab(np.clip(F,0,1));L=Lb[...,0]
     out=dict(L=float(L.mean()),a=float(Lb[...,1].mean()),b=float(Lb[...,2].mean()),
         C=float(np.hypot(Lb[...,1],Lb[...,2]).mean()),
+        C95=float(np.percentile(np.hypot(Lb[...,1],Lb[...,2]),95)),
         sL=float(L.std(axis=(1,2)).mean()),
         tb=float(L[:,:10].mean()-L[:,-10:].mean()))
     z=L-L.mean(0)
@@ -56,7 +58,8 @@ def stats(F,fps=10):
 def render(art, t, p, w=W, h=H):
     """Deterministic candidate: rotating, orbiting enlarged artwork layers; blur; color transfer.
     p: s (layer side / canvas height), r (orbit radius / canvas height), nu (orbit rad/s),
-       om (rotation rad/s), sig (blur, native px), sat, gain, grad."""
+       om (rotation rad/s), sig (blur, native px), sat, gain, grad; optional lift (added after gain) and
+       c0 (artwork mean chroma at which saturation halves)."""
     src=Image.fromarray((art*255).astype(np.uint8))
     acc=np.zeros((h,w,3))
     for k,(ph,dirn) in enumerate([(0.0,1),(2.1,-1)]):
@@ -69,8 +72,11 @@ def render(art, t, p, w=W, h=H):
     base=acc/2
     img=Image.fromarray((np.clip(base,0,1)*255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(float(p['sig'])/4))
     x=np.asarray(img,float)/255
-    g=(x@LUM)[...,None];x=g+(x-g)*p['sat']
-    x=x*p['gain']*(1-p['grad']*np.linspace(0,1,h)[:,None,None])
+    sat=p['sat']
+    if p.get('c0',0)>0:
+        ca=float(np.hypot(*lab(art)[...,1:].transpose(2,0,1)).mean());sat=sat*ca/(ca+p['c0'])
+    g=(x@LUM)[...,None];x=g+(x-g)*sat
+    x=(x*p['gain']+p.get('lift',0.0))*(1-p['grad']*np.linspace(0,1,h)[:,None,None])
     return np.clip(x,0,1)
 
 
@@ -96,9 +102,13 @@ def frames(path, fps=10):
 
 
 def artwork(root, song):
-    # The private background-cases.json maps neutral song labels to screenshots.
+    # The private background-cases.json maps neutral song labels to screenshots, or to
+    # {"artwork": FILE} for artwork supplied directly, which is resampled to the same 192 pixels.
     # Header artwork bounds [96,276,312,492) with a 12-pixel inset exclude rounded corners.
     name = json.loads((root/'background-cases.json').read_text())[song]
+    if isinstance(name, dict):
+        image = Image.open(root/name['artwork']).convert('RGB').resize((192, 192))
+        return np.asarray(image).astype(float)/255
     image = np.asarray(Image.open(root/'screenshots'/name).convert('RGB')).astype(float)/255
     return image[288:480, 108:300]
 
@@ -181,6 +191,74 @@ def fit_motion(root, out, mode, evaluations):
     return result
 
 
+# A complete playing capture (V17) adds a high-contrast, nearly neutral cover. Its target is the mean
+# over six 30-second windows after the controls hide; lyrics are suppressed by field().
+CAPTURE = {'D': ('V17', [10, 60, 110, 160, 210, 260])}
+APPEARANCE_KEYS = ['L', 'C', 'sL', 'tb', 'rx', 'ry', 'C95']
+APPEARANCE_FLOORS = np.array([1.5, 1, 1, 2, .05, .08, 2])
+APPEARANCE_NAMES = ['sig', 'sat', 'gain', 'lift', 'grad', 's', 'c0']
+APPEARANCE_START = np.array([110, 4.0, 0.37, 0.24, 0.44, 1.45, 8.0])
+# Orbit and rotation from docs/reference-data/background/motion.json, fold "all".
+MOTION = dict(r=0.0865, nu=0.1233, om=-0.0259)
+
+
+def capture_target(root, out, song):
+    cached = out/f'target-{song}.json'
+    if cached.exists():
+        return json.loads(cached.read_text())
+    name, starts = CAPTURE[song]
+    path = sorted((root/'recordings').glob('*.MP4'))[int(name[1:])-1]
+    windows = []
+    for start in starts:
+        cmd = ['ffmpeg', '-v', 'error', '-ss', str(start), '-t', '30', '-i', str(path), '-vf',
+               f'fps=10,scale={W}:{H}:flags=area', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']
+        raw = subprocess.run(cmd, capture_output=True, check=True).stdout
+        F = np.frombuffer(raw, np.uint8).reshape(-1, H, W, 3).astype(np.float32)/255
+        windows.append(stats(np.stack([field(f) for f in F])))
+    result = {k: float(np.mean([w[k] for w in windows])) for k in windows[0]}
+    cached.write_text(json.dumps(result, indent=1)+'\n')
+    return result
+
+
+def fit_appearance(root, out, mode, evaluations):
+    """Refit appearance with lift, adaptive saturation, a blur of at least 100 pixels (smaller blurs leave the
+    artwork recognizable although block statistics prefer them), and a canvas-covering layer scale (at least
+    1.28 canvas heights, so no rotation or orbit exposes the canvas). Motion stays at MOTION."""
+    from scipy.optimize import minimize
+    T = json.loads((out/'targets.json').read_text())
+    motion = MOTION
+    tgt, tol, hue = {}, {}, {}
+    for s, vs in SONGS.items():
+        a = np.array([[T[v][k] for k in APPEARANCE_KEYS] for v in vs])
+        tgt[s], tol[s] = a.mean(0), np.maximum(a.std(0, ddof=1), APPEARANCE_FLOORS)
+        hue[s] = np.degrees(np.arctan2(np.mean([T[v]['b'] for v in vs]), np.mean([T[v]['a'] for v in vs])))
+    for s in CAPTURE:
+        c = capture_target(root, out, s)
+        tgt[s], tol[s], hue[s] = np.array([c[k] for k in APPEARANCE_KEYS]), APPEARANCE_FLOORS, None
+    arts = {s: artwork(root, s) for s in tgt}
+
+    def song_loss(s, x, fps=2, count=16):
+        p = dict(r=motion['r'], nu=motion['nu'], om=motion['om'], **dict(zip(APPEARANCE_NAMES, x)))
+        st = stats(np.stack([field(render(arts[s], i/fps, p)) for i in range(count)]), fps)
+        loss = float((((np.array([st[k] for k in APPEARANCE_KEYS])-tgt[s])/tol[s])**2).sum())
+        if hue[s] is not None and st['C'] > 3:
+            loss += (((np.degrees(np.arctan2(st['b'], st['a']))-hue[s]+180) % 360-180)/5)**2
+        return loss, st
+    train = [s for s in tgt if s != mode]
+
+    def loss(x):
+        sig, sat, gain, lift, grad, s, c0 = x
+        if sig < 100 or not 0 <= sat <= 8 or gain <= 0 or not 0 <= lift <= .5 or not 0 <= grad < .9 or not 1.28 <= s < 3 or not 0 <= c0 < 200:
+            return 1e6
+        return sum(song_loss(s, x)[0] for s in train)
+    r = minimize(loss, APPEARANCE_START, method='Nelder-Mead', options=dict(maxfev=evaluations))
+    result = dict(mode=mode, train=train, params=dict(motion, **dict(zip(APPEARANCE_NAMES, r.x.tolist()))), train_loss=r.fun,
+                  per_song={s: dict(zip(['loss', 'stats'], song_loss(s, r.x))) for s in tgt},
+                  targets={s: dict(zip(APPEARANCE_KEYS, tgt[s].tolist())) for s in tgt})
+    (out/f'appearance-{mode}.json').write_text(json.dumps(result, indent=1, default=float)+'\n')
+    return result
+
+
 def main():
     root = private_root(Path(__file__).resolve().parents[2]/'reference-private')
     out = root/'analysis'/'background'
@@ -191,11 +269,15 @@ def main():
     elif command == 'fit' and len(sys.argv) == 4:
         r = fit(root, out, sys.argv[2], int(sys.argv[3]))
         print(json.dumps({k: r[k] for k in ['mode', 'params', 'train_loss']}, default=float))
+    elif command == 'appearance' and len(sys.argv) == 4:
+        r = fit_appearance(root, out, sys.argv[2], int(sys.argv[3]))
+        print(json.dumps({k: r[k] for k in ['mode', 'params', 'train_loss']}, default=float))
     elif command == 'motion' and len(sys.argv) == 4:
         r = fit_motion(root, out, sys.argv[2], int(sys.argv[3]))
         print(json.dumps({k: r[k] for k in ['mode', 'params', 'loss']}, default=float))
     else:
-        raise SystemExit('Usage: background.py targets | fit all|A|B|C EVALUATIONS | motion all|A|B|C EVALUATIONS')
+        raise SystemExit('Usage: background.py targets | fit all|A|B|C EVALUATIONS | motion all|A|B|C EVALUATIONS'
+                         ' | appearance all|A|B|C|D EVALUATIONS')
 
 
 if __name__ == '__main__':
