@@ -79,6 +79,9 @@ public struct LyricsScreen: Sendable {
     // Native boundaries remain unknown. This inset and smooth fade are provisional.
     public static let viewport = ScreenBounds(72,550,1040,950)
     public static let fadeLength = 80.0
+    /// Volume fill measured in eight reference screenshots: the fill ends at x = 576 on the bar [171, 982),
+    /// that is 405 of 811 pixels, slightly below one half.
+    public static let referenceVolume = 405.0/811.0
     public init(composition: LyricsComposition, title: String, artist: String, duration: Time,
                 volume: Double, events: [ScreenEvent], visibility: ScreenVisibility = .init(),
                 background: ArtworkBackground? = nil) throws {

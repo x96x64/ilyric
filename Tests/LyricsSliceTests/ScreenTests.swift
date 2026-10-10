@@ -36,6 +36,15 @@ struct ScreenTests {
         #expect(!screen.evaluate(Time(119,60)).components.first{$0.part == .singExpanded}!.visible)
         #expect(throws:SliceError.self) { try LyricsScreen(composition:base,title:"",artist:"B",duration:Time(6),volume:0.3,events:[]) }
     }
+    @Test func referenceVolumeFillEndsAtMeasuredPixel() throws {
+        let base=try LyricsScreen.synthetic()
+        let screen=try LyricsScreen(composition:base.composition,title:base.title,artist:base.artist,duration:base.duration,
+                                    volume:LyricsScreen.referenceVolume,events:[.init(Time(0),order:0,controls:.init())])
+        let bytes=[UInt8](try ScreenRenderer(screen).native(screen.evaluate(Time(0))).dataProvider!.data! as Data)
+        func luma(_ x:Int) -> Int { let i=(2203*1179+x)*4;return Int(bytes[i])+Int(bytes[i+1])+Int(bytes[i+2]) }
+        // The bright fill occupies columns up to 575 and the dimmer track begins at 576.
+        #expect(luma(574)>luma(577)+60 && abs(luma(577)-luma(600))<10)
+    }
     @Test func nativeCoordinatesAndFade() {
         let a=LyricsScreen.contain(width:1080,height:1920,canvasWidth:1179)
         let b=LyricsScreen.contain(width:1080,height:1920,canvasWidth:1180)

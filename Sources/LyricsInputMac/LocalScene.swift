@@ -61,7 +61,7 @@ public final class LocalScene {
             bottom:v?.bottom ?? true,handle:v?.handle ?? true,translation:v?.translation ?? true,sing:true)
         let controls=ScreenControls(translation:v?.translation ?? false,handle:v?.handle ?? true,
             sing:SingControl(rawValue:v?.sing ?? "hidden")!)
-        let screen=try LyricsScreen(composition:composition,title:project?.title ?? "Local Lyrics",artist:project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:0.62,
+        let screen=try LyricsScreen(composition:composition,title:project?.title ?? "Local Lyrics",artist:project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:LyricsScreen.referenceVolume,
             events:[.init(Time(0),order:0,controls:controls)],visibility:visibility,background:presentation.background)
         renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons)
     }
