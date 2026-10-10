@@ -28,9 +28,13 @@ final class InactiveTiles {
         let r=bounds.offsetBy(dx:0,dy:-translation)
         // Additive accumulation preserves a convex interpolation of premultiplied
         // masks; ordinary source-over would darken overlapping intermediate tiles.
-        c.saveGState();c.setAlpha(opacity);c.beginTransparencyLayer(auxiliaryInfo:nil);c.setBlendMode(.plusLighter)
-        c.setAlpha(1-fraction);c.draw(images[low],in:r)
-        if fraction>0 { c.setAlpha(fraction);c.draw(images[high],in:r) }
+        c.saveGState();c.setAlpha(opacity);c.beginTransparencyLayer(in:r.insetBy(dx:0,dy:-2),auxiliaryInfo:nil);c.setBlendMode(.plusLighter)
+        // Subpixel placement is the same complementary-weight interpolation in the vertical direction.
+        let base=r.minY.rounded(.down),f=r.minY-base,lowRect=CGRect(x:r.minX,y:base,width:r.width,height:r.height)
+        for (image,weight) in [(images[low],1-fraction),(images[high],fraction)] where weight>0 {
+            c.setAlpha(weight*(1-f));c.draw(image,in:lowRect)
+            if f>1e-6 { c.setAlpha(weight*f);c.draw(image,in:lowRect.offsetBy(dx:0,dy:1)) }
+        }
         c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
     }
 }

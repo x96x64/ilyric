@@ -204,7 +204,7 @@ public final class SliceParagraph {
             let m=motion.edge>0 ? min(1,max(0,(front-position)/motion.edge+0.5)) : (position<front ? 1:0)
             return UInt8((m*255).rounded())
         }
-        context.saveGState();context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState()
+        context.drawSubpixel(layer.image,in:rect,alpha:p.dimOpacity)
         guard bytes.contains(where:{$0>0}) else { return }
         let mask=CGImage(width:layer.image.width,height:1,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:layer.image.width,
             space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:true,intent:.defaultIntent)!
@@ -215,7 +215,7 @@ public final class SliceParagraph {
                 color:CGColor(gray:1,alpha:span.glow*span.progress))
             context.draw(layer.image,in:rect.offsetBy(dx:away,dy:0));context.restoreGState()
         }
-        context.saveGState();context.clip(to:rect,mask:mask);context.draw(layer.image,in:rect);context.restoreGState()
+        context.saveGState();context.clip(to:rect,mask:mask);context.drawSubpixel(layer.image,in:rect);context.restoreGState()
     }
     public func raw(_ time:Time, coverage:Bool = false) throws -> Data {
         let image = try render(input.evaluate(time),coverage:coverage)
