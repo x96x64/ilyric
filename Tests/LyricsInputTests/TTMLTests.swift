@@ -101,6 +101,9 @@ struct TTMLTests {
         #expect(during.lyrics.focus == -1 && during.lyrics.gaps[0].state != nil && abs(during.lyrics.gaps[0].translationY)<1)
         #expect(presented.renderer.screen.evaluate(Time(5,2)).lyrics.focus==1)
         #expect(presented.renderer.screen.background != nil && presented.renderer.icons == .systemSymbols)
+        let led=try LocalScene(lyrics:gap,audio:audio,presentation:.init(focusLead:Time(3,10)))
+        #expect(led.renderer.screen.evaluate(Time(17,10)).lyrics.focus==1 && scene.renderer.screen.evaluate(Time(17,10)).lyrics.focus == -1)
+        #expect(led.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance==scene.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance)
         let long=try LocalScene(lyrics:gap,audio:audio,presentation:.init(minimumGap:Time(2)))
         #expect(long.renderer.screen.composition.gaps.isEmpty)
     }

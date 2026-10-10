@@ -12,9 +12,15 @@ public struct LocalPresentation: Sendable {
     /// Insert the instrumental-gap indicator where supplied lyric timing leaves at least this much silence.
     /// The native minimum is unmeasured; this threshold is a provisional presentation choice.
     public var minimumGap: Time?
-    public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil) {
-        self.background=background;self.icons=icons;self.minimumGap=minimumGap
+    /// Focus moves to a line this long before its supplied onset; highlighting keeps the supplied timing.
+    public var focusLead: Time
+    public var stagger: FocusStagger
+    public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid) {
+        self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
     }
+    /// Reference-measured presentation: 0.30-second focus lead and staggered motion (docs/lyrics-motion-timing.md).
+    public static let measuredMotion = (focusLead: Time(3,10), stagger: FocusStagger.measured)
 }
 
 /// Experimental paragraph focus with optional explicitly supplied segment appearance.
@@ -36,7 +42,7 @@ public final class LocalScene {
                 position+=GapIndicator.slotHeight
             }
             let end=entry.intervalEnd ?? (i+1<lyrics.entries.count ? lyrics.entries[i+1].time : schedule.audioEnd)
-            if entry.intervalEnd != nil && (i+1==lyrics.entries.count || end<lyrics.entries[i+1].time) {
+            if entry.intervalEnd != nil && (i+1==lyrics.entries.count || end<lyrics.entries[i+1].time-presentation.focusLead) {
                 events.append(.init(end,order:lyrics.entries.count+i+1,paragraph:-1))
             }
             if entry.text.isEmpty { events.append(.init(entry.time,order:i+1,paragraph:-1));continue }
@@ -48,13 +54,16 @@ public final class LocalScene {
             if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
             let input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
             let layout=try SliceParagraph(input)
-            events.append(.init(entry.time,order:i+1,paragraph:paragraphs.count))
+            // Lead never moves focus before the previous focus event or before zero.
+            let previous=events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
+            let led=entry.time-presentation.focusLead
+            events.append(.init(led>previous ? led : max(previous,Time(0)),order:i+1,paragraph:paragraphs.count))
             paragraphs.append(.init(input:input,position:position,begin:entry.time,end:end))
             lastEnd=end
             // Provisional inter-paragraph spacing; measured line advances remain unchanged.
             position += Double(layout.lines.count)*input.parameters.lineAdvance+110
         }
-        let composition=try LyricsComposition(paragraphs:paragraphs,events:events,gaps:gaps)
+        let composition=try LyricsComposition(paragraphs:paragraphs,events:events,gaps:gaps,stagger:presentation.stagger)
         let v=project?.visibility
         let visibility=ScreenVisibility(artwork:v?.artwork ?? true,metadata:v?.metadata ?? true,
             progress:v?.progress ?? true,transport:v?.transport ?? true,volume:v?.volume ?? true,

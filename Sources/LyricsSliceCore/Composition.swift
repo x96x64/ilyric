@@ -50,6 +50,19 @@ public struct FocusSegment: Sendable {
         return (target+(a+b*t)*e,(b-(a+b*t)/tau)*e)
     }
 }
+/// Staggered focus motion: a paragraph laid out below the focus target follows the focus segment
+/// with a delay that grows with its layout distance. Measured on the reference Lyrics screen
+/// (docs/lyrics-motion-timing.md); zero values reproduce rigid motion.
+public struct FocusStagger: Equatable, Sendable {
+    public let secondsPerPixel, interceptSeconds, maximumSeconds: Double
+    public init(secondsPerPixel: Double, interceptSeconds: Double, maximumSeconds: Double) throws {
+        guard [secondsPerPixel,interceptSeconds,maximumSeconds].allSatisfy({ $0.isFinite && $0>=0 }),maximumSeconds<=1 else { throw SliceError.invalid("Focus stagger") }
+        self.secondsPerPixel=secondsPerPixel;self.interceptSeconds=interceptSeconds;self.maximumSeconds=maximumSeconds
+    }
+    public static let rigid = try! FocusStagger(secondsPerPixel:0,interceptSeconds:0,maximumSeconds:0)
+    public static let measured = try! FocusStagger(secondsPerPixel:0.000147,interceptSeconds:0.033,maximumSeconds:0.3)
+    public func delay(below distance: Double) -> Double { min(maximumSeconds,max(0,distance*secondsPerPixel-interceptSeconds)) }
+}
 public struct LyricsComposition: Sendable {
     public let paragraphs: [CompositionParagraph]
     public let gaps: [CompositionGap]
@@ -57,9 +70,10 @@ public struct LyricsComposition: Sendable {
     public let clocks: [PlaybackAnchor]
     public let canvasWidth: Int
     public let tau: Double
+    public let stagger: FocusStagger
     private let segments: [FocusSegment]
     public init(paragraphs: [CompositionParagraph], events: [FocusEvent], clocks: [PlaybackAnchor] = [.init(output:Time(0),media:Time(0),running:true)], tau: Double = 0.081,
-                gaps: [CompositionGap] = []) throws {
+                gaps: [CompositionGap] = [], stagger: FocusStagger = .rigid) throws {
         guard (1...256).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
               Set(events.map(\.order)).count==events.count, !events.isEmpty,
               !clocks.isEmpty, clocks[0].output==Time(0),
@@ -83,23 +97,36 @@ public struct LyricsComposition: Sendable {
             let initial=compiled.last!.evaluate(event.time)
             compiled.append(FocusSegment(start:event.time,position:initial.position,velocity:initial.velocity,target:target(event,hold:compiled.last!.target),tau:tau))
         }
-        self.paragraphs=paragraphs;self.gaps=gaps;self.events=sorted;self.clocks=clocks;self.canvasWidth=paragraphs[0].input.canvasWidth;self.tau=tau;segments=compiled
+        self.paragraphs=paragraphs;self.gaps=gaps;self.stagger=stagger;self.events=sorted;self.clocks=clocks;self.canvasWidth=paragraphs[0].input.canvasWidth;self.tau=tau;segments=compiled
     }
     public func mediaTime(_ output: Time) -> Time {
         let clock=clocks.last(where:{$0.output<=output}) ?? clocks[0]
         return clock.media+(clock.running ? output-clock.output : Time(0))
     }
+    /// Scroll position at an output time, evaluated from the compiled focus segments.
+    private func scroll(at time: Time) -> Double {
+        let index=events.lastIndex(where:{$0.time<=time}) ?? 0
+        return segments[index].evaluate(time).position
+    }
+    /// Delayed scroll for a slot laid out `distance` pixels below the current focus target.
+    private func scroll(at time: Time, below distance: Double) -> Double {
+        let delay=stagger.delay(below:distance)
+        if delay==0 { return scroll(at:time) }
+        let micro=Int64((delay*1_000_000).rounded())
+        return scroll(at:time-Time(micro,1_000_000))
+    }
     public func evaluate(_ time: Time) -> CompositionSnapshot {
         let index=events.lastIndex(where:{$0.time<=time}) ?? 0
         let movement=segments[index].evaluate(time),media=mediaTime(time),focus=events[index].paragraph
+        let target=segments[index].target
         let states=paragraphs.enumerated().map { i,p in
             // First-baseline alignment is an explicit synthetic composition anchor.
             // Individual paragraph typography and appearance are untouched.
-            ParagraphPresentation(index:i,translationY:791.25-p.input.parameters.originY-p.input.parameters.size+p.position-movement.position,
+            ParagraphPresentation(index:i,translationY:791.25-p.input.parameters.originY-p.input.parameters.size+p.position-scroll(at:time,below:p.position-target),
                 opacity:i==focus ? 1:0.38,active:p.begin<=media && media<p.end,appearance:p.input.evaluate(media))
         }
         let gapStates=gaps.enumerated().map { i,g in
-            GapPresentation(index:i,translationY:g.position-movement.position,
+            GapPresentation(index:i,translationY:g.position-scroll(at:time,below:g.position-target),
                 state:g.indicator.evaluate(elapsed:(media-g.begin).seconds,duration:(g.end-g.begin).seconds))
         }
         return CompositionSnapshot(output:time,media:media,focus:focus,scroll:movement.position,velocity:movement.velocity,paragraphs:states,gaps:gapStates)
