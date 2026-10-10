@@ -116,10 +116,12 @@ struct TTMLTests {
         let prefix="<p begin=\"0s\" end=\"2s\">"
         let spans=(0..<129).map {"<span begin=\"\($0*10)ms\" dur=\"10ms\">a</span>"}.joined()
         #expect(throws:InputError.self) {try parse(prefix+spans+"</p>")}
-        let paragraphs=(0..<6).map { j in
-            "<p begin=\"\(j)s\" dur=\"1s\">"+(0..<86).map {"<span begin=\"\($0*10)ms\" dur=\"10ms\">a</span>"}.joined()+"</p>"
-        }.joined()
-        #expect(throws:InputError.self) {try parse(paragraphs)}
+        // A word-timed complete song may use up to 1,536 spans; one more is rejected.
+        func timed(_ counts:[Int]) -> String {
+            counts.enumerated().map { j,n in "<p begin=\"\(j)s\" dur=\"1s\">"+(0..<n).map {"<span begin=\"\($0)ms\" dur=\"1ms\">a</span>"}.joined()+"</p>" }.joined()
+        }
+        #expect(try parse(timed(Array(repeating:128,count:12))).entries.reduce(0) { $0+$1.segments.count }==TTMLParser.totalSpanLimit)
+        #expect(throws:InputError.self) {try parse(timed(Array(repeating:128,count:12)+[1]))}
         // Wall-clock measurement is diagnostic only; timeline and export state never use it.
         for format in [LyricsFormat.enhancedLRC,.ttml] {
             let data=format == .ttml ? xml:lrc,start=Date()

@@ -6,6 +6,8 @@ import SpikeCore
 
 /// Bounded TTML2 content/timing import, not a general TTML presentation processor.
 public enum TTMLParser {
+    /// Word-timed complete songs need more spans than Enhanced LRC's 512 segments; the 64-KiB byte limit still applies.
+    public static let totalSpanLimit=1536
     public static func parse(_ data: Data) throws -> LocalLyrics {
         guard data.count<=LRCParser.byteLimit, let source=String(data:data,encoding:.utf8),
               !source.unicodeScalars.contains(where:{$0.value<32 && ![9,10,13].contains($0.value)}) else {
@@ -75,7 +77,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
     func parser(_ parser:XMLParser,didStartElement name:String,namespaceURI:String?,qualifiedName:String?,attributes:[String:String]) {
         guard failure==nil else {return}
         elements+=1
-        guard namespaceURI==Self.tt,elements<=1024,stack.count<6 else { fail(parser,"Unsupported TTML namespace or XML resource limit");return }
+        guard namespaceURI==Self.tt,elements<=4096,stack.count<6 else { fail(parser,"Unsupported TTML namespace or XML resource limit");return }
         let parent=stack.last?.name
         let allowed:[String:[String]]=["tt":["body"],"body":["div"],"div":["p"],"p":["span","br"],"span":["br"]]
         guard parent==nil ? name=="tt" && root==nil : (allowed[parent!] ?? []).contains(name) else { fail(parser,"Unsupported TTML element structure");return }
@@ -176,7 +178,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
                 guard segments.allSatisfy({boundaries.contains($0.start) && boundaries.contains($0.start+$0.length)}) else {throw InputError.invalid("TTML span boundary splits an extended grapheme")}
             }
             total+=segments.count
-            guard total<=512,value.utf16.count<500,value.components(separatedBy:"\n").count<=4,
+            guard total<=TTMLParser.totalSpanLimit,value.utf16.count<500,value.components(separatedBy:"\n").count<=4,
                   value.isEmpty || value.components(separatedBy:"\n").allSatisfy({!$0.trimmingCharacters(in:.whitespaces).isEmpty}) else {throw InputError.invalid("TTML text or timing resource limit")}
             entries.append(.init(time:range.0,text:value,sourceLine:p.line,suppliedBreaks:value.contains("\n"),segments:segments,intervalEnd:range.1))
         }
