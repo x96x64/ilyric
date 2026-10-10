@@ -100,6 +100,16 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
+    /// Full-canvas paragraph rasters are mostly transparent; draw only the paragraph's band.
+    private func band(_ image:CGImage,paragraph i:Int,translation:Double) -> (CGImage,CGRect) {
+        let input=lyrics.paragraphs[i].input,lines=lyrics.paragraphs[i].lines.count,w=Double(image.width)
+        let top=max(0,(input.parameters.originY-80).rounded(.down))
+        let bottom=min(Double(image.height),(input.parameters.originY+Double(lines-1)*input.parameters.lineAdvance+input.parameters.size*2+120).rounded(.up))
+        guard bottom>top,let cropped=image.cropping(to:CGRect(x:0,y:top,width:w,height:bottom-top)) else {
+            return (image,CGRect(x:0,y:-translation,width:w,height:Double(image.height)))
+        }
+        return (cropped,CGRect(x:0,y:Double(image.height)-bottom-translation,width:w,height:bottom-top))
+    }
     public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds=LyricsScreen.viewport,reveal:Double=1) throws -> CGImage {
         let w=screen.composition.canvasWidth,c=Self.context(w,2556)
         var mask=v == LyricsScreen.expandedViewport ? expandedFadeMask : fadeMask
@@ -133,14 +143,16 @@ public final class ScreenRenderer {
                     tiles.draw(a.blur,opacity:a.opacity*(1-weight),translation:p.translationY,into:c)
                     if weight>0 {
                         let image=try lyrics.paragraphs[p.index].render(p.appearance)
-                        c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556),alpha:a.opacity*weight)
+                        let (part,frame)=band(image,paragraph:p.index,translation:p.translationY)
+                        c.drawSubpixel(part,in:frame,alpha:a.opacity*weight)
                     }
                     c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
                 } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
-            c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(w),height:2556),alpha:p.opacity)
+            let (part,frame)=band(image,paragraph:p.index,translation:p.translationY)
+            c.drawSubpixel(part,in:frame,alpha:p.opacity)
         }
         for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
         return c.makeImage()!
@@ -173,7 +185,8 @@ public final class ScreenRenderer {
             c.setFillColor(CGColor(gray:1,alpha:0.9));c.setStrokeColor(CGColor(gray:1,alpha:0.85));c.setLineWidth(5)
             switch part.part {
             case .background:
-                if let dynamicBackdrop { c.interpolationQuality = .high;c.draw(dynamicBackdrop.image(at:state.lyrics.output),in:r) }
+                // The backdrop is heavily blurred, so bilinear upscaling is indistinguishable from high quality.
+                if let dynamicBackdrop { c.interpolationQuality = .low;c.draw(dynamicBackdrop.image(at:state.lyrics.output),in:r) }
                 else { c.draw(backdrop,in:r) }
             case .lyrics: c.draw(try lyricLayer(state.lyrics,viewport:part.bounds,reveal:state.lyricsReveal),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
             case .artwork:
