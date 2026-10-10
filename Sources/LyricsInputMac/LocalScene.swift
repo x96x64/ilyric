@@ -19,6 +19,9 @@ public struct LocalPresentation: Sendable {
     public var marquee: TitleMarquee?
     /// Soft fill, lift, and emphasis of supplied Latin word timing; nil keeps the hard wipe.
     public var wordMotion: WordMotion?
+    /// Keep a finished line focused until the next line or gap takes focus, as the native screen does,
+    /// instead of releasing focus at the line's supplied end.
+    public var holdsFinishedLine = false
     /// Word fill begins this long before each supplied word interval; focus timing is unaffected.
     public var fillLead: Time = Time(0)
     /// Native word fill leads the sung onset by 0.22 s relative to iLyric's estimates (docs/word-fill-lead.md).
@@ -56,7 +59,7 @@ public final class LocalScene {
                 position+=GapIndicator.slotHeight
             }
             let end=entry.intervalEnd ?? (i+1<lyrics.entries.count ? lyrics.entries[i+1].time : schedule.audioEnd)
-            if entry.intervalEnd != nil && (i+1==lyrics.entries.count || end<lyrics.entries[i+1].time-presentation.focusLead) {
+            if !presentation.holdsFinishedLine && entry.intervalEnd != nil && (i+1==lyrics.entries.count || end<lyrics.entries[i+1].time-presentation.focusLead) {
                 events.append(.init(end,order:lyrics.entries.count+i+1,paragraph:-1))
             }
             if entry.text.isEmpty { events.append(.init(entry.time,order:i+1,paragraph:-1));continue }

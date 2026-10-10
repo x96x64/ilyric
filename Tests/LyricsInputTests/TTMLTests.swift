@@ -111,6 +111,12 @@ struct TTMLTests {
         let led=try LocalScene(lyrics:gap,audio:audio,presentation:.init(focusLead:Time(3,10)))
         #expect(led.renderer.screen.evaluate(Time(17,10)).lyrics.focus==1 && scene.renderer.screen.evaluate(Time(17,10)).lyrics.focus == -1)
         #expect(led.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance==scene.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance)
+        // Holding keeps a finished line focused through a short gap; a gap indicator still takes focus.
+        var hold=LocalPresentation();hold.holdsFinishedLine=true
+        #expect(scene.renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)
+        #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus==0)
+        hold.minimumGap=Time(1,2)
+        #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)
         let long=try LocalScene(lyrics:gap,audio:audio,presentation:.init(minimumGap:Time(2)))
         #expect(long.renderer.screen.composition.gaps.isEmpty)
     }
