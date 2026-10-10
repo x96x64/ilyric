@@ -82,6 +82,22 @@ public final class ScreenRenderer {
             NSAttributedString.Key(kCTFontAttributeName as String):font,
             NSAttributedString.Key(kCTForegroundColorAttributeName as String):CGColor(gray:1,alpha:1)]))
     }
+    /// Time labels use monospaced digits and a fixed reference position, so changing digits never
+    /// move the label; the ink-based placement of other text would shift with each glyph's bounds.
+    private func timeLabel(_ text:String,_ b:ScreenBounds,_ c:CGContext,right:Bool) {
+        let regular=CTFontCreateUIFontForLanguage(.system,35,nil)!
+        let features=[[kCTFontFeatureTypeIdentifierKey:kNumberSpacingType,kCTFontFeatureSelectorIdentifierKey:kMonospacedNumbersSelector]]
+        let font=CTFontCreateCopyWithAttributes(regular,35,nil,CTFontDescriptorCreateWithAttributes([kCTFontFeatureSettingsAttribute:features] as CFDictionary))
+        func line(_ s:String) -> CTLine {
+            CTLineCreateWithAttributedString(NSAttributedString(string:s,attributes:[
+                NSAttributedString.Key(kCTFontAttributeName as String):font,
+                NSAttributedString.Key(kCTForegroundColorAttributeName as String):CGColor(gray:1,alpha:1)]))
+        }
+        c.saveGState();c.setAlpha(0.55);c.textMatrix = .identity;c.textPosition = .zero
+        let reference=CTLineGetImageBounds(line(right ? "−0:00":"0:00"),c),shown=line(text)
+        let x=right ? b.x+b.width-CTLineGetTypographicBounds(shown,nil,nil,nil) : b.x-reference.minX
+        c.textPosition=CGPoint(x:x,y:2556-b.y-reference.maxY);CTLineDraw(shown,c);c.restoreGState()
+    }
     private func rect(_ b:ScreenBounds) -> CGRect { CGRect(x:b.x,y:2556-b.y-b.height,width:b.width,height:b.height) }
     private func ink(_ line:CTLine,_ b:ScreenBounds,_ c:CGContext,alpha:Double=1,right:Bool=false) {
         c.saveGState();c.setAlpha(alpha);c.textMatrix = .identity;c.textPosition = .zero
@@ -203,7 +219,7 @@ public final class ScreenRenderer {
             case .elapsed,.remaining:
                 let value=part.part == .elapsed ? state.elapsed:state.remaining
                 let label=(part.part == .remaining ? "−":"")+String(format:"%d:%02d",value/60,value%60)
-                ink(Self.line(label,size:35,bold:false),part.bounds,c,alpha:0.55,right:part.part == .remaining)
+                timeLabel(label,part.bounds,c,right:part.part == .remaining)
             case .playback:
                 if state.playing {
                     rounded(CGRect(x:r.midX-25,y:r.midY-34,width:17,height:68),3,c,alpha:0.95)

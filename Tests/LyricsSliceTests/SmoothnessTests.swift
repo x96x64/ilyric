@@ -37,4 +37,21 @@ struct SmoothnessTests {
         // The elapsed label rounds to the nearest second.
         #expect(screen.evaluate(Time(3,2)).elapsed==2 && screen.evaluate(Time(7,5)).elapsed==1)
     }
+    @Test func timeLabelsDoNotMoveAsDigitsChange() throws {
+        let base=try LyricsScreen.synthetic()
+        let screen=try LyricsScreen(composition:base.composition,title:base.title,artist:base.artist,duration:Time(180),volume:0.5,
+            events:[.init(Time(0),order:0,controls:.init())])
+        let r=try ScreenRenderer(screen,diagnosticMarkers:false)
+        func edges(_ t:Time) throws -> (Int,Int) {
+            let image=try r.native(screen.evaluate(t)),bytes=[UInt8](image.dataProvider!.data! as Data),w=image.width
+            func leftmost(_ x0:Int,_ x1:Int) -> Int {
+                for x in x0..<x1 { for y in 1735..<1775 where Int(bytes[(y*w+x)*4])>140 { return x } }
+                return -1
+            }
+            return (leftmost(90,300),leftmost(860,1090))
+        }
+        let samples=try (1...6).map { try edges(Time(Int64($0))) }
+        #expect(samples.allSatisfy { $0.0>0 && $0.1>0 })
+        #expect(Set(samples.map(\.0)).count==1 && Set(samples.map(\.1)).count==1)
+    }
 }
