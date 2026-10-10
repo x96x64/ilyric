@@ -24,8 +24,9 @@ public struct LocalPresentation: Sendable {
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
         self.marquee=marquee;self.wordMotion=wordMotion
     }
-    /// Reference-measured presentation: 0.30-second focus lead and staggered motion (docs/lyrics-motion-timing.md).
-    public static let measuredMotion = (focusLead: Time(3,10), stagger: FocusStagger.measured)
+    /// Reference-measured presentation: 0.90-second focus lead and staggered motion
+    /// (docs/lyrics-motion-timing.md, lead corrected in docs/reference-clock-and-word-motion.md).
+    public static let measuredMotion = (focusLead: Time(9,10), stagger: FocusStagger.measured)
 }
 
 /// Experimental paragraph focus with optional explicitly supplied segment appearance.

@@ -26,7 +26,7 @@ public struct TitleMarquee: Equatable, Sendable {
     }
     /// Fitted to iPhone 16, reported iOS 27.0.1: 0.54-pixel RMS displacement residual over two cycles.
     public static let measured = try! TitleMarquee(clipMinX:312,clipMaxX:977,leadingFade:20,trailingFade:22,gap:104,
-        speed:104.3,delay:8.71,pause:4.42,curve:[0.296,0.340,0.567,1.0])
+        speed:104.3,delay:8.11,pause:4.42,curve:[0.296,0.340,0.567,1.0])
 
     /// Provisional rule: scrolling starts only when resting ink would enter the trailing fade.
     public func overflows(origin: Double, inkWidth: Double) -> Bool { origin+inkWidth>clipMaxX-trailingFade }

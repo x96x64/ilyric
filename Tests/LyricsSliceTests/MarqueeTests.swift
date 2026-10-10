@@ -18,8 +18,8 @@ struct MarqueeTests {
         let width=804.0,distance=width+m.gap,duration=distance/m.speed,period=duration+m.pause
         #expect(m.offset(at:0,origin:352,inkWidth:width)==0 && m.offset(at:m.delay,origin:352,inkWidth:width)==0)
         // Displacements observed by direct frame matching in the reference capture: 254 and 442 pixels.
-        #expect(abs(m.offset(at:10.517,origin:352,inkWidth:width)-254)<3)
-        #expect(abs(m.offset(at:11.717,origin:352,inkWidth:width)-442)<3)
+        #expect(abs(m.offset(at:9.91,origin:352,inkWidth:width)-254)<3)
+        #expect(abs(m.offset(at:11.11,origin:352,inkWidth:width)-442)<3)
         #expect(m.offset(at:m.delay+duration+m.pause/2,origin:352,inkWidth:width)==0)
         for t in stride(from:m.delay+0.1,to:m.delay+period,by:0.37) {
             let a=m.offset(at:t,origin:352,inkWidth:width)
