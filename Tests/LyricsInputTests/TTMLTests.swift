@@ -43,7 +43,7 @@ struct TTMLTests {
         let alias="<t:tt xmlns:t=\"http://www.w3.org/ns/ttml\" xmlns:q=\"http://www.w3.org/ns/ttml#parameter\" q:timeBase=\"media\" xml:space=\"preserve\"><t:body><t:div><t:p begin=\"0s\" dur=\"1s\">A&amp;B&#x301;</t:p></t:div></t:body></t:tt>"
         #expect(try TTMLParser.parse(Data(alias.utf8)).entries[0].text.utf8.elementsEqual("A&B\u{301}".utf8))
         #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"<span>",count:20)+"A"+String(repeating:"</span>",count:20)+"</p>")}
-        #expect(throws:InputError.self) {try parse(String(repeating:"<p begin=\"0s\" end=\"1s\">A</p>",count:65))}
+        #expect(throws:InputError.self) {try parse(String(repeating:"<p begin=\"0s\" end=\"1s\">A</p>",count:257))}
         #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"x",count:500)+"</p>")}
         #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"<br/>",count:1024)+"A</p>")}
     }
@@ -92,6 +92,17 @@ struct TTMLTests {
         let scene=try LocalScene(lyrics:gap,audio:audio)
         #expect(scene.renderer.screen.evaluate(Time(1)).lyrics.focus == -1)
         #expect(scene.renderer.screen.evaluate(Time(2)).lyrics.focus==1)
+        // Presentation options are opt-in; defaults insert no gaps and keep the static backdrop and original icons.
+        #expect(scene.renderer.screen.composition.gaps.isEmpty && scene.renderer.screen.background==nil && scene.renderer.icons == .original)
+        let presented=try LocalScene(lyrics:gap,audio:audio,presentation:.init(background:.fitted,icons:.systemSymbols,minimumGap:Time(1,2)))
+        let composition=presented.renderer.screen.composition
+        #expect(composition.gaps.count==1 && composition.gaps[0].begin==Time(1) && composition.gaps[0].end==Time(2))
+        let during=presented.renderer.screen.evaluate(Time(19,10))
+        #expect(during.lyrics.focus == -1 && during.lyrics.gaps[0].state != nil && abs(during.lyrics.gaps[0].translationY)<1)
+        #expect(presented.renderer.screen.evaluate(Time(5,2)).lyrics.focus==1)
+        #expect(presented.renderer.screen.background != nil && presented.renderer.icons == .systemSymbols)
+        let long=try LocalScene(lyrics:gap,audio:audio,presentation:.init(minimumGap:Time(2)))
+        #expect(long.renderer.screen.composition.gaps.isEmpty)
     }
     @Test func fixtureEquivalenceAndResourceBounds() throws {
         let root=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
