@@ -33,4 +33,4 @@ Native 1179×2556 layout uses uniform `contain`; the distinct 1180-pixel referen
 
 ## Resource Bounds
 
-Limits are 64 KiB of LRC, 64 expanded events, 499 UTF-16 units and four supplied/rendered lines per paragraph, 256 MiB of source audio, stereo or mono, and ten minutes of decoded audio. At least one nonempty paragraph is required. Every entry must fit these bounds before export. Already-shaped paragraph masks are cached; only visible paragraphs are rasterized and at most six inactive tile sets are retained. These limits bound this experiment, not the eventual product's capacity.
+Limits are 64 KiB of LRC, 256 expanded events (64 before October 10, 2026), 499 UTF-16 units and four supplied/rendered lines per paragraph, 256 MiB of source audio, stereo or mono, and ten minutes of decoded audio. At least one nonempty paragraph is required. Every entry must fit these bounds before export. Already-shaped paragraph masks are cached; only visible paragraphs are rasterized and at most six inactive tile sets are retained. These limits bound this experiment, not the eventual product's capacity.

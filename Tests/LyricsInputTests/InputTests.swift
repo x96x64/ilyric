@@ -32,7 +32,7 @@ struct InputTests {
         }
         #expect(throws:InputError.self) { try LRCParser.parse(Data([0xff,0xfe])) }
         #expect(throws:InputError.self) { try LRCParser.parse(Data(repeating:65,count:65_537)) }
-        #expect(throws:InputError.self) { try parse((0..<65).map{String(format:"[00:%02d.%03d]A",$0/10,($0%10)*100)}.joined(separator:"\n")) }
+        #expect(throws:InputError.self) { try parse((0..<257).map{String(format:"[%02d:%02d.%03d]A",$0/600,($0/10)%60,($0%10)*100)}.joined(separator:"\n")) }
         #expect(throws:InputError.self) { try parse("[00:00]A\n|B\n|C\n|D\n|E") }
     }
     @Test func durationAndFocusPolicy() throws {

@@ -47,7 +47,7 @@ public struct OutputSchedule: Equatable, Sendable {
     }
 }
 public enum LRCParser {
-    public static let byteLimit=65_536, eventLimit=64
+    public static let byteLimit=65_536, eventLimit=256
     public static func parse(_ data: Data) throws -> LocalLyrics {
         guard data.count<=byteLimit, var text=String(data:data,encoding:.utf8) else { throw InputError.invalid("Lyrics must be valid UTF-8 and no larger than 64 KiB") }
         if text.hasPrefix("\u{FEFF}") { text.removeFirst() }
@@ -75,7 +75,7 @@ public enum LRCParser {
                           let seconds=Int64(ns.substring(with:match.range(at:2))),seconds<60 else { throw InputError.invalid("Timestamp out of range at line \(number)") }
                     let fraction=match.range(at:3).location == NSNotFound ? "" : ns.substring(with:match.range(at:3))
                     let ms=fraction.isEmpty ? 0 : Int64(fraction+String(repeating:"0",count:3-fraction.count))!
-                    guard times.count<eventLimit else { throw InputError.invalid("At most 64 timestamps are supported on one entry") }
+                    guard times.count<eventLimit else { throw InputError.invalid("At most 256 timestamps are supported on one entry") }
                     times.append((minutes*60+seconds)*1000+ms)
                     rest=String(rest[rest.index(after:end)...]);continue
                 }
@@ -106,7 +106,7 @@ public enum LRCParser {
                 let ms=raw+(offset ?? 0)
                 guard (0...600_000).contains(ms) else { throw InputError.invalid("Effective timestamp outside 0–600 seconds at line \(row.line)") }
                 entries.append(.init(time:Time(ms,1000),text:row.text,sourceLine:row.line,suppliedBreaks:row.text.contains("\n")))
-                guard entries.count<=eventLimit else { throw InputError.invalid("At most 64 expanded lyric events are supported") }
+                guard entries.count<=eventLimit else { throw InputError.invalid("At most 256 expanded lyric events are supported") }
             }
         }
         if !zip(entries,entries.dropFirst()).allSatisfy({$0.time<=$1.time}) { diagnostics.append("Sorted out-of-order lyric events") }

@@ -66,13 +66,13 @@ public enum EnhancedLRCParser {
             var rest=line,prefix="",count=0
             while rest.hasPrefix("["),let end=rest.firstIndex(of:"]") {
                 count+=1
-                guard count<=LRCParser.eventLimit else { throw InputError.invalid("At most 64 timestamps are supported on one entry") }
+                guard count<=LRCParser.eventLimit else { throw InputError.invalid("At most 256 timestamps are supported on one entry") }
                 prefix+=rest[...end];rest=String(rest[rest.index(after:end)...])
             }
             if !prefix.isEmpty,!rest.isEmpty {
                 let value=try part(rest,i+1)
                 guard value.segments.isEmpty || count==1 else { throw InputError.invalid("Repeated paragraph timestamps with inline timing are ambiguous at line \(i+1)") }
-                guard rows.count<LRCParser.eventLimit else { throw InputError.invalid("At most 64 expanded lyric events are supported") }
+                guard rows.count<LRCParser.eventLimit else { throw InputError.invalid("At most 256 expanded lyric events are supported") }
                 rows.append(.init(line:i+1,parts:[value]));parent=rows.count-1
                 lines.append(prefix+value.text)
             } else { lines.append(line) }

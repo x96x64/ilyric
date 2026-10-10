@@ -153,7 +153,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
         }
         let body=try single(root,"body"),div=try single(body,"div")
         let bounds=try interval(div,interval(body,(Time(0),Time(600)),required:false),required:false)
-        guard (1...64).contains(div.children.count) else {throw InputError.invalid("TTML requires 1–64 paragraphs or gaps")}
+        guard (1...256).contains(div.children.count) else {throw InputError.invalid("TTML requires 1–256 paragraphs or gaps")}
         var entries:[LyricEntry]=[],total=0
         for p in div.children {
             let range=try interval(p,bounds,required:true)

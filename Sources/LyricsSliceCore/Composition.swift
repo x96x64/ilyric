@@ -60,13 +60,13 @@ public struct LyricsComposition: Sendable {
     private let segments: [FocusSegment]
     public init(paragraphs: [CompositionParagraph], events: [FocusEvent], clocks: [PlaybackAnchor] = [.init(output:Time(0),media:Time(0),running:true)], tau: Double = 0.081,
                 gaps: [CompositionGap] = []) throws {
-        guard (1...64).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
+        guard (1...256).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
               Set(events.map(\.order)).count==events.count, !events.isEmpty,
               !clocks.isEmpty, clocks[0].output==Time(0),
               zip(clocks,clocks.dropFirst()).allSatisfy({$0.output<$1.output}),
               events.allSatisfy({$0.time>=Time(0) && ($0.paragraph == -1 || paragraphs.indices.contains($0.paragraph))}),
               events.allSatisfy({ $0.gap.map { gaps.indices.contains($0) } ?? true }),
-              gaps.count<=64, gaps.allSatisfy({ $0.begin<$0.end && $0.position.isFinite }),
+              gaps.count<=256, gaps.allSatisfy({ $0.begin<$0.end && $0.position.isFinite }),
               Set(paragraphs.map(\.position)+gaps.map(\.position)).count==paragraphs.count+gaps.count else { throw SliceError.invalid("Composition event constraints") }
         for p in paragraphs { try p.input.validate() }
         guard paragraphs.allSatisfy({ $0.input.canvasWidth==paragraphs[0].input.canvasWidth && $0.begin<$0.end && $0.position.isFinite }),
