@@ -17,10 +17,12 @@ public struct LocalPresentation: Sendable {
     public var stagger: FocusStagger
     /// Header scrolling for labels that overflow; nil keeps the labels static and clipped.
     public var marquee: TitleMarquee?
+    /// Soft fill, lift, and emphasis of supplied Latin word timing; nil keeps the hard wipe.
+    public var wordMotion: WordMotion?
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
-                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil) {
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil) {
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
-        self.marquee=marquee
+        self.marquee=marquee;self.wordMotion=wordMotion
     }
     /// Reference-measured presentation: 0.30-second focus lead and staggered motion (docs/lyrics-motion-timing.md).
     public static let measuredMotion = (focusLead: Time(3,10), stagger: FocusStagger.measured)
@@ -52,7 +54,7 @@ public final class LocalScene {
             let japanese=entry.text.unicodeScalars.contains { (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value) || (0xff66...0xff9d).contains($0.value) }
             let timed=entry.segments.map { AppearanceEvent(start:$0.start,length:$0.length,
                 begin:SliceTime($0.begin.numerator,$0.begin.denominator),end:SliceTime($0.end.numerator,$0.end.denominator),verticalEvent:nil) }
-            let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed)
+            let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed,motion:presentation.wordMotion)
             // Validate supplied cluster boundaries even when their visualization is disabled.
             if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
             let input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)

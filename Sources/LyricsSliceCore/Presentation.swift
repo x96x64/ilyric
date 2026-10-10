@@ -43,6 +43,47 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
         return v*v*(3-2*v)
     }
 }
+/// Latin word-fill motion for supplied word timing; nil keeps the original hard wipe without motion.
+/// Constants are fitted to one reference capture (docs/reference-clock-and-word-motion.md).
+public struct WordMotion: Codable, Equatable, Sendable {
+    /// Width, in pixels, of the linear ramp between filled and unfilled ink.
+    public var edge: Double
+    /// Upward offset, in pixels, that a word approaches once its interval begins.
+    public var lift: Double
+    /// Time constant, in seconds, of the critically damped lift response.
+    public var liftTime: Double
+    /// Words lasting at least this long, in seconds, receive emphasis.
+    public var emphasisDuration: Double
+    /// Peak scale, additional lift in pixels, and glow opacity of an emphasized word.
+    public var emphasisScale, emphasisLift, emphasisGlow: Double
+    /// Glow blur radius in pixels and emphasis release time constant in seconds.
+    public var glowRadius, release: Double
+    public init(edge: Double, lift: Double, liftTime: Double, emphasisDuration: Double, emphasisScale: Double,
+                emphasisLift: Double, emphasisGlow: Double, glowRadius: Double, release: Double) throws {
+        guard [edge,lift,liftTime,emphasisDuration,emphasisScale,emphasisLift,emphasisGlow,glowRadius,release].allSatisfy(\.isFinite),
+              (0...200).contains(edge), (0...20).contains(lift), (0.01...2).contains(liftTime), emphasisDuration>0,
+              (1...1.3).contains(emphasisScale), (0...40).contains(emphasisLift), (0...1).contains(emphasisGlow),
+              (0...60).contains(glowRadius), (0.01...3).contains(release) else { throw SliceError.invalid("Word motion") }
+        self.edge=edge;self.lift=lift;self.liftTime=liftTime;self.emphasisDuration=emphasisDuration;self.emphasisScale=emphasisScale
+        self.emphasisLift=emphasisLift;self.emphasisGlow=emphasisGlow;self.glowRadius=glowRadius;self.release=release
+    }
+    /// Fitted to V17 (iPhone 16, reported iOS 27.0.1): 1,783 fill events for lift, one sustained word for emphasis.
+    public static let measured = try! WordMotion(edge:30,lift:3.5,liftTime:0.17,emphasisDuration:1.0,emphasisScale:1.05,
+        emphasisLift:8.5,emphasisGlow:0.5,glowRadius:18,release:0.3)
+    /// Emphasis strength in [0, 1]: rises over the word's interval and decays after it.
+    public func emphasis(begin: Double, end: Double, at t: Double) -> Double {
+        guard end-begin>=emphasisDuration, t>begin else { return 0 }
+        let rise={ (u: Double) -> Double in let v=min(1,max(0,u)); return v*v*(3-2*v) }
+        if t<=end { return rise((t-begin)/(end-begin)) }
+        return exp(-(t-end)/release)
+    }
+    /// Critically damped approach to the lift from the word's beginning; continuous at the beginning.
+    public func liftOffset(begin: Double, at t: Double) -> Double {
+        guard t>begin else { return 0 }
+        let u=(t-begin)/liftTime
+        return lift*(1-(1+u)*exp(-u))
+    }
+}
 /// Static styles do not infer fine-grained timing from line-level inputs.
 public enum ParagraphStyle: String, Codable, Sendable { case latinStatic, japaneseStatic, latinTimed, japaneseTimed
     public var timed: Bool { self == .latinTimed || self == .japaneseTimed } }
@@ -54,13 +95,17 @@ public struct SliceInput: Codable, Sendable {
     public let parameters: SliceParameters
     public let appearance: SoftAppearance?
     public let events: [AppearanceEvent]
-    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil, breakEvidence: String = "observed-structure-source-semantics-unknown") {
+    /// Applies only to Latin paragraphs with supplied timing.
+    public let motion: WordMotion?
+    public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil, breakEvidence: String = "observed-structure-source-semantics-unknown", motion: WordMotion? = nil) {
         self.text = text; self.canvasWidth = canvasWidth; self.breakEvidence = breakEvidence
         self.parameters = parameters; self.events = events; self.appearance = appearance; self.paragraphStyle = paragraphStyle
+        self.motion = motion
     }
     public func validate() throws {
         let p = parameters
         try appearance?.validate()
+        guard motion == nil || paragraphStyle == .latinTimed else { throw SliceError.invalid("Word motion requires supplied Latin timing") }
         let count = text.split(separator:"\n",omittingEmptySubsequences:false).count
         let structureValid = paragraphStyle != nil ? (1...4).contains(count) : count == 2
         if let style=paragraphStyle,style.timed {
@@ -107,8 +152,15 @@ public struct SliceInput: Codable, Sendable {
             } else { progress = 0; phase = nil }
             let age = e.verticalEvent.map { (time-Time($0.numerator,$0.denominator)).seconds }
             let u = max(0,age ?? 0)/p.tau
+            var displacement=p.amplitude*(1+u)*exp(-u),scale=1.0,glow=0.0
+            if let motion,let begin=e.begin,let end=e.end {
+                let a=Time(begin.numerator,begin.denominator).seconds,b=Time(end.numerator,end.denominator).seconds,t=time.seconds
+                let k=motion.emphasis(begin:a,end:b,at:t)
+                displacement -= motion.liftOffset(begin:a,at:t)+motion.emphasisLift*k
+                scale=1+(motion.emphasisScale-1)*k;glow=motion.emphasisGlow*k
+            }
             return SpanPresentation(start:e.start,length:e.length,progress:progress,
-                displacement:p.amplitude*(1+u)*exp(-u),phase:phase)
+                displacement:displacement,phase:phase,scale:scale,glow:glow)
         }
         return SliceSnapshot(time:time,spans:states)
     }
@@ -127,11 +179,11 @@ public struct SliceInput: Codable, Sendable {
             breakEvidence:"supplied-explicit-structure")
     }
     /// Supplied segment intervals; the appearance mapping is a synthetic visualization.
-    public static func suppliedTimed(text:String,japanese:Bool,events:[AppearanceEvent]) -> SliceInput {
+    public static func suppliedTimed(text:String,japanese:Bool,events:[AppearanceEvent],motion:WordMotion?=nil) -> SliceInput {
         var p=supplied(text:text,japanese:japanese).parameters;p.dimOpacity=0.42
         var soft=SoftAppearance();soft.intervalScale=1;soft.softness=0.25;soft.completedOpacity=1
         return SliceInput(text:text,parameters:p,events:events,appearance:japanese ? soft : nil,
-            paragraphStyle:japanese ? .japaneseTimed : .latinTimed,breakEvidence:"supplied-explicit-structure")
+            paragraphStyle:japanese ? .japaneseTimed : .latinTimed,breakEvidence:"supplied-explicit-structure",motion:japanese ? nil : motion)
     }
     /// Original synthetic text and timings, independent of commercial references.
     public static func synthetic(canvasWidth: Int = 1179, softened: Bool = false) -> SliceInput {
@@ -156,6 +208,8 @@ public struct SpanPresentation: Equatable, Codable, Sendable {
     public let start, length: Int
     public let progress, displacement: Double
     public let phase: Double?
+    /// Word emphasis about the word's ink center, and glow opacity; 1 and 0 without word motion.
+    public var scale = 1.0, glow = 0.0
 }
 public struct SliceSnapshot: Equatable, Sendable {
     public let time: Time

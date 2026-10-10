@@ -173,6 +173,9 @@ public final class SliceParagraph {
                     decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
                 context.draw(image,in:rect);continue
             }
+            if !coverage, let motion = input.motion {
+                drawMoving(layer,span,motion,top:p.originY+Double(layer.line)*p.lineAdvance+span.displacement,into:context);continue
+            }
             if coverage || span.progress >= 1 { context.draw(layer.image,in:rect);continue }
             if span.progress <= 0 {
                 context.saveGState();context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState();continue
@@ -186,6 +189,33 @@ public final class SliceParagraph {
             context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState()
         }
         return context.makeImage()!
+    }
+    /// Soft-edged fill, continuous lift, emphasis scale about the ink center, and glow behind filled ink.
+    private func drawMoving(_ layer:Layer,_ span:SpanPresentation,_ motion:WordMotion,top:Double,into context:CGContext) {
+        let p=input.parameters,width=Double(layer.image.width),height=Double(maskHeight)
+        let base=CGRect(x:p.originX+layer.rasterX,y:2556-top-height,width:width,height:height)
+        // Scale about the ink center so neighboring words keep their positions.
+        let rect=CGRect(x:base.midX-width*span.scale/2,y:base.midY-height*span.scale/2,width:width*span.scale,height:height*span.scale)
+        // The ramp starts fully before the word and ends fully after it, so endpoints are exact.
+        let front=span.progress<=0 ? -Double.infinity : span.progress>=1 ? Double.infinity :
+            -motion.edge/2+span.progress*(layer.totalAdvance+motion.edge)-layer.precedingAdvance
+        let bytes=(0..<layer.image.width).map { x -> UInt8 in
+            let position=layer.rasterX+Double(x)+0.5-layer.left
+            let m=motion.edge>0 ? min(1,max(0,(front-position)/motion.edge+0.5)) : (position<front ? 1:0)
+            return UInt8((m*255).rounded())
+        }
+        context.saveGState();context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState()
+        guard bytes.contains(where:{$0>0}) else { return }
+        let mask=CGImage(width:layer.image.width,height:1,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:layer.image.width,
+            space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:true,intent:.defaultIntent)!
+        if span.glow>0 && motion.glowRadius>0 {
+            // Draw only the shadow: the glyphs land outside the canvas and the shadow is offset back.
+            let away=Double(input.canvasWidth)*4
+            context.saveGState();context.setShadow(offset:CGSize(width:-away,height:0),blur:motion.glowRadius,
+                color:CGColor(gray:1,alpha:span.glow*span.progress))
+            context.draw(layer.image,in:rect.offsetBy(dx:away,dy:0));context.restoreGState()
+        }
+        context.saveGState();context.clip(to:rect,mask:mask);context.draw(layer.image,in:rect);context.restoreGState()
     }
     public func raw(_ time:Time, coverage:Bool = false) throws -> Data {
         let image = try render(input.evaluate(time),coverage:coverage)
