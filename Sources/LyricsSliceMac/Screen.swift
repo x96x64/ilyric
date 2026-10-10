@@ -16,11 +16,27 @@ public final class ScreenRenderer {
     private let diagnosticMarkers, calibratedInactive, boundedCache: Bool
     private let title: CTLine
     private let artist: CTLine
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original) throws {
-        self.icons=icons
+    /// Optional measured header scrolling; nil keeps both labels static and clipped.
+    public let marquee: TitleMarquee?
+    private let marqueeMask: CGImage?
+    private let scrollingParts: Set<ScreenPart>
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil) throws {
+        self.icons=icons;self.marquee=marquee
+        if let marquee {
+            let width=Int((marquee.clipMaxX-marquee.clipMinX).rounded())
+            let bytes=(0..<width).map { UInt8((marquee.opacity(at:marquee.clipMinX+Double($0)+0.5)*255).rounded()) }
+            marqueeMask=CGImage(width:width,height:1,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:width,
+                space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
+        } else { marqueeMask=nil }
         self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
         self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
-        title=Self.line(screen.title,size:51,bold:true); artist=Self.line(screen.artist,size:49,bold:false)
+        let titleLine=Self.line(screen.title,size:51,bold:true),artistLine=Self.line(screen.artist,size:49,bold:false)
+        title=titleLine; artist=artistLine
+        let probe=Self.context(1,1),header=screen.evaluate(Time(0)).components
+        scrollingParts=Set(header.compactMap { part in
+            guard let marquee,let line=part.part == .title ? titleLine : part.part == .artist ? artistLine : nil else { return nil }
+            return marquee.overflows(origin:part.bounds.x,inkWidth:CTLineGetImageBounds(line,probe).width) ? part.part : nil
+        })
         // Palette shared by the original artwork and background; no source artwork.
         let colors=[CGColor(srgbRed:0.12,green:0.21,blue:0.25,alpha:1),CGColor(srgbRed:0.29,green:0.23,blue:0.35,alpha:1),CGColor(srgbRed:0.16,green:0.12,blue:0.24,alpha:1)]
         let bg=Self.context(screen.composition.canvasWidth,2556)
@@ -68,6 +84,17 @@ public final class ScreenRenderer {
         let bounds=CTLineGetImageBounds(line,c)
         c.textPosition=CGPoint(x:(right ? b.x+b.width-bounds.width : b.x)-bounds.minX,y:2556-b.y-bounds.maxY)
         CTLineDraw(line,c);c.restoreGState()
+    }
+    /// Two copies separated by the measured gap, clipped to the measured header span with edge fades.
+    private func scroll(_ line:CTLine,_ b:ScreenBounds,_ c:CGContext,seconds:Double,alpha:Double=1) {
+        guard let marquee,let marqueeMask else { return }
+        c.saveGState();c.setAlpha(alpha);c.textMatrix = .identity;c.textPosition = .zero
+        let bounds=CTLineGetImageBounds(line,c),offset=marquee.offset(at:seconds,origin:b.x,inkWidth:bounds.width)
+        let r=rect(b);c.clip(to:CGRect(x:marquee.clipMinX,y:r.minY,width:marquee.clipMaxX-marquee.clipMinX,height:r.height),mask:marqueeMask)
+        for copy in [0.0,bounds.width+marquee.gap] {
+            c.textPosition=CGPoint(x:b.x-offset+copy-bounds.minX,y:2556-b.y-bounds.maxY);CTLineDraw(line,c)
+        }
+        c.restoreGState()
     }
     public func lyricLayer(_ state:CompositionSnapshot) throws -> CGImage {
         let w=screen.composition.canvasWidth,c=Self.context(w,2556),v=LyricsScreen.viewport
@@ -121,7 +148,9 @@ public final class ScreenRenderer {
                 try symbols.draw(symbol,canvasHeight:2556,into:c);continue
             }
             c.saveGState();let r=rect(part.bounds)
-            if part.clips { c.clip(to:r) }
+            let label=part.part == .title ? title : part.part == .artist ? artist : nil
+            let scrolling=scrollingParts.contains(part.part)
+            if part.clips && !scrolling { c.clip(to:r) }
             c.setFillColor(CGColor(gray:1,alpha:0.9));c.setStrokeColor(CGColor(gray:1,alpha:0.85));c.setLineWidth(5)
             switch part.part {
             case .background:
@@ -130,8 +159,10 @@ public final class ScreenRenderer {
             case .lyrics: c.draw(try lyricLayer(state.lyrics),in:CGRect(x:0,y:0,width:screen.composition.canvasWidth,height:2556))
             case .artwork:
                 c.addPath(CGPath(roundedRect:r,cornerWidth:14,cornerHeight:14,transform:nil));c.clip();c.draw(artwork,in:r)
-            case .title: ink(title,part.bounds,c)
-            case .artist: ink(artist,part.bounds,c,alpha:0.6)
+            case .title,.artist:
+                let alpha=part.part == .title ? 1:0.6
+                if scrolling { scroll(label!,part.bounds,c,seconds:state.lyrics.output.seconds,alpha:alpha) }
+                else { ink(label!,part.bounds,c,alpha:alpha) }
             case .handle: rounded(r,6,c,alpha:0.4)
             case .progress,.volume:
                 rounded(r,r.height/2,c,alpha:0.22)

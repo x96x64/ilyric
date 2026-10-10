@@ -15,9 +15,12 @@ public struct LocalPresentation: Sendable {
     /// Focus moves to a line this long before its supplied onset; highlighting keeps the supplied timing.
     public var focusLead: Time
     public var stagger: FocusStagger
+    /// Header scrolling for labels that overflow; nil keeps the labels static and clipped.
+    public var marquee: TitleMarquee?
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
-                focusLead: Time = Time(0), stagger: FocusStagger = .rigid) {
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil) {
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
+        self.marquee=marquee
     }
     /// Reference-measured presentation: 0.30-second focus lead and staggered motion (docs/lyrics-motion-timing.md).
     public static let measuredMotion = (focusLead: Time(3,10), stagger: FocusStagger.measured)
@@ -72,6 +75,6 @@ public final class LocalScene {
             sing:SingControl(rawValue:v?.sing ?? "hidden")!)
         let screen=try LyricsScreen(composition:composition,title:project?.title ?? "Local Lyrics",artist:project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:LyricsScreen.referenceVolume,
             events:[.init(Time(0),order:0,controls:controls)],visibility:visibility,background:presentation.background)
-        renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons)
+        renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee)
     }
 }
