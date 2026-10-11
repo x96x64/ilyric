@@ -156,14 +156,16 @@ public final class ScreenRenderer {
         for (k,line) in lines.enumerated() {
             let baseline=p.originY+(count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset+Double(k)*p.lineAdvance*SecondaryLine.sizeRatio
             let y=2556-baseline,x=p.originX
-            c.setAlpha(weight*0.42);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
+            c.setAlpha(weight*SecondaryLine.unfilledOpacity);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
             let local=front-preceding
             if local>0 {
                 let w=Int(ceil(widths[k]))+2,bytes=(0..<w).map { UInt8((min(1,max(0,(local-Double($0)-0.5)/edge+0.5))*255).rounded()) }
                 let mask=CGImage(width:w,height:1,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:w,space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],
                     provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:true,intent:.defaultIntent)!
                 c.saveGState();c.clip(to:CGRect(x:x,y:y-p.size,width:Double(w),height:p.size*2),mask:mask)
-                c.setAlpha(weight);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c);c.restoreGState()
+                // Filled ink composites over the unfilled ink, so its own alpha completes the measured opacity.
+                c.setAlpha(weight*(SecondaryLine.filledOpacity-SecondaryLine.unfilledOpacity)/(1-SecondaryLine.unfilledOpacity))
+                c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c);c.restoreGState()
             }
             preceding+=widths[k]
         }

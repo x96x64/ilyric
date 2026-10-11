@@ -10,6 +10,9 @@ public struct SecondaryLine: Equatable, Sendable {
     public static let sizeRatio = 0.652
     /// First secondary baseline below the paragraph's last baseline, in native pixels.
     public static let baselineOffset = 138.0
+    /// Opacity of filled and unfilled background-vocal ink relative to white; the native secondary line never
+    /// reaches the main line's full white.
+    public static let filledOpacity = 0.70, unfilledOpacity = 0.45
     /// Extra layout space reserved below a paragraph for its first secondary line, beyond the usual spacing.
     public static let firstLineSpace = 56.0
     public init(text: String, begin: Time, end: Time) throws {
