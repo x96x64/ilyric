@@ -2,7 +2,8 @@ import Foundation
 
 /// Untimed lyrics as people write them, normalized for alignment (docs/command-line-interface.md): section labels
 /// are dropped, parenthesized phrases become background vocals, lines without letters are dropped, whitespace is
-/// collapsed, and paragraphs are split evenly into at most four lines and fewer than 500 UTF-16 units.
+/// collapsed, apostrophe variants become ’, and paragraphs are split evenly into at most four lines and fewer than
+/// 500 UTF-16 units.
 public struct NormalizedLyrics: Equatable, Sendable {
     /// Text for `LyricSource`: paragraphs separated by blank lines.
     public let text: String
@@ -17,7 +18,9 @@ public struct NormalizedLyrics: Equatable, Sendable {
         let label=try! NSRegularExpression(pattern:"^\\s*\\[[^\\]]*\\]\\s*$")
         var paragraphs=[[String]](),current=[String](),background=[Int:String](),dropped=[String](),count=0
         func flush() { if !current.isEmpty { paragraphs.append(current);current=[] } }
-        let body=raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw
+        // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
+        var body=raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw
+        for variant in ["\u{02BC}","\u{2018}","\u{0060}","\u{00B4}","\u{FF07}"] { body=body.replacingOccurrences(of:variant,with:"\u{2019}") }
         for line in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n") {
             let ns=line as NSString,range=NSRange(location:0,length:ns.length)
             if line.trimmingCharacters(in:.whitespaces).isEmpty { flush();continue }

@@ -28,4 +28,9 @@ struct LyricsTextTests {
         let n=NormalizedLyrics("(intro hum)\nFirst line")
         #expect(n.text=="First line\n" && n.background.isEmpty && n.dropped.count==1)
     }
+    @Test func apostropheVariantsBecomeAlignable() throws {
+        let n=NormalizedLyrics("You\u{02BC}ll be fine\nDon\u{2018}t you go")
+        #expect(n.text=="You\u{2019}ll be fine\nDon\u{2019}t you go\n")
+        #expect(try textTargets(LyricSource(Data(n.text.utf8))).tokens.filter { $0=="'" }.count==2)
+    }
 }
