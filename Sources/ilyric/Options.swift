@@ -1,0 +1,56 @@
+import Foundation
+
+/// A usage error: reported with the command's usage and exit status 2.
+struct UsageError: Error { let message: String }
+/// A runtime failure: reported with its recovery step and exit status 1.
+struct Failure: Error { let message: String }
+
+/// Parsed command-line arguments of one subcommand: positional operands, flags, and option values.
+struct Options {
+    var operands=[String](),flags=Set<String>(),values=[String:String]()
+
+    /// `valued` and `flags` list long names; `short` maps single letters to long names.
+    init(_ arguments: ArraySlice<String>, valued: Set<String>, flags known: Set<String>, short: [Character:String]) throws {
+        var rest=arguments[...]
+        while let argument=rest.popFirst() {
+            if argument=="--" { operands+=rest;break }
+            var name:String,inline:String?=nil
+            if argument.hasPrefix("--") {
+                let body=argument.dropFirst(2)
+                if let eq=body.firstIndex(of:"=") { name=String(body[..<eq]);inline=String(body[body.index(after:eq)...]) } else { name=String(body) }
+            } else if argument.hasPrefix("-"),argument.count>1,argument != "-" {
+                let letter=argument[argument.index(after:argument.startIndex)]
+                guard let long=short[letter] else { throw UsageError(message:"unknown option '\(argument)'") }
+                name=long
+                if argument.count>2 { inline=String(argument.dropFirst(2)) }
+            } else { operands.append(argument);continue }
+            if valued.contains(name) {
+                guard let value=inline ?? rest.popFirst() else { throw UsageError(message:"option '--\(name)' requires a value") }
+                values[name]=value
+            } else if known.contains(name) {
+                guard inline==nil else { throw UsageError(message:"option '--\(name)' takes no value") }
+                flags.insert(name)
+            } else { throw UsageError(message:"unknown option '\(argument)'") }
+        }
+    }
+    func has(_ flag: String) -> Bool { flags.contains(flag) }
+}
+
+/// Progress on standard error, silenced by `--quiet`; details only with `--verbose`.
+struct Console {
+    let quiet, verbose: Bool
+    func say(_ s: String) { if !quiet { FileHandle.standardError.write(Data((s+"\n").utf8)) } }
+    func detail(_ s: String) { if verbose { FileHandle.standardError.write(Data((s+"\n").utf8)) } }
+}
+
+/// Elapsed time as "1 min 05 s" or "8.2 s".
+func elapsed(_ seconds: Double) -> String {
+    seconds<60 ? String(format:"%.1f s",seconds) : String(format:"%d min %02d s",Int(seconds)/60,Int(seconds)%60)
+}
+
+/// Refuses to replace an existing output unless `--force` was given.
+func checkOutput(_ path: String, force: Bool) throws -> URL {
+    let url=URL(fileURLWithPath:path)
+    if FileManager.default.fileExists(atPath:url.path),!force { throw Failure(message:"\(path) already exists; pass --force to replace it") }
+    return url
+}

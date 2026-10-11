@@ -16,11 +16,21 @@ enum CLI {
 }
 
 let arguments=Array(CommandLine.arguments.dropFirst())
-switch arguments.first {
-case nil,"-h","--help","help":
-    print(CLI.usage)
-case "-V","--version":
-    print("ilyric \(CLI.version)")
-default:
-    FileHandle.standardError.write(Data("ilyric: unknown command '\(arguments[0])'\n\n\(CLI.usage)\n".utf8));exit(2)
+func fail(_ message: String, status: Int32) -> Never {
+    FileHandle.standardError.write(Data("ilyric: \(message)\n".utf8));exit(status)
+}
+do {
+    switch arguments.first {
+    case nil,"-h","--help","help": print(CLI.usage)
+    case "-V","--version": print("ilyric \(CLI.version)")
+    case "align": try await Align.command(arguments.dropFirst())
+    case "models": try await Models.run(arguments.dropFirst())
+    default: throw UsageError(message:"unknown command '\(arguments[0])'")
+    }
+} catch let error as UsageError {
+    fail("\(error.message)\n\n\(CLI.usage)",status:2)
+} catch let error as Failure {
+    fail(error.message,status:1)
+} catch {
+    fail("\(error)",status:1)
 }
