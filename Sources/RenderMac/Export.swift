@@ -20,9 +20,17 @@ public struct ExportMetrics: Codable {
 private final class BatchTargets: @unchecked Sendable {
     let targets: [(UnsafeMutableRawPointer?, Int)]
     let failures: UnsafeMutableBufferPointer<String?>
+    private let lock = NSLock()
+    private var next = 0
     init(_ targets: [(UnsafeMutableRawPointer?, Int)], workers: Int) {
         self.targets = targets
         failures = .allocate(capacity: workers); failures.initialize(repeating: nil)
+    }
+    /// The next unclaimed frame of the batch; workers on faster cores simply claim more frames.
+    func claim() -> Int? {
+        lock.lock(); defer { lock.unlock() }
+        guard next < targets.count else { return nil }
+        next += 1; return next - 1
     }
     deinit { failures.deallocate() }
 }
@@ -45,8 +53,8 @@ public enum Exporter {
         try await video(width:width,height:height,to:url,frames:frames,workers:[draw],audioSample:audioSample)
     }
     /// Parallel rasterization: each worker closure owns its renderer and is never called concurrently with
-    /// itself. Within a batch, worker w draws frames w, w+W, ...; frames are appended strictly in order,
-    /// and every frame remains a pure function of its time.
+    /// itself. Workers claim the batch's frames one at a time, so faster cores render more of them; frames
+    /// are appended strictly in order, and every frame remains a pure function of its time.
     @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
         workers draws: [(Time, CGContext) throws -> Void],
         audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
@@ -126,8 +134,7 @@ public enum Exporter {
                 let shared = BatchTargets(buffers.map { (CVPixelBufferGetBaseAddress($0), CVPixelBufferGetBytesPerRow($0)) }, workers: count)
                 let base = first
                 DispatchQueue.concurrentPerform(iterations: count) { w in
-                    var k = w
-                    while k < n {
+                    while let k = shared.claim() {
                         autoreleasepool {
                             do {
                                 let ctx = try context(width: width, height: height, data: shared.targets[k].0, rowBytes: shared.targets[k].1)
@@ -135,7 +142,6 @@ public enum Exporter {
                             } catch { shared.failures[w] = String(describing: error) }
                         }
                         if shared.failures[w] != nil { return }
-                        k += count
                     }
                 }
                 for buffer in buffers { CVPixelBufferUnlockBaseAddress(buffer, []) }

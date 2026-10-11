@@ -65,4 +65,19 @@ struct SmoothnessTests {
         #expect(throws:SliceError.self) { try SecondaryLine(text:"",begin:Time(0),end:Time(1)) }
         #expect(try SecondaryLine(text:"a",begin:Time(1),end:Time(3)).progress(at:Time(2))==0.5)
     }
+    @Test func gpuDownscaleMatchesCoreGraphicsClosely() throws {
+        let screen=try LyricsScreen.synthetic(),cpu=try ScreenRenderer(screen,diagnosticMarkers:false),gpu=try ScreenRenderer(screen,diagnosticMarkers:false)
+        gpu.enableGPUScaling()
+        guard gpu.usesGPUScaling else { return }   // No Metal device: the CPU path is used.
+        func frame(_ r:ScreenRenderer) throws -> [UInt8] {
+            let c=CGContext(data:nil,width:1080,height:1920,bitsPerComponent:8,bytesPerRow:1080*4,space:CGColorSpace(name:CGColorSpace.itur_709)!,
+                            bitmapInfo:CGBitmapInfo.byteOrder32Little.rawValue|CGImageAlphaInfo.premultipliedFirst.rawValue)!
+            try r.draw(Time(3,2),into:c);return [UInt8](Data(bytes:c.data!,count:1080*1920*4))
+        }
+        let a=try frame(cpu),b=try frame(gpu)
+        let diffs=zip(a,b).map { abs(Int($0)-Int($1)) }
+        let mean=Double(diffs.reduce(0,+))/Double(diffs.count)
+        #expect(mean<1.0 && diffs.max()!<=64)
+        #expect(try frame(gpu)==b)
+    }
 }
