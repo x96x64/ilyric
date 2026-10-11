@@ -1,0 +1,44 @@
+name: Release Assets
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build assets for
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Build and Attach Packages
+    runs-on: macos-latest
+    timeout-minutes: 60
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ env.TAG }}
+      - name: Report toolchain
+        run: |
+          sw_vers
+          swift --version
+      - name: Build release binary
+        run: swift build -c release --product ilyric
+      - name: Check version
+        run: test "$(.build/release/ilyric --version)" = "ilyric ${TAG#v}"
+      - name: Package
+        # Packaging scripts come from main, so that tags created before packaging existed can be built.
+        run: |
+          git fetch origin main --depth 1
+          mkdir -p packaging/npm
+          for f in packaging/package.sh packaging/build_wheel.py packaging/npm/package.json; do git show origin/main:$f > $f; done
+          sh packaging/package.sh "${TAG#v}" .build/release/ilyric dist
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" dist/* --clobber
