@@ -15,6 +15,18 @@ public struct ExportMetrics: Codable {
     public let finishSeconds: Double
 }
 
+/// Pixel destinations and per-worker failure slots for one batch. Each worker writes only its own
+/// slot and its own frames, so concurrent access never overlaps.
+private final class BatchTargets: @unchecked Sendable {
+    let targets: [(UnsafeMutableRawPointer?, Int)]
+    let failures: UnsafeMutableBufferPointer<String?>
+    init(_ targets: [(UnsafeMutableRawPointer?, Int)], workers: Int) {
+        self.targets = targets
+        failures = .allocate(capacity: workers); failures.initialize(repeating: nil)
+    }
+    deinit { failures.deallocate() }
+}
+
 /// SDK-specific writer compatibility path, isolated from timeline and raster code.
 /// The adaptor supports macOS 14; migration to receiver APIs is a later backend decision.
 public enum Exporter {
@@ -30,6 +42,15 @@ public enum Exporter {
     @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
         draw: @escaping (Time, CGContext) throws -> Void,
         audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
+        try await video(width:width,height:height,to:url,frames:frames,workers:[draw],audioSample:audioSample)
+    }
+    /// Parallel rasterization: each worker closure owns its renderer and is never called concurrently with
+    /// itself. Within a batch, worker w draws frames w, w+W, ...; frames are appended strictly in order,
+    /// and every frame remains a pure function of its time.
+    @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
+        workers draws: [(Time, CGContext) throws -> Void],
+        audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
+        guard !draws.isEmpty else { throw SpikeError.failure("At least one frame worker is required") }
         guard frames > 0, !FileManager.default.fileExists(atPath: url.path) else { throw SpikeError.failure("Invalid frame count or existing output") }
         let temporary = url.deletingLastPathComponent().appendingPathComponent(".\(UUID().uuidString).mp4")
         defer { try? FileManager.default.removeItem(at: temporary) }
@@ -73,12 +94,13 @@ public enum Exporter {
         }
         @MainActor @Sendable func feedVideo() async throws -> (Double, Double, Double) {
             var raster = 0.0, append = 0.0, wait = 0.0
-            for frame in 0..<frames {
-                let waiting = Date()
-                try await ready(true)
-                wait += Date().timeIntervalSince(waiting)
-                try autoreleasepool {
-                    guard let pool = adaptor.pixelBufferPool else { throw SpikeError.failure("Missing pixel buffer pool") }
+            let count = draws.count, batch = count * 4
+            var first = 0
+            while first < frames {
+                let n = min(batch, frames - first)
+                guard let pool = adaptor.pixelBufferPool else { throw SpikeError.failure("Missing pixel buffer pool") }
+                var buffers: [CVPixelBuffer] = []
+                for _ in 0..<n {
                     var value: CVPixelBuffer?
                     guard CVPixelBufferPoolCreatePixelBuffer(nil, pool, &value) == kCVReturnSuccess, let buffer = value else {
                         throw SpikeError.failure("Pixel buffer allocation failed")
@@ -88,22 +110,38 @@ public enum Exporter {
                     CVBufferSetAttachment(buffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, .shouldPropagate)
                     CVBufferSetAttachment(buffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, .shouldPropagate)
                     CVPixelBufferLockBaseAddress(buffer, [])
-                    let began = Date()
-                    do {
-                        let ctx = try context(width: width, height: height,
-                                              data: CVPixelBufferGetBaseAddress(buffer), rowBytes: CVPixelBufferGetBytesPerRow(buffer))
-                        try draw(.frame(Int64(frame)),ctx)
-                    } catch {
-                        CVPixelBufferUnlockBaseAddress(buffer, []); throw error
+                    buffers.append(buffer)
+                }
+                let began = Date()
+                let shared = BatchTargets(buffers.map { (CVPixelBufferGetBaseAddress($0), CVPixelBufferGetBytesPerRow($0)) }, workers: count)
+                let base = first
+                DispatchQueue.concurrentPerform(iterations: count) { w in
+                    var k = w
+                    while k < n {
+                        autoreleasepool {
+                            do {
+                                let ctx = try context(width: width, height: height, data: shared.targets[k].0, rowBytes: shared.targets[k].1)
+                                try draws[w](.frame(Int64(base + k)), ctx)
+                            } catch { shared.failures[w] = String(describing: error) }
+                        }
+                        if shared.failures[w] != nil { return }
+                        k += count
                     }
-                    CVPixelBufferUnlockBaseAddress(buffer, [])
-                    raster += Date().timeIntervalSince(began)
+                }
+                for buffer in buffers { CVPixelBufferUnlockBaseAddress(buffer, []) }
+                if let failure = shared.failures.compactMap({ $0 }).first { throw SpikeError.failure("Frame rendering failed: \(failure)") }
+                raster += Date().timeIntervalSince(began)
+                for (k, buffer) in buffers.enumerated() {
+                    let waiting = Date()
+                    try await ready(true)
+                    wait += Date().timeIntervalSince(waiting)
                     let writing = Date()
-                    guard adaptor.append(buffer, withPresentationTime: CMTime(value: Int64(frame), timescale: 60)) else {
+                    guard adaptor.append(buffer, withPresentationTime: CMTime(value: Int64(first + k), timescale: 60)) else {
                         throw writer.error ?? SpikeError.failure("Video append failed")
                     }
                     append += Date().timeIntervalSince(writing)
                 }
+                first += n
             }
             video.markAsFinished()
             return (raster, append, wait)

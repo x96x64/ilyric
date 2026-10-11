@@ -46,8 +46,18 @@ public final class LocalScene {
     public let audio: LocalAudio
     public let schedule: OutputSchedule
     public let renderer: ScreenRenderer
+    private let artwork: CGImage?
+    private let presentation: LocalPresentation
+    /// An independent renderer of the same scene for parallel export; renderers hold caches and are not
+    /// shared between threads. Every renderer produces identical frames.
+    public func makeRenderer() throws -> ScreenRenderer {
+        let r=try ScreenRenderer(renderer.screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,
+                                 icons:presentation.icons,marquee:presentation.marquee)
+        r.secondary=renderer.secondary;return r
+    }
     public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled, presentation: LocalPresentation = .init()) throws {
-        self.lyrics=lyrics;self.audio=audio;schedule=try lyrics.validate(audioSamples:audio.sampleCount)
+        self.lyrics=lyrics;self.audio=audio;self.artwork=artwork;self.presentation=presentation
+        schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
         var gaps:[CompositionGap]=[],lastEnd=Time(0),secondary:[Int:SecondaryLine]=[:]
         let gapOrder=3*lyrics.entries.count+2

@@ -88,6 +88,19 @@ struct TTMLTests {
         }
         #expect(states[4].lyrics.paragraphs[0].appearance.spans.allSatisfy{$0.progress==1} && states[4].lyrics.focus==0)
         #expect(a.renderer.lyrics.paragraphs[0].lines==off.renderer.lyrics.paragraphs[0].lines)
+        // Independent renderers drawing concurrently produce frames identical to serial rendering.
+        let workers=try [a.makeRenderer(),a.makeRenderer(),a.makeRenderer()]
+        final class Frames: @unchecked Sendable {
+            let data=UnsafeMutableBufferPointer<Data?>.allocate(capacity:7)
+            init() { data.initialize(repeating:nil) }
+            deinit { data.deallocate() }
+        }
+        let parallel=Frames()
+        DispatchQueue.concurrentPerform(iterations:3) { w in
+            var k=w
+            while k<times.count { parallel.data[k]=try? workers[w].frame(times[k]).dataProvider!.data! as Data;k+=3 }
+        }
+        #expect(parallel.data.enumerated().allSatisfy { $0.element==raw[$0.offset] })
         // A fill lead moves supplied word intervals earlier without changing focus or layout.
         let early=try LocalScene(lyrics:ttml,audio:audio,presentation:.init(fillLead:Time(22,100)))
         let shifted=early.renderer.screen.composition.paragraphs[0].input.events[0],original=a.renderer.screen.composition.paragraphs[0].input.events[0]

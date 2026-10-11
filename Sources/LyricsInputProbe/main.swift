@@ -10,11 +10,11 @@ import SpikeCore
         var exporting=false
         do {
             let args=Array(CommandLine.arguments.dropFirst())
-            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc|ttml --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4; either mode accepts [--background fitted|static] [--icons original|system-symbols] [--gaps auto|none] [--motion measured|rigid] [--marquee measured|none] [--controls auto-hide|visible]"
+            let help="Experimental: LyricsInputProbe render --lyrics FILE.lrc --audio FILE --output FILE.mp4 [--format enhanced-lrc|ttml --highlighting enabled|disabled] | project --project FILE.json --output FILE.mp4; either mode accepts [--background fitted|static] [--icons original|system-symbols] [--gaps auto|none] [--motion measured|rigid] [--marquee measured|none] [--controls auto-hide|visible] [--jobs N]"
             if args==["--help"] { print(help);return }
             let projectMode=args.first=="project"
             guard args.first=="render" || projectMode,args.count%2==1 else { throw InputError.invalid(help) }
-            let presentationOptions=["--background","--icons","--gaps","--motion","--marquee","--controls"]
+            let presentationOptions=["--background","--icons","--gaps","--motion","--marquee","--controls","--jobs"]
             let allowed=(projectMode ? ["--project","--output"] : ["--lyrics","--audio","--output","--format","--highlighting"])+presentationOptions
             var options:[String:String]=[:]
             for i in stride(from:1,to:args.count,by:2) {
@@ -26,6 +26,8 @@ import SpikeCore
                   ["auto","none",nil].contains(options["--gaps"]),["measured","rigid",nil].contains(options["--motion"]),
                   ["measured","none",nil].contains(options["--marquee"]),
                   ["auto-hide","visible",nil].contains(options["--controls"]) else { throw InputError.invalid(help) }
+            let jobs=options["--jobs"].map { Int($0) ?? 0 } ?? max(1,ProcessInfo.processInfo.activeProcessorCount)
+            guard (1...64).contains(jobs) else { throw InputError.invalid(help) }
             let measured=options["--motion"]=="measured"
             var presentation=LocalPresentation(background:options["--background"]=="fitted" ? .fitted : nil,
                 icons:options["--icons"]=="system-symbols" ? .systemSymbols : .original,
@@ -62,8 +64,10 @@ import SpikeCore
             let lyrics=scene.lyrics,audio=scene.audio
             for diagnostic in lyrics.diagnostics { FileHandle.standardError.write(Data(("LyricsInputProbe: "+diagnostic+"\n").utf8)) }
             exporting=true
+            // Each worker owns one renderer; frames are pure functions of time, so output does not depend on the count.
+            let renderers=try [scene.renderer]+(1..<jobs).map { _ in try scene.makeRenderer() }
             let result=try await Exporter.video(width:1080,height:1920,to:output,frames:scene.schedule.frames,
-                draw:{try scene.renderer.draw($0,into:$1)},audioSample:{audio.sample($0)})
+                workers:renderers.map { r in { try r.draw($0,into:$1) } },audioSample:{audio.sample($0)})
             let record:[String:Any]=["status":"experimental","project_version":version,"artwork":artworkInfo.map { ["width":$0.width,"height":$0.height,"reported_color_profile":$0.reportedColorProfile] as [String:Any] } ?? [:],"export":try JSONSerialization.jsonObject(with:JSONEncoder().encode(result)),
                 "lyric_events":lyrics.entries.count,"paragraphs":scene.renderer.lyrics.paragraphs.count,"offset_milliseconds":lyrics.offsetMilliseconds,
                 "audio_samples":audio.sampleCount,"source_sample_rate":audio.sourceRate,"source_channels":audio.sourceChannels,"source_format":audio.sourceFormat,
