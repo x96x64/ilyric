@@ -26,7 +26,8 @@ public final class RecognitionModel {
         var result=[[Double]]()
         for window in try analysisWindows(samples:samples.count) {
             let segment=Array(samples[window.startSample..<window.endSample])
-            let scores=try logProbabilities(normalized(segment))
+            // Core ML outputs are autoreleased; draining them per window bounds peak memory.
+            let scores=try autoreleasepool { try logProbabilities(normalized(segment)) }
             for local in try ownedFrames(window,frameCount:scores.count,expected:result.count) { result.append(scores[local]) }
         }
         return result

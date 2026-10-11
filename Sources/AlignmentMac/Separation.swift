@@ -145,7 +145,8 @@ public final class VocalSeparator {
         var out=[[Double]](repeating:[Double](repeating:0,count:length),count:2),sum=[Double](repeating:0,count:length)
         for offset in Swift.stride(from:0,to:length,by:stride) {
             let chunkLength=min(segment,length-offset)
-            let chunk=try runSegment(mix,offset:offset,chunkLength:chunkLength)
+            // Core ML outputs are autoreleased; draining them per segment bounds peak memory.
+            let chunk=try autoreleasepool { try runSegment(mix,offset:offset,chunkLength:chunkLength) }
             for c in 0..<2 { for k in 0..<chunkLength { out[c][offset+k]+=weight[k]*chunk[c][k] } }
             for k in 0..<chunkLength { sum[offset+k]+=weight[k] }
         }
