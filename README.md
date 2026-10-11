@@ -1,189 +1,275 @@
 # iLyric
 
 [![CI](https://github.com/x96x64/ilyric/actions/workflows/ci.yml/badge.svg)](https://github.com/x96x64/ilyric/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![macOS 14+](https://img.shields.io/badge/macOS-14%2B-000000?logo=apple&logoColor=white)](#requirements)
+[![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)](https://www.swift.org)
+[![Core ML](https://img.shields.io/badge/Core%20ML-inference-34C759?logo=apple&logoColor=white)](https://developer.apple.com/documentation/coreml)
+[![AVFoundation](https://img.shields.io/badge/AVFoundation-media-5856D6?logo=apple&logoColor=white)](https://developer.apple.com/documentation/avfoundation)
+[![Core Text](https://img.shields.io/badge/Core%20Text-typography-8E8E93?logo=apple&logoColor=white)](https://developer.apple.com/documentation/coretext)
+[![Core Image](https://img.shields.io/badge/Core%20Image-background-FF9500?logo=apple&logoColor=white)](https://developer.apple.com/documentation/coreimage)
+[![Metal](https://img.shields.io/badge/Metal-scaling-8A8A8A?logo=apple&logoColor=white)](https://developer.apple.com/metal/)
+[![Accelerate](https://img.shields.io/badge/Accelerate-signal%20processing-007AFF?logo=apple&logoColor=white)](https://developer.apple.com/documentation/accelerate)
+[![Demucs](https://img.shields.io/badge/Demucs-vocal%20separation-0467DF?logo=meta&logoColor=white)](https://github.com/facebookresearch/demucs)
+[![wav2vec 2.0](https://img.shields.io/badge/wav2vec%202.0-speech%20recognition-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/facebook/wav2vec2-base-960h)
+[![Python](https://img.shields.io/badge/Python-model%20templates-3776AB?logo=python&logoColor=white)](scripts)
+
+iLyric renders lyrics videos that reproduce the Lyrics screen of the Music app on iPhone, and synchronizes plain lyrics to a recording automatically. It runs entirely on your Mac: vocal separation and speech recognition run through Core ML, frames are drawn with Core Text and Core Graphics, and no network service is involved after the one-time model installation.
+
+```bash
+ilyric render song.m4a lyrics.txt -o video.mp4
+```
+
+<p align="center">
+  <img src="docs/media/demo.png" alt="Three frames of a rendered Lyrics video: the first line filling while the playback controls are visible, a line filling word by word with a background vocal beneath it, and the instrumental-gap indicator" width="720">
+</p>
+
+> [!IMPORTANT]
+> iLyric is an experimental source release. English synchronization and the visual preset have not yet been qualified for a public preview, and command-line options may change before the stable release. iLyric is not affiliated with, endorsed by, or sponsored by Apple.
+
+## Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage](#usage)
+- [Lyrics Input](#lyrics-input)
+- [Reviewing an Alignment](#reviewing-an-alignment)
+- [How It Works](#how-it-works)
+- [Performance](#performance)
+- [Troubleshooting](#troubleshooting)
+- [SF Symbols and Rights](#sf-symbols-and-rights)
+- [Limitations](#limitations)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
+
+## Features
+
+- **Automatic synchronization.** Plain text lyrics are aligned line by line and word by word against a separated vocal stem. Lines without reliable timing are placed between their neighbours rather than guessed, and every placement is reported.
+- **A faithful Lyrics screen.** Focus motion, word fill with a gentle lift, emphasis of sustained final words, background vocals beneath their line, instrumental-gap indicators, a scrolling title, an artwork-derived background, and controls that hide after playback starts. Each behavior was measured from reference recordings of the Music app on iPhone running iOS 27.
+- **Deterministic output.** Every frame is a pure function of its timestamp, so any frame can be rendered independently and in parallel. The default CPU inference reproduces the same alignment on every run.
+- **Supplied timing.** TTML, LRC, and Enhanced LRC files are rendered exactly as supplied, without alignment.
+- **Local and private.** Recordings, lyrics, and videos never leave your Mac; the only network access is the model download.
+
+## Requirements
+
+- macOS 14 or later
+- A Swift 6 toolchain (Xcode or the Command Line Tools) to build from source
+- About 600 MB of disk space for the alignment models, and 8 GB of memory or more for complete songs
+
+## Installation
+
+### From Source
+
+```bash
+git clone https://github.com/x96x64/ilyric.git
+cd ilyric
+swift build -c release
+sudo install -m 755 .build/release/ilyric /usr/local/bin/ilyric
+sudo mkdir -p /usr/local/share/ilyric
+sudo cp -R share/ilyric/templates /usr/local/share/ilyric/
+```
+
+The second and third commands install the weightless model templates beside the executable. Running `.build/release/ilyric` directly from the checkout needs no installation step.
+
+Homebrew, npm, and pip packages will be added for the public preview. The npm and pip packages will install the same native macOS binary.
+
+### Alignment Models
+
+The first `render` or `align` of plain text installs the alignment models automatically. To install them in advance:
+
+```bash
+ilyric models install
+```
+
+Installation downloads about 460 MB from the publishers: the [HTDemucs](https://github.com/facebookresearch/demucs) checkpoint from Meta and the [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) weights from Hugging Face. iLyric verifies each file against a pinned SHA-256 digest, rebuilds the Core ML models on your Mac from weightless templates in this repository, runs a self-test, and deletes the downloads. The installed models occupy about 590 MB in `~/Library/Application Support/iLyric/Models`. iLyric does not redistribute either set of weights.
+
+```bash
+ilyric models status   # show the cache location and state
+ilyric models remove   # delete the installed models
+```
 
-iLyric is an independent experimental offline renderer under development. Its intended visual reference is the native Music application on iPhone running iOS 27. Neither visual fidelity nor production readiness has been demonstrated.
+## Quick Start
 
-iLyric is not affiliated with, endorsed by, or sponsored by Apple.
+```bash
+# 1. Check the environment
+ilyric doctor
 
-## Planning Baseline
+# 2. Render a video from a recording and plain lyrics
+ilyric render "Paper Skies.m4a" paper-skies.txt -o paper-skies.mp4
+```
 
-The [technical planning study](docs/planning-study.md) is preserved verbatim as the architectural baseline. Its recommendations require experimental validation. Its historical placeholder executable is superseded by the established name `ilyric`; its proposed release features are not implemented commitments. The initial architecture spike uses a shorter, entirely synthetic fixture rather than the study’s proposed measured scene.
+iLyric reports each step on standard error: model installation on first use, alignment, any lines it could not time, and rendering progress. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
 
-iLyric source code is licensed under the [Apache License, Version 2.0](LICENSE). No proprietary media, extracted Apple assets, or font files are included; models, recordings, lyrics, and generated videos are subject to their own terms.
+## Usage
 
-## Implementation and Release Planning
+```
+ilyric render AUDIO LYRICS -o VIDEO.mp4 [options]
+ilyric align  AUDIO LYRICS -o LYRICS.ttml [options]
+ilyric models install | status | remove
+ilyric doctor
+```
 
-The [implementation-readiness and release plan](docs/reports/implementation-release-readiness.md) records the intended transition to a supported open-source command-line product maintained by one person. It recommends audio-derived passage correspondence, bounded alignment, and measured complete-song qualification before broad visual expansion. License selection, reliable automatic synchronization, supported installation, and release qualification remain incomplete; no new implementation or license is introduced by the study.
+`render` produces a video. Plain text lyrics (`.txt`) are aligned first; timed lyrics (`.ttml`, `.lrc`) are used as supplied. `align` stops after synchronization and writes word-timed TTML, which you can inspect, correct, and render later. The title, artist, and artwork are read from the audio file's metadata; `--title`, `--artist`, and `--artwork` override them, and a placeholder is drawn when no artwork is available.
 
-## Audio-Derived Correspondence Preparation
+| Option | Commands | Meaning | Default |
+| --- | --- | --- | --- |
+| `-o, --output FILE` | render, align | Output file | Required |
+| `--force` | render, align | Replace an existing output | Off |
+| `--title TEXT`, `--artist TEXT` | render | Header text | From the audio file |
+| `--artwork FILE` | render | Artwork image | Embedded artwork |
+| `--background artwork\|static` | render | Artwork-derived or static background | `artwork` |
+| `--controls auto-hide\|visible` | render | Lower controls | `auto-hide` |
+| `--no-marquee` | render | Keep an overflowing title static | Scrolling |
+| `--no-gaps` | render | Omit instrumental-gap indicators | Shown |
+| `--keep-ad-libs` | render, align | Keep vocable-only lines that cannot be timed | Omitted |
+| `-j, --jobs N` | render | Parallel rendering workers | Processor count |
+| `--fast` | render, align | GPU and Neural Engine inference | CPU |
+| `--report FILE` | render, align | JSON report of alignment and export | None |
+| `-q, --quiet`, `-v, --verbose` | all | Less or more progress output | Normal |
 
-The [preparation report](docs/reports/audio-derived-correspondence-preparation.md) records model-free anchor matching, repeated-occurrence handling, baseline reproduction, and a pinned provisioning proposal. Whisper inference, bounded refinement, and acoustic M1 qualification remain pending approval; coarse anchors are not final timing estimates.
+Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. See [Command-Line Interface](docs/command-line-interface.md) for the complete reference and environment variables.
 
-## Architecture Spike
+### Examples
 
-The repository contains a deliberately narrow Swift Package prototype with a synthetic scene. See the [architecture-spike report](docs/reports/architecture-spike.md) for measured results and limitations, and [developer experiment commands](docs/reports/spike-commands.md) for reproduction.
+```bash
+# Align only, then review the report before rendering
+ilyric align song.m4a lyrics.txt -o lyrics.ttml --report report.json
+ilyric render song.m4a lyrics.ttml -o video.mp4
 
-## Physical-Reference Validation
+# Supply header text and artwork explicitly
+ilyric render song.wav lyrics.txt -o video.mp4 --title "Paper Skies" --artist "The Harbour Lights" --artwork cover.jpg
 
-The [physical-reference validation report](docs/reports/physical-reference-validation.md) records initial measurements from private iPhone 16 references, typography discrepancies, motion fits, and unresolved questions. Public validation code and numerical results supplement the synthetic spike. Source captures remain private and are not required by the public test suite.
+# Keep the controls on screen and use a static background
+ilyric render song.m4a lyrics.ttml -o video.mp4 --controls visible --background static
 
-## Typography Calibration
+# Faster alignment on the GPU and Neural Engine, at the cost of reproducibility
+ilyric render song.m4a lyrics.txt -o video.mp4 --fast
+```
 
-The [native-space typography report](docs/reports/typography-calibration.md) records shared-model fits, wrapping sensitivity, and unresolved Japanese state differences. Candidate parameters remain in validation tooling; a shared cross-script model and native typography fidelity are not yet established.
+## Lyrics Input
 
-## State-Controlled Typography
+### Plain Text
 
-The [Japanese state-control report](docs/reports/state-controlled-typography.md) records repeated S08 geometry, state-dependent spacing evidence, and the missing S09 recording correspondence. Candidate parameters remain experimental; the shared Japanese model is not yet validated.
+Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections, as they appear in most lyrics sources.
 
-## S09 Typography Continuation
+```text
+[Verse 1]
+Paper skies above the harbour
+Lanterns drifting (drifting) out to sea
 
-The [S09 continuation report](docs/reports/s09-typography-validation.md) supports a shared experimental Japanese base-size candidate across repeated S08/S09 observations. At that gate, relative vertical treatment during progressive appearance remained unresolved; complete state-controlled typography and native fidelity were not validated.
+[Chorus]
+Hold the light (hold the light)
+(Hold it now)
+```
 
-## Common-Origin Glyph Validation
+- Section labels in brackets, such as `[Chorus]`, are ignored.
+- Parenthesized phrases are shown as background vocals beneath their line. A line consisting only of parenthesized phrases belongs to the line above.
+- Lines without letters, such as `...`, are ignored.
+- Sections longer than four lines are split into balanced groups; a six-line verse becomes two groups of three.
+- Lines that consist only of vocables, such as "ooh" or "na-na-na", are omitted when they cannot be timed. Pass `--keep-ad-libs` to keep them in place.
 
-The [glyph-outline report](docs/reports/glyph-outline-validation.md) supports a bounded experimental vertical treatment over the shared Japanese base configuration. Reverse recording holdouts justify a first measured typography slice with explicit appearance-event inputs. Native implementation, generality, and full Music fidelity remain unestablished; production rendering is unchanged.
+The lyrics must match what is sung, in order. Repeated choruses should be written out in full rather than abbreviated as "Chorus ×2".
 
-## Experimental Japanese Lyrics Slice
+### Timed Lyrics
 
-The [measured-slice report](docs/reports/lyrics-slice.md) records a separate deterministic native-space paragraph renderer and V09/V10 integration comparisons. Shared geometry is retained; progressive appearance remains provisional. [Developer commands](docs/reports/lyrics-slice-commands.md) exercise an original synthetic fixture without private references. The existing `ilyric` scene and export path are unchanged.
+| Format | Extension | Timing |
+| --- | --- | --- |
+| TTML | `.ttml` | Line and word spans, including `ttm:role="x-bg"` background vocals |
+| Enhanced LRC | `.lrc` with `<mm:ss.xx>` word tags | Line and word |
+| LRC | `.lrc` | Line |
 
-## Progressive Appearance Calibration
+Timed lyrics are used exactly as supplied. Word timing produces word-by-word fill; line timing fills each line steadily.
 
-The [appearance report](docs/reports/progressive-appearance.md) records a shared softened progression candidate, reverse-recording holdouts, and unchanged Japanese geometry. The improvement remains experimental; native appearance and general timing fidelity are unvalidated. [Developer commands](docs/reports/appearance-commands.md) preserve the prior hard-wipe path and provide an optional synthetic softened fixture.
+### Audio
 
-## Experimental Latin Typography
+Any unprotected audio file that AVFoundation can decode is accepted, including AAC, Apple Lossless up to 96 kHz, MP3, WAV, and AIFF. Recordings must be mono or stereo and at most ten minutes long. Stereo sources keep stereo audio in the video.
 
-The [Latin integration report](docs/reports/latin-typography-integration.md) records a shared static configuration conditional on observed line structure, held-out geometry results, and Japanese nonregression. Native source breaks and automatic wrapping remain underidentified. [Developer commands](docs/reports/latin-integration-commands.md) exercise original Latin fixtures without importing Japanese timing behavior.
+## Reviewing an Alignment
 
-## Experimental Motion and Composition
+Automatic synchronization is reliable for most lines, but not all. iLyric never invents word timing it cannot support:
 
-The [motion-composition report](docs/reports/motion-composition.md) records a deterministic three-paragraph Latin/Japanese sequence, qualified English motion fits, and audiovisual validation. [Developer commands](docs/reports/motion-composition-commands.md) produce original synthetic stills and a six-second video. Native timing, clipping, inactive treatment, and full-screen fidelity remain unvalidated.
+- **Aligned** lines have line and word timing derived from the vocal stem.
+- **Placed** lines lacked reliable evidence and are spread evenly between their aligned neighbours; they fill steadily instead of word by word.
+- **Omitted** lines are untimed vocable-only lines, unless `--keep-ad-libs` is given.
 
-## Latin Outline Motion Diagnostic
+The summary line states how many lines fell into each group, and `--report FILE` writes every line's status, interval, word intervals, and reasons as JSON. To correct a result, edit the TTML written by `align` and render it as supplied timing.
 
-The [Latin outline report](docs/reports/latin-outline-motion.md) separates common movement, relative residuals, appearance-support bias, and phase sensitivity. The bounded experiment retains the existing renderer and recommends a measured full-screen composition with explicit uncertainty. [Diagnostic commands](docs/reports/latin-outline-commands.md) keep reference-dependent analysis private.
+## How It Works
 
-## Experimental Full-Screen Lyrics Composition
+1. **Decoding.** AVFoundation decodes the recording and resamples it at mastering quality.
+2. **Vocal separation.** HTDemucs isolates the vocals. The network runs through Core ML; the spectrogram, its inverse, and resampling are implemented with Accelerate.
+3. **Recognition.** wav2vec 2.0 produces character probabilities for every 20 ms of the vocal stem.
+4. **Forced alignment.** A complete-sequence CTC alignment places every character of the lyrics, and words and lines are derived from it. Vocal-activity rules refine line boundaries and reject implausible results.
+5. **Rendering.** The aligned lyrics are evaluated at exact rational timestamps into immutable screen snapshots, drawn with Core Text and Core Graphics, and encoded by parallel workers with AVFoundation.
 
-The [full-screen report](docs/reports/full-screen-composition.md) records measured component placement around the existing lyric composition, deterministic native-space rendering, and audiovisual export. Original artwork and controls, a provisional fade, and a static background remain qualified approximations. [Developer commands](docs/reports/full-screen-commands.md) render the synthetic scene without private references. Native Music fidelity remains unvalidated.
+The native pipeline reproduces the original Python research implementation exactly on a complete recording. The design and its measurements are recorded in [Native Alignment Pipeline](docs/reports/native-alignment-pipeline.md).
 
-## Experimental Inactive Appearance
+## Performance
 
-The [inactive-appearance report](docs/reports/inactive-appearance.md) records the benchmark timeline audit, held-out Latin blur/contrast diagnostics, and an opt-in cached appearance treatment. Geometry, Japanese appearance, and the original benchmark path remain unchanged. [Developer commands](docs/reports/inactive-appearance-commands.md) separate synthetic verification from private calibration. Native fidelity remains unvalidated.
+Measured on an Apple M4 (10 cores) with a 5 min 19 s recording decoded from 96-kHz Apple Lossless:
 
-## Experimental Local Input
+| Step | Time |
+| --- | ---: |
+| Decoding | 7 s |
+| Vocal separation | 42 s |
+| Recognition and alignment | 12 s |
+| Rendering and encoding (19,122 frames) | 5 min 27 s |
+| **Complete `render` of plain lyrics** | **7 min 0 s** |
 
-The [local-input report](docs/reports/local-input-integration.md) records a bounded path from supplied UTF-8 LRC and unprotected local audio to a complete experimental Lyrics video. The [input contract](docs/reports/local-input-subset.md) and [developer commands](docs/reports/local-input-commands.md) define exact line timing, multiline constraints, audio conversion, and resource limits. This path does not provide fine-grained synchronization, a finalized public CLI, or native Music fidelity.
+Peak memory was 5.4 GB. Rendering scales with processor cores; use `--jobs` to limit it. `--fast` shortens separation and recognition but may change results slightly between runs.
 
-## Experimental Project Configuration
+## Troubleshooting
 
-The [configuration report](docs/reports/project-configuration.md) records strict version-1 JSON preparation, supplied artwork/metadata, exact offsets, independent component visibility, and the separate complete-multiline demonstration. The [format contract and commands](docs/reports/experimental-project-format.md) define the bounded experimental interface and original example generator. Ordinary LRC remains line-level; that gate left translated lyric display and fine-grained timing import deferred. Production `ilyric` behavior is unchanged.
+Run `ilyric doctor` first; it checks each requirement and states the recovery step for any problem.
 
-## Experimental Enhanced-LRC Timing
+| Message | Remedy |
+| --- | --- |
+| `model templates were not found` | Run iLyric from the cloned repository or an installed package, or set `ILYRIC_TEMPLATES`. |
+| `model download failed` | Check the network connection and run `ilyric models install` again; verified downloads are reused. |
+| `the lyrics cannot be aligned` | Remove unsupported symbols, or split sections that exceed the stated limit. |
+| `Protected audio is unsupported` | Use a file you own without DRM; streamed Apple Music downloads cannot be read. |
+| `... already exists` | Choose another output or pass `--force`. |
 
-The [timing integration report](docs/reports/enhanced-lrc-integration.md) records exact supplied segment boundaries, whole-paragraph shaping, complete multiline progression, and version-2 format selection. The [subset and commands](docs/reports/enhanced-lrc-subset.md) define supported syntax, Unicode/cluster restrictions, and enabled/disabled behavior. Ordinary LRC and version-1 projects remain compatible; color-glyph progression and native fidelity remain unqualified.
+## SF Symbols and Rights
 
-## Experimental TTML Timing
+Control icons are SF Symbols, resolved at render time from the Mac running iLyric; iLyric never bundles or redistributes them. Apple's [SF Symbols license](https://developer.apple.com/support/terms/) does not expressly permit their use in exported videos, so you are responsible for how you use and publish the videos you create. The original icon set in this repository is used only for tests and public documentation media. See [SF Symbols Rights Assessment](docs/sf-symbols-rights-assessment.md).
 
-The [TTML integration report](docs/reports/ttml-integration.md) records exact parent-relative paragraph/span intervals, explicit paragraph ends, multiline progression, and version-3 selection. The [subset and commands](docs/reports/ttml-subset.md) define namespace, whitespace, XML safety, and compatibility limits. Versions 1 and 2 retain their prior contracts. This bounded importer does not implement TTML styling, provider-specific lyric profiles, or native Music fidelity.
+You are likewise responsible for holding the rights to the recordings, lyrics, and artwork you render. iLyric does not download lyrics or audio.
 
-## Lyrics Acquisition Feasibility
+## Limitations
 
-The [acquisition study](docs/reports/lyrics-acquisition-feasibility.md) compares documented providers, content-use permissions, recording matching, local correction, and optional alignment. It recommends offline preparation and provenance before conditional provider lookup. API access does not establish permission to export lyrics into videos. No acquisition client, alignment system, or project-schema change is implemented by this study.
+- Automatic synchronization supports English. Japanese is planned for the release after the stable release.
+- Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.
+- The visual target is the Music app on iOS 27. Its behavior has been measured from private reference recordings, but fidelity has not yet been qualified against acceptance thresholds.
+- Translations, the Sing mode, and landscape layouts are not rendered.
 
-The [local Music cache feasibility report](docs/reports/apple-music-local-cache-feasibility.md) distinguishes response-body reading from signed-request replay, records the limited local metadata inspection, and documents why cache integration remains unqualified. Legitimately supplied timing can avoid inference for matching recordings; acoustic alignment remains the fallback.
+## Documentation
 
-## Experimental Automatic Singing Alignment
+- [Command-Line Interface](docs/command-line-interface.md): commands, options, and environment variables
+- [Roadmap to the Stable Release](docs/roadmap-to-stable.md): remaining work and release stages
+- [Native Alignment Pipeline](docs/reports/native-alignment-pipeline.md) and [Native Model Installation and Decoding](docs/reports/native-model-installation.md)
+- [Model Template Distribution](docs/reports/model-template-distribution.md): what the repository's model templates contain
+- [Documentation Index](docs/README.md): every engineering report by topic, in chronological order
 
-The [alignment report](docs/reports/automatic-alignment.md) evaluates a speech CTC baseline and a singing-specific model against licensed English/Japanese recordings. The [preparation commands](docs/reports/alignment-commands.md) provide optional offline inference, preserved source mapping, reviewed corrections, and line-level TTML for the existing renderer. Model dependencies are separate from public tests. Accuracy, coverage, licensing, and the 60-second context limit prevent qualification for unattended or complete-song use; mandatory automatic synchronization remains incomplete.
+## Contributing
 
-## Singing-Alignment Refinement
+Issues and pull requests are welcome. Before submitting a change:
 
-The [refinement report](docs/reports/alignment-refinement.md) reproduces the archived baseline, recovers two Japanese cases through explicit source-preserving pronunciation hypotheses, and evaluates English endpoint and incorrect-text controls. The [refinement commands](docs/reports/alignment-refinement-commands.md) document optional overrides. Endpoint repair and automatic score-based acceptance remain unqualified; full-song synchronization remains blocked by measured correspondence and failure-detection limits.
+```bash
+swift build
+swift test
+```
 
-## Deferred Product Requirements
+The public test suite uses only original synthetic fixtures and needs neither the network nor private recordings. Read [AGENTS.md](AGENTS.md) for the engineering constraints, including determinism, evidence classification, and the rules for private reference material. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 
-The [product requirements](docs/reports/product-requirements.md) distinguish long-term user-input, synchronization, customization, delivery, and iconography goals from implemented experiments. They do not establish supported input formats, a finalized public CLI, provider access, or symbol-export permissions.
+## Acknowledgments
 
-## Independent Acoustic Coverage Validation
+iLyric was developed with [Codex](https://openai.com/codex) by OpenAI and [Claude](https://claude.ai) by Anthropic, credited as co-authors in the commit history. It builds on [Demucs](https://github.com/facebookresearch/demucs) by Meta AI Research (MIT License) and [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) by Meta AI (Apache License 2.0).
 
-The [coverage report](docs/reports/independent-acoustic-coverage.md) compares audio-only CTC evidence and a spectral proxy against reserved mismatch controls. The [diagnostic commands](docs/reports/acoustic-coverage-commands.md) preserve input artifacts and mandatory review. Limited incremental detections do not establish reliable lyric correspondence; automatic acceptance and full-song synchronization remain unqualified.
+## License
 
-## Singing-Aware Activity Evaluation
-
-The [singing-activity report](docs/reports/singing-vocal-activity.md) reproduces the frozen activity baselines and records a bounded candidate screen. Checkpoint-specific licensing and independently verified additional-singer annotations remain unresolved; no new model was provisioned or evaluated. The prospective protocol preserves mandatory review and does not qualify automatic full-song synchronization.
-
-## Checkpoint Permission and Evaluation Readiness
-
-The [veracity readiness assessment](docs/reports/veracity-evaluation-readiness.md) records checkpoint permission, native dependency metadata, cumulative resources, and missing independent activity annotations. The [conditional evaluation procedure](docs/reports/veracity-evaluation-procedure.md) and [unsent permission inquiry](docs/reports/veracity-permission-inquiry.md) define the remaining preparation steps. Those historical gates did not provision or execute the model. The local-inference update below records subsequent authorization and execution; automatic synchronization remains incomplete.
-
-The [permission and annotation preparation update](docs/reports/checkpoint-permission-annotation-preparation.md) identifies the verified institutional contact, final unsent inquiry, minimum missing recording, and independent human annotation steps. That gate required further user action before provisioning; the later local-research scope is recorded below.
-
-## Local veracity Inference Validation
-
-The [local inference report](docs/reports/local-veracity-inference.md) supersedes the procedural provisioning restriction above for explicitly authorized personal, noncommercial exploratory research. The pinned CPU diagnostic is executable and reproducible; checkpoint-specific licensing scope and independent vocal-activity accuracy remain unresolved. No developer contact is required by this workflow. The [deferred documentation cleanup](docs/reports/deferred-documentation-cleanup.md) preserves the obsolete unsent inquiries until a dedicated cleanup milestone. Automatic acceptance and full-song synchronization remain disabled.
-
-## Evaluation Resources
-
-The [current resource policy](docs/reports/evaluation-resource-policy.md) charges complete evaluation storage against the approved 15-GB ceiling. [Optional vocal-annotation intake](docs/reports/vocal-annotation-intake.md) supports the independent research protocol; [readiness findings](docs/reports/evaluation-storage-annotation-readiness.md) distinguish that protocol from personal review-first development.
-
-## Personal Full-Song Preparation
-
-The [review-first full-song prototype](docs/reports/review-first-full-song.md) processes complete recordings through bounded English CTC windows. [Experimental commands](docs/reports/full-song-commands.md) preserve unresolved occurrences and require explicit review before TTML export. Current measured coverage is insufficient to complete mandatory automatic synchronization.
-
-## Bounded TIFA Passage Search
-
-The [passage-search report](docs/reports/tifa-passage-search.md) evaluates automatic overlapping candidates and chronological reconciliation against the frozen complete-song CTC results. Explicit skip and ambiguity states preserve reviewability, but TIFA support does not establish lyric correspondence. The separate [experimental commands](docs/reports/tifa-passage-commands.md) preserve the existing renderer and correction workflow. Automatic synchronization remains incomplete.
-
-## Audio-Derived Correspondence Evaluation
-
-The [bounded Whisper evaluation](docs/reports/audio-derived-correspondence-evaluation.md) records failed M1 coverage criteria, reproducible offline preparation, and the next narrowly scoped corrective experiment. It does not establish automatic synchronization or release readiness.
-
-## Segment-Level Anchor Comparison
-
-The [segment-level comparison](docs/reports/segment-level-anchor-comparison.md) retains native Whisper segment text when heuristic word timestamps are unusable. Correct-region availability remained below 90% on every recording, and recognized lexical content was unchanged; M1 remains a no-go. The report identifies vocal separation before recognition as the next single architectural change.
-
-## Release and Fidelity Decisions
-
-The [decision record](docs/reports/release-and-fidelity-decisions.md) establishes automatic synchronization and native Music Lyrics screen reproduction as equal primary objectives, selects Apache-2.0 for source code, and defines staged releases with parallel synchronization and visual-fidelity tracks. The [SF Symbols rights assessment](docs/sf-symbols-rights-assessment.md) records that exported-video use is not expressly licensed and defines a runtime-only policy.
-
-## Vocal Separation Before Recognition
-
-The [separation report](docs/reports/vocal-separation-recognition.md) evaluates pinned Demucs vocal separation before Whisper recognition. Availability rose from 93 to 104 of 140 occurrences but remained below 90% on every recording, and lexical recognition coverage barely changed; M1 remains a no-go. Complete-sequence CTC alignment on separated vocals is the next single experiment.
-
-## Complete-Sequence CTC Alignment on Separated Vocals
-
-The [separated-vocal alignment report](docs/reports/separated-vocal-ctc-alignment.md) aligns complete supplied lyrics to Demucs vocal stems. Retained estimates doubled from 53 to 106 of 140 occurrences and unresolved occurrences fell from 87 to 34; one unflagged short-line displacement prevents an M1 pass. Separated-vocal CTC is now the lead synchronization architecture, pending failure-detection and boundary work and a new locked evaluation set.
-
-## Artwork-Derived Dynamic Background
-
-The [background report](docs/reports/artwork-background.md) records an opt-in deterministic reconstruction of the blurred, moving artwork-derived Lyrics background. Color, spatial structure, and vertical gradient generalize to held-out songs; motion remains provisional pending paused-playback captures.
-
-## Vocal-Activity Boundary and Duration Rules
-
-The [rules report](docs/reports/vocal-activity-rules.md) withholds implausibly short estimates and trims leading vocal inactivity on separated stems. On the development recordings this removes the observed displacement and introductory-audio absorption; qualification on new locked recordings remains required.
-
-## Runtime Control Symbols
-
-The [control-symbol report](docs/reports/control-symbols.md) records an opt-in runtime SF Symbols icon set fitted to reference screenshots; rendered ink bounds match the measured controls within two native pixels. Symbols are never bundled, and public fixtures continue to use original icons.
-
-## Artwork Background Motion
-
-The [motion report](docs/reports/artwork-background-motion.md) shows that the background keeps moving while playback is paused, corrects a sequence-length mismatch in the earlier evaluation, and refits orbit and rotation so that paused-capture motion statistics generalize to held-out songs.
-
-## M2 Locked Evaluation
-
-The [locked evaluation](docs/reports/m2-locked-evaluation.md) tested the frozen separated-vocal pipeline on fourteen unseen, human-annotated JamendoLyrics recordings. No song passed M2: 406 of 637 lines were placed and 231 left unresolved, with zero displaced estimates. Most rejected lines had correct raw proposals, and offsets end early; both define the next development gate.
-
-## Instrumental-Gap Indicator
-
-The [gap-indicator report](docs/reports/gap-indicator.md) records a fitted three-dot indicator that fills across supplied instrumental gaps, completing a fixed 2.22 seconds before each gap ends, with a ±11% group pulse, and records the observed pause state.
-
-## Separated-Vocal Acceptance and Boundary Rules
-
-The [acceptance report](docs/reports/separated-vocal-acceptance.md) replaces the lexical gate with separated-stem evidence and extends offsets through vocal activity. Cross-validation over seventeen annotated recordings estimates 90.5% correct placement with near-zero displacement and median onset and offset errors of 42 and 65 ms; unseen requalification remains required.
-
-## First Complete Real-Song Video
-
-The [real-song milestone](docs/reports/first-real-song-video.md) records the first complete video produced from supplied lyrics and audio with automatic synchronization, the fitted background, runtime symbols, and gap insertion, and lists the integration defects that define the supported command.
+iLyric is licensed under the [Apache License, Version 2.0](LICENSE). The alignment models are downloaded from their publishers under their own licenses.
