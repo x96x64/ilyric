@@ -4,6 +4,7 @@
 
 - [Command-Line Interface](command-line-interface.md): commands, options, and environment variables
 - [Roadmap to the Stable Release](roadmap-to-stable.md): decisions in force, remaining work, and confirmation points
+- [Distribution](distribution.md): release archive and the Homebrew, npm, and pip channels for the preview
 - [SF Symbols and System Font Rights Assessment](sf-symbols-rights-assessment.md): the runtime-only symbol policy
 - [Technical Planning Study](planning-study.md): the original architectural baseline, preserved verbatim
 
