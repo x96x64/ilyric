@@ -22,7 +22,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 7. The HTDemucs checkpoint is never redistributed. iLyric downloads it from Meta's host on first use, verifies its SHA-256, and rebuilds the Core ML weights locally. The wav2vec2 weights (Apache-2.0) are installed the same way from Hugging Face.
 8. The maintainer does not perform manual annotation; evaluation uses public human-annotated data, cross-validation, and isolated scoring.
 9. Commits carry the Claude co-author trailer when Claude contributes; history is not rewritten.
-10. (Added October 11, 2026.) The command design in [Command-Line Interface](command-line-interface.md) is approved. SF Symbols are enabled by default; where they cannot be resolved, the command falls back to the original icon set and says so, and `--icons original` selects the original set explicitly.
+10. (Added October 11, 2026.) The command design in [Command-Line Interface](command-line-interface.md) is approved. Control icons are always SF Symbols, resolved at runtime, with no option to disable them; the original icon set remains internal for tests and public media.
 11. (Added October 11, 2026.) The public preview is distributed through Homebrew, npm, and pip; the npm and pip packages are thin installers for the native macOS binary.
 
 ## Where Work Can Run

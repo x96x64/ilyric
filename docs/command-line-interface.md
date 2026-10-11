@@ -19,6 +19,8 @@ ilyric --help | --version
 - `models` installs, reports, or removes the alignment models in the user's model cache. `render` and `align` install missing models automatically on first use.
 - `doctor` reports the macOS version, available compute units, SF Symbols availability, the model cache, and the toolchain, and states the recovery step for each problem.
 
+Control icons are always SF Symbols, resolved at runtime; there is no icon option. If a symbol cannot be resolved, rendering stops with an error and `doctor` reports the cause. The original icon set remains internal, for tests and public media only.
+
 ## Lyrics Input
 
 Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines consisting only of a bracketed section label, such as `[Chorus]`, are ignored. Parenthesized phrases become background vocals of their line; a line containing only parenthesized phrases attaches them to the preceding line. Paragraphs longer than four lines are split. Lines consisting only of vocables that the alignment cannot time are omitted unless `--keep-ad-libs` is given.
@@ -31,7 +33,6 @@ Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines cons
 | `--force` | render, align | Replace an existing output | Off |
 | `--title TEXT`, `--artist TEXT` | render | Header text | From the audio file's metadata |
 | `--artwork FILE` | render | Artwork image | Embedded artwork, else an original placeholder |
-| `--icons sf-symbols\|original` | render | Control icons | `sf-symbols`; falls back to `original` with a notice when unavailable |
 | `--background artwork\|static` | render | Background style | `artwork` |
 | `--controls auto-hide\|visible` | render | Lower controls | `auto-hide` |
 | `--no-marquee`, `--no-gaps` | render | Disable the title marquee or the instrumental-gap indicator | Enabled |
@@ -45,4 +46,4 @@ Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Err
 
 ## Rights
 
-SF Symbols are resolved at runtime from the user's Mac and never bundled, as recorded in [SF Symbols Rights Assessment](sf-symbols-rights-assessment.md). Model weights are downloaded from their publishers and rebuilt locally ([Native Model Installation and Decoding](native-model-installation.md)).
+SF Symbols are resolved at runtime from the user's Mac and never bundled, as recorded in [SF Symbols Rights Assessment](sf-symbols-rights-assessment.md). The README states that Apple's terms do not expressly license SF Symbols in exported videos; the command does not repeat this notice on every run. Model weights are downloaded from their publishers and rebuilt locally ([Native Model Installation and Decoding](native-model-installation.md)).
