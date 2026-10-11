@@ -23,7 +23,7 @@ struct TTMLTests {
         let offset=try input.applyingProjectOffset(125).entries[0]
         #expect(offset.time==Time(1,4) && offset.intervalEnd==Time(9,4))
         #expect(offset.segments[0].begin==Time(251234,1_000_000))
-        for bad in ["1","1f","1t","wallclock(12:00:00)","-1s","+1s","1e2s",".1s","1.1234567s","00:00:60","00:00:01:01","0:00:01","600.000001s","9999999999h","1 s"] {
+        for bad in ["1","1f","1t","wallclock(12:00:00)","-1s","+1s","1e2s",".1s","1.1234567s","00:00:60","00:00:01:01","0:00:01","1200.000001s","9999999999h","1 s"] {
             #expect(throws:InputError.self) {try TTMLParser.time(bad)}
         }
     }

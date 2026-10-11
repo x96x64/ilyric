@@ -167,7 +167,8 @@ public extension LocalLyrics {
             entry.background=e.background.map { BackgroundVocal(text:$0.text,begin:$0.begin+offset,end:$0.end+offset) }
             return entry
         }
-        guard shifted.allSatisfy({$0.time>=Time(0) && $0.time<=Time(600) && ($0.intervalEnd.map { $0<=Time(600) } ?? true)}) else { throw InputError.invalid("Combined lyric offset places an event outside 0–600 seconds") }
+        let limit=Time(Int64(InputLimits.maximumSeconds))
+        guard shifted.allSatisfy({$0.time>=Time(0) && $0.time<=limit && ($0.intervalEnd.map { $0<=limit } ?? true)}) else { throw InputError.invalid("Combined lyric offset places an event outside the supported duration") }
         let result=LocalLyrics(entries:shifted,offsetMilliseconds:offsetMilliseconds+milliseconds,diagnostics:diagnostics)
         try result.validateSegments();return result
     }

@@ -55,7 +55,7 @@ public enum TTMLParser {
             let (n,d)=try decimal(String(value.dropLast(unit.0.count)))
             result=Time(n*unit.1,d*unit.2)
         }
-        guard result>=Time(0),result<=Time(600) else { throw InputError.invalid("TTML time outside 0–600 seconds") }
+        guard result>=Time(0),result<=Time(Int64(InputLimits.maximumSeconds)) else { throw InputError.invalid("TTML time outside the supported duration") }
         return result
     }
 }

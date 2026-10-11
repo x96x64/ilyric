@@ -123,7 +123,7 @@ public enum LyricsParser {
     }
 }
 public extension LocalLyrics {
-    func validateSegments(audioEnd:Time = Time(600)) throws {
+    func validateSegments(audioEnd:Time = Time(Int64(InputLimits.maximumSeconds))) throws {
         for (i,e) in entries.enumerated() {
             if let explicit=e.intervalEnd {
                 guard e.time<explicit,explicit<=audioEnd,(i+1==entries.count || explicit<=entries[i+1].time) else {

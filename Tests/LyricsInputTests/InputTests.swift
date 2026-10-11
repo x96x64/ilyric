@@ -46,7 +46,8 @@ struct InputTests {
         #expect(offFrame.entries[0].time==Time(5,8))
         #expect(offFrame.focus(at:Time(37,60))==nil && offFrame.focus(at:Time(38,60))==0)
         #expect(throws:InputError.self) { try input.validate(audioSamples:96_000) }
-        #expect(throws:InputError.self) { try OutputSchedule(audioSamples:28_800_001) }
+        #expect(throws:InputError.self) { try OutputSchedule(audioSamples:InputLimits.maximumSeconds*48_000+1) }
+        #expect(try OutputSchedule(audioSamples:InputLimits.maximumSeconds*48_000).samples==57_600_000)
         #expect(throws:InputError.self) { try OutputSchedule(audioSamples:0) }
     }
     @Test func staticJapaneseAndSuppliedShaping() throws {

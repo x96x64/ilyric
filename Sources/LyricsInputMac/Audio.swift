@@ -39,7 +39,7 @@ public struct LocalAudio: Sendable {
                   asbd.mSampleRate.isFinite,(8_000...96_000).contains(asbd.mSampleRate),asbd.mSampleRate.rounded()==asbd.mSampleRate,(1...2).contains(asbd.mChannelsPerFrame),
                   range.start.isNumeric,range.duration.isNumeric,range.start >= .zero,range.duration > .zero else { throw InputError.invalid("Unsupported audio format, channels, or presentation range") }
             let endpoint=CMTimeAdd(range.start,range.duration)
-            guard CMTimeGetSeconds(endpoint)<=600 else { throw InputError.invalid("Audio exceeds the ten-minute bound") }
+            guard CMTimeGetSeconds(endpoint)<=Double(InputLimits.maximumSeconds) else { throw InputError.invalid("Audio exceeds the twenty-minute bound") }
             let rate=Int32(asbd.mSampleRate),channels=Int(asbd.mChannelsPerFrame)
             let declaredEnd=Int(CMTimeConvertScale(endpoint,timescale:rate,method:.roundHalfAwayFromZero).value)
             guard declaredEnd>0 else { throw InputError.invalid("Audio presentation is shorter than one source sample") }
@@ -63,7 +63,7 @@ public struct LocalAudio: Sendable {
                 }
                 guard abs(index-samples.count/channels)<=1 else { throw InputError.invalid("Decoded audio contains an unsupported gap or overlap") }
                 let count=CMBlockBufferGetDataLength(block)
-                guard count%(2*channels)==0,count/(2*channels)==CMSampleBufferGetNumSamples(buffer),samples.count+count/2<=Int(rate)*channels*600+8192 else { throw InputError.invalid("Decoded audio exceeds its resource or PCM-format bounds") }
+                guard count%(2*channels)==0,count/(2*channels)==CMSampleBufferGetNumSamples(buffer),samples.count+count/2<=Int(rate)*channels*InputLimits.maximumSeconds+8192 else { throw InputError.invalid("Decoded audio exceeds its resource or PCM-format bounds") }
                 var chunk=[Int16](repeating:0,count:count/2)
                 let status=chunk.withUnsafeMutableBytes { CMBlockBufferCopyDataBytes(block,atOffset:0,dataLength:count,destination:$0.baseAddress!) }
                 guard status==kCMBlockBufferNoErr else { throw InputError.invalid("Decoded PCM could not be read") }
@@ -116,7 +116,7 @@ public struct LocalAudio: Sendable {
             }
             guard status != .error,conversionError==nil else { throw InputError.invalid("Audio sample-rate or channel conversion failed") }
             if target.frameLength>0 { converted.append(contentsOf:UnsafeBufferPointer(start:target.int16ChannelData![0],count:Int(target.frameLength)*channels)) }
-            guard converted.count<=28_800_800*channels else { throw InputError.invalid("Converted audio exceeds the duration bound") }
+            guard converted.count<=(InputLimits.maximumSeconds*48_000+800)*channels else { throw InputError.invalid("Converted audio exceeds the duration bound") }
             if status == .endOfStream { break }
             guard status == .haveData else { throw InputError.invalid("Audio conversion did not reach an explicit endpoint") }
         }

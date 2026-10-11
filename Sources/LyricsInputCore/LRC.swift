@@ -1,6 +1,11 @@
 import Foundation
 import SpikeCore
 
+/// Resource bounds shared by every input path.
+public enum InputLimits {
+    /// Longest supported recording, in seconds.
+    public static let maximumSeconds=1200
+}
 public enum InputError: Error, CustomStringConvertible {
     case invalid(String)
     public var description: String { switch self { case .invalid(let message): return message } }
@@ -49,7 +54,7 @@ public struct OutputSchedule: Equatable, Sendable {
     public let samples, frames: Int
     public let audioEnd, outputEnd: Time
     public init(audioSamples: Int) throws {
-        guard (1...28_800_000).contains(audioSamples) else { throw InputError.invalid("Audio duration must be positive and no longer than ten minutes") }
+        guard (1...InputLimits.maximumSeconds*48_000).contains(audioSamples) else { throw InputError.invalid("Audio duration must be positive and no longer than twenty minutes") }
         samples=audioSamples;frames=(audioSamples+799)/800
         audioEnd=Time(Int64(audioSamples),48_000);outputEnd=Time(Int64(frames),60)
     }
@@ -79,7 +84,7 @@ public enum LRCParser {
                 let token=String(rest[rest.index(after:rest.startIndex)..<end])
                 let ns=token as NSString
                 if let match=timestamp.firstMatch(in:token,range:NSRange(location:0,length:ns.length)) {
-                    guard let minutes=Int64(ns.substring(with:match.range(at:1))),minutes<=10,
+                    guard let minutes=Int64(ns.substring(with:match.range(at:1))),minutes<=Int64(InputLimits.maximumSeconds/60),
                           let seconds=Int64(ns.substring(with:match.range(at:2))),seconds<60 else { throw InputError.invalid("Timestamp out of range at line \(number)") }
                     let fraction=match.range(at:3).location == NSNotFound ? "" : ns.substring(with:match.range(at:3))
                     let ms=fraction.isEmpty ? 0 : Int64(fraction+String(repeating:"0",count:3-fraction.count))!
@@ -112,7 +117,7 @@ public enum LRCParser {
                   row.text.isEmpty || row.text.components(separatedBy:"\n").allSatisfy({!$0.trimmingCharacters(in:.whitespaces).isEmpty}) else { throw InputError.invalid("Paragraph size or empty-line constraint at line \(row.line)") }
             for raw in row.times {
                 let ms=raw+(offset ?? 0)
-                guard (0...600_000).contains(ms) else { throw InputError.invalid("Effective timestamp outside 0–600 seconds at line \(row.line)") }
+                guard (0...Int64(InputLimits.maximumSeconds)*1000).contains(ms) else { throw InputError.invalid("Effective timestamp outside the supported duration at line \(row.line)") }
                 entries.append(.init(time:Time(ms,1000),text:row.text,sourceLine:row.line,suppliedBreaks:row.text.contains("\n")))
                 guard entries.count<=eventLimit else { throw InputError.invalid("At most 256 expanded lyric events are supported") }
             }

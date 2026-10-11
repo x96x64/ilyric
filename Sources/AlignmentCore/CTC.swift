@@ -11,7 +11,7 @@ public struct AnalysisWindow: Equatable, Sendable {
 /// 30-second windows advancing by 26 seconds (Python `windows`).
 public func analysisWindows(samples: Int) throws -> [AnalysisWindow] {
     let rate=16000
-    guard samples>0,samples<=rate*600 else { throw AlignmentError.invalid("Full-song analysis requires 16-kHz audio of at most 600 seconds") }
+    guard samples>0,samples<=rate*1200 else { throw AlignmentError.invalid("Full-song analysis requires 16-kHz audio of at most 1,200 seconds") }
     let size=rate*30,stride=rate*26
     var starts=[0]
     while starts[starts.count-1]+size<samples { starts.append(starts[starts.count-1]+stride) }
@@ -54,7 +54,7 @@ public func textTargets(_ source: LyricSource) throws -> TextTargets {
         if !tokens.isEmpty { tokens.append("|");owners.append(nil) }
         for c in text { tokens.append(String(c));owners.append(line.id) }
     }
-    guard tokens.count<=6000 else { throw AlignmentError.invalid("Full-song text exceeds 6000 CTC labels") }
+    guard tokens.count<=12000 else { throw AlignmentError.invalid("Full-song text exceeds 12,000 CTC labels") }
     return TextTargets(tokens:tokens,owners:owners)
 }
 
@@ -62,7 +62,7 @@ public func textTargets(_ source: LyricSource) throws -> TextTargets {
 /// (Python `path`). Comparisons and accumulation order match the reference exactly.
 public func ctcPath(_ emissions: [[Double]], targets: [Int], blank: Int = 0) throws -> [[Int]]? {
     let frames=emissions.count
-    guard !targets.isEmpty,targets.count<=6000,frames>0,frames<=30000 else { throw AlignmentError.invalid("Full-song frame or target limit") }
+    guard !targets.isEmpty,targets.count<=12000,frames>0,frames<=60000 else { throw AlignmentError.invalid("Full-song frame or target limit") }
     let width=emissions[0].count
     guard blank>=0,blank<width else { throw AlignmentError.invalid("Invalid blank label") }
     var labels=[blank]
@@ -71,10 +71,10 @@ public func ctcPath(_ emissions: [[Double]], targets: [Int], blank: Int = 0) thr
         labels.append(target);labels.append(blank)
     }
     let count=labels.count
-    // Each choice (stay, advance, or skip) takes two bits, so the largest permitted input (30,000 frames by 12,001
-    // states) needs at most 90 MB of trace.
+    // Each choice (stay, advance, or skip) takes two bits, so the largest permitted input (60,000 frames by 24,001
+    // states) needs at most 360 MB of trace.
     let cells=frames*count
-    guard cells<=480_000_000 else { throw AlignmentError.invalid("Full-song CTC trace exceeds 120 MB; reduce input, not model limits") }
+    guard cells<=1_440_060_000 else { throw AlignmentError.invalid("Full-song CTC trace exceeds 360 MB") }
     var scores=[Double](repeating:-.infinity,count:count);scores[0]=0
     let skip=labels.enumerated().map { j,v in j>1 && v != blank && v != labels[j-2] }
     var trace=[UInt8](repeating:0,count:(cells+3)/4)

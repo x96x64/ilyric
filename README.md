@@ -186,7 +186,7 @@ Timed lyrics are used exactly as supplied. Word timing produces word-by-word fil
 
 ### Audio
 
-Any unprotected audio file that AVFoundation can decode is accepted, including AAC, Apple Lossless up to 96 kHz, MP3, WAV, and AIFF. Recordings must be mono or stereo and at most ten minutes long. Stereo sources keep stereo audio in the video.
+Any unprotected audio file that AVFoundation can decode is accepted, including AAC, Apple Lossless up to 96 kHz, MP3, WAV, and AIFF. Recordings must be mono or stereo and at most twenty minutes long. Stereo sources keep stereo audio in the video.
 
 ## Reviewing an Alignment
 
