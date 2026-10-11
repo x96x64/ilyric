@@ -8,6 +8,15 @@ import CoreML
 let args=CommandLine.arguments
 // ILYRIC_COMPUTE_UNITS=cpu|gpu|all selects Core ML compute units for development comparisons; cpu is the default.
 let units:MLComputeUnits={ switch ProcessInfo.processInfo.environment["ILYRIC_COMPUTE_UNITS"] { case "gpu": return .cpuAndGPU; case "all": return .all; default: return .cpuOnly } }()
+// Recognition installation: AlignProbe install-recognition TEMPLATE_DIR model.safetensors DESTINATION_DIR
+if args.count==5,args[1]=="install-recognition" {
+    do {
+        let started=Date()
+        let url=try RecognitionInstaller.install(template:URL(fileURLWithPath:args[2]),weights:URL(fileURLWithPath:args[3]),destination:URL(fileURLWithPath:args[4]))
+        print("{\"model\":\"\(url.path)\",\"seconds\":\(Date().timeIntervalSince(started))}")
+    } catch { FileHandle.standardError.write(Data("AlignProbe: \(error)\n".utf8));exit(1) }
+    exit(0)
+}
 // Installation mode: AlignProbe install TEMPLATE_DIR CHECKPOINT.th DESTINATION_DIR
 if args.count==5,args[1]=="install" {
     do {
