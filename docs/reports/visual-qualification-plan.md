@@ -2,7 +2,7 @@
 
 ## Status
 
-October 12, 2026. **Draft for the maintainer's review**; nothing in this plan has been run. It proposes how Stage 3 of the [roadmap](../roadmap-to-stable.md) qualifies the visual preset against the native Music Lyrics screen on the reference iPhone 16, reported iOS 27.0.1, exact build Unknown. Thresholds become binding only after the maintainer approves them and before any held-out capture is analysed.
+October 12, 2026. **Approved by the maintainer on October 12, 2026, before any held-out capture was analysed; the thresholds below are binding.** The held-out captures N01 to N06 and six screenshots were recorded on October 12, 2026; N07 measures the duet layout and is excluded from its qualification. Nothing in this plan has been run. It proposes how Stage 3 of the [roadmap](../roadmap-to-stable.md) qualifies the visual preset against the native Music Lyrics screen on the reference iPhone 16, reported iOS 27.0.1, exact build Unknown. Thresholds become binding only after the maintainer approves them and before any held-out capture is analysed.
 
 ## Held-Out Captures
 

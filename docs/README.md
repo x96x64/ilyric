@@ -102,7 +102,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-12 — [Anchored Realignment](reports/anchored-realignment.md)
 - 2026-10-12 — [Third Preview Qualification Procedure](reports/third-preview-qualification-procedure.md)
 - 2026-10-12 — [Third Preview Qualification Results](reports/third-preview-qualification-results.md)
-- 2026-10-12 — [Visual Qualification Plan](reports/visual-qualification-plan.md) (draft)
+- 2026-10-12 — [Visual Qualification Plan](reports/visual-qualification-plan.md)
 
 ### Native Pipeline
 
