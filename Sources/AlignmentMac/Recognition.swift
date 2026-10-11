@@ -86,14 +86,15 @@ public func readMono16k(_ url: URL) throws -> [Float] {
 }
 
 /// Complete native line and word alignment of separated vocals against untimed lyrics.
-public func alignLyrics(_ lyrics: Data, vocals: [Float], durationMicroseconds: Int, model: RecognitionModel) throws -> [LineAlignment] {
+/// `neighbourAcceptance` selects the version 3 acceptance rules; the default reproduces the Python reference (version 2).
+public func alignLyrics(_ lyrics: Data, vocals: [Float], durationMicroseconds: Int, model: RecognitionModel, neighbourAcceptance: Bool = false) throws -> [LineAlignment] {
     let source=try LyricSource(lyrics),targets=try textTargets(source)
     guard targets.tokens.allSatisfy({ model.vocabulary[$0] != nil }) else { throw AlignmentError.invalid("Text cannot be represented by the recognition model") }
     let emissions=try model.emissions(vocals)
     let spans=try ctcPath(emissions,targets:targets.tokens.map { model.vocabulary[$0]! },blank:model.blank)
     var rows=try proposals(source,duration:durationMicroseconds,emissions:emissions,targets:targets,spans:spans,vocabulary:model.vocabulary,blank:model.blank)
     let activity=try VocalRules.activity(vocals)
-    VocalRules.apply(&rows,level:activity.level,reference:activity.reference)
+    VocalRules.apply(&rows,level:activity.level,reference:activity.reference,neighbours:neighbourAcceptance)
     return rows
 }
 

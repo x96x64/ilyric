@@ -105,8 +105,15 @@ public enum VocalRules {
         return (level,sorted[low]+(sorted[high]-sorted[low])*(position-Double(low)))
     }
 
-    /// Acceptance from separated-stem evidence and activity-refined boundaries (Python `apply_vocal_rules`).
-    public static func apply(_ rows: inout [LineAlignment], level: [Double], reference: Double) {
+    /// Version 3 neighbour acceptance: a rejected line whose nearest lines are both accepted by the version 2 evidence,
+    /// or one of them is and its similarity is at least this, is accepted when its rate is at most `neighbourRate`
+    /// (docs/reports/neighbour-acceptance.md).
+    public static let neighbourSimilarity=0.05, neighbourRate=1_000_000
+
+    /// Acceptance from separated-stem evidence and activity-refined boundaries (Python `apply_vocal_rules`). With
+    /// `neighbours`, rejected lines framed by accepted neighbours are accepted as well (version 3); without it the
+    /// result equals the Python reference.
+    public static func apply(_ rows: inout [LineAlignment], level: [Double], reference: Double, neighbours: Bool = false) {
         let onsetThreshold=reference-onsetActivityDB,offsetThreshold=reference-offsetActivityDB
         var rates=[Int:Double]()
         for k in rows.indices {
@@ -120,6 +127,17 @@ public enum VocalRules {
             if rate>Double(microsecondsPerCharacter.upperBound) { reasons.append("implausible_rate") }
             if !reasons.isEmpty { rows[k].flags+=reasons;continue }
             rows[k].estimate=p;rates[rows[k].id]=rate
+        }
+        if neighbours {
+            // Decide against the version 2 acceptance only, so that neighbour acceptance does not chain.
+            let base=rows.map { $0.estimate != nil }
+            for k in rows.indices where !base[k] {
+                guard let p=rows[k].proposal else { continue }
+                let rate=Double(p[1]-p[0])/Double(rows[k].alignmentText.unicodeScalars.count)
+                let before=k>0 && base[k-1],after=k+1<rows.count && base[k+1]
+                guard rate<=Double(neighbourRate),(before && after) || ((before || after) && (rows[k].similarity ?? 0)>=neighbourSimilarity) else { continue }
+                rows[k].flags.append("neighbour_supported");rows[k].estimate=p
+            }
         }
         let values=rates.values.sorted()
         let median:Double?=values.isEmpty ? nil : values.count%2==1 ? values[values.count/2] : (values[values.count/2-1]+values[values.count/2])/2
@@ -138,7 +156,7 @@ public enum VocalRules {
             guard onset<offset else { rows[k].flags.append("no_vocal_activity");rows[k].estimate=nil;continue }
             if onset>a { rows[k].onsetTrim=onset-a }
             if offset>b { rows[k].offsetExtension=offset-b }
-            if let median,median>0,rates[rows[k].id]!>uncertainRateRatio*median { rows[k].flags.append("uncertain_boundary") }
+            if let median,median>0,let rate=rates[rows[k].id],rate>uncertainRateRatio*median { rows[k].flags.append("uncertain_boundary") }
             rows[k].estimate=[onset,offset]
             rows[k].wordEstimates=wordEstimates(rows[k].words,onset:onset,offset:offset)
         }

@@ -30,7 +30,7 @@ enum Align {
         console.detail("  Separated vocals in \(elapsed(separatedAt.timeIntervalSince(decodedAt)))")
         let model=try RecognitionModel(modelURL:models.recognizer,vocabularyURL:models.vocabulary,computeUnits:units)
         let rows:[LineAlignment]
-        do { rows=try alignLyrics(Data(normalized.text.utf8),vocals:vocals,durationMicroseconds:duration,model:model) }
+        do { rows=try alignLyrics(Data(normalized.text.utf8),vocals:vocals,durationMicroseconds:duration,model:model,neighbourAcceptance:true) }
         catch AlignmentError.invalid(let reason) { throw Failure(message:"alignment failed: \(reason)") }
         let alignedAt=Date()
         console.detail("  Aligned in \(elapsed(alignedAt.timeIntervalSince(separatedAt)))")
