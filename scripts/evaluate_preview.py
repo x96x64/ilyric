@@ -5,6 +5,7 @@
   evaluate_preview.py musdb-input SECTIONS.txt LYRICS.txt
   evaluate_preview.py musdb REPORT.json SECTIONS.txt
   evaluate_preview.py musdb-revised REPORT.json SECTIONS.txt
+  evaluate_preview.py jamendopp REPORT.json LYRICS.txt WORDS.csv
 
 `musdb-revised` applies docs/reports/revised-preview-criteria.md: vocable-only sections are excluded from scoring and
 reported separately.
@@ -168,6 +169,55 @@ def musdb(report_path, sections_path, revised=False):
     return result
 
 
+def jamendopp(report_path, lyrics_path, words_path):
+    """Third qualification (docs/reports/third-preview-qualification-procedure.md): line intervals from word timing."""
+    report = load_report(report_path)
+    words = [(float(r['word_start']) * US, float(r['word_end']) * US) for r in csv.DictReader(open(words_path))]
+    lines, cursor = [], 0
+    for raw in open(lyrics_path, encoding='utf-8').read().split('\n'):
+        tokens = raw.split()
+        if not tokens:
+            continue
+        span = words[cursor:cursor + len(tokens)]
+        cursor += len(tokens)
+        if any(c.isalpha() for c in raw):
+            lines.append(dict(text=norm(re.sub(r'[()]', ' ', raw)), start=span[0][0], end=span[-1][1], words=span, tokens=tokens))
+    if cursor != len(words):
+        raise SystemExit('Word annotations do not correspond to the lyrics')
+    rows = report['lines']
+    if len(rows) != len(lines) or any(norm(r['text']) != l['text'] for r, l in zip(rows, lines)):
+        raise SystemExit('Report lines do not correspond to the lyric lines')
+    t = dict(lines=0, placed=0, wrong=0, unresolved=0, words=0, contained=0)
+    vocables = dict(lines=0, omitted=0, aligned=0, placed_correctly=0)
+    onset, offset, word_onset = [], [], []
+    for row, ref in zip(rows, lines):
+        if vocable_only(ref['text']):
+            vocables['lines'] += 1
+            vocables['omitted'] += row['status'] == 'omitted'
+            if row['status'] == 'aligned':
+                vocables['aligned'] += 1
+                vocables['placed_correctly'] += hit(row['interval_us'], [ref['start'], ref['end']])
+            continue
+        t['lines'] += 1
+        if row['status'] != 'aligned':
+            t['unresolved'] += 1
+            continue
+        a, b = row['interval_us']
+        t['placed' if hit([a, b], [ref['start'], ref['end']]) else 'wrong'] += 1
+        estimated = row['words'] or []
+        t['words'] += len(estimated)
+        t['contained'] += sum(ref['start'] - US / 2 <= (w['interval_us'][0] + w['interval_us'][1]) / 2 <= ref['end'] + US / 2 for w in estimated)
+        onset.append(a - ref['start'])
+        offset.append(b - ref['end'])
+        if len(estimated) == len(ref['words']):
+            word_onset += [w['interval_us'][0] - r[0] for w, r in zip(estimated, ref['words'])]
+    n = t['lines']
+    return dict(lines=n, placement_accuracy=t['placed'] / n if n else None, wrong_placement=t['wrong'] / n if n else None,
+                unresolved=t['unresolved'] / n if n else None, word_containment=t['contained'] / t['words'] if t['words'] else None,
+                counts=t, vocable_only=vocables, line_onset=errors_summary(onset), line_offset=errors_summary(offset),
+                word_onset=errors_summary(word_onset), duration_us=report['duration_us'])
+
+
 if __name__ == '__main__':
     mode, args = sys.argv[1], sys.argv[2:]
     if mode == 'jamendo':
@@ -176,6 +226,8 @@ if __name__ == '__main__':
         print(json.dumps(musdb_input(*args)))
     elif mode == 'musdb':
         print(json.dumps(musdb(*args), indent=1))
+    elif mode == 'jamendopp':
+        print(json.dumps(jamendopp(*args), indent=1))
     elif mode == 'musdb-revised':
         print(json.dumps(musdb(*args, revised=True), indent=1))
     else:

@@ -10,7 +10,7 @@ October 12, 2026. This procedure defines the third unseen English evaluation for
 
 ## Inputs and Reference
 
-The dataset's lyrics file of each recording is the input text, with parenthesis characters removed so that every line remains one aligned line, as in the earlier procedures. Each reference line interval runs from the start of its first annotated word to the end of its last, following the dataset's word annotations and line ends. Lines are vocable-only when every word matches the command's vocable pattern.
+The dataset's lyrics file of each recording is the input text, with parenthesis characters removed so that every line remains one aligned line, as in the earlier procedures. Each reference line interval runs from the start of its first annotated word to the end of its last, following the dataset's word annotations and line ends. Lines are vocable-only when every word matches the command's vocable pattern. *Clarification recorded after the data was obtained and before any recording was processed:* the word annotations have no line-end column; their word count equals the whitespace-separated words of every lyrics file, so each lyric line takes its words in order, and lines without letters are skipped as the command skips them. No lyrics file contains parentheses or section labels.
 
 ## Measures and Criteria
 
