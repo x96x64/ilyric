@@ -98,6 +98,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-11 — [Neighbour Acceptance](reports/neighbour-acceptance.md)
 - 2026-10-11 — [Second Preview Qualification Procedure](reports/second-preview-qualification-procedure.md)
 - 2026-10-11 — [Second Preview Qualification Results](reports/second-preview-qualification-results.md)
+- 2026-10-12 — [Revised Preview Criteria](reports/revised-preview-criteria.md)
 
 ### Native Pipeline
 
