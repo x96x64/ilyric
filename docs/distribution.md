@@ -28,6 +28,10 @@ The binary is unsigned until the maintainer provides an Apple Developer ID for s
 
 All three install the same binary and templates. The alignment models are installed by `ilyrics models install` or on first use, as with a source build; no package contains model weights.
 
+## Publication
+
+Version 0.2.0 was published on October 12, 2026, through all three channels. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
+
 ## Maintainer Actions
 
 Publishing requires credentials that only the maintainer holds: an npm account with an access token, a PyPI account with a trusted-publisher configuration for this repository, and creation of the `homebrew-tap` repository. Each first publication is a confirmation point under the roadmap.
