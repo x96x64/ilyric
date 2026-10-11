@@ -7,6 +7,7 @@ root=$(cd "$(dirname "$0")/.." && pwd)
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 mkdir -p "$stage/bin" "$stage/share/ilyric" "$out"
+out=$(cd "$out" && pwd)
 install -m 755 "$binary" "$stage/bin/ilyric"
 cp -R "$root/share/ilyric/templates" "$stage/share/ilyric/"
 cp "$root/LICENSE" "$root/README.md" "$stage/"
