@@ -61,19 +61,24 @@ public struct WordMotion: Codable, Equatable, Sendable {
     /// Width in seconds of a centered moving average applied to the paragraph's fill front, so that
     /// very short words fill over at least this long instead of at once; 0 keeps per-word linear fill.
     public var smoothing: Double = 0
+    /// Emphasize only the last word of a paragraph; the native screen does not emphasize words mid-line.
+    public var emphasisFinalOnly = false
+    /// Continue a word's fill until the next word begins, so the fill never pauses inside a line.
+    public var bridgesGaps = false
     public init(edge: Double, lift: Double, liftTime: Double, emphasisDuration: Double, emphasisScale: Double,
-                emphasisLift: Double, emphasisGlow: Double, glowRadius: Double, release: Double, smoothing: Double = 0) throws {
+                emphasisLift: Double, emphasisGlow: Double, glowRadius: Double, release: Double, smoothing: Double = 0,
+                emphasisFinalOnly: Bool = false, bridgesGaps: Bool = false) throws {
         guard [edge,lift,liftTime,emphasisDuration,emphasisScale,emphasisLift,emphasisGlow,glowRadius,release].allSatisfy(\.isFinite),
               (0...200).contains(edge), (0...20).contains(lift), (0.01...2).contains(liftTime), emphasisDuration>0,
               (1...1.3).contains(emphasisScale), (0...40).contains(emphasisLift), (0...1).contains(emphasisGlow),
               (0...60).contains(glowRadius), (0.01...3).contains(release), smoothing.isFinite, (0...1).contains(smoothing) else { throw SliceError.invalid("Word motion") }
-        self.smoothing=smoothing
+        self.smoothing=smoothing;self.emphasisFinalOnly=emphasisFinalOnly;self.bridgesGaps=bridgesGaps
         self.edge=edge;self.lift=lift;self.liftTime=liftTime;self.emphasisDuration=emphasisDuration;self.emphasisScale=emphasisScale
         self.emphasisLift=emphasisLift;self.emphasisGlow=emphasisGlow;self.glowRadius=glowRadius;self.release=release
     }
     /// Fitted to V17 (iPhone 16, reported iOS 27.0.1): 1,783 fill events for lift, one sustained word for emphasis.
-    public static let measured = try! WordMotion(edge:30,lift:3.5,liftTime:0.17,emphasisDuration:1.0,emphasisScale:1.05,
-        emphasisLift:8.5,emphasisGlow:0.5,glowRadius:18,release:0.3,smoothing:0.12)
+    public static let measured = try! WordMotion(edge:30,lift:3.5,liftTime:0.17,emphasisDuration:1.5,emphasisScale:1.05,
+        emphasisLift:8.5,emphasisGlow:0.5,glowRadius:18,release:0.3,smoothing:0.12,emphasisFinalOnly:true,bridgesGaps:true)
     /// Emphasis strength in [0, 1]: rises over the word's interval and decays after it.
     public func emphasis(begin: Double, end: Double, at t: Double) -> Double {
         guard end-begin>=emphasisDuration, t>begin else { return 0 }
@@ -146,7 +151,7 @@ public struct SliceInput: Codable, Sendable {
     }
     public func evaluate(_ time: Time) -> SliceSnapshot {
         let p = parameters
-        let states = events.map { e -> SpanPresentation in
+        let states = events.enumerated().map { index, e -> SpanPresentation in
             let progress: Double
             let phase: Double?
             if let begin = e.begin, let end = e.end {
@@ -159,7 +164,7 @@ public struct SliceInput: Codable, Sendable {
             var displacement=p.amplitude*(1+u)*exp(-u),scale=1.0,glow=0.0
             if let motion,let begin=e.begin,let end=e.end {
                 let a=Time(begin.numerator,begin.denominator).seconds,b=Time(end.numerator,end.denominator).seconds,t=time.seconds
-                let k=motion.emphasis(begin:a,end:b,at:t)
+                let k=motion.emphasisFinalOnly && index != events.count-1 ? 0 : motion.emphasis(begin:a,end:b,at:t)
                 displacement -= motion.liftOffset(begin:a,at:t)+motion.emphasisLift*k
                 scale=1+(motion.emphasisScale-1)*k;glow=motion.emphasisGlow*k
             }

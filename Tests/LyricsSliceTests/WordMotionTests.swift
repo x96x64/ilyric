@@ -59,4 +59,18 @@ struct WordMotionTests {
         #expect(early==earlyHard && late==lateHard)
         #expect(throws:SliceError.self) { try WordMotion(edge:30,lift:0,liftTime:0.1,emphasisDuration:1,emphasisScale:1,emphasisLift:0,emphasisGlow:0,glowRadius:0,release:0.1,smoothing:2) }
     }
+    @Test func onlyLineFinalSustainedWordsAreEmphasizedAndGapsAreBridged() throws {
+        // Two 2-second words with a 1-second gap: only the final one is emphasized.
+        let input=SliceInput.suppliedTimed(text:"Bright skyline",japanese:false,events:[
+            AppearanceEvent(start:0,length:7,begin:SliceTime(1),end:SliceTime(3),verticalEvent:nil),
+            AppearanceEvent(start:7,length:7,begin:SliceTime(4),end:SliceTime(6),verticalEvent:nil)],motion:m)
+        let s=input.evaluate(Time(3))
+        #expect(s.spans[0].scale==1 && s.spans[0].glow==0)
+        #expect(input.evaluate(Time(6)).spans[1].scale==m.emphasisScale)
+        // During the gap the first word is still filling rather than pausing.
+        var plain=m;plain.bridgesGaps=false
+        let bridged=try SliceParagraph(input),paused=try SliceParagraph(SliceInput.suppliedTimed(text:"Bright skyline",japanese:false,events:input.events,motion:plain))
+        let a=try bridged.raw(Time(7,2)),b=try paused.raw(Time(7,2)),c=try bridged.raw(Time(37,10))
+        #expect(a != b && a != c)
+    }
 }

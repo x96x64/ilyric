@@ -154,7 +154,12 @@ public final class SliceParagraph {
                 let advance=storage.filter { $0.event==e }.reduce(0.0) { $0+$1.right-$1.left }
                 eventStart.append(position);eventAdvance.append(advance)
                 if let b=event.begin,let f=event.end {
-                    let begin=Time(b.numerator,b.denominator).seconds,end=Time(f.numerator,f.denominator).seconds
+                    let begin=Time(b.numerator,b.denominator).seconds
+                    var end=Time(f.numerator,f.denominator).seconds
+                    // Bridging lets the fill run on to the next word's start instead of pausing in the gap.
+                    if input.motion?.bridgesGaps == true,e+1<input.events.count,let nb=input.events[e+1].begin {
+                        end=max(end,Time(nb.numerator,nb.denominator).seconds)
+                    }
                     frontKnots.append((begin,position));frontKnots.append((end,position+advance))
                 }
                 position+=advance
@@ -207,7 +212,7 @@ public final class SliceParagraph {
             }
             if !coverage, let motion = input.motion {
                 var moving=span
-                if motion.smoothing>0,let e=layer.event,!frontKnots.isEmpty,eventAdvance[e]>0 {
+                if motion.smoothing>0 || motion.bridgesGaps,let e=layer.event,!frontKnots.isEmpty,eventAdvance[e]>0 {
                     // A smoothed paragraph front replaces abrupt per-word fills; endpoints remain exact.
                     let front=smoothedFront(state.time.seconds,window:motion.smoothing)
                     moving=SpanPresentation(start:span.start,length:span.length,progress:min(1,max(0,(front-eventStart[e])/eventAdvance[e])),
