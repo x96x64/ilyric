@@ -95,10 +95,20 @@ public enum Exporter {
         @MainActor @Sendable func feedVideo() async throws -> (Double, Double, Double) {
             var raster = 0.0, append = 0.0, wait = 0.0
             let count = draws.count, batch = count * 4
+            // Render into a separate pool: holding a whole batch of the encoder's own buffers can starve the
+            // encoder, which then stops accepting frames while the batch waits to be appended.
+            var created: CVPixelBufferPool?
+            let attributes: [String: Any] = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
+                kCVPixelBufferWidthKey as String: width, kCVPixelBufferHeightKey as String: height,
+                kCVPixelBufferCGImageCompatibilityKey as String: true, kCVPixelBufferCGBitmapContextCompatibilityKey as String: true,
+                kCVPixelBufferIOSurfacePropertiesKey as String: [:]]
+            guard CVPixelBufferPoolCreate(nil, [kCVPixelBufferPoolMinimumBufferCountKey as String: batch] as CFDictionary,
+                                          attributes as CFDictionary, &created) == kCVReturnSuccess, let pool = created else {
+                throw SpikeError.failure("Pixel buffer pool creation failed")
+            }
             var first = 0
             while first < frames {
                 let n = min(batch, frames - first)
-                guard let pool = adaptor.pixelBufferPool else { throw SpikeError.failure("Missing pixel buffer pool") }
                 var buffers: [CVPixelBuffer] = []
                 for _ in 0..<n {
                     var value: CVPixelBuffer?
