@@ -92,7 +92,7 @@ enum Render {
             if let path=options.values["artwork"] { artwork=try LocalArtwork.decode(URL(fileURLWithPath:path)) }
             else { artwork=try tags.artwork.map { try LocalArtwork.decode(data:$0) } }
         } catch { throw Failure(message:"the artwork could not be decoded: \(error)") }
-        if artwork==nil { console.say("No artwork found; using the placeholder (pass --artwork FILE to supply one)") }
+        if artwork==nil { console.say("No artwork found; using the placeholder artwork (pass --artwork FILE to supply one)") }
 
         var presentation=LocalPresentation(background:background=="artwork" ? .fitted : nil,icons:.systemSymbols,
             minimumGap:options.has("no-gaps") ? nil : Time(4),
@@ -104,7 +104,7 @@ enum Render {
         let audio:LocalAudio,scene:LocalScene
         do {
             audio=try await LocalAudio.decode(audioURL)
-            scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:artwork?.image,highlighting:.enabled,presentation:presentation,
+            scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:artwork?.image ?? PlaceholderArtwork.image(),highlighting:.enabled,presentation:presentation,
                                  title:options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent,
                                  artist:options.values["artist"] ?? tags.artist ?? "")
         } catch let error as InputError { throw Failure(message:"\(error)") }
