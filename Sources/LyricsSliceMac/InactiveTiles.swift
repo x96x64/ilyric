@@ -38,3 +38,18 @@ final class InactiveTiles {
         c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
     }
 }
+
+/// Inactive tiles shared by renderers of one scene. Tiles are immutable once built, so concurrent drawing
+/// is safe; the lock covers only lookup, construction, and bounded least-recently-built eviction.
+final class TileCache: @unchecked Sendable {
+    private let lock=NSLock(),capacity: Int
+    private var tiles: [Int:InactiveTiles]=[:],order: [Int]=[]
+    init(capacity: Int) { self.capacity=capacity }
+    func tiles(_ index: Int, make: () throws -> InactiveTiles) rethrows -> InactiveTiles {
+        lock.lock();defer { lock.unlock() }
+        if let cached=tiles[index] { return cached }
+        let built=try make()
+        if tiles.count>=capacity,let oldest=order.first { tiles.removeValue(forKey:oldest);order.removeFirst() }
+        tiles[index]=built;order.append(index);return built
+    }
+}

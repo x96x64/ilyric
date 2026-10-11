@@ -9,7 +9,7 @@ public final class ScreenRenderer {
     public let screen: LyricsScreen
     public let lyrics: CompositionRenderer
     private let backdrop, artwork, fadeMask, expandedFadeMask: CGImage
-    private var inactiveTiles: [Int:InactiveTiles] = [:]
+    private let tileCache: TileCache
     private let dynamicBackdrop: ArtworkBackdrop?
     public let icons: ScreenIconSet
     private let symbols = SystemSymbols()
@@ -20,7 +20,7 @@ public final class ScreenRenderer {
     public let marquee: TitleMarquee?
     private let marqueeMask: CGImage?
     private let scrollingParts: Set<ScreenPart>
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil, sharing: ScreenRenderer? = nil) throws {
         self.icons=icons;self.marquee=marquee
         if let marquee {
             let width=Int((marquee.clipMaxX-marquee.clipMinX).rounded())
@@ -29,7 +29,13 @@ public final class ScreenRenderer {
                 space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
         } else { marqueeMask=nil }
         self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
-        self.screen=screen; lyrics=try CompositionRenderer(screen.composition)
+        // Renderers of the same scene share immutable layouts and inactive tiles; caches stay bounded.
+        if let sharing,sharing.screen.composition.paragraphs.count==screen.composition.paragraphs.count {
+            lyrics=sharing.lyrics;tileCache=sharing.tileCache
+        } else {
+            lyrics=try CompositionRenderer(screen.composition);tileCache=TileCache(capacity:boundedCache ? 16 : Int.max)
+        }
+        self.screen=screen
         let titleLine=Self.line(screen.title,size:51,bold:true),artistLine=Self.line(screen.artist,size:49,bold:false)
         title=titleLine; artist=artistLine
         let probe=Self.context(1,1),header=screen.evaluate(Time(0)).components
@@ -68,7 +74,7 @@ public final class ScreenRenderer {
         } else { dynamicBackdrop=nil }
         if calibratedInactive && !boundedCache {
             for (i,p) in screen.composition.paragraphs.enumerated() where (p.input.paragraphStyle == .latinStatic || p.input.paragraphStyle == .latinTimed) {
-                inactiveTiles[i]=InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0)),coverage:p.input.paragraphStyle == .latinTimed))
+                _=try tileCache.tiles(i) { InactiveTiles(try lyrics.paragraphs[i].render(p.input.evaluate(Time(0)),coverage:p.input.paragraphStyle == .latinTimed)) }
             }
         }
     }
@@ -190,12 +196,12 @@ public final class ScreenRenderer {
                 let top=input.parameters.originY+p.translationY-40
                 let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
                 if bottom<v.y || top>v.y+v.height { continue }
-                if calibratedInactive && (input.paragraphStyle == .latinStatic || input.paragraphStyle == .latinTimed) && inactiveTiles[p.index]==nil {
-                    if inactiveTiles.count>=12,let key=inactiveTiles.keys.sorted().first { inactiveTiles.removeValue(forKey:key) }
-                    inactiveTiles[p.index]=InactiveTiles(try lyrics.paragraphs[p.index].render(input.evaluate(Time(0)),coverage:input.paragraphStyle == .latinTimed))
-                }
             }
-            if let tiles=inactiveTiles[p.index] {
+            let style=lyrics.paragraphs[p.index].input.paragraphStyle
+            let tiles=calibratedInactive && (style == .latinStatic || style == .latinTimed) ? try tileCache.tiles(p.index) {
+                InactiveTiles(try lyrics.paragraphs[p.index].render(lyrics.paragraphs[p.index].input.evaluate(Time(0)),coverage:style == .latinTimed))
+            } : nil
+            if let tiles {
                 let a=InactiveTreatment.evaluate(state.output,paragraph:p.index,events:screen.composition.events)
                 if lyrics.paragraphs[p.index].input.paragraphStyle == .latinTimed {
                     // A bounded synthetic blend separates supplied highlighting from cached inactive support.

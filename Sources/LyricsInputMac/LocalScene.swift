@@ -52,7 +52,7 @@ public final class LocalScene {
     /// shared between threads. Every renderer produces identical frames.
     public func makeRenderer() throws -> ScreenRenderer {
         let r=try ScreenRenderer(renderer.screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,
-                                 icons:presentation.icons,marquee:presentation.marquee)
+                                 icons:presentation.icons,marquee:presentation.marquee,sharing:renderer)
         r.secondary=renderer.secondary;return r
     }
     public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled, presentation: LocalPresentation = .init()) throws {
