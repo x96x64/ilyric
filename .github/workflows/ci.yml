@@ -36,6 +36,10 @@ jobs:
         if: success() || failure()
         timeout-minutes: 10
         run: swift test --disable-xctest --filter AlignmentTests
+      - name: Test native separation signal processing
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter AlignmentMacTests
       - name: Test Lyrics slice
         timeout-minutes: 40
         run: swift test --disable-xctest --filter LyricsSliceTests

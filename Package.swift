@@ -24,6 +24,7 @@ let package = Package(
         .target(name: "AlignmentCore"),
         .target(name: "AlignmentMac", dependencies: ["AlignmentCore"]),
         .executableTarget(name: "AlignProbe", dependencies: ["AlignmentCore", "AlignmentMac"]),
+        .testTarget(name: "AlignmentMacTests", dependencies: ["AlignmentCore", "AlignmentMac"], resources: [.copy("Fixtures")]),
         .testTarget(name: "AlignmentTests", dependencies: ["AlignmentCore"], resources: [.copy("Fixtures")])
     ],
     swiftLanguageModes: [.v5]

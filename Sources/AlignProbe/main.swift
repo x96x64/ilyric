@@ -5,6 +5,21 @@ import AlignmentMac
 // Development probe: align untimed lyrics to a 16-kHz vocal stem with the Core ML recognition model and print JSON.
 // Usage: AlignProbe MODEL.mlpackage VOCAB.json LYRICS.txt VOCALS.wav DURATION_US
 let args=CommandLine.arguments
+// Separation mode: AlignProbe separate NETWORK.mlpackage MIX.f32 EXPECTED_SAMPLES OUT.f32
+// MIX.f32 is interleaved stereo 44.1-kHz float32 PCM; OUT.f32 receives mono 16-kHz float32 vocals.
+if args.count==6,args[1]=="separate",let expected=Int(args[4]) {
+    do {
+        let started=Date()
+        let separator=try VocalSeparator(modelURL:URL(fileURLWithPath:args[2]))
+        let raw=try Data(contentsOf:URL(fileURLWithPath:args[3]))
+        let interleaved=raw.withUnsafeBytes { Array($0.bindMemory(to:Float.self)) }
+        let left=stride(from:0,to:interleaved.count,by:2).map { interleaved[$0] },right=stride(from:1,to:interleaved.count,by:2).map { interleaved[$0] }
+        let vocals=try separator.vocals16k(left:left,right:right,expectedSamples:expected)
+        try vocals.withUnsafeBufferPointer { Data(buffer:$0) }.write(to:URL(fileURLWithPath:args[5]))
+        print("{\"samples\":\(vocals.count),\"seconds\":\(Date().timeIntervalSince(started))}")
+    } catch { FileHandle.standardError.write(Data("AlignProbe: \(error)\n".utf8));exit(1) }
+    exit(0)
+}
 guard args.count==6,let duration=Int(args[5]) else {
     FileHandle.standardError.write(Data("Usage: AlignProbe MODEL VOCAB LYRICS VOCALS DURATION_US\n".utf8));exit(2)
 }
