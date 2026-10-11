@@ -14,20 +14,19 @@ import SpikeCore
 
 func stamp(_ t: Double) -> String { String(format:"%.3fs",t) }
 func escape(_ s: String) -> String { s.replacingOccurrences(of:"&",with:"&amp;").replacingOccurrences(of:"<",with:"&lt;") }
-/// Each line lasts 2.6 s with evenly timed words; an instrumental gap of 7 s precedes the third stanza.
+/// Each line lasts 2.6 s with evenly timed words; an instrumental gap of 7 s follows the second line, so that every
+/// shown state occurs before the title marquee first moves (8.11 s).
 func timedLyrics(_ raw: String) throws -> (ttml: String, end: Double) {
     let stanzas=raw.components(separatedBy:"\n\n").map { $0.split(separator:"\n").map { $0.trimmingCharacters(in:.whitespaces) }.filter { !$0.isEmpty } }.filter { !$0.isEmpty }
     var paragraphs=[String](),time=1.0
-    for (k,stanza) in stanzas.enumerated() {
-        if k==2 { time+=7 }
-        for line in stanza {
-            let words=line.split(separator:" ").map(String.init),step=2.6/Double(words.count)
-            let spans=words.enumerated().map { i,w in
-                "<span begin=\"\(stamp(Double(i)*step))\" end=\"\(stamp(Double(i+1)*step))\">\(escape(w))\(i<words.count-1 ? " " : "")</span>"
-            }.joined()
-            paragraphs.append("<p begin=\"\(stamp(time))\" end=\"\(stamp(time+2.6))\">\(spans)</p>")
-            time+=2.8
-        }
+    for (n,line) in stanzas.joined().enumerated() {
+        if n==2 { time+=7 }
+        let words=line.split(separator:" ").map(String.init),step=2.6/Double(words.count)
+        let spans=words.enumerated().map { i,w in
+            "<span begin=\"\(stamp(Double(i)*step))\" end=\"\(stamp(Double(i+1)*step))\">\(escape(w))\(i<words.count-1 ? " " : "")</span>"
+        }.joined()
+        paragraphs.append("<p begin=\"\(stamp(time))\" end=\"\(stamp(time+2.6))\">\(spans)</p>")
+        time+=2.8
     }
     return ("<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body><div>"+paragraphs.joined()+"</div></body></tt>\n",time)
 }
@@ -43,8 +42,9 @@ do {
     presentation.holdsFinishedLine=true;presentation.collapsesGaps=true
     let scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:PlaceholderArtwork.image(),presentation:presentation,
                              title:"Twinkle, Twinkle, Little Star",artist:"Jane Taylor")
-    // Controls visible during the first line, word fill in the third stanza, and the instrumental gap.
-    let times=[Time(23,10),Time(3400,100),Time(2580,100)]
+    // Controls visible during the first line, word fill of the second line, and the instrumental gap, all before
+    // the title marquee's delay so that the title rests at its initial position.
+    let times=[Time(23,10),Time(47,10),Time(76,10)]
     // Frames contain the native 1179 × 2556 screen pillarboxed in 1080 × 1920; only the screen is kept.
     let screenWidth=1920.0*1179/2556,inset=(1080-screenWidth)/2
     let height=960,width=Int((screenWidth*Double(height)/1920).rounded()),gap=32,radius=44.0

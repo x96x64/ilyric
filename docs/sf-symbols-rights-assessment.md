@@ -45,7 +45,7 @@ The same runtime-only, no-redistribution policy applies to system fonts used for
 
 The maintainer decided that the README demonstration image, `docs/media/demo.png`, shows the SF Symbols that the `ilyric` command renders, so that the image depicts the command's actual output. This decision amends policies 1 and 2 for that single generated image only:
 
-- The image is rendered by the `DocumentationMedia` target, which resolves the control symbols at runtime through public AppKit APIs. The placeholder artwork is not a symbol: it is the character U+266B of the macOS system font Hiragino Sans W6, under the system-font policy above. No symbol vector, glyph outline, or font file is committed; the committed PNG contains rasterized symbols and text.
+- The image is rendered by the `DocumentationMedia` target, which resolves the control symbols and the placeholder artwork's `music.note` symbol at runtime through public AppKit APIs. No symbol vector, glyph outline, or font file is committed; the committed PNG contains rasterized symbols.
 - The image is documentation of iLyric's interface. It is not used as a logo, icon, or other trademark, and no symbol is modified.
 - Public fixtures, golden images, test outputs, and continuous integration remain on the original icon set and never compare against symbol-derived pixels.
 

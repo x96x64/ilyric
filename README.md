@@ -21,7 +21,7 @@ ilyric render song.m4a lyrics.txt -o video.mp4
 ```
 
 <p align="center">
-  <img src="docs/media/demo.png" alt="Three frames of a rendered Lyrics video of Twinkle, Twinkle, Little Star: the first line filling while the playback controls are visible, a line filling word by word under a scrolling title, and the instrumental-gap indicator" width="720">
+  <img src="docs/media/demo.png" alt="Three frames of a rendered Lyrics video of Twinkle, Twinkle, Little Star: the first line filling while the playback controls are visible, the next line filling word by word after the controls have hidden, and the instrumental-gap indicator" width="720">
 </p>
 
 > [!IMPORTANT]
