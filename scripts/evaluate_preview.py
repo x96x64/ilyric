@@ -24,7 +24,8 @@ def load_report(path):
 
 
 def norm(text):
-    return ' '.join(text.split())
+    # Whitespace is collapsed and, as ilyric's lyrics normalization does, not kept before punctuation.
+    return re.sub(r' ([,.;:!?])', r'\1', ' '.join(text.split()))
 
 
 def hit(a, b):
