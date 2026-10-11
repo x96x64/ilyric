@@ -32,7 +32,7 @@ def main(stage, version, out):
     for path in sorted((stage / 'share').rglob('*')):
         if path.is_file():
             entries.append((f'{data}/data/{path.relative_to(stage).as_posix()}', path, 0o644))
-    readme = (Path(__file__).resolve().parents[1] / 'README.md').read_text()
+    readme = (Path(__file__).resolve().parent / 'README.md').read_text()
     metadata = '\n'.join([
         'Metadata-Version: 2.1', 'Name: ilyric', f'Version: {version}',
         'Summary: Lyrics videos of the iPhone Music Lyrics screen, with on-device synchronization',

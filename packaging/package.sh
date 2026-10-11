@@ -10,7 +10,9 @@ mkdir -p "$stage/bin" "$stage/share/ilyric" "$out"
 out=$(cd "$out" && pwd)
 install -m 755 "$binary" "$stage/bin/ilyric"
 cp -R "$root/share/ilyric/templates" "$stage/share/ilyric/"
-cp "$root/LICENSE" "$root/README.md" "$stage/"
+cp "$root/LICENSE" "$stage/"
+# The package README uses absolute links, unlike the repository README.
+cp "$root/packaging/README.md" "$stage/README.md"
 # Release archive.
 tar -C "$stage" -czf "$out/ilyric-$version-macos-arm64.tar.gz" bin share LICENSE README.md
 # npm package: the same files; npm marks the bin target executable.

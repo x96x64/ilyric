@@ -36,7 +36,7 @@ jobs:
         run: |
           git fetch origin main --depth 1
           mkdir -p packaging/npm
-          for f in packaging/package.sh packaging/build_wheel.py packaging/npm/package.json; do git show origin/main:$f > $f; done
+          for f in packaging/package.sh packaging/build_wheel.py packaging/npm/package.json packaging/README.md; do git show origin/main:$f > $f; done
           sh packaging/package.sh "${TAG#v}" .build/release/ilyric dist
       - name: Attach to the release
         env:
