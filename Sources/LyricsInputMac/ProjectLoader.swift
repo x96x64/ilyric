@@ -26,7 +26,11 @@ public struct LocalArtwork {
     public let image: CGImage
     public let info: ArtworkInfo
     public static func decode(_ url: URL) throws -> LocalArtwork {
-        let data=try LocalFile.boundedData(url,limit:16*1024*1024,label:"Artwork")
+        try decode(data:LocalFile.boundedData(url,limit:16*1024*1024,label:"Artwork"))
+    }
+    /// Decodes artwork bytes, such as the cover embedded in an audio file.
+    public static func decode(data: Data) throws -> LocalArtwork {
+        guard data.count<=16*1024*1024 else { throw InputError.invalid("Artwork exceeds its byte limit") }
         guard let source=CGImageSourceCreateWithData(data as CFData,[kCGImageSourceShouldCache:false] as CFDictionary),
               CGImageSourceGetCount(source)==1,
               let properties=CGImageSourceCopyPropertiesAtIndex(source,0,nil) as? [CFString:Any],

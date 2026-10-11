@@ -57,7 +57,9 @@ public final class LocalScene {
                                  icons:presentation.icons,marquee:presentation.marquee,sharing:renderer)
         r.secondary=renderer.secondary;return r
     }
-    public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled, presentation: LocalPresentation = .init()) throws {
+    /// `title` and `artist` override the project's header labels.
+    public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled,
+                presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil) throws {
         self.lyrics=lyrics;self.audio=audio;self.artwork=artwork;self.presentation=presentation
         schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
@@ -112,7 +114,7 @@ public final class LocalScene {
             bottom:v?.bottom ?? true,handle:v?.handle ?? true,translation:v?.translation ?? true,sing:true)
         let controls=ScreenControls(translation:v?.translation ?? false,handle:v?.handle ?? true,
             sing:SingControl(rawValue:v?.sing ?? "hidden")!)
-        let screen=try LyricsScreen(composition:composition,title:project?.title ?? "Local Lyrics",artist:project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:LyricsScreen.referenceVolume,
+        let screen=try LyricsScreen(composition:composition,title:title ?? project?.title ?? "Local Lyrics",artist:artist ?? project?.artist ?? "Supplied Recording",duration:schedule.audioEnd,volume:LyricsScreen.referenceVolume,
             events:[.init(Time(0),order:0,controls:controls)]+(presentation.hideControls.map { [.init($0,order:1,
                 controls:ScreenControls(lower:false,translation:false,handle:controls.handle,sing:.hidden))] } ?? []),
             visibility:visibility,background:presentation.background,expandsLyrics:presentation.hideControls != nil)
