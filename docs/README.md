@@ -95,6 +95,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-11 — [Word Confidence Fallback](reports/word-confidence-fallback.md)
 - 2026-10-11 — [Preview Qualification Procedure](reports/preview-qualification-procedure.md)
 - 2026-10-11 — [Preview Qualification Results](reports/preview-qualification-results.md)
+- 2026-10-11 — [Second Preview Qualification Procedure](reports/second-preview-qualification-procedure.md)
 
 ### Native Pipeline
 
