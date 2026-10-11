@@ -20,7 +20,7 @@ The separator's training data is a limitation: the released `htdemucs` checkpoin
 
 ## Inputs
 
-For Set A, the dataset's lyrics file is the input text. For Set B, each section of type (a), (b), or (c) becomes one input line in order, including `*` sections so that the sung sequence is complete; sections of type (d) are omitted. The text is used as transcribed, lowercase and without punctuation; `ilyric` splits it into paragraphs of at most four lines. The MUSDB18 mixture is the first audio track of each stem file and is extracted losslessly into a single-track file before processing; the stems are not used.
+For Set A, the dataset's lyrics file is the input text. For Set B, each section of type (a), (b), or (c) becomes one input line in order, including `*` sections so that the sung sequence is complete; sections of type (d) are omitted. The text is used as transcribed, lowercase and almost without punctuation; `ilyric` splits it into paragraphs of at most four lines. *Clarification recorded before any Set B audio was obtained or processed:* eight sections contain parenthesized words, which `ilyric` would treat as background vocals outside the alignment; the parenthesis characters are removed and the words kept, so that every section remains one aligned line. Eighty sections are marked `*`, leaving 1,065 scored sections of types (a) 462, (b) 444, and (c) 159. The MUSDB18 mixture is the first audio track of each stem file and is extracted losslessly into a single-track file before processing; the stems are not used.
 
 ## Measures
 
