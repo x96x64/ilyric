@@ -42,4 +42,21 @@ struct WordMotionTests {
         let alphas=Set(stride(from:3,to:mid.count,by:4).map { mid[$0] })
         #expect(alphas.count>20)
     }
+    @Test func shortWordsFillOverTheSmoothingWindow() throws {
+        // A 20-ms word: without smoothing it is full 30 ms after it begins; with it, it is still filling.
+        var instant=m;instant.smoothing=0
+        func input(_ motion:WordMotion) -> SliceInput {
+            .suppliedTimed(text:"Go on home",japanese:false,events:[
+                AppearanceEvent(start:0,length:3,begin:SliceTime(1),end:SliceTime(12,10),verticalEvent:nil),
+                AppearanceEvent(start:3,length:3,begin:SliceTime(12,10),end:SliceTime(122,100),verticalEvent:nil),
+                AppearanceEvent(start:6,length:4,begin:SliceTime(13,10),end:SliceTime(2),verticalEvent:nil)],motion:motion)
+        }
+        let smooth=try SliceParagraph(input(m)),hard=try SliceParagraph(input(instant))
+        let t=Time(123,100)
+        #expect(try smooth.raw(t) != hard.raw(t))
+        // Long before and after every word, smoothing changes nothing.
+        let early=try smooth.raw(Time(1,2)),earlyHard=try hard.raw(Time(1,2)),late=try smooth.raw(Time(3)),lateHard=try hard.raw(Time(3))
+        #expect(early==earlyHard && late==lateHard)
+        #expect(throws:SliceError.self) { try WordMotion(edge:30,lift:0,liftTime:0.1,emphasisDuration:1,emphasisScale:1,emphasisLift:0,emphasisGlow:0,glowRadius:0,release:0.1,smoothing:2) }
+    }
 }

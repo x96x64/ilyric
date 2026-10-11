@@ -28,6 +28,26 @@ public final class SliceParagraph {
     }
     private let layers: [Layer]
     private let maskHeight: Int
+    /// Fill-front knots along the paragraph's advance: each timed event fills its advance between its times.
+    private var frontKnots: [(time: Double, position: Double)] = []
+    private var eventStart: [Double] = [], eventAdvance: [Double] = []
+    /// Average of the piecewise-linear front over [t - w/2, t + w/2], evaluated exactly from the knots.
+    private func smoothedFront(_ t: Double, window w: Double) -> Double {
+        let k=frontKnots
+        func value(_ x: Double) -> Double {
+            if x<=k[0].time { return k[0].position }
+            if x>=k[k.count-1].time { return k[k.count-1].position }
+            let i=k.lastIndex(where:{$0.time<=x})!,a=k[i],b=k[i+1]
+            return b.time>a.time ? a.position+(b.position-a.position)*(x-a.time)/(b.time-a.time) : b.position
+        }
+        if w<=0 { return value(t) }
+        let lo=t-w/2,hi=t+w/2
+        var points=[lo]+k.map(\.time).filter { $0>lo && $0<hi }+[hi]
+        points.sort()
+        var area=0.0
+        for (a,b) in zip(points,points.dropLast(0).dropFirst()) where b>a { area+=(value(a)+value(b))/2*(b-a) }
+        return area/w
+    }
     public init(_ input: SliceInput) throws {
         try input.validate(); self.input = input
         let p = input.parameters
@@ -128,6 +148,18 @@ public final class SliceParagraph {
             }
         }
         lines = details;fonts = names.sorted();layers = storage
+        if input.paragraphStyle?.timed == true {
+            var position=0.0
+            for (e,event) in input.events.enumerated() {
+                let advance=storage.filter { $0.event==e }.reduce(0.0) { $0+$1.right-$1.left }
+                eventStart.append(position);eventAdvance.append(advance)
+                if let b=event.begin,let f=event.end {
+                    let begin=Time(b.numerator,b.denominator).seconds,end=Time(f.numerator,f.denominator).seconds
+                    frontKnots.append((begin,position));frontKnots.append((end,position+advance))
+                }
+                position+=advance
+            }
+        }
     }
     private static func context(width:Int,height:Int) -> CGContext {
         CGContext(data:nil,width:width,height:height,bitsPerComponent:8,bytesPerRow:width*4,
@@ -174,7 +206,14 @@ public final class SliceParagraph {
                 context.draw(image,in:rect);continue
             }
             if !coverage, let motion = input.motion {
-                drawMoving(layer,span,motion,top:p.originY+Double(layer.line)*p.lineAdvance+span.displacement,into:context);continue
+                var moving=span
+                if motion.smoothing>0,let e=layer.event,!frontKnots.isEmpty,eventAdvance[e]>0 {
+                    // A smoothed paragraph front replaces abrupt per-word fills; endpoints remain exact.
+                    let front=smoothedFront(state.time.seconds,window:motion.smoothing)
+                    moving=SpanPresentation(start:span.start,length:span.length,progress:min(1,max(0,(front-eventStart[e])/eventAdvance[e])),
+                        displacement:span.displacement,phase:span.phase,scale:span.scale,glow:span.glow)
+                }
+                drawMoving(layer,moving,motion,top:p.originY+Double(layer.line)*p.lineAdvance+span.displacement,into:context);continue
             }
             if coverage || span.progress >= 1 { context.draw(layer.image,in:rect);continue }
             if span.progress <= 0 {
@@ -193,6 +232,10 @@ public final class SliceParagraph {
     /// Soft-edged fill, continuous lift, emphasis scale about the ink center, and glow behind filled ink.
     private func drawMoving(_ layer:Layer,_ span:SpanPresentation,_ motion:WordMotion,top:Double,into context:CGContext) {
         let p=input.parameters,width=Double(layer.image.width),height=Double(maskHeight)
+        // Nearest-neighbor sampling would snap a slowly scaling word to different pixels each frame.
+        let previousQuality=context.interpolationQuality
+        context.interpolationQuality = span.scale != 1 ? .high : previousQuality
+        defer { context.interpolationQuality=previousQuality }
         let base=CGRect(x:p.originX+layer.rasterX,y:2556-top-height,width:width,height:height)
         // Scale about the ink center so neighboring words keep their positions.
         let rect=CGRect(x:base.midX-width*span.scale/2,y:base.midY-height*span.scale/2,width:width*span.scale,height:height*span.scale)
