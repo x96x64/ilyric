@@ -1,0 +1,3330 @@
+{
+ "format": "ilyric-weight-recipe-1",
+ "model": "htdemucs",
+ "checkpoint": {
+  "file": "955717e8-8726e21a.th",
+  "sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+  "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th"
+ },
+ "weights": {
+  "size": 214666240,
+  "sha256": "232681a6637b42e2461b91edc6c54dbdef350935d0ebb4134e1c0e160834dfe7",
+  "skeleton_sha256": "8e975bb6825ad84444000c3c46a1b6ecbd2b1d5eec2f04d65c7e2dd74246016a"
+ },
+ "program": {
+  "sha256": "a19d8d179885b4d8e543330aefc489a034d36e2e7d06ed855f451b19ab5ad01e",
+  "inline_entries": [
+   {
+    "name": "m_tencoder_0_dconv_layers_0_0_bias",
+    "count": 6,
+    "sentinel": "80b6b846f6f35b490cc02dc92e115b4923c2b7c8c7c015c8",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.0.0.bias"
+   },
+   {
+    "name": "m_tencoder_0_dconv_layers_1_0_bias",
+    "count": 6,
+    "sentinel": "f7cce8c837c9c4c8386e1949824247c9438243482234df48",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.1.0.bias"
+   },
+   {
+    "name": "m_encoder_0_dconv_layers_0_0_bias",
+    "count": 6,
+    "sentinel": "db514ac9b08200c94f1b134905792048eb2d46c9889c02c8",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.0.0.bias"
+   },
+   {
+    "name": "m_encoder_0_dconv_layers_1_0_bias",
+    "count": 6,
+    "sentinel": "0356584936feb046778a68497fab4cc9eaad5148b53c71c8",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.1.0.bias"
+   },
+   {
+    "name": "m_decoder_3_dconv_layers_0_0_bias",
+    "count": 6,
+    "sentinel": "5eed1449995c16493f76ef46a82dd1c8aace59c98fcb63c8",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.0.0.bias"
+   },
+   {
+    "name": "m_decoder_3_dconv_layers_1_0_bias",
+    "count": 6,
+    "sentinel": "5a149547480e99c861ba7fc89e1f75c8a0026e4911a58148",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.1.0.bias"
+   },
+   {
+    "name": "m_tdecoder_3_dconv_layers_0_0_bias",
+    "count": 6,
+    "sentinel": "bc537448baf34149b69c06491a2d06c96e26c3c82e663649",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.0.0.bias"
+   },
+   {
+    "name": "m_tdecoder_3_dconv_layers_1_0_bias",
+    "count": 6,
+    "sentinel": "eef8a8c89bed6d494a0ab1c89ee40c49109d344999b954c8",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.1.0.bias"
+   },
+   {
+    "name": "m_tdecoder_3_conv_tr_bias",
+    "count": 8,
+    "sentinel": "27c93449b32fd0c813764948c3830749a802d34884d24a4935f92f49b4374c49",
+    "kind": "tensor",
+    "key": "tdecoder.3.conv_tr.bias"
+   },
+   {
+    "name": "reshape_2",
+    "count": 6,
+    "sentinel": "37a85e49c6bb0ec99c5f2049bc3f2bc97712c8460dc631c9",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.0.1.weight"
+   },
+   {
+    "name": "reshape_3",
+    "count": 6,
+    "sentinel": "ba5c35c9ce88b4c42e3d4648e02166c93de92bc961165149",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.0.1.bias"
+   },
+   {
+    "name": "reshape_10",
+    "count": 6,
+    "sentinel": "e355f3c81e245a49f4b217c993981cc9b19792c8589203c9",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.1.1.weight"
+   },
+   {
+    "name": "reshape_11",
+    "count": 6,
+    "sentinel": "b31f3249d07c2d49eddd174969f6e8c811724ec939005a49",
+    "kind": "tensor",
+    "key": "tencoder.0.dconv.layers.1.1.bias"
+   },
+   {
+    "name": "reshape_18",
+    "count": 6,
+    "sentinel": "ea9c214955cb87c8d4fcc548d9d62f495f018a4835ebbc47",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.0.1.weight"
+   },
+   {
+    "name": "reshape_19",
+    "count": 6,
+    "sentinel": "d839bc4824351a4950f297c83a3f5ec9a1d60b4852bb2cc9",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.0.1.bias"
+   },
+   {
+    "name": "reshape_26",
+    "count": 6,
+    "sentinel": "6bb20248ed4307c8c63446c91d5c94c885526d48209169c9",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.1.1.weight"
+   },
+   {
+    "name": "reshape_27",
+    "count": 6,
+    "sentinel": "597e28495d8a25c98c90e14704d480c841300bc9fbff5ec8",
+    "kind": "tensor",
+    "key": "encoder.0.dconv.layers.1.1.bias"
+   },
+   {
+    "name": "reshape_266",
+    "count": 6,
+    "sentinel": "1eab44c8ab51d4482b0ad6c863bf4bc96a616549bfb6f947",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.0.1.weight"
+   },
+   {
+    "name": "reshape_267",
+    "count": 6,
+    "sentinel": "9a821bc8abf14f4981d4dcc8edd156c92304b9c85112d548",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.0.1.bias"
+   },
+   {
+    "name": "reshape_274",
+    "count": 6,
+    "sentinel": "02c5d6c84ac597c70ab538c9b4a03047cc6731c80e2951c9",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.1.1.weight"
+   },
+   {
+    "name": "reshape_275",
+    "count": 6,
+    "sentinel": "b343094984bb4e484ce2cc48c4a248c9354d7f4856c56a49",
+    "kind": "tensor",
+    "key": "decoder.3.dconv.layers.1.1.bias"
+   },
+   {
+    "name": "reshape_282",
+    "count": 6,
+    "sentinel": "458582c814d412c934e648c9ec999548f5d69ec7741f6e49",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.0.1.weight"
+   },
+   {
+    "name": "reshape_283",
+    "count": 6,
+    "sentinel": "4563bd488e248a48795335c97e9e3cc961c0954823962c49",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.0.1.bias"
+   },
+   {
+    "name": "reshape_290",
+    "count": 6,
+    "sentinel": "cac0a5c8583339c8e9f8114823fe474682d4fa47a81b0848",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.1.1.weight"
+   },
+   {
+    "name": "reshape_291",
+    "count": 6,
+    "sentinel": "d9a925c9fffc73c931610ac9ade080c8b92673c9a4dc15c9",
+    "kind": "tensor",
+    "key": "tdecoder.3.dconv.layers.1.1.bias"
+   }
+  ]
+ },
+ "derived_entries": 516,
+ "constant_entries": 6,
+ "entries": [
+  {
+   "offset": 128,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.0.conv.bias"
+  },
+  {
+   "offset": 384,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.0.conv.weight"
+  },
+  {
+   "offset": 3520,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 7040,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 7488,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 9856,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 13376,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 13824,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 16192,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.rewrite.bias"
+  },
+  {
+   "offset": 16640,
+   "size": 18432,
+   "kind": "tensor",
+   "key": "tencoder.0.rewrite.weight"
+  },
+  {
+   "offset": 35136,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.0.conv.bias"
+  },
+  {
+   "offset": 35392,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "encoder.0.conv.weight"
+  },
+  {
+   "offset": 41600,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 45120,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 45568,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 47936,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 51456,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 51904,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 54272,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.rewrite.bias"
+  },
+  {
+   "offset": 54720,
+   "size": 18432,
+   "kind": "tensor",
+   "key": "encoder.0.rewrite.weight"
+  },
+  {
+   "offset": 73216,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.1.conv.bias"
+  },
+  {
+   "offset": 73664,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tencoder.1.conv.weight"
+  },
+  {
+   "offset": 221184,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 221312,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 235200,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 236032,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 245312,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 245440,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 259328,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 260160,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 269440,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.rewrite.bias"
+  },
+  {
+   "offset": 270272,
+   "size": 73728,
+   "kind": "tensor",
+   "key": "tencoder.1.rewrite.weight"
+  },
+  {
+   "offset": 344064,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.1.conv.bias"
+  },
+  {
+   "offset": 344512,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "encoder.1.conv.weight"
+  },
+  {
+   "offset": 492032,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 492160,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 506048,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 506880,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 516160,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 516288,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 530176,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 531008,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 540288,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.rewrite.bias"
+  },
+  {
+   "offset": 541120,
+   "size": 73728,
+   "kind": "tensor",
+   "key": "encoder.1.rewrite.weight"
+  },
+  {
+   "offset": 614912,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.2.conv.bias"
+  },
+  {
+   "offset": 615744,
+   "size": 589824,
+   "kind": "tensor",
+   "key": "tencoder.2.conv.weight"
+  },
+  {
+   "offset": 1205632,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 1205824,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 1261184,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 1262784,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 1299712,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 1299904,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 1355264,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 1356864,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 1393792,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.rewrite.bias"
+  },
+  {
+   "offset": 1395392,
+   "size": 294912,
+   "kind": "tensor",
+   "key": "tencoder.2.rewrite.weight"
+  },
+  {
+   "offset": 1690368,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.2.conv.bias"
+  },
+  {
+   "offset": 1691200,
+   "size": 589824,
+   "kind": "tensor",
+   "key": "encoder.2.conv.weight"
+  },
+  {
+   "offset": 2281088,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 2281280,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 2336640,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 2338240,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 2375168,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 2375360,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 2430720,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 2432320,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 2469248,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.rewrite.bias"
+  },
+  {
+   "offset": 2470848,
+   "size": 294912,
+   "kind": "tensor",
+   "key": "encoder.2.rewrite.weight"
+  },
+  {
+   "offset": 2765824,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.3.conv.bias"
+  },
+  {
+   "offset": 2767424,
+   "size": 2359296,
+   "kind": "tensor",
+   "key": "tencoder.3.conv.weight"
+  },
+  {
+   "offset": 5126784,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 5127040,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 5348288,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 5351424,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 5498944,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 5499200,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 5720448,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 5723584,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 5871104,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.rewrite.bias"
+  },
+  {
+   "offset": 5874240,
+   "size": 1179648,
+   "kind": "tensor",
+   "key": "tencoder.3.rewrite.weight"
+  },
+  {
+   "offset": 7053952,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.3.conv.bias"
+  },
+  {
+   "offset": 7055552,
+   "size": 2359296,
+   "kind": "tensor",
+   "key": "encoder.3.conv.weight"
+  },
+  {
+   "offset": 9414912,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 9415168,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 9636416,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 9639552,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 9787072,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 9787328,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 10008576,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 10011712,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 10159232,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.rewrite.bias"
+  },
+  {
+   "offset": 10162368,
+   "size": 1179648,
+   "kind": "tensor",
+   "key": "encoder.3.rewrite.weight"
+  },
+  {
+   "offset": 11342080,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "channel_upsampler.bias"
+  },
+  {
+   "offset": 11344192,
+   "size": 786432,
+   "kind": "tensor",
+   "key": "channel_upsampler.weight"
+  },
+  {
+   "offset": 12130688,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "channel_upsampler_t.bias"
+  },
+  {
+   "offset": 12132800,
+   "size": 786432,
+   "kind": "tensor",
+   "key": "channel_upsampler_t.weight"
+  },
+  {
+   "offset": 12919296,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.norm_in.bias"
+  },
+  {
+   "offset": 12921408,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.norm_in.weight"
+  },
+  {
+   "offset": 12923520,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.norm_in_t.bias"
+  },
+  {
+   "offset": 12925632,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.norm_in_t.weight"
+  },
+  {
+   "offset": 12927744,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm1.bias"
+  },
+  {
+   "offset": 12929856,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm1.weight"
+  },
+  {
+   "offset": 12931968,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 12934080,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 13982720,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 13988928,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 17134720,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.gamma_1.scale"
+  },
+  {
+   "offset": 17136832,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm2.bias"
+  },
+  {
+   "offset": 17138944,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm2.weight"
+  },
+  {
+   "offset": 17141056,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.linear1.bias"
+  },
+  {
+   "offset": 17149312,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.linear1.weight"
+  },
+  {
+   "offset": 21343680,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.linear2.bias"
+  },
+  {
+   "offset": 21345792,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.linear2.weight"
+  },
+  {
+   "offset": 25540160,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.gamma_2.scale"
+  },
+  {
+   "offset": 25542272,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm1.bias"
+  },
+  {
+   "offset": 25544384,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm1.weight"
+  },
+  {
+   "offset": 25546496,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 25548608,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 26597248,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 26603456,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 29749248,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.gamma_1.scale"
+  },
+  {
+   "offset": 29751360,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm2.bias"
+  },
+  {
+   "offset": 29753472,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm2.weight"
+  },
+  {
+   "offset": 29755584,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.linear1.bias"
+  },
+  {
+   "offset": 29763840,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.linear1.weight"
+  },
+  {
+   "offset": 33958208,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.linear2.bias"
+  },
+  {
+   "offset": 33960320,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.linear2.weight"
+  },
+  {
+   "offset": 38154688,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.gamma_2.scale"
+  },
+  {
+   "offset": 38156800,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm1.bias"
+  },
+  {
+   "offset": 38158912,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm1.weight"
+  },
+  {
+   "offset": 38161024,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm2.bias"
+  },
+  {
+   "offset": 38163136,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm2.weight"
+  },
+  {
+   "offset": 38165248,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.cross_attn.out_proj.bias"
+  },
+  {
+   "offset": 38167360,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.cross_attn.out_proj.weight"
+  },
+  {
+   "offset": 39216000,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.gamma_1.scale"
+  },
+  {
+   "offset": 39218112,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm3.bias"
+  },
+  {
+   "offset": 39220224,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm3.weight"
+  },
+  {
+   "offset": 39222336,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.linear1.bias"
+  },
+  {
+   "offset": 39230592,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.linear1.weight"
+  },
+  {
+   "offset": 43424960,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.linear2.bias"
+  },
+  {
+   "offset": 43427072,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.linear2.weight"
+  },
+  {
+   "offset": 47621440,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.gamma_2.scale"
+  },
+  {
+   "offset": 47623552,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm1.bias"
+  },
+  {
+   "offset": 47625664,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm1.weight"
+  },
+  {
+   "offset": 47627776,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm2.bias"
+  },
+  {
+   "offset": 47629888,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm2.weight"
+  },
+  {
+   "offset": 47632000,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.cross_attn.out_proj.bias"
+  },
+  {
+   "offset": 47634112,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.cross_attn.out_proj.weight"
+  },
+  {
+   "offset": 48682752,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.gamma_1.scale"
+  },
+  {
+   "offset": 48684864,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm3.bias"
+  },
+  {
+   "offset": 48686976,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm3.weight"
+  },
+  {
+   "offset": 48689088,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.linear1.bias"
+  },
+  {
+   "offset": 48697344,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.linear1.weight"
+  },
+  {
+   "offset": 52891712,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.linear2.bias"
+  },
+  {
+   "offset": 52893824,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.linear2.weight"
+  },
+  {
+   "offset": 57088192,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.gamma_2.scale"
+  },
+  {
+   "offset": 57090304,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm1.bias"
+  },
+  {
+   "offset": 57092416,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm1.weight"
+  },
+  {
+   "offset": 57094528,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 57096640,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 58145280,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 58151488,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 61297280,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.gamma_1.scale"
+  },
+  {
+   "offset": 61299392,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm2.bias"
+  },
+  {
+   "offset": 61301504,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm2.weight"
+  },
+  {
+   "offset": 61303616,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.linear1.bias"
+  },
+  {
+   "offset": 61311872,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.linear1.weight"
+  },
+  {
+   "offset": 65506240,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.linear2.bias"
+  },
+  {
+   "offset": 65508352,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.linear2.weight"
+  },
+  {
+   "offset": 69702720,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.gamma_2.scale"
+  },
+  {
+   "offset": 69704832,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm1.bias"
+  },
+  {
+   "offset": 69706944,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm1.weight"
+  },
+  {
+   "offset": 69709056,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 69711168,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 70759808,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 70766016,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 73911808,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.gamma_1.scale"
+  },
+  {
+   "offset": 73913920,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm2.bias"
+  },
+  {
+   "offset": 73916032,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm2.weight"
+  },
+  {
+   "offset": 73918144,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.linear1.bias"
+  },
+  {
+   "offset": 73926400,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.linear1.weight"
+  },
+  {
+   "offset": 78120768,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.linear2.bias"
+  },
+  {
+   "offset": 78122880,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.linear2.weight"
+  },
+  {
+   "offset": 82317248,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.gamma_2.scale"
+  },
+  {
+   "offset": 82319360,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm1.bias"
+  },
+  {
+   "offset": 82321472,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm1.weight"
+  },
+  {
+   "offset": 82323584,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm2.bias"
+  },
+  {
+   "offset": 82325696,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm2.weight"
+  },
+  {
+   "offset": 82327808,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.cross_attn.out_proj.bias"
+  },
+  {
+   "offset": 82329920,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.cross_attn.out_proj.weight"
+  },
+  {
+   "offset": 83378560,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.gamma_1.scale"
+  },
+  {
+   "offset": 83380672,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm3.bias"
+  },
+  {
+   "offset": 83382784,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm3.weight"
+  },
+  {
+   "offset": 83384896,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.linear1.bias"
+  },
+  {
+   "offset": 83393152,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.linear1.weight"
+  },
+  {
+   "offset": 87587520,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.linear2.bias"
+  },
+  {
+   "offset": 87589632,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.linear2.weight"
+  },
+  {
+   "offset": 91784000,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.gamma_2.scale"
+  },
+  {
+   "offset": 91786112,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm1.bias"
+  },
+  {
+   "offset": 91788224,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm1.weight"
+  },
+  {
+   "offset": 91790336,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm2.bias"
+  },
+  {
+   "offset": 91792448,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm2.weight"
+  },
+  {
+   "offset": 91794560,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.cross_attn.out_proj.bias"
+  },
+  {
+   "offset": 91796672,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.cross_attn.out_proj.weight"
+  },
+  {
+   "offset": 92845312,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.gamma_1.scale"
+  },
+  {
+   "offset": 92847424,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm3.bias"
+  },
+  {
+   "offset": 92849536,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm3.weight"
+  },
+  {
+   "offset": 92851648,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.linear1.bias"
+  },
+  {
+   "offset": 92859904,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.linear1.weight"
+  },
+  {
+   "offset": 97054272,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.linear2.bias"
+  },
+  {
+   "offset": 97056384,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.linear2.weight"
+  },
+  {
+   "offset": 101250752,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.gamma_2.scale"
+  },
+  {
+   "offset": 101252864,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm1.bias"
+  },
+  {
+   "offset": 101254976,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm1.weight"
+  },
+  {
+   "offset": 101257088,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 101259200,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 102307840,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 102314048,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 105459840,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.gamma_1.scale"
+  },
+  {
+   "offset": 105461952,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm2.bias"
+  },
+  {
+   "offset": 105464064,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm2.weight"
+  },
+  {
+   "offset": 105466176,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.linear1.bias"
+  },
+  {
+   "offset": 105474432,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.linear1.weight"
+  },
+  {
+   "offset": 109668800,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.linear2.bias"
+  },
+  {
+   "offset": 109670912,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.linear2.weight"
+  },
+  {
+   "offset": 113865280,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.gamma_2.scale"
+  },
+  {
+   "offset": 113867392,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm1.bias"
+  },
+  {
+   "offset": 113869504,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm1.weight"
+  },
+  {
+   "offset": 113871616,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.self_attn.out_proj.bias"
+  },
+  {
+   "offset": 113873728,
+   "size": 1048576,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.self_attn.out_proj.weight"
+  },
+  {
+   "offset": 114922368,
+   "size": 6144,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.self_attn.in_proj_bias"
+  },
+  {
+   "offset": 114928576,
+   "size": 3145728,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.self_attn.in_proj_weight"
+  },
+  {
+   "offset": 118074368,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.gamma_1.scale"
+  },
+  {
+   "offset": 118076480,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm2.bias"
+  },
+  {
+   "offset": 118078592,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm2.weight"
+  },
+  {
+   "offset": 118080704,
+   "size": 8192,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.linear1.bias"
+  },
+  {
+   "offset": 118088960,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.linear1.weight"
+  },
+  {
+   "offset": 122283328,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.linear2.bias"
+  },
+  {
+   "offset": 122285440,
+   "size": 4194304,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.linear2.weight"
+  },
+  {
+   "offset": 126479808,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.gamma_2.scale"
+  },
+  {
+   "offset": 126481920,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "channel_downsampler.bias"
+  },
+  {
+   "offset": 126483520,
+   "size": 786432,
+   "kind": "tensor",
+   "key": "channel_downsampler.weight"
+  },
+  {
+   "offset": 127270016,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "channel_downsampler_t.bias"
+  },
+  {
+   "offset": 127271616,
+   "size": 786432,
+   "kind": "tensor",
+   "key": "channel_downsampler_t.weight"
+  },
+  {
+   "offset": 128058112,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.rewrite.bias"
+  },
+  {
+   "offset": 128061248,
+   "size": 10616832,
+   "kind": "tensor",
+   "key": "decoder.0.rewrite.weight"
+  },
+  {
+   "offset": 138678144,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 138678400,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 138899648,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 138902784,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 139050304,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 139050560,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 139271808,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 139274944,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 139422464,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.0.conv_tr.bias"
+  },
+  {
+   "offset": 139423296,
+   "size": 2359296,
+   "kind": "tensor",
+   "key": "decoder.0.conv_tr.weight"
+  },
+  {
+   "offset": 141782656,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.rewrite.bias"
+  },
+  {
+   "offset": 141785792,
+   "size": 3538944,
+   "kind": "tensor",
+   "key": "tdecoder.0.rewrite.weight"
+  },
+  {
+   "offset": 145324800,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 145325056,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 145546304,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 145549440,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 145696960,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 145697216,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 145918464,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 145921600,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 146069120,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.0.conv_tr.bias"
+  },
+  {
+   "offset": 146069952,
+   "size": 2359296,
+   "kind": "tensor",
+   "key": "tdecoder.0.conv_tr.weight"
+  },
+  {
+   "offset": 148429312,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.rewrite.bias"
+  },
+  {
+   "offset": 148430912,
+   "size": 2654208,
+   "kind": "tensor",
+   "key": "decoder.1.rewrite.weight"
+  },
+  {
+   "offset": 151085184,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 151085376,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 151140736,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 151142336,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 151179264,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 151179456,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 151234816,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 151236416,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 151273344,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.1.conv_tr.bias"
+  },
+  {
+   "offset": 151273792,
+   "size": 589824,
+   "kind": "tensor",
+   "key": "decoder.1.conv_tr.weight"
+  },
+  {
+   "offset": 151863680,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.rewrite.bias"
+  },
+  {
+   "offset": 151865280,
+   "size": 884736,
+   "kind": "tensor",
+   "key": "tdecoder.1.rewrite.weight"
+  },
+  {
+   "offset": 152750080,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 152750272,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 152805632,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 152807232,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 152844160,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 152844352,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 152899712,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 152901312,
+   "size": 36864,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 152938240,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.1.conv_tr.bias"
+  },
+  {
+   "offset": 152938688,
+   "size": 589824,
+   "kind": "tensor",
+   "key": "tdecoder.1.conv_tr.weight"
+  },
+  {
+   "offset": 153528576,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.rewrite.bias"
+  },
+  {
+   "offset": 153529408,
+   "size": 663552,
+   "kind": "tensor",
+   "key": "decoder.2.rewrite.weight"
+  },
+  {
+   "offset": 154193024,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 154193152,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 154207040,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 154207872,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 154217152,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 154217280,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 154231168,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 154232000,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 154241280,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.2.conv_tr.bias"
+  },
+  {
+   "offset": 154241536,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "decoder.2.conv_tr.weight"
+  },
+  {
+   "offset": 154389056,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.rewrite.bias"
+  },
+  {
+   "offset": 154389888,
+   "size": 221184,
+   "kind": "tensor",
+   "key": "tdecoder.2.rewrite.weight"
+  },
+  {
+   "offset": 154611136,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.0.bias"
+  },
+  {
+   "offset": 154611264,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 154625152,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 154625984,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 154635264,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.0.bias"
+  },
+  {
+   "offset": 154635392,
+   "size": 13824,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 154649280,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 154650112,
+   "size": 9216,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 154659392,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.2.conv_tr.bias"
+  },
+  {
+   "offset": 154659648,
+   "size": 147456,
+   "kind": "tensor",
+   "key": "tdecoder.2.conv_tr.weight"
+  },
+  {
+   "offset": 154807168,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.rewrite.bias"
+  },
+  {
+   "offset": 154807616,
+   "size": 165888,
+   "kind": "tensor",
+   "key": "decoder.3.rewrite.weight"
+  },
+  {
+   "offset": 154973568,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 154977088,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 154977536,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 154979904,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 154983424,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 154983872,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 154986240,
+   "size": 64,
+   "kind": "tensor",
+   "key": "decoder.3.conv_tr.bias"
+  },
+  {
+   "offset": 154986368,
+   "size": 24576,
+   "kind": "tensor",
+   "key": "decoder.3.conv_tr.weight"
+  },
+  {
+   "offset": 155011008,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.rewrite.bias"
+  },
+  {
+   "offset": 155011456,
+   "size": 55296,
+   "kind": "tensor",
+   "key": "tdecoder.3.rewrite.weight"
+  },
+  {
+   "offset": 155066816,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.0.weight"
+  },
+  {
+   "offset": 155070336,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.3.bias"
+  },
+  {
+   "offset": 155070784,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.3.weight"
+  },
+  {
+   "offset": 155073152,
+   "size": 3456,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.0.weight"
+  },
+  {
+   "offset": 155076672,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.3.bias"
+  },
+  {
+   "offset": 155077120,
+   "size": 2304,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.3.weight"
+  },
+  {
+   "offset": 155079488,
+   "size": 12288,
+   "kind": "tensor",
+   "key": "tdecoder.3.conv_tr.weight"
+  },
+  {
+   "offset": 155091840,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 155092288,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 155092736,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 155092992,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 155093440,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 155093888,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.0.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 155094144,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 155094592,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 155095040,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 155095296,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 155095744,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 155096192,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.0.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 155096448,
+   "size": 33030144,
+   "kind": "frequency_embedding",
+   "key": "freq_emb.embedding.weight",
+   "bins": 512,
+   "frames": 336,
+   "scale": 10.0,
+   "outer_scale": 0.2
+  },
+  {
+   "offset": 188126656,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188126784,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188126912,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188127744,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188128576,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188129024,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188129152,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188129280,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188130112,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188130944,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tencoder.1.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 188131392,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188131520,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188131648,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188132480,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188133312,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188133760,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188133888,
+   "size": 48,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188134016,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188134848,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188135680,
+   "size": 384,
+   "kind": "tensor",
+   "key": "encoder.1.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 188136128,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188136320,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188136512,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188138112,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188139712,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188140544,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188140736,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188140928,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188142528,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188144128,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tencoder.2.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 188144960,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188145152,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188145344,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188146944,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188148544,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188149376,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188149568,
+   "size": 96,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188149760,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188151360,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188152960,
+   "size": 768,
+   "kind": "tensor",
+   "key": "encoder.2.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 188153792,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188154048,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188154304,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188157440,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188160576,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188162176,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188162432,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188162688,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188165824,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188168960,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tencoder.3.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 188170560,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 188170816,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 188171072,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 188174208,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 188177344,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 188178944,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 188179200,
+   "size": 192,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 188179456,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 188182592,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 188185728,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "encoder.3.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 201950272,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm_out.weight"
+  },
+  {
+   "offset": 201952384,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.0.norm_out.bias"
+  },
+  {
+   "offset": 201954496,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm_out.weight"
+  },
+  {
+   "offset": 201956608,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.0.norm_out.bias"
+  },
+  {
+   "offset": 201958720,
+   "size": 1048576,
+   "kind": "rows",
+   "key": "crosstransformer.layers.1.cross_attn.in_proj_weight",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 203007360,
+   "size": 2097152,
+   "kind": "rows",
+   "key": "crosstransformer.layers.1.cross_attn.in_proj_weight",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 205104576,
+   "size": 2048,
+   "kind": "rows",
+   "key": "crosstransformer.layers.1.cross_attn.in_proj_bias",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 205106688,
+   "size": 4096,
+   "kind": "rows",
+   "key": "crosstransformer.layers.1.cross_attn.in_proj_bias",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 205110848,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm_out.weight"
+  },
+  {
+   "offset": 205112960,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.1.norm_out.bias"
+  },
+  {
+   "offset": 205115072,
+   "size": 1048576,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.1.cross_attn.in_proj_weight",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 206163712,
+   "size": 2097152,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.1.cross_attn.in_proj_weight",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 208260928,
+   "size": 2048,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.1.cross_attn.in_proj_bias",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 208263040,
+   "size": 4096,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.1.cross_attn.in_proj_bias",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 208267200,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm_out.weight"
+  },
+  {
+   "offset": 208269312,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.1.norm_out.bias"
+  },
+  {
+   "offset": 208271424,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm_out.weight"
+  },
+  {
+   "offset": 208273536,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.2.norm_out.bias"
+  },
+  {
+   "offset": 208275648,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm_out.weight"
+  },
+  {
+   "offset": 208277760,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.2.norm_out.bias"
+  },
+  {
+   "offset": 208279872,
+   "size": 1048576,
+   "kind": "rows",
+   "key": "crosstransformer.layers.3.cross_attn.in_proj_weight",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 209328512,
+   "size": 2097152,
+   "kind": "rows",
+   "key": "crosstransformer.layers.3.cross_attn.in_proj_weight",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 211425728,
+   "size": 2048,
+   "kind": "rows",
+   "key": "crosstransformer.layers.3.cross_attn.in_proj_bias",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 211427840,
+   "size": 4096,
+   "kind": "rows",
+   "key": "crosstransformer.layers.3.cross_attn.in_proj_bias",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 211432000,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm_out.weight"
+  },
+  {
+   "offset": 211434112,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.3.norm_out.bias"
+  },
+  {
+   "offset": 211436224,
+   "size": 1048576,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.3.cross_attn.in_proj_weight",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 212484864,
+   "size": 2097152,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.3.cross_attn.in_proj_weight",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 214582080,
+   "size": 2048,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.3.cross_attn.in_proj_bias",
+   "start": 0,
+   "end": 512
+  },
+  {
+   "offset": 214584192,
+   "size": 4096,
+   "kind": "rows",
+   "key": "crosstransformer.layers_t.3.cross_attn.in_proj_bias",
+   "start": 512,
+   "end": 1536
+  },
+  {
+   "offset": 214588352,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm_out.weight"
+  },
+  {
+   "offset": 214590464,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.3.norm_out.bias"
+  },
+  {
+   "offset": 214592576,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm_out.weight"
+  },
+  {
+   "offset": 214594688,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers.4.norm_out.bias"
+  },
+  {
+   "offset": 214596800,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm_out.weight"
+  },
+  {
+   "offset": 214598912,
+   "size": 2048,
+   "kind": "tensor",
+   "key": "crosstransformer.layers_t.4.norm_out.bias"
+  },
+  {
+   "offset": 214601024,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214601280,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214601536,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214604672,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214607808,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214609408,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214609664,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214609920,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214613056,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214616192,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.0.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214617792,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214618048,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214618304,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214621440,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214624576,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214626176,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214626432,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214626688,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214629824,
+   "size": 3072,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214632960,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.0.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214634560,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214634752,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214634944,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214636544,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214638144,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214638976,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214639168,
+   "size": 96,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214639360,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214640960,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214642560,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.1.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214643392,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214643584,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214643776,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214645376,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214646976,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214647808,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214648000,
+   "size": 96,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214648192,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214649792,
+   "size": 1536,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214651392,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.1.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214652224,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214652352,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214652480,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214653312,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214654144,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214654592,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214654720,
+   "size": 48,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214654848,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214655680,
+   "size": 768,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214656512,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.2.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214656960,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.1.weight"
+  },
+  {
+   "offset": 214657088,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.1.bias"
+  },
+  {
+   "offset": 214657216,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214658048,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214658880,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214659328,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.1.weight"
+  },
+  {
+   "offset": 214659456,
+   "size": 48,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.1.bias"
+  },
+  {
+   "offset": 214659584,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214660416,
+   "size": 768,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214661248,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.2.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214661696,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214662144,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214662592,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214662848,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214663296,
+   "size": 384,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214663744,
+   "size": 192,
+   "kind": "tensor",
+   "key": "decoder.3.dconv.layers.1.6.scale"
+  },
+  {
+   "offset": 214664000,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.4.weight"
+  },
+  {
+   "offset": 214664448,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.4.bias"
+  },
+  {
+   "offset": 214664896,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.0.6.scale"
+  },
+  {
+   "offset": 214665152,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.4.weight"
+  },
+  {
+   "offset": 214665600,
+   "size": 384,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.4.bias"
+  },
+  {
+   "offset": 214666048,
+   "size": 192,
+   "kind": "tensor",
+   "key": "tdecoder.3.dconv.layers.1.6.scale"
+  }
+ ]
+}

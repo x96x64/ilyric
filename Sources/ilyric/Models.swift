@@ -9,15 +9,17 @@ enum Models {
         ProcessInfo.processInfo.environment["ILYRIC_MODELS"].map { URL(fileURLWithPath:$0,isDirectory:true) } ?? ModelStore.defaultDirectory
     }
 
-    /// The weightless model templates: `ILYRIC_TEMPLATES`, else share/ilyric/templates beside the executable's prefix.
+    /// The weightless model templates: `ILYRIC_TEMPLATES`, else share/ilyric/templates in the executable's installation
+    /// prefix or in an enclosing source checkout (for `.build/release/ilyric`).
     static func templates() throws -> URL {
         if let path=ProcessInfo.processInfo.environment["ILYRIC_TEMPLATES"] { return URL(fileURLWithPath:path,isDirectory:true) }
-        let executable=URL(fileURLWithPath:CommandLine.arguments[0]).resolvingSymlinksInPath()
-        let shared=executable.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("share/ilyric/templates")
-        guard FileManager.default.fileExists(atPath:shared.appendingPathComponent("weight-recipe.json").path) else {
-            throw Failure(message:"model templates were not found; set ILYRIC_TEMPLATES to a directory built by scripts/build_separation_template.py and scripts/build_recognition_template.py")
+        var directory=URL(fileURLWithPath:CommandLine.arguments[0]).resolvingSymlinksInPath().deletingLastPathComponent()
+        for _ in 0..<4 {
+            directory=directory.deletingLastPathComponent()
+            let candidate=directory.appendingPathComponent("share/ilyric/templates",isDirectory:true)
+            if FileManager.default.fileExists(atPath:candidate.appendingPathComponent("weight-recipe.json").path) { return candidate }
         }
-        return shared
+        throw Failure(message:"model templates were not found; install share/ilyric/templates from the source checkout beside the executable's prefix, or set ILYRIC_TEMPLATES")
     }
 
     /// Installed models, installing them first when missing or built from other templates.
