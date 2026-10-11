@@ -24,7 +24,7 @@ public enum SeparationInstaller {
     /// Returns the compiled model inside `destination`.
     public static func install(template: URL, checkpoint: URL, destination: URL) throws -> URL {
         let recipe=try JSONDecoder().decode(Recipe.self,from:Data(contentsOf:template.appendingPathComponent("weight-recipe.json")))
-        guard recipe.format=="ilyric-weight-recipe-1" else { throw AlignmentError.invalid("Unsupported weight recipe") }
+        guard recipe.format=="ilyrics-weight-recipe-1" else { throw AlignmentError.invalid("Unsupported weight recipe") }
         let checkpointData=try Data(contentsOf:checkpoint)
         guard hex(SHA256.hash(data:checkpointData))==recipe.checkpoint.sha256 else { throw AlignmentError.invalid("Checkpoint SHA-256 differs from the pinned file") }
         var weights=try inflate(Data(contentsOf:template.appendingPathComponent("weight-skeleton.bin.zlib")),size:recipe.weights.size)
@@ -152,7 +152,7 @@ public enum RecognitionInstaller {
     /// `template` holds wav2vec2-template.mlpackage, wav2vec2-skeleton.bin.zlib, and wav2vec2-recipe.json.
     public static func install(template: URL, weights: URL, destination: URL) throws -> URL {
         let recipe=try JSONDecoder().decode(Recipe.self,from:Data(contentsOf:template.appendingPathComponent("wav2vec2-recipe.json")))
-        guard recipe.format=="ilyric-weight-recipe-1" else { throw AlignmentError.invalid("Unsupported weight recipe") }
+        guard recipe.format=="ilyrics-weight-recipe-1" else { throw AlignmentError.invalid("Unsupported weight recipe") }
         let data=try Data(contentsOf:weights)
         guard SeparationInstaller.hex(SHA256.hash(data:data))==recipe.checkpoint.sha256 else { throw AlignmentError.invalid("Recognition weights SHA-256 differs from the pinned file") }
         var blob=try SeparationInstaller.inflate(Data(contentsOf:template.appendingPathComponent("wav2vec2-skeleton.bin.zlib")),size:recipe.weights.size)

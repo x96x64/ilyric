@@ -65,7 +65,7 @@ def main(reference, weights, out):
     x = self_test_input()
     model = ct.models.MLModel(str(reference), compute_units=ct.ComputeUnit.CPU_ONLY)
     expected = model.predict({'input_values': x[None]})['log_probs'][0]
-    manifest = dict(format='ilyric-weight-recipe-1', model='wav2vec2-base-960h',
+    manifest = dict(format='ilyrics-weight-recipe-1', model='wav2vec2-base-960h',
                     checkpoint=dict(file='model.safetensors', sha256=hashlib.sha256(Path(weights).read_bytes()).hexdigest(),
                                     url=BASE + 'model.safetensors', vocabulary_url=BASE + 'vocab.json',
                                     vocabulary_sha256=VOCABULARY_SHA256),

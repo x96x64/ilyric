@@ -2,7 +2,7 @@
 
 ## Project Identity and Documentation
 
-Use `iLyrics` as the canonical product name and `ilyrics` for the executable, repository, and suitable lowercase technical identifiers. The project was renamed from iLyric (`ilyric`) on October 12, 2026; historical reports, earlier commits and releases, and versioned data-format identifiers such as `ilyric-weight-recipe-1` keep the former name. Work in this repository; do not create a nested project directory. Preserve the planning-baseline commit.
+Use `iLyrics` as the canonical product name and `ilyrics` for the executable, repository, and suitable lowercase technical identifiers. The project was renamed from iLyric (`ilyric`) on October 12, 2026; historical reports, earlier commits and releases, and the data-format identifiers of historical research scripts and their outputs keep the former name. Work in this repository; do not create a nested project directory. Preserve the planning-baseline commit.
 
 Use MLA headline-style title case permanently for all English documentation titles, section headings, and subsection headings, including README, contributor guidance, architecture documents, command references, and future documentation. Preserve literal capitalization of iLyrics, Apple product names, APIs, frameworks, languages, commands, filenames, options, packages, and code identifiers.
 

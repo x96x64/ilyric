@@ -67,7 +67,7 @@ enum Render {
         let started=Date()
 
         // Lyrics: align untimed text, or parse supplied timing.
-        var report:[String:Any]=["format":"ilyric-render-report-1"]
+        var report:[String:Any]=["format":"ilyrics-render-report-1"]
         let lyrics:LocalLyrics
         do {
             switch lyricsURL.pathExtension.lowercased() {

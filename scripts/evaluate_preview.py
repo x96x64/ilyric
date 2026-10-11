@@ -22,7 +22,8 @@ US = 1_000_000
 
 def load_report(path):
     report = json.load(open(path))
-    if report.get('format') != 'ilyric-alignment-report-1':
+    # Reports written before the rename to iLyrics carry the former identifier.
+    if report.get('format') not in ('ilyrics-alignment-report-1', 'ilyric-alignment-report-1'):
         raise SystemExit('Unsupported report format')
     return report
 

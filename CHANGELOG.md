@@ -6,7 +6,7 @@ All notable changes to iLyric are recorded here. The format follows [Keep a Chan
 
 ### Changed
 
-- The project is renamed from iLyric to iLyrics: the command is `ilyrics`, the repository `x96x64/ilyrics`, the environment variables `ILYRICS_MODELS` and `ILYRICS_TEMPLATES`, the templates directory `share/ilyrics/templates`, and the model cache `~/Library/Application Support/iLyrics/Models`. Models installed by 0.1.0 must be installed again.
+- The project is renamed from iLyric to iLyrics: the command is `ilyrics`, the repository `x96x64/ilyrics`, the environment variables `ILYRICS_MODELS` and `ILYRICS_TEMPLATES`, the templates directory `share/ilyrics/templates`, the model cache `~/Library/Application Support/iLyrics/Models`, and the data-format identifiers of reports and model recipes (`ilyrics-alignment-report-1`, `ilyrics-render-report-1`, `ilyrics-weight-recipe-1`, `ilyrics-installed-models-1`). Models installed by 0.1.0 must be installed again.
 - Alignment accepts lines framed by accepted neighbours (version 3 of the vocal rules), raising the share of timed lines.
 - Recordings of up to twenty minutes are supported, and long recordings no longer exceed the alignment's trace bound.
 - Alignment reports include each line's forced proposal, support, and similarity.

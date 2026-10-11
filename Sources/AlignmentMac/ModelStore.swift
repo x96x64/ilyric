@@ -64,7 +64,7 @@ public struct InstalledModels: Equatable, Sendable {
     }
     static func manifest(_ templates: URL) throws -> Manifest {
         let p=try pins(templates)
-        return Manifest(format:"ilyric-installed-models-1",separation:p.separation.weights.skeleton_sha256,recognition:p.recognition.weights.skeleton_sha256)
+        return Manifest(format:"ilyrics-installed-models-1",separation:p.separation.weights.skeleton_sha256,recognition:p.recognition.weights.skeleton_sha256)
     }
 
     /// The models in `directory` when they were completely installed from `templates`, otherwise nil.

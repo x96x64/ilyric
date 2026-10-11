@@ -50,7 +50,7 @@ enum Align {
              "proposal_us":r.proposal.map { $0 as Any } ?? NSNull(),"support":r.support ?? NSNull(),"similarity":r.similarity ?? NSNull(),
              "proposal_words":r.words.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull()]
         }
-        let report:[String:Any]=["format":"ilyric-alignment-report-1","audio":audio.lastPathComponent,"duration_us":duration,
+        let report:[String:Any]=["format":"ilyrics-alignment-report-1","audio":audio.lastPathComponent,"duration_us":duration,
             "compute_units":fast ? "all" : "cpu","ignored_input_lines":normalized.dropped,"lines":lines,
             "seconds":["decode":decodedAt.timeIntervalSince(started),"separation":separatedAt.timeIntervalSince(decodedAt),"alignment":alignedAt.timeIntervalSince(separatedAt)]]
         return Result(ttml:ttml,report:report,resolved:resolved,placed:rows.count-resolved-omitted.count,omitted:omitted.count)

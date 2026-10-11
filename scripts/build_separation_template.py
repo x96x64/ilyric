@@ -144,7 +144,7 @@ def main(reference, random_reference, checkpoint, out):
     shutil.copytree(reference, template, ignore=shutil.ignore_patterns('weight.bin'))
     (out / 'weight-skeleton.bin.zlib').write_bytes(zlib.compress(bytes(skeleton), 9))
     inline, program_sha256 = sanitize_program(template, random_reference, candidates)
-    manifest = dict(format='ilyric-weight-recipe-1', model='htdemucs', checkpoint=dict(
+    manifest = dict(format='ilyrics-weight-recipe-1', model='htdemucs', checkpoint=dict(
         file='955717e8-8726e21a.th', sha256=hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest(),
         url='https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th'),
         weights=dict(size=len(blob), sha256=hashlib.sha256(blob).hexdigest(),

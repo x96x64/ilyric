@@ -1,5 +1,5 @@
 {
- "format": "ilyric-weight-recipe-1",
+ "format": "ilyrics-weight-recipe-1",
  "model": "htdemucs",
  "checkpoint": {
   "file": "955717e8-8726e21a.th",
