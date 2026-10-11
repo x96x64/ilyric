@@ -10,7 +10,7 @@
 
 ## Engineering Reports
 
-The reports below record measurements, decisions, and their limitations in the order the work was done. They are historical records: later reports supersede earlier conclusions where they say so, and they are not revised afterwards. Commands in older reports refer to development probes that were removed after commit `9670573`, when the `ilyric` command replaced them.
+The reports below record measurements, decisions, and their limitations in the order the work was done. They are historical records: later reports supersede earlier conclusions where they say so, and they are not revised afterwards. Commands in older reports refer to development probes that were removed after commit `9670573`, when the command, then named `ilyric` and now `ilyrics`, replaced them.
 
 ### Planning and Decisions
 
@@ -109,7 +109,7 @@ The reports below record measurements, decisions, and their limitations in the o
 ### Historical Developer Commands
 
 - 2026-10-07 — [Reference-Validation Commands](reports/reference-validation-commands.md)
-- 2026-10-07 — [Running the iLyric Architecture Spike](reports/spike-commands.md)
+- 2026-10-07 — [Running the iLyrics Architecture Spike](reports/spike-commands.md)
 - 2026-10-07 — [Typography Calibration Commands](reports/typography-calibration-commands.md)
 - 2026-10-08 — [Acoustic Coverage Diagnostic Commands](reports/acoustic-coverage-commands.md)
 - 2026-10-08 — [Experimental Alignment Preparation](reports/alignment-commands.md)

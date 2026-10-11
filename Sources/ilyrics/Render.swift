@@ -9,7 +9,7 @@ import SpikeCore
 /// The `render` subcommand: a Lyrics video from audio and untimed or timed lyrics.
 enum Render {
     static let help="""
-    Usage: ilyric render AUDIO LYRICS -o VIDEO.mp4 [options]
+    Usage: ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]
 
     Renders a 1080×1920 Lyrics video. Untimed lyrics (.txt) are aligned automatically first; timed lyrics
     (.ttml, .lrc, Enhanced LRC) are used as supplied.
@@ -114,7 +114,7 @@ enum Render {
         renderers.forEach { $0.enableGPUScaling() }
         let frames=scene.schedule.frames,progress=Progress(total:frames,console:console)
         console.say("Rendering \(frames) frames with \(jobs) workers")
-        let temporary=target.deletingLastPathComponent().appendingPathComponent(".ilyric-\(UUID().uuidString).mp4")
+        let temporary=target.deletingLastPathComponent().appendingPathComponent(".ilyrics-\(UUID().uuidString).mp4")
         defer { try? FileManager.default.removeItem(at:temporary) }
         let metrics=try await Exporter.video(width:1080,height:1920,to:temporary,frames:frames,
             workers:renderers.map { r in { time,context in try r.draw(time,into:context);progress.advance() } },

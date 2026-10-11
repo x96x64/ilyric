@@ -62,7 +62,7 @@ enum Align {
     }
 
     static let help="""
-    Usage: ilyric align AUDIO LYRICS -o LYRICS.ttml [options]
+    Usage: ilyrics align AUDIO LYRICS -o LYRICS.ttml [options]
 
     Aligns untimed lyrics (UTF-8 text) to a recording and writes word-timed TTML.
 

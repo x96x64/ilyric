@@ -1,4 +1,4 @@
-// Experimental developer invocation; deliberately separate from ilyric.
+// Experimental developer invocation; deliberately separate from ilyrics.
 import Foundation
 import CoreGraphics
 import ImageIO

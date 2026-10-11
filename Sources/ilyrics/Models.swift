@@ -4,22 +4,22 @@ import AlignmentMac
 
 /// Model cache and template locations, and the `models` subcommand.
 enum Models {
-    /// The cache directory: `ILYRIC_MODELS`, else Application Support/iLyric/Models.
+    /// The cache directory: `ILYRICS_MODELS`, else Application Support/iLyrics/Models.
     static var directory: URL {
-        ProcessInfo.processInfo.environment["ILYRIC_MODELS"].map { URL(fileURLWithPath:$0,isDirectory:true) } ?? ModelStore.defaultDirectory
+        ProcessInfo.processInfo.environment["ILYRICS_MODELS"].map { URL(fileURLWithPath:$0,isDirectory:true) } ?? ModelStore.defaultDirectory
     }
 
-    /// The weightless model templates: `ILYRIC_TEMPLATES`, else share/ilyric/templates in the executable's installation
-    /// prefix or in an enclosing source checkout (for `.build/release/ilyric`).
+    /// The weightless model templates: `ILYRICS_TEMPLATES`, else share/ilyrics/templates in the executable's installation
+    /// prefix or in an enclosing source checkout (for `.build/release/ilyrics`).
     static func templates() throws -> URL {
-        if let path=ProcessInfo.processInfo.environment["ILYRIC_TEMPLATES"] { return URL(fileURLWithPath:path,isDirectory:true) }
+        if let path=ProcessInfo.processInfo.environment["ILYRICS_TEMPLATES"] { return URL(fileURLWithPath:path,isDirectory:true) }
         var directory=URL(fileURLWithPath:CommandLine.arguments[0]).resolvingSymlinksInPath().deletingLastPathComponent()
         for _ in 0..<4 {
             directory=directory.deletingLastPathComponent()
-            let candidate=directory.appendingPathComponent("share/ilyric/templates",isDirectory:true)
+            let candidate=directory.appendingPathComponent("share/ilyrics/templates",isDirectory:true)
             if FileManager.default.fileExists(atPath:candidate.appendingPathComponent("weight-recipe.json").path) { return candidate }
         }
-        throw Failure(message:"model templates were not found; install share/ilyric/templates from the source checkout beside the executable's prefix, or set ILYRIC_TEMPLATES")
+        throw Failure(message:"model templates were not found; install share/ilyrics/templates from the source checkout beside the executable's prefix, or set ILYRICS_TEMPLATES")
     }
 
     /// Installed models, installing them first when missing or built from other templates.
@@ -37,19 +37,19 @@ enum Models {
             console.say("Installed alignment models in \(elapsed(Date().timeIntervalSince(started)))")
             return models
         } catch let error as URLError {
-            throw Failure(message:"model download failed (\(error.localizedDescription)); check the network connection and run 'ilyric models install' again")
+            throw Failure(message:"model download failed (\(error.localizedDescription)); check the network connection and run 'ilyrics models install' again")
         }
     }
 
     static let help="""
-    Usage: ilyric models install | status | remove
+    Usage: ilyrics models install | status | remove
 
     Installs, reports, or removes the alignment models. Installation downloads the pinned HTDemucs checkpoint from
     Meta and the wav2vec2 weights from Hugging Face, verifies their SHA-256, and rebuilds the Core ML models locally.
 
     Environment:
-      ILYRIC_MODELS     Model cache directory (default: ~/Library/Application Support/iLyric/Models)
-      ILYRIC_TEMPLATES  Directory of the weightless model templates
+      ILYRICS_MODELS     Model cache directory (default: ~/Library/Application Support/iLyrics/Models)
+      ILYRICS_TEMPLATES  Directory of the weightless model templates
     """
 
     static func run(_ arguments: ArraySlice<String>) async throws {
@@ -66,8 +66,8 @@ enum Models {
             let templates=try? templates()
             let installed=try templates.flatMap { try InstalledModels.existing(in:directory,templates:$0) } != nil
             print("Cache:     \(directory.path)")
-            print("Templates: \(templates?.path ?? "not found (set ILYRIC_TEMPLATES)")")
-            print("Models:    \(installed ? "installed (\(size(directory)))" : "not installed; run 'ilyric models install'")")
+            print("Templates: \(templates?.path ?? "not found (set ILYRICS_TEMPLATES)")")
+            print("Models:    \(installed ? "installed (\(size(directory)))" : "not installed; run 'ilyrics models install'")")
         case "remove":
             try InstalledModels.remove(from:directory)
             console.say("Removed alignment models from \(directory.path)")

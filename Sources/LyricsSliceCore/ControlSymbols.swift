@@ -2,7 +2,7 @@ import Foundation
 
 /// Icon source for interface controls.
 ///
-/// `original` draws iLyric's own vector placeholders and is used by every public fixture and test.
+/// `original` draws iLyrics's own vector placeholders and is used by every public fixture and test.
 /// `systemSymbols` resolves SF Symbols at runtime on the rendering Mac; symbols are never bundled.
 /// Apple's terms do not expressly license symbols in exported videos (docs/sf-symbols-rights-assessment.md).
 public enum ScreenIconSet: String, Codable, Sendable { case original, systemSymbols }

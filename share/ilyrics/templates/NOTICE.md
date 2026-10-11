@@ -1,6 +1,6 @@
 # Model Templates
 
-These files let iLyric rebuild its two alignment models on the user's Mac. They contain the converted Core ML network structures, zero-filled weight skeletons, and recipes, but no trained weights.
+These files let iLyrics rebuild its two alignment models on the user's Mac. They contain the converted Core ML network structures, zero-filled weight skeletons, and recipes, but no trained weights.
 
 ## HTDemucs
 

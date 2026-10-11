@@ -9,7 +9,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 - **Video generation** is considered sufficient by the maintainer after the ninth Man in the Mirror video. It covers the measured focus lead, word fill with lift and sustained-word emphasis, background vocals, the title marquee, control auto-hide, gap slots, and the recalibrated artwork background. Reports from [First Complete Real-Song Video](reports/first-real-song-video.md) through [Gap Slot Collapse](reports/gap-slot-collapse.md) record the measurements.
 - **Alignment** runs natively on macOS without Python or FFmpeg, as recorded in [Native Alignment Pipeline](reports/native-alignment-pipeline.md) and [Native Model Installation and Decoding](reports/native-model-installation.md). It reproduces the Python reference on a complete recording and exports word-timed TTML byte-identically from the same alignment.
 - **Export throughput** is about 1.2 times real time with parallel rendering ([Playback Smoothness, Fill Lead, and Control Transition](reports/playback-smoothness-and-fill-lead.md)).
-- **The `ilyric` command** provides `render`, `align`, `models`, and `doctor`, replacing the rendering and alignment probes; the probes used by private reference validation remain as developer tools.
+- **The `ilyrics` command** provides `render`, `align`, `models`, and `doctor`, replacing the rendering and alignment probes; the probes used by private reference validation remain as developer tools.
 
 ### Decisions in Force
 
@@ -19,11 +19,12 @@ October 11, 2026. This roadmap carries the project from the current state to the
 4. The first public release supports English automatic synchronization; Japanese follows in the next release.
 5. Distribution is native macOS (Swift and Core ML), not a Python setup.
 6. SF Symbols are resolved at runtime and never bundled; public media use original icons.
-7. The HTDemucs checkpoint is never redistributed. iLyric downloads it from Meta's host on first use, verifies its SHA-256, and rebuilds the Core ML weights locally. The wav2vec2 weights (Apache-2.0) are installed the same way from Hugging Face.
+7. The HTDemucs checkpoint is never redistributed. iLyrics downloads it from Meta's host on first use, verifies its SHA-256, and rebuilds the Core ML weights locally. The wav2vec2 weights (Apache-2.0) are installed the same way from Hugging Face.
 8. The maintainer does not perform manual annotation; evaluation uses public human-annotated data, cross-validation, and isolated scoring.
 9. Commits carry the Claude co-author trailer when Claude contributes; history is not rewritten.
 10. (Added October 11, 2026.) The command design in [Command-Line Interface](command-line-interface.md) is approved. Control icons are always SF Symbols, resolved at runtime, with no option to disable them; the original icon set remains internal for tests and public media.
 11. (Added October 11, 2026.) The public preview is distributed through Homebrew, npm, and pip; the npm and pip packages are thin installers for the native macOS binary.
+12. (Added October 12, 2026.) The product is renamed from iLyric to iLyrics, the command from `ilyric` to `ilyrics`, and the repository to `x96x64/ilyrics`, before any package is published. Version 0.1.0 and historical records keep the former name.
 
 ## Where Work Can Run
 
@@ -39,10 +40,10 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 
 ## Stage 1: Experimental Source Release
 
-1. **Single command.** Replace the probes with one `ilyric` executable modeled on established tools (ripgrep, fd, bat, GitHub CLI, FFmpeg, yt-dlp): `ilyric render AUDIO LYRICS -o VIDEO` with automatic alignment, plus subcommands for alignment only, export only, model installation, and diagnostics. Options include presentation features enabled by default where rights permit, `--jobs`, deterministic CPU inference by default, and an explicit opt-in for faster non-reproducible inference. Lyrics normalization moves into Swift: parenthesized phrases become background vocals, section labels are dropped, and paragraphs are split to at most four lines.
+1. **Single command.** Replace the probes with one `ilyrics` executable modeled on established tools (ripgrep, fd, bat, GitHub CLI, FFmpeg, yt-dlp): `ilyrics render AUDIO LYRICS -o VIDEO` with automatic alignment, plus subcommands for alignment only, export only, model installation, and diagnostics. Options include presentation features enabled by default where rights permit, `--jobs`, deterministic CPU inference by default, and an explicit opt-in for faster non-reproducible inference. Lyrics normalization moves into Swift: parenthesized phrases become background vocals, section labels are dropped, and paragraphs are split to at most four lines.
 2. **Remaining defects** from the first real-song video: stereo audio output instead of mono; direct high-resolution Apple Lossless input; explicit reporting of unresolved and placed lines; peak memory reduction in the native pipeline (currently 3.6 GB).
 3. **Model distribution.** Host the weightless templates (about 3.6 MB for HTDemucs, 1 MB for wav2vec2) as release assets or in the repository, with Apache-2.0 notices for wav2vec2 and a statement that the Demucs checkpoint is downloaded from its publisher.
-4. **README and documentation.** Rewrite the README for users: what iLyric is, installation, a quick start, the command reference, model downloads and rights, limitations, and acknowledgments (Codex and Claude). Consolidate developer documentation and keep historical reports as records. All titles and headings use MLA title case.
+4. **README and documentation.** Rewrite the README for users: what iLyrics is, installation, a quick start, the command reference, model downloads and rights, limitations, and acknowledgments (Codex and Claude). Consolidate developer documentation and keep historical reports as records. All titles and headings use MLA title case.
 5. **Repository organization.** Remove or archive superseded spike targets and probes in a dedicated cleanup milestone, keep CI green, and audit history, ignored files, and untracked files before publication.
 
 **Progress (October 11, 2026).** Items 1 to 5 are complete except the final publication audit: the command is implemented and verified on the development recording; stereo output, direct 96-kHz Apple Lossless input, and placement reporting are fixed; peak memory fell from 5.4 GB to 1.6 GB for alignment and 3.0 GB for a complete render; the templates are distributed in the repository after removing checkpoint-derived inline values ([Model Template Distribution](reports/model-template-distribution.md)); the README is rewritten with a generated demonstration image; and the reports are indexed in [Documentation](README.md).

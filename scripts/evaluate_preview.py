@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Score `ilyric align` reports for the preview qualification (docs/reports/preview-qualification-procedure.md).
+"""Score `ilyrics align` reports for the preview qualification (docs/reports/preview-qualification-procedure.md).
 
   evaluate_preview.py jamendo REPORT.json LINES.csv WORDS.csv
   evaluate_preview.py musdb-input SECTIONS.txt LYRICS.txt
   evaluate_preview.py musdb REPORT.json SECTIONS.txt
+  evaluate_preview.py musdb-revised REPORT.json SECTIONS.txt
+
+`musdb-revised` applies docs/reports/revised-preview-criteria.md: vocable-only sections are excluded from scoring and
+reported separately.
 
 Outputs JSON numbers only; lyric text is read for matching and never printed.
 """
@@ -24,7 +28,7 @@ def load_report(path):
 
 
 def norm(text):
-    # Whitespace is collapsed and, as ilyric's lyrics normalization does, not kept before punctuation.
+    # Whitespace is collapsed and, as ilyrics's lyrics normalization does, not kept before punctuation.
     return re.sub(r' ([,.;:!?])', r'\1', ' '.join(text.split()))
 
 
@@ -98,12 +102,21 @@ def sections(path):
 
 def musdb_input(sections_path, lyrics_path):
     sung = sections(sections_path)
-    # One section per line; paragraphs are formed by ilyric's normalization.
+    # One section per line; paragraphs are formed by ilyrics's normalization.
     open(lyrics_path, 'w', encoding='utf-8').write('\n'.join(s['text'] for s in sung) + '\n')
     return dict(lines=len(sung), scored=sum(not s['star'] for s in sung))
 
 
-def musdb(report_path, sections_path):
+# The command's vocable pattern (TTMLExport.vocable).
+VOCABLE = re.compile(r"^(?:h?m+(?:h?m+)*|mh?m+|a+h*|o+h*|u+h+|e+y+|a+y+|la+|na+|da+|whoa+|ha+|w?h?o+o+|ow+|hee+|ye+a+h*|hey+|shamone)$")
+
+
+def vocable_only(text):
+    words = [w.lower() for w in re.findall(r'[A-Za-z]+', text)]
+    return bool(words) and all(VOCABLE.match(w) for w in words)
+
+
+def musdb(report_path, sections_path, revised=False):
     report = load_report(report_path)
     sung = sections(sections_path)
     lines = report['lines']
@@ -111,8 +124,17 @@ def musdb(report_path, sections_path):
         raise SystemExit('Report lines do not correspond to the annotated sections')
     tally = {k: dict(lines=0, placed=0, wrong=0, unresolved=0, words=0, contained=0) for k in ['all', 'a', 'b', 'c']}
     onset = []
+    vocables = dict(sections=0, omitted=0, aligned=0, placed_correctly=0)
     for line, s in zip(lines, sung):
         if s['star']:
+            continue
+        if revised and vocable_only(s['text']):
+            vocables['sections'] += 1
+            vocables['omitted'] += line['status'] == 'omitted'
+            if line['status'] == 'aligned':
+                vocables['aligned'] += 1
+                a, b = line['interval_us']
+                vocables['placed_correctly'] += s['start'] - US <= (a + b) / 2 <= s['end'] + US
             continue
         lo, hi = s['start'] - US, s['end'] + US
         for key in ['all', s['kind']]:
@@ -140,6 +162,8 @@ def musdb(report_path, sections_path):
     result['section_onset_difference'] = errors_summary(onset)
     result['excluded_star_sections'] = sum(s['star'] for s in sung)
     result['duration_us'] = report['duration_us']
+    if revised:
+        result['vocable_only'] = vocables
     return result
 
 
@@ -151,5 +175,7 @@ if __name__ == '__main__':
         print(json.dumps(musdb_input(*args)))
     elif mode == 'musdb':
         print(json.dumps(musdb(*args), indent=1))
+    elif mode == 'musdb-revised':
+        print(json.dumps(musdb(*args, revised=True), indent=1))
     else:
         raise SystemExit(__doc__)

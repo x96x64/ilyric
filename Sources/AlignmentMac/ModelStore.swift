@@ -4,9 +4,9 @@ import AlignmentCore
 
 /// Pinned downloads for first launch: a file is kept only when its SHA-256 matches, and a verified copy is reused.
 public enum ModelStore {
-    /// The user's cache directory for iLyric models.
+    /// The user's cache directory for iLyrics models.
     public static var defaultDirectory: URL {
-        FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("iLyric/Models",isDirectory:true)
+        FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("iLyrics/Models",isDirectory:true)
     }
 
     /// Returns the local file for `url`, downloading it when absent or corrupted.

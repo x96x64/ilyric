@@ -1,6 +1,6 @@
-# iLyric
+# iLyrics
 
-[![CI](https://github.com/x96x64/ilyric/actions/workflows/ci.yml/badge.svg)](https://github.com/x96x64/ilyric/actions/workflows/ci.yml)
+[![CI](https://github.com/x96x64/ilyrics/actions/workflows/ci.yml/badge.svg)](https://github.com/x96x64/ilyrics/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![macOS 14+](https://img.shields.io/badge/macOS-14%2B-000000?logo=apple&logoColor=white)](#requirements)
 [![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)](https://www.swift.org)
@@ -14,10 +14,10 @@
 [![wav2vec 2.0](https://img.shields.io/badge/wav2vec%202.0-speech%20recognition-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co/facebook/wav2vec2-base-960h)
 [![Python](https://img.shields.io/badge/Python-model%20templates-3776AB?logo=python&logoColor=white)](scripts)
 
-iLyric renders lyrics videos that reproduce the Lyrics screen of the Music app on iPhone, and synchronizes plain lyrics to a recording automatically. It runs entirely on your Mac: vocal separation and speech recognition run through Core ML, frames are drawn with Core Text and Core Graphics, and no network service is involved after the one-time model installation.
+iLyrics renders lyrics videos that reproduce the Lyrics screen of the Music app on iPhone, and synchronizes plain lyrics to a recording automatically. It runs entirely on your Mac: vocal separation and speech recognition run through Core ML, frames are drawn with Core Text and Core Graphics, and no network service is involved after the one-time model installation.
 
 ```bash
-ilyric render song.m4a lyrics.txt -o video.mp4
+ilyrics render song.m4a lyrics.txt -o video.mp4
 ```
 
 <p align="center">
@@ -25,7 +25,7 @@ ilyric render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> iLyric is an experimental source release. English synchronization and the visual preset have not yet been qualified for a public preview, and command-line options may change before the stable release. iLyric is not affiliated with, endorsed by, or sponsored by Apple.
+> iLyrics is an experimental source release. English synchronization and the visual preset have not yet been qualified for a public preview, and command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Contents
 
@@ -65,15 +65,15 @@ ilyric render song.m4a lyrics.txt -o video.mp4
 ### From Source
 
 ```bash
-git clone https://github.com/x96x64/ilyric.git
-cd ilyric
+git clone https://github.com/x96x64/ilyrics.git
+cd ilyrics
 swift build -c release
-sudo install -m 755 .build/release/ilyric /usr/local/bin/ilyric
-sudo mkdir -p /usr/local/share/ilyric
-sudo cp -R share/ilyric/templates /usr/local/share/ilyric/
+sudo install -m 755 .build/release/ilyrics /usr/local/bin/ilyrics
+sudo mkdir -p /usr/local/share/ilyrics
+sudo cp -R share/ilyrics/templates /usr/local/share/ilyrics/
 ```
 
-The second and third commands install the weightless model templates beside the executable. Running `.build/release/ilyric` directly from the checkout needs no installation step.
+The second and third commands install the weightless model templates beside the executable. Running `.build/release/ilyrics` directly from the checkout needs no installation step.
 
 Homebrew, npm, and pip packages will be added for the public preview. The npm and pip packages will install the same native macOS binary.
 
@@ -82,35 +82,35 @@ Homebrew, npm, and pip packages will be added for the public preview. The npm an
 The first `render` or `align` of plain text installs the alignment models automatically. To install them in advance:
 
 ```bash
-ilyric models install
+ilyrics models install
 ```
 
-Installation downloads about 460 MB from the publishers: the [HTDemucs](https://github.com/facebookresearch/demucs) checkpoint from Meta and the [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) weights from Hugging Face. iLyric verifies each file against a pinned SHA-256 digest, rebuilds the Core ML models on your Mac from weightless templates in this repository, runs a self-test, and deletes the downloads. The installed models occupy about 590 MB in `~/Library/Application Support/iLyric/Models`. iLyric does not redistribute either set of weights.
+Installation downloads about 460 MB from the publishers: the [HTDemucs](https://github.com/facebookresearch/demucs) checkpoint from Meta and the [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) weights from Hugging Face. iLyrics verifies each file against a pinned SHA-256 digest, rebuilds the Core ML models on your Mac from weightless templates in this repository, runs a self-test, and deletes the downloads. The installed models occupy about 590 MB in `~/Library/Application Support/iLyrics/Models`. iLyrics does not redistribute either set of weights.
 
 ```bash
-ilyric models status   # show the cache location and state
-ilyric models remove   # delete the installed models
+ilyrics models status   # show the cache location and state
+ilyrics models remove   # delete the installed models
 ```
 
 ## Quick Start
 
 ```bash
 # 1. Check the environment
-ilyric doctor
+ilyrics doctor
 
 # 2. Render a video from a recording and plain lyrics
-ilyric render "Paper Skies.m4a" paper-skies.txt -o paper-skies.mp4
+ilyrics render "Paper Skies.m4a" paper-skies.txt -o paper-skies.mp4
 ```
 
-iLyric reports each step on standard error: model installation on first use, alignment, any lines it could not time, and rendering progress. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
+iLyrics reports each step on standard error: model installation on first use, alignment, any lines it could not time, and rendering progress. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
 
 ## Usage
 
 ```
-ilyric render AUDIO LYRICS -o VIDEO.mp4 [options]
-ilyric align  AUDIO LYRICS -o LYRICS.ttml [options]
-ilyric models install | status | remove
-ilyric doctor
+ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]
+ilyrics align  AUDIO LYRICS -o LYRICS.ttml [options]
+ilyrics models install | status | remove
+ilyrics doctor
 ```
 
 `render` produces a video. Plain text lyrics (`.txt`) are aligned first; timed lyrics (`.ttml`, `.lrc`) are used as supplied. `align` stops after synchronization and writes word-timed TTML, which you can inspect, correct, and render later. The title, artist, and artwork are read from the audio file's metadata; `--title`, `--artist`, and `--artwork` override them, and a placeholder is drawn when no artwork is available.
@@ -137,17 +137,17 @@ Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. See
 
 ```bash
 # Align only, then review the report before rendering
-ilyric align song.m4a lyrics.txt -o lyrics.ttml --report report.json
-ilyric render song.m4a lyrics.ttml -o video.mp4
+ilyrics align song.m4a lyrics.txt -o lyrics.ttml --report report.json
+ilyrics render song.m4a lyrics.ttml -o video.mp4
 
 # Supply header text and artwork explicitly
-ilyric render song.wav lyrics.txt -o video.mp4 --title "Paper Skies" --artist "The Harbour Lights" --artwork cover.jpg
+ilyrics render song.wav lyrics.txt -o video.mp4 --title "Paper Skies" --artist "The Harbour Lights" --artwork cover.jpg
 
 # Keep the controls on screen and use a static background
-ilyric render song.m4a lyrics.ttml -o video.mp4 --controls visible --background static
+ilyrics render song.m4a lyrics.ttml -o video.mp4 --controls visible --background static
 
 # Faster alignment on the GPU and Neural Engine, at the cost of reproducibility
-ilyric render song.m4a lyrics.txt -o video.mp4 --fast
+ilyrics render song.m4a lyrics.txt -o video.mp4 --fast
 ```
 
 ## Lyrics Input
@@ -190,7 +190,7 @@ Any unprotected audio file that AVFoundation can decode is accepted, including A
 
 ## Reviewing an Alignment
 
-Automatic synchronization is reliable for most lines, but not all. iLyric never invents word timing it cannot support:
+Automatic synchronization is reliable for most lines, but not all. iLyrics never invents word timing it cannot support:
 
 - **Aligned** lines have line and word timing derived from the vocal stem.
 - **Placed** lines lacked reliable evidence and are spread evenly between their aligned neighbours; they fill steadily instead of word by word.
@@ -224,23 +224,23 @@ Peak memory was 1.6 GB during alignment and 3.0 GB for the complete `render`. Re
 
 ## Troubleshooting
 
-Run `ilyric doctor` first; it checks each requirement and states the recovery step for any problem.
+Run `ilyrics doctor` first; it checks each requirement and states the recovery step for any problem.
 
 | Message | Remedy |
 | --- | --- |
-| `model templates were not found` | Run iLyric from the cloned repository or an installed package, or set `ILYRIC_TEMPLATES`. |
-| `model download failed` | Check the network connection and run `ilyric models install` again; verified downloads are reused. |
+| `model templates were not found` | Run iLyrics from the cloned repository or an installed package, or set `ILYRICS_TEMPLATES`. |
+| `model download failed` | Check the network connection and run `ilyrics models install` again; verified downloads are reused. |
 | `the lyrics cannot be aligned` | Remove unsupported symbols, or split sections that exceed the stated limit. |
 | `Protected audio is unsupported` | Use a file you own without DRM; streamed Apple Music downloads cannot be read. |
 | `... already exists` | Choose another output or pass `--force`. |
 
 ## SF Symbols and Rights
 
-Control icons are SF Symbols, resolved at render time from the Mac running iLyric; iLyric never bundles or redistributes them. Apple's [SF Symbols license](https://developer.apple.com/support/terms/) does not expressly permit their use in exported videos, so you are responsible for how you use and publish the videos you create. The demonstration image above shows SF Symbols rendered the same way; the original icon set in this repository is used for tests. See [SF Symbols Rights Assessment](docs/sf-symbols-rights-assessment.md).
+Control icons are SF Symbols, resolved at render time from the Mac running iLyrics; iLyrics never bundles or redistributes them. Apple's [SF Symbols license](https://developer.apple.com/support/terms/) does not expressly permit their use in exported videos, so you are responsible for how you use and publish the videos you create. The demonstration image above shows SF Symbols rendered the same way; the original icon set in this repository is used for tests. See [SF Symbols Rights Assessment](docs/sf-symbols-rights-assessment.md).
 
 The demonstration uses "The Star" by Jane Taylor (1806), which is in the public domain, with synthetic timing and no recording.
 
-You are likewise responsible for holding the rights to the recordings, lyrics, and artwork you render. iLyric does not download lyrics or audio.
+You are likewise responsible for holding the rights to the recordings, lyrics, and artwork you render. iLyrics does not download lyrics or audio.
 
 ## Limitations
 
@@ -270,8 +270,8 @@ The public test suite uses only original synthetic fixtures and needs neither th
 
 ## Acknowledgments
 
-iLyric was developed with [Codex](https://openai.com/codex) by OpenAI and [Claude](https://claude.ai) by Anthropic, credited as co-authors in the commit history. It builds on [Demucs](https://github.com/facebookresearch/demucs) by Meta AI Research (MIT License) and [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) by Meta AI (Apache License 2.0).
+iLyrics was developed with [Codex](https://openai.com/codex) by OpenAI and [Claude](https://claude.ai) by Anthropic, credited as co-authors in the commit history. It builds on [Demucs](https://github.com/facebookresearch/demucs) by Meta AI Research (MIT License) and [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) by Meta AI (Apache License 2.0).
 
 ## License
 
-iLyric is licensed under the [Apache License, Version 2.0](LICENSE). The alignment models are downloaded from their publishers under their own licenses.
+iLyrics is licensed under the [Apache License, Version 2.0](LICENSE). The alignment models are downloaded from their publishers under their own licenses.

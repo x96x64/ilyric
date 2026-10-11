@@ -26,7 +26,7 @@ public struct LocalPresentation: Sendable {
     public var collapsesGaps = false
     /// Word fill begins this long before each supplied word interval; focus timing is unaffected.
     public var fillLead: Time = Time(0)
-    /// Native word fill leads the sung onset by 0.22 s relative to iLyric's estimates (docs/word-fill-lead.md).
+    /// Native word fill leads the sung onset by 0.22 s relative to iLyrics's estimates (docs/word-fill-lead.md).
     public static let measuredFillLead = Time(22,100)
     /// Hide lower controls at this time and extend the lyrics to the bottom edge; nil keeps them visible.
     public var hideControls: Time?

@@ -2,13 +2,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "iLyric",
+    name: "iLyrics",
     platforms: [.macOS(.v14)],
-    products: [.executable(name: "ilyric", targets: ["ilyric"])],
+    products: [.executable(name: "ilyrics", targets: ["ilyrics"])],
     targets: [
         .target(name: "SpikeCore"),
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
-        .executableTarget(name: "ilyric", dependencies: ["AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .executableTarget(name: "ilyrics", dependencies: ["AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
         .target(name: "LyricsSliceCore", dependencies: ["SpikeCore"]),
         .target(name: "LyricsSliceMac", dependencies: ["LyricsSliceCore", "SpikeCore"]),

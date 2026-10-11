@@ -1,24 +1,24 @@
 #!/bin/sh
-# Stage a built ilyric and produce the release archive, npm package, and wheel (docs/distribution.md).
+# Stage a built ilyrics and produce the release archive, npm package, and wheel (docs/distribution.md).
 # Usage: packaging/package.sh VERSION BINARY OUTDIR
 set -eu
 version=$1 binary=$2 out=$3
 root=$(cd "$(dirname "$0")/.." && pwd)
 stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
-mkdir -p "$stage/bin" "$stage/share/ilyric" "$out"
+mkdir -p "$stage/bin" "$stage/share/ilyrics" "$out"
 out=$(cd "$out" && pwd)
-install -m 755 "$binary" "$stage/bin/ilyric"
-cp -R "$root/share/ilyric/templates" "$stage/share/ilyric/"
+install -m 755 "$binary" "$stage/bin/ilyrics"
+cp -R "$root/share/ilyrics/templates" "$stage/share/ilyrics/"
 cp "$root/LICENSE" "$stage/"
 # The package README uses absolute links, unlike the repository README.
 cp "$root/packaging/README.md" "$stage/README.md"
 # Release archive.
-tar -C "$stage" -czf "$out/ilyric-$version-macos-arm64.tar.gz" bin share LICENSE README.md
+tar -C "$stage" -czf "$out/ilyrics-$version-macos-arm64.tar.gz" bin share LICENSE README.md
 # npm package: the same files; npm marks the bin target executable.
 sed "s/__VERSION__/$version/" "$root/packaging/npm/package.json" > "$stage/package.json"
 (cd "$stage" && npm pack --silent --pack-destination "$out" >/dev/null)
 # Platform wheel.
 python3 "$root/packaging/build_wheel.py" "$stage" "$version" "$out" >/dev/null
-(cd "$out" && shasum -a 256 ilyric-* > SHA256SUMS)
+(cd "$out" && shasum -a 256 ilyrics-* > SHA256SUMS)
 ls "$out"

@@ -8,7 +8,7 @@ public struct ArtworkLayerState: Equatable, Sendable {
 
 /// Deterministic artwork-derived background, evaluated from explicit output time.
 ///
-/// The model is an iLyric reconstruction fitted to phase-independent statistics of
+/// The model is an iLyrics reconstruction fitted to phase-independent statistics of
 /// physical recordings: rotating, orbiting enlarged artwork layers, a large Gaussian
 /// blur, and a color transfer with vertical darkening. It is not Apple's implementation,
 /// and its phase is not matched to any native recording.

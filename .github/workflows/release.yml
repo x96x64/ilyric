@@ -28,16 +28,16 @@ jobs:
           sw_vers
           swift --version
       - name: Build release binary
-        run: swift build -c release --product ilyric
+        run: swift build -c release --product ilyrics
       - name: Check version
-        run: test "$(.build/release/ilyric --version)" = "ilyric ${TAG#v}"
+        run: test "$(.build/release/ilyrics --version)" = "ilyrics ${TAG#v}"
       - name: Package
         # Packaging scripts come from main, so that tags created before packaging existed can be built.
         run: |
           git fetch origin main --depth 1
           mkdir -p packaging/npm
           for f in packaging/package.sh packaging/build_wheel.py packaging/npm/package.json packaging/README.md; do git show origin/main:$f > $f; done
-          sh packaging/package.sh "${TAG#v}" .build/release/ilyric dist
+          sh packaging/package.sh "${TAG#v}" .build/release/ilyrics dist
       - name: Attach to the release
         env:
           GH_TOKEN: ${{ github.token }}

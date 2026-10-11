@@ -7,11 +7,11 @@ October 11, 2026. Design approved by the maintainer. `render`, `align`, `models`
 ## Synopsis
 
 ```
-ilyric render AUDIO LYRICS -o VIDEO.mp4 [options]
-ilyric align  AUDIO LYRICS -o LYRICS.ttml [options]
-ilyric models install | status | remove
-ilyric doctor
-ilyric --help | --version
+ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]
+ilyrics align  AUDIO LYRICS -o LYRICS.ttml [options]
+ilyrics models install | status | remove
+ilyrics doctor
+ilyrics --help | --version
 ```
 
 - `render` produces a Lyrics video. Untimed lyrics (`.txt`) are aligned automatically first; timed lyrics (`.ttml`, `.lrc`, Enhanced LRC) are used as supplied.
@@ -48,8 +48,8 @@ Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Err
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
-| `ILYRIC_MODELS` | Model cache directory | `~/Library/Application Support/iLyric/Models` |
-| `ILYRIC_TEMPLATES` | Directory of the weightless model templates | `share/ilyric/templates` beside the executable's installation prefix |
+| `ILYRICS_MODELS` | Model cache directory | `~/Library/Application Support/iLyrics/Models` |
+| `ILYRICS_TEMPLATES` | Directory of the weightless model templates | `share/ilyrics/templates` beside the executable's installation prefix |
 
 The cache holds the compiled models (about 590 MB). Installation downloads about 460 MB of publisher files, verifies their pinned SHA-256 digests, rebuilds and self-tests both models, and deletes the downloads.
 
