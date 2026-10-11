@@ -55,9 +55,11 @@ public enum Exporter {
     /// Parallel rasterization: each worker closure owns its renderer and is never called concurrently with
     /// itself. Workers claim the batch's frames one at a time, so faster cores render more of them; frames
     /// are appended strictly in order, and every frame remains a pure function of its time.
+    /// With two `audioChannels`, `audioSample` takes interleaved indices (frame × 2 + channel).
     @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
-        workers draws: [(Time, CGContext) throws -> Void],
+        workers draws: [(Time, CGContext) throws -> Void], audioChannels: Int = 1,
         audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
+        guard audioChannels == 1 || audioChannels == 2 else { throw SpikeError.failure("Audio must be mono or stereo") }
         guard !draws.isEmpty else { throw SpikeError.failure("At least one frame worker is required") }
         guard frames > 0, !FileManager.default.fileExists(atPath: url.path) else { throw SpikeError.failure("Invalid frame count or existing output") }
         let temporary = url.deletingLastPathComponent().appendingPathComponent(".\(UUID().uuidString).mp4")
@@ -78,7 +80,7 @@ public enum Exporter {
         let video = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
         let audio = AVAssetWriterInput(mediaType: .audio, outputSettings: [
             AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: 48_000,
-            AVNumberOfChannelsKey: 1, AVEncoderBitRateKey: 128_000
+            AVNumberOfChannelsKey: audioChannels, AVEncoderBitRateKey: 128_000 * audioChannels
         ])
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: video, sourcePixelBufferAttributes: [
             kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
@@ -168,7 +170,7 @@ public enum Exporter {
                 let began = Date()
                 try await ready(false)
                 wait += Date().timeIntervalSince(began)
-                let sample = try pcm(sample: audioSample, start: frame * 800, count: 800)
+                let sample = try pcm(sample: audioSample, start: frame * 800, count: 800, channels: audioChannels)
                 guard audio.append(sample) else { throw writer.error ?? SpikeError.failure("Audio append failed") }
             }
             audio.markAsFinished()
@@ -193,25 +195,27 @@ public enum Exporter {
                              effectiveFPS: Double(frames) / elapsed, rasterSeconds: raster,
                              appendSeconds: append, backpressureSeconds: wait, finishSeconds: finish)
     }
-    private static func pcm(sample: (Int) -> Int16, start: Int, count: Int) throws -> CMSampleBuffer {
+    /// `start` and `count` are in frames; samples are interleaved when `channels` is two.
+    private static func pcm(sample: (Int) -> Int16, start: Int, count: Int, channels: Int) throws -> CMSampleBuffer {
+        let bytesPerFrame = UInt32(2 * channels)
         var description = AudioStreamBasicDescription(mSampleRate: 48_000, mFormatID: kAudioFormatLinearPCM,
             mFormatFlags: kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked,
-            mBytesPerPacket: 2, mFramesPerPacket: 1, mBytesPerFrame: 2, mChannelsPerFrame: 1, mBitsPerChannel: 16, mReserved: 0)
+            mBytesPerPacket: bytesPerFrame, mFramesPerPacket: 1, mBytesPerFrame: bytesPerFrame, mChannelsPerFrame: UInt32(channels), mBitsPerChannel: 16, mReserved: 0)
         var format: CMAudioFormatDescription?
         guard CMAudioFormatDescriptionCreate(allocator: nil, asbd: &description, layoutSize: 0, layout: nil,
             magicCookieSize: 0, magicCookie: nil, extensions: nil, formatDescriptionOut: &format) == noErr else {
             throw SpikeError.failure("PCM format failed")
         }
         var block: CMBlockBuffer?
-        guard CMBlockBufferCreateWithMemoryBlock(allocator: nil, memoryBlock: nil, blockLength: count * 2,
-            blockAllocator: nil, customBlockSource: nil, offsetToData: 0, dataLength: count * 2,
+        guard CMBlockBufferCreateWithMemoryBlock(allocator: nil, memoryBlock: nil, blockLength: count * 2 * channels,
+            blockAllocator: nil, customBlockSource: nil, offsetToData: 0, dataLength: count * 2 * channels,
             flags: 0, blockBufferOut: &block) == noErr else { throw SpikeError.failure("PCM allocation failed") }
-        let samples = (start..<(start + count)).map { sample($0) }
-        let status = samples.withUnsafeBytes { CMBlockBufferReplaceDataBytes(with: $0.baseAddress!, blockBuffer: block!, offsetIntoDestination: 0, dataLength: count * 2) }
+        let samples = (start * channels..<(start + count) * channels).map { sample($0) }
+        let status = samples.withUnsafeBytes { CMBlockBufferReplaceDataBytes(with: $0.baseAddress!, blockBuffer: block!, offsetIntoDestination: 0, dataLength: count * 2 * channels) }
         guard status == noErr else { throw SpikeError.failure("PCM copy failed") }
         var timing = CMSampleTimingInfo(duration: CMTime(value: 1, timescale: 48_000),
             presentationTimeStamp: CMTime(value: Int64(start), timescale: 48_000), decodeTimeStamp: .invalid)
-        var sampleSize = 2
+        var sampleSize = 2 * channels
         var sample: CMSampleBuffer?
         guard CMSampleBufferCreateReady(allocator: nil, dataBuffer: block, formatDescription: format,
             sampleCount: count, sampleTimingEntryCount: 1, sampleTimingArray: &timing,

@@ -8,13 +8,13 @@ import LyricsSliceMac
 
 struct AudioSceneTests {
     /// Independently generated RIFF PCM, avoiding a binary fixture in public history.
-    func wav(rate: Int=44_100, channels: Int=2) throws -> URL {
+    func wav(rate: Int=44_100, channels: Int=2, silentRight: Bool=false) throws -> URL {
         let url=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString+".wav")
         var pcm=Data()
         func append<T:FixedWidthInteger>(_ n:T,to data:inout Data) { var little=n.littleEndian;withUnsafeBytes(of:&little){data.append(contentsOf:$0)} }
         for i in 0..<rate*3 {
             let sample=Int16(sin(2*Double.pi*330*Double(i)/Double(rate))*8000)
-            for _ in 0..<channels { append(sample,to:&pcm) }
+            for c in 0..<channels { append(silentRight && c==1 ? 0 : sample,to:&pcm) }
         }
         var data=Data("RIFF".utf8);append(UInt32(36+pcm.count),to:&data);data.append(Data("WAVEfmt ".utf8))
         append(UInt32(16),to:&data);append(UInt16(1),to:&data);append(UInt16(channels),to:&data)
@@ -57,6 +57,17 @@ struct AudioSceneTests {
         for i in [4,0,3,1,2,4,0] { #expect(try scene.renderer.frame(times[i]).dataProvider!.data! as Data==raw[i]) }
         let unbounded=try ScreenRenderer(scene.renderer.screen,calibratedInactive:true,diagnosticMarkers:false)
         for i in [0,3,4] { #expect(try unbounded.frame(times[i]).dataProvider!.data! as Data==raw[i]) }
+    }
+    @Test func stereoChannelsArePreservedForExport() async throws {
+        let url=try wav(silentRight:true);defer{try? FileManager.default.removeItem(at:url)}
+        let audio=try await LocalAudio.decode(url)
+        #expect(audio.channels==2 && audio.stereo?.count==2*audio.sampleCount && audio.sampleCount==144_000)
+        let left=stride(from:0,to:audio.stereo!.count,by:2).map { abs(Int(audio.stereo![$0])) }.max()!
+        let right=stride(from:1,to:audio.stereo!.count,by:2).map { abs(Int(audio.stereo![$0])) }.max()!
+        #expect(left>7000 && right<16 && audio.interleavedSample(288_000)==0)
+        let mono=try wav(rate:48_000,channels:1);defer{try? FileManager.default.removeItem(at:mono)}
+        let single=try await LocalAudio.decode(mono)
+        #expect(single.channels==1 && single.stereo==nil && single.interleavedSample(5)==single.sample(5))
     }
     @Test func monoAndInvalidAudio() async throws {
         let url=try wav(rate:48_000,channels:1);defer{try? FileManager.default.removeItem(at:url)}

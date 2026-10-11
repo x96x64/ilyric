@@ -7,11 +7,23 @@ import LyricsInputCore
 /// Immutable, bounded PCM on the writer's existing 48-kHz mono sample lattice.
 public struct LocalAudio: Sendable {
     public let samples: [Int16]
+    /// Interleaved left and right samples on the same 48-kHz lattice for stereo sources; nil for mono sources.
+    public let stereo: [Int16]?
     public let sourceRate: Double
     public let sourceChannels: Int
     public let sourceFormat: UInt32
     public var sampleCount: Int { samples.count }
     public func sample(_ index: Int) -> Int16 { samples.indices.contains(index) ? samples[index] : 0 }
+    /// Output channels: two for stereo sources, otherwise one.
+    public var channels: Int { stereo == nil ? 1 : 2 }
+    /// Interleaved output sample `index` (frame × channels + channel), zero beyond the end.
+    public func interleavedSample(_ index: Int) -> Int16 {
+        guard let stereo else { return sample(index) }
+        return stereo.indices.contains(index) ? stereo[index] : 0
+    }
+    public init(samples: [Int16], stereo: [Int16]? = nil, sourceRate: Double, sourceChannels: Int, sourceFormat: UInt32) {
+        self.samples=samples;self.stereo=stereo;self.sourceRate=sourceRate;self.sourceChannels=sourceChannels;self.sourceFormat=sourceFormat
+    }
     public static func decode(_ url: URL) async throws -> LocalAudio {
         let values: URLResourceValues
         do { values=try url.resourceValues(forKeys:[.isRegularFileKey,.fileSizeKey,.isReadableKey]) }
@@ -67,41 +79,51 @@ public struct LocalAudio: Sendable {
             guard frameCount>=declaredEnd-tick,frameCount-declaredEnd<=4096 else { throw InputError.invalid("Decoded audio duration disagrees with its track endpoint (decoded \(frameCount) frames, declared \(declaredEnd))") }
             if frameCount>declaredEnd { samples.removeLast((frameCount-declaredEnd)*channels) }
             if frameCount<declaredEnd { samples.append(contentsOf:Array(repeating:0,count:(declaredEnd-frameCount)*channels)) }
+            // Stereo sources keep both channels for export; the mono mix drives scheduling as before.
+            var stereo:[Int16]?=channels == 2 ? samples : nil
             if channels == 2 {
                 samples=stride(from:0,to:samples.count,by:2).map { Int16((Int32(samples[$0])+Int32(samples[$0+1]))/2) }
             }
             if rate != 48_000 {
-                let sourceFormat=AVAudioFormat(commonFormat:.pcmFormatInt16,sampleRate:Double(rate),channels:1,interleaved:false)!
-                let targetFormat=AVAudioFormat(commonFormat:.pcmFormatInt16,sampleRate:48_000,channels:1,interleaved:false)!
-                guard let source=AVAudioPCMBuffer(pcmFormat:sourceFormat,frameCapacity:AVAudioFrameCount(declaredEnd)),
-                      let converter=AVAudioConverter(from:sourceFormat,to:targetFormat),
-                      let target=AVAudioPCMBuffer(pcmFormat:targetFormat,frameCapacity:48_000) else { throw InputError.invalid("Audio conversion setup failed") }
-                source.frameLength=AVAudioFrameCount(declaredEnd)
-                samples.withUnsafeBytes { source.mutableAudioBufferList.pointee.mBuffers.mData!.copyMemory(from:$0.baseAddress!,byteCount:$0.count) }
-                converter.primeMethod = .normal
-                converter.dither = false
-                var supplied=false,converted:[Int16]=[]
-                while true {
-                    var conversionError:NSError?
-                    let status=converter.convert(to:target,error:&conversionError) { _,state in
-                        if supplied { state.pointee = .endOfStream;return nil }
-                        supplied=true;state.pointee = .haveData;return source
-                    }
-                    guard status != .error,conversionError==nil else { throw InputError.invalid("Audio sample-rate or channel conversion failed") }
-                    if target.frameLength>0 { converted.append(contentsOf:UnsafeBufferPointer(start:target.int16ChannelData![0],count:Int(target.frameLength))) }
-                    guard converted.count<=28_800_800 else { throw InputError.invalid("Converted audio exceeds the duration bound") }
-                    if status == .endOfStream { break }
-                    guard status == .haveData else { throw InputError.invalid("Audio conversion did not reach an explicit endpoint") }
-                }
                 let expected=Int(CMTimeConvertScale(endpoint,timescale:48_000,method:.roundHalfAwayFromZero).value)
-                guard abs(converted.count-expected)<=1 else { throw InputError.invalid("Flushed audio conversion disagrees with the presentation endpoint (converted \(converted.count), expected \(expected))") }
-                if converted.count>expected { converted.removeLast() }
-                if converted.count<expected { converted.append(0) }
-                samples=converted
+                samples=try resample(samples,channels:1,rate:rate,frames:declaredEnd,expected:expected)
+                stereo=try stereo.map { try resample($0,channels:2,rate:rate,frames:declaredEnd,expected:expected) }
             }
             _=try OutputSchedule(audioSamples:samples.count)
-            return .init(samples:samples,sourceRate:asbd.mSampleRate,sourceChannels:Int(asbd.mChannelsPerFrame),sourceFormat:asbd.mFormatID)
+            return .init(samples:samples,stereo:stereo,sourceRate:asbd.mSampleRate,sourceChannels:Int(asbd.mChannelsPerFrame),sourceFormat:asbd.mFormatID)
         } catch let error as InputError { throw error }
         catch { throw InputError.invalid("Audio inspection or decoding failed; use an unprotected local file supported by AVFoundation") }
+    }
+    /// Converts interleaved 16-bit PCM of `frames` source frames to 48 kHz, flushing the converter and matching the
+    /// presentation endpoint within one sample.
+    static func resample(_ input: [Int16], channels: Int, rate: Int32, frames: Int, expected: Int) throws -> [Int16] {
+        let count=AVAudioChannelCount(channels)
+        let sourceFormat=AVAudioFormat(commonFormat:.pcmFormatInt16,sampleRate:Double(rate),channels:count,interleaved:true)!
+        let targetFormat=AVAudioFormat(commonFormat:.pcmFormatInt16,sampleRate:48_000,channels:count,interleaved:true)!
+        guard let source=AVAudioPCMBuffer(pcmFormat:sourceFormat,frameCapacity:AVAudioFrameCount(frames)),
+              let converter=AVAudioConverter(from:sourceFormat,to:targetFormat),
+              let target=AVAudioPCMBuffer(pcmFormat:targetFormat,frameCapacity:48_000) else { throw InputError.invalid("Audio conversion setup failed") }
+        source.frameLength=AVAudioFrameCount(frames)
+        input.withUnsafeBytes { source.mutableAudioBufferList.pointee.mBuffers.mData!.copyMemory(from:$0.baseAddress!,byteCount:min($0.count,frames*channels*2)) }
+        converter.primeMethod = .normal
+        converter.dither = false
+        var supplied=false,converted:[Int16]=[]
+        while true {
+            var conversionError:NSError?
+            let status=converter.convert(to:target,error:&conversionError) { _,state in
+                if supplied { state.pointee = .endOfStream;return nil }
+                supplied=true;state.pointee = .haveData;return source
+            }
+            guard status != .error,conversionError==nil else { throw InputError.invalid("Audio sample-rate or channel conversion failed") }
+            if target.frameLength>0 { converted.append(contentsOf:UnsafeBufferPointer(start:target.int16ChannelData![0],count:Int(target.frameLength)*channels)) }
+            guard converted.count<=28_800_800*channels else { throw InputError.invalid("Converted audio exceeds the duration bound") }
+            if status == .endOfStream { break }
+            guard status == .haveData else { throw InputError.invalid("Audio conversion did not reach an explicit endpoint") }
+        }
+        let produced=converted.count/channels
+        guard abs(produced-expected)<=1 else { throw InputError.invalid("Flushed audio conversion disagrees with the presentation endpoint (converted \(produced), expected \(expected))") }
+        if produced>expected { converted.removeLast(channels) }
+        if produced<expected { converted.append(contentsOf:Array(repeating:0,count:channels)) }
+        return converted
     }
 }
