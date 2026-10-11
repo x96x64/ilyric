@@ -68,7 +68,7 @@ private final class TTMLNode {
     var children:[TTMLNode] { parts.compactMap { if case .node(let n)=$0 {return n};return nil } }
 }
 private final class TTMLReader: NSObject, XMLParserDelegate {
-    static let tt="http://www.w3.org/ns/ttml",xml="http://www.w3.org/XML/1998/namespace",parameter="http://www.w3.org/ns/ttml#parameter"
+    static let tt="http://www.w3.org/ns/ttml",xml="http://www.w3.org/XML/1998/namespace",parameter="http://www.w3.org/ns/ttml#parameter",metadata="http://www.w3.org/ns/ttml#metadata"
     var root:TTMLNode?,stack:[TTMLNode]=[],failure:InputError?
     var namespaces:[String:[String]]=["xml":[xml]],elements=0,textUnits=0,ids=Set<String>()
     func fail(_ parser:XMLParser,_ message:String) { if failure==nil {failure = .invalid(message)};parser.abortParsing() }
@@ -90,6 +90,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
             if uri==Self.xml && ["space","id","lang"].contains(local) { canonical="xml:"+local }
             else if uri==Self.parameter && name=="tt" && local=="timeBase" {canonical="ttp:timeBase"}
             else if uri.isEmpty && name != "tt" && name != "br" && ["begin","end","dur","timeContainer"].contains(local) {canonical=local}
+            else if uri==Self.metadata && name=="span" && local=="role" && value=="x-bg" {canonical="ttm:role"}
             else { fail(parser,"Unsupported TTML attribute");return }
             guard clean[canonical]==nil else { fail(parser,"Duplicate TTML attribute");return }
             clean[canonical]=value
@@ -160,13 +161,22 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
         for p in div.children {
             let range=try interval(p,bounds,required:true)
             if let last=entries.last {guard last.intervalEnd!<=range.0 else {throw InputError.invalid("Overlapping or out-of-order TTML paragraphs")}}
-            let spans=p.children.filter{$0.name=="span"}
+            let isBackground={ (n:TTMLNode) in n.name=="span" && n.attributes["ttm:role"] != nil }
+            let backgrounds=p.children.filter(isBackground)
+            let spans=p.children.filter { $0.name=="span" && !isBackground($0) }
             var value="",segments:[TimedSegment]=[]
-            if spans.isEmpty {value=try text(p)}
+            if spans.isEmpty {
+                value=try p.parts.map { part -> String in
+                    if case .node(let n)=part,isBackground(n) { return "" }
+                    if case .node(let n)=part { guard n.name=="br",n.parts.isEmpty else {throw InputError.invalid("Unsupported nested TTML text")};return "\n" }
+                    if case .text(let t)=part { return t };return ""
+                }.joined()
+            }
             else {
                 guard spans.count<=128 else {throw InputError.invalid("At most 128 TTML spans per paragraph")}
                 for part in p.parts {
                     guard case .node(let node)=part else {throw InputError.invalid("Every text unit in a timed TTML paragraph must belong to a timed span")}
+                    if isBackground(node) { continue }
                     if node.name=="br" {value+="\n";continue}
                     let piece=try text(node),timing=try interval(node,range,required:true)
                     guard !piece.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty else {throw InputError.invalid("Empty TTML timed span")}
@@ -180,7 +190,15 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
             total+=segments.count
             guard total<=TTMLParser.totalSpanLimit,value.utf16.count<500,value.components(separatedBy:"\n").count<=4,
                   value.isEmpty || value.components(separatedBy:"\n").allSatisfy({!$0.trimmingCharacters(in:.whitespaces).isEmpty}) else {throw InputError.invalid("TTML text or timing resource limit")}
-            entries.append(.init(time:range.0,text:value,sourceLine:p.line,suppliedBreaks:value.contains("\n"),segments:segments,intervalEnd:range.1))
+            var entry=LyricEntry(time:range.0,text:value,sourceLine:p.line,suppliedBreaks:value.contains("\n"),segments:segments,intervalEnd:range.1)
+            if !backgrounds.isEmpty {
+                guard backgrounds.count==1 else {throw InputError.invalid("At most one TTML background-vocal span per paragraph")}
+                let node=backgrounds[0],words=try text(node).trimmingCharacters(in:.whitespacesAndNewlines)
+                guard !words.isEmpty,words.utf16.count<300,!words.contains("\n") else {throw InputError.invalid("TTML background vocals must be one nonempty line")}
+                let timing=try interval(node,range,required:false)
+                entry.background=BackgroundVocal(text:words,begin:timing.0,end:timing.1)
+            }
+            entries.append(entry)
         }
         guard entries.contains(where:{!$0.text.isEmpty}) else {throw InputError.invalid("TTML requires a nonempty lyric paragraph")}
         let result=LocalLyrics(entries:entries,offsetMilliseconds:0,diagnostics:[])

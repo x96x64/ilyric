@@ -54,4 +54,15 @@ struct SmoothnessTests {
         #expect(samples.allSatisfy { $0.0>0 && $0.1>0 })
         #expect(Set(samples.map(\.0)).count==1 && Set(samples.map(\.1)).count==1)
     }
+    @Test func secondaryLineDrawsOnlyUnderTheFocusedParagraph() throws {
+        let screen=try LyricsScreen.synthetic()
+        let plain=try ScreenRenderer(screen,diagnosticMarkers:false),backed=try ScreenRenderer(screen,diagnosticMarkers:false)
+        backed.secondary[2]=try SecondaryLine(text:"original backing phrase",begin:Time(3),end:Time(5))
+        func data(_ r:ScreenRenderer,_ t:Time) throws -> Data { try r.native(screen.evaluate(t)).dataProvider!.data! as Data }
+        // Paragraph 2 holds focus from 3 s; before that the secondary line is invisible.
+        #expect(try data(backed,Time(2)) == data(plain,Time(2)))
+        #expect(try data(backed,Time(4)) != data(plain,Time(4)))
+        #expect(throws:SliceError.self) { try SecondaryLine(text:"",begin:Time(0),end:Time(1)) }
+        #expect(try SecondaryLine(text:"a",begin:Time(1),end:Time(3)).progress(at:Time(2))==0.5)
+    }
 }

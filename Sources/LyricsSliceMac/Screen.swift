@@ -116,6 +116,51 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
+    /// Optional background vocals by paragraph index, shown while the paragraph holds focus.
+    public var secondary: [Int:SecondaryLine] = [:]
+    private var secondaryLines: [Int:[CTLine]] = [:]
+    /// Wrapped secondary lines at the measured size; cached per paragraph.
+    func wrappedSecondary(_ i:Int) -> [CTLine] {
+        if let cached=secondaryLines[i] { return cached }
+        guard let s=secondary[i] else { return [] }
+        let p=lyrics.paragraphs[i].input.parameters,size=p.size*SecondaryLine.sizeRatio
+        let regular=CTFontCreateUIFontForLanguage(.system,size,nil)!
+        let font=CTFontCreateCopyWithSymbolicTraits(regular,size,nil,.traitBold,.traitBold)!
+        let attributed=NSAttributedString(string:s.text,attributes:[NSAttributedString.Key(kCTFontAttributeName as String):font,
+            NSAttributedString.Key(kCTForegroundColorAttributeName as String):CGColor(gray:1,alpha:1)])
+        let setter=CTTypesetterCreateWithAttributedString(attributed)
+        var lines=[CTLine](),start=0
+        while start<attributed.length {
+            let n=max(1,CTTypesetterSuggestLineBreak(setter,start,p.width))
+            lines.append(CTTypesetterCreateLine(setter,CFRange(location:start,length:n)));start+=n
+        }
+        secondaryLines[i]=lines;return lines
+    }
+    /// Unfilled ink at the paragraph's dim opacity, then filled ink through a soft left-to-right ramp.
+    private func drawSecondary(_ i:Int,translation:Double,weight:Double,time:Time,into c:CGContext) {
+        guard let s=secondary[i],weight>0 else { return }
+        let input=lyrics.paragraphs[i].input,p=input.parameters,lines=wrappedSecondary(i),edge=30.0
+        let count=Double(lyrics.paragraphs[i].lines.count)
+        let widths=lines.map { CTLineGetTypographicBounds($0,nil,nil,nil) },total=widths.reduce(0,+)
+        let front=s.progress(at:time)*(total+edge)-edge/2
+        var preceding=0.0
+        c.saveGState();c.textMatrix = .identity
+        for (k,line) in lines.enumerated() {
+            let baseline=p.originY+(count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset+Double(k)*p.lineAdvance*SecondaryLine.sizeRatio
+            let y=2556-baseline,x=p.originX
+            c.setAlpha(weight*0.42);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
+            let local=front-preceding
+            if local>0 {
+                let w=Int(ceil(widths[k]))+2,bytes=(0..<w).map { UInt8((min(1,max(0,(local-Double($0)-0.5)/edge+0.5))*255).rounded()) }
+                let mask=CGImage(width:w,height:1,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:w,space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],
+                    provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:true,intent:.defaultIntent)!
+                c.saveGState();c.clip(to:CGRect(x:x,y:y-p.size,width:Double(w),height:p.size*2),mask:mask)
+                c.setAlpha(weight);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c);c.restoreGState()
+            }
+            preceding+=widths[k]
+        }
+        c.restoreGState()
+    }
     /// Full-canvas paragraph rasters are mostly transparent; draw only the paragraph's band.
     private func band(_ image:CGImage,paragraph i:Int,translation:Double) -> (CGImage,CGRect) {
         let input=lyrics.paragraphs[i].input,lines=lyrics.paragraphs[i].lines.count,w=Double(image.width)
@@ -164,11 +209,13 @@ public final class ScreenRenderer {
                     }
                     c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
                 } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
+                drawSecondary(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),time:state.output,into:c)
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
             let (part,frame)=band(image,paragraph:p.index,translation:p.translationY)
             c.drawSubpixel(part,in:frame,alpha:p.opacity)
+            drawSecondary(p.index,translation:p.translationY,weight:state.focus==p.index ? p.opacity:0,time:state.output,into:c)
         }
         for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
         return c.makeImage()!

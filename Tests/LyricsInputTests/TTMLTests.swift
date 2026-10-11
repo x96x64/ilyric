@@ -117,6 +117,20 @@ struct TTMLTests {
         #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus==0)
         hold.minimumGap=Time(1,2)
         #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)
+        // Background vocals parse from ttm:role="x-bg" spans and reserve space under their line.
+        func document(_ body:String) -> Data {
+            Data(("<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div>"+body+"</div></body></tt>").utf8)
+        }
+        let first="<p begin=\"0s\" end=\"1s\"><span begin=\"0s\" end=\"0.5s\">Paper </span><span begin=\"0.5s\" end=\"1s\">skies</span>"
+        let second="<p begin=\"2s\" end=\"3s\">Skies</p>"
+        let withBackground=try TTMLParser.parse(document(first+"<span ttm:role=\"x-bg\">high above</span></p>"+second))
+        let without=try TTMLParser.parse(document(first+"</p>"+second))
+        #expect(withBackground.entries[0].text=="Paper skies" && withBackground.entries[0].background==BackgroundVocal(text:"high above",begin:Time(0),end:Time(1)))
+        #expect(withBackground.entries[1].background==nil)
+        #expect(throws:InputError.self) { try TTMLParser.parse(document("<p begin=\"0s\" end=\"1s\">A<span ttm:role=\"x-other\">b</span></p>")) }
+        let backed=try LocalScene(lyrics:withBackground,audio:audio),plain=try LocalScene(lyrics:without,audio:audio)
+        #expect(backed.renderer.secondary[0]?.text=="high above" && backed.renderer.secondary[1]==nil && plain.renderer.secondary.isEmpty)
+        #expect(backed.renderer.screen.composition.paragraphs[1].position>plain.renderer.screen.composition.paragraphs[1].position)
         let long=try LocalScene(lyrics:gap,audio:audio,presentation:.init(minimumGap:Time(2)))
         #expect(long.renderer.screen.composition.gaps.isEmpty)
     }

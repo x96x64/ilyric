@@ -6,6 +6,12 @@ public enum InputError: Error, CustomStringConvertible {
     public var description: String { switch self { case .invalid(let message): return message } }
 }
 /// Bounded import representation, not a finalized project format.
+/// Background vocals shown as a smaller secondary line under a lyric line (TTML ttm:role="x-bg").
+public struct BackgroundVocal: Equatable, Sendable {
+    public let text: String
+    public let begin, end: Time
+    public init(text: String, begin: Time, end: Time) { self.text=text;self.begin=begin;self.end=end }
+}
 public struct LyricEntry: Equatable, Sendable {
     public let time: Time
     public let text: String
@@ -14,6 +20,8 @@ public struct LyricEntry: Equatable, Sendable {
     public let segments: [TimedSegment]
     /// Explicit TTML end; nil preserves legacy next-event/final-hold semantics.
     public let intervalEnd: Time?
+    /// Optional background vocals; nil for formats without them.
+    public var background: BackgroundVocal? = nil
     public var timingProvenance: String { intervalEnd != nil ? (segments.isEmpty ? "supplied-ttml-paragraph-interval" : "supplied-ttml-paragraph-and-span-intervals") : segments.isEmpty ? "supplied-line-timestamp-with-explicit-offset" : "supplied-segment-boundaries-with-explicit-offset" }
     public init(time:Time,text:String,sourceLine:Int,suppliedBreaks:Bool,segments:[TimedSegment]=[],intervalEnd:Time?=nil) {
         self.time=time;self.text=text;self.sourceLine=sourceLine;self.suppliedBreaks=suppliedBreaks;self.segments=segments;self.intervalEnd=intervalEnd

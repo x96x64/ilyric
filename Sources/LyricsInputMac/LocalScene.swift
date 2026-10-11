@@ -49,7 +49,7 @@ public final class LocalScene {
     public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled, presentation: LocalPresentation = .init()) throws {
         self.lyrics=lyrics;self.audio=audio;schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
-        var gaps:[CompositionGap]=[],lastEnd=Time(0)
+        var gaps:[CompositionGap]=[],lastEnd=Time(0),secondary:[Int:SecondaryLine]=[:]
         let gapOrder=3*lyrics.entries.count+2
         for (i,entry) in lyrics.entries.enumerated() {
             // A gap occupies its own layout slot; its focus event follows any simultaneous hold event.
@@ -79,10 +79,19 @@ public final class LocalScene {
             let previous=events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
             let led=entry.time-presentation.focusLead
             events.append(.init(led>previous ? led : max(previous,Time(0)),order:i+1,paragraph:paragraphs.count))
+            if let bg=entry.background {
+                let lead=presentation.fillLead,begin=max(Time(0),bg.begin-lead)
+                secondary[paragraphs.count]=try SecondaryLine(text:bg.text,begin:begin,end:max(begin+Time(1,1000),bg.end-lead))
+            }
             paragraphs.append(.init(input:input,position:position,begin:entry.time,end:end))
             lastEnd=end
             // Provisional inter-paragraph spacing; measured line advances remain unchanged.
             position += Double(layout.lines.count)*input.parameters.lineAdvance+110
+            if let bg=entry.background {
+                // Reserve the measured secondary offset and wrapped secondary lines, estimated from character count.
+                let estimate=max(1,ceil(Double(bg.text.count)*input.parameters.size*SecondaryLine.sizeRatio*0.55/input.parameters.width))
+                position += SecondaryLine.firstLineSpace+estimate*input.parameters.lineAdvance*SecondaryLine.sizeRatio
+            }
         }
         let composition=try LyricsComposition(paragraphs:paragraphs,events:events,gaps:gaps,stagger:presentation.stagger)
         let v=project?.visibility
@@ -96,5 +105,6 @@ public final class LocalScene {
                 controls:ScreenControls(lower:false,translation:false,handle:controls.handle,sing:.hidden))] } ?? []),
             visibility:visibility,background:presentation.background,expandsLyrics:presentation.hideControls != nil)
         renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee)
+        renderer.secondary=secondary
     }
 }
