@@ -23,8 +23,10 @@ do {
     switch arguments.first {
     case nil,"-h","--help","help": print(CLI.usage)
     case "-V","--version": print("ilyric \(CLI.version)")
+    case "render": try await Render.command(arguments.dropFirst())
     case "align": try await Align.command(arguments.dropFirst())
     case "models": try await Models.run(arguments.dropFirst())
+    case "doctor": try Doctor.command(arguments.dropFirst())
     default: throw UsageError(message:"unknown command '\(arguments[0])'")
     }
 } catch let error as UsageError {

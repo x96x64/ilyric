@@ -2,7 +2,7 @@
 
 ## Status
 
-October 11, 2026. Design approved by the maintainer; implementation in progress. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
+October 11, 2026. Design approved by the maintainer. `render`, `align`, `models`, and `doctor` are implemented; distribution of the model templates is pending. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
 
 ## Synopsis
 
@@ -43,6 +43,15 @@ Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines cons
 | `-q, --quiet` / `-v, --verbose` | all | Less or more progress output | Normal |
 
 Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Error messages name the cause and the recovery step.
+
+## Environment
+
+| Variable | Meaning | Default |
+| --- | --- | --- |
+| `ILYRIC_MODELS` | Model cache directory | `~/Library/Application Support/iLyric/Models` |
+| `ILYRIC_TEMPLATES` | Directory of the weightless model templates | `share/ilyric/templates` beside the executable's installation prefix |
+
+The cache holds the compiled models (about 590 MB). Installation downloads about 460 MB of publisher files, verifies their pinned SHA-256 digests, rebuilds and self-tests both models, and deletes the downloads.
 
 ## Rights
 
