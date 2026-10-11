@@ -140,6 +140,8 @@ struct TTMLTests {
         let without=try TTMLParser.parse(document(first+"</p>"+second))
         #expect(withBackground.entries[0].text=="Paper skies" && withBackground.entries[0].background==BackgroundVocal(text:"high above",begin:Time(0),end:Time(1)))
         #expect(withBackground.entries[1].background==nil)
+        // Project offsets keep and shift background vocals with their line.
+        #expect(try withBackground.applyingProjectOffset(250).entries[0].background==BackgroundVocal(text:"high above",begin:Time(1,4),end:Time(5,4)))
         #expect(throws:InputError.self) { try TTMLParser.parse(document("<p begin=\"0s\" end=\"1s\">A<span ttm:role=\"x-other\">b</span></p>")) }
         let backed=try LocalScene(lyrics:withBackground,audio:audio),plain=try LocalScene(lyrics:without,audio:audio)
         #expect(backed.renderer.secondary[0]?.text=="high above" && backed.renderer.secondary[1]==nil && plain.renderer.secondary.isEmpty)

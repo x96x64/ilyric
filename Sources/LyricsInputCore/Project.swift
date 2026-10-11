@@ -161,7 +161,12 @@ private struct UniqueJSON {
 public extension LocalLyrics {
     func applyingProjectOffset(_ milliseconds:Int64) throws -> LocalLyrics {
         guard (-600_000...600_000).contains(milliseconds) else { throw InputError.invalid("Project lyric offset out of range") }
-        let shifted=entries.map { LyricEntry(time:$0.time+Time(milliseconds,1000),text:$0.text,sourceLine:$0.sourceLine,suppliedBreaks:$0.suppliedBreaks,segments:$0.segments.map { $0.shifted(Time(milliseconds,1000)) },intervalEnd:$0.intervalEnd.map { $0+Time(milliseconds,1000) }) }
+        let offset=Time(milliseconds,1000)
+        let shifted=entries.map { e -> LyricEntry in
+            var entry=LyricEntry(time:e.time+offset,text:e.text,sourceLine:e.sourceLine,suppliedBreaks:e.suppliedBreaks,segments:e.segments.map { $0.shifted(offset) },intervalEnd:e.intervalEnd.map { $0+offset })
+            entry.background=e.background.map { BackgroundVocal(text:$0.text,begin:$0.begin+offset,end:$0.end+offset) }
+            return entry
+        }
         guard shifted.allSatisfy({$0.time>=Time(0) && $0.time<=Time(600) && ($0.intervalEnd.map { $0<=Time(600) } ?? true)}) else { throw InputError.invalid("Combined lyric offset places an event outside 0–600 seconds") }
         let result=LocalLyrics(entries:shifted,offsetMilliseconds:offsetMilliseconds+milliseconds,diagnostics:diagnostics)
         try result.validateSegments();return result
