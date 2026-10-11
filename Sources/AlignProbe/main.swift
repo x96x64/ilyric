@@ -26,6 +26,28 @@ if args.count==5,args[1]=="install" {
     } catch { FileHandle.standardError.write(Data("AlignProbe: \(error)\n".utf8));exit(1) }
     exit(0)
 }
+// Native end-to-end: AlignProbe native SEPARATOR.mlmodelc RECOGNIZER.mlmodelc VOCAB.json LYRICS.txt AUDIO
+if args.count==7,args[1]=="native" {
+    do {
+        let started=Date()
+        let (left,right,duration)=try readStereo44k(URL(fileURLWithPath:args[6]))
+        let decoded=Date()
+        // Analysis samples follow the Python pipeline: 48-kHz frames of the source, one third at 16 kHz.
+        let frames48=Int((Double(duration)*48000/1_000_000).rounded()),expected=(frames48+2)/3
+        let vocals=try VocalSeparator(modelURL:URL(fileURLWithPath:args[2]),computeUnits:units).vocals16k(left:left,right:right,expectedSamples:expected)
+        let separated=Date()
+        let model=try RecognitionModel(modelURL:URL(fileURLWithPath:args[3]),vocabularyURL:URL(fileURLWithPath:args[4]),computeUnits:units)
+        let rows=try alignLyrics(Data(contentsOf:URL(fileURLWithPath:args[5])),vocals:vocals,durationMicroseconds:duration,model:model)
+        let lines:[[String:Any]]=rows.map { r in
+            ["id":r.id,"flags":r.flags,"estimate":r.estimate ?? NSNull(),
+             "word_estimates":r.wordEstimates.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull()]
+        }
+        let out:[String:Any]=["duration_us":duration,"samples":vocals.count,"decode_seconds":decoded.timeIntervalSince(started),
+            "separation_seconds":separated.timeIntervalSince(decoded),"alignment_seconds":Date().timeIntervalSince(separated),"lines":lines]
+        print(String(data:try JSONSerialization.data(withJSONObject:out,options:[.sortedKeys]),encoding:.utf8)!)
+    } catch { FileHandle.standardError.write(Data("AlignProbe: \(error)\n".utf8));exit(1) }
+    exit(0)
+}
 // Separation mode: AlignProbe separate NETWORK.mlpackage MIX.f32 EXPECTED_SAMPLES OUT.f32
 // MIX.f32 is interleaved stereo 44.1-kHz float32 PCM; OUT.f32 receives mono 16-kHz float32 vocals.
 if args.count==6,args[1]=="separate",let expected=Int(args[4]) {

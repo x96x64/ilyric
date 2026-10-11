@@ -95,3 +95,28 @@ public func alignLyrics(_ lyrics: Data, vocals: [Float], durationMicroseconds: I
     VocalRules.apply(&rows,level:activity.level,reference:activity.reference)
     return rows
 }
+
+/// Stereo 44.1-kHz Float samples for separation, decoded and resampled with AVFoundation at mastering quality;
+/// mono input is duplicated. Also returns the source duration in microseconds.
+public func readStereo44k(_ url: URL) throws -> (left: [Float], right: [Float], durationMicroseconds: Int) {
+    let file=try AVAudioFile(forReading:url),source=file.processingFormat
+    let duration=Int((Double(file.length)*1_000_000/source.sampleRate).rounded())
+    guard let input=AVAudioPCMBuffer(pcmFormat:source,frameCapacity:AVAudioFrameCount(file.length)) else { throw AlignmentError.invalid("Audio buffer allocation failed") }
+    try file.read(into:input)
+    let target=AVAudioFormat(commonFormat:.pcmFormatFloat32,sampleRate:44100,channels:2,interleaved:false)!
+    guard let converter=AVAudioConverter(from:source,to:target) else { throw AlignmentError.invalid("Unsupported audio format") }
+    converter.sampleRateConverterQuality=AVAudioQuality.max.rawValue
+    converter.sampleRateConverterAlgorithm=AVSampleRateConverterAlgorithm_Mastering
+    if source.channelCount==1 { converter.channelMap=[0,0] }
+    let capacity=AVAudioFrameCount(Double(input.frameLength)*44100/source.sampleRate)+4096
+    guard let output=AVAudioPCMBuffer(pcmFormat:target,frameCapacity:capacity) else { throw AlignmentError.invalid("Audio buffer allocation failed") }
+    // One call converts the whole input and, after end of stream, flushes the resampler into the same buffer.
+    var consumed=false,error:NSError?
+    converter.convert(to:output,error:&error) { _,state in
+        if consumed { state.pointee = .endOfStream;return nil }
+        consumed=true;state.pointee = .haveData;return input
+    }
+    if let error { throw error }
+    let n=Int(output.frameLength)
+    return (Array(UnsafeBufferPointer(start:output.floatChannelData![0],count:n)),Array(UnsafeBufferPointer(start:output.floatChannelData![1],count:n)),duration)
+}
