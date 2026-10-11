@@ -73,4 +73,9 @@ struct WordMotionTests {
         let a=try bridged.raw(Time(7,2)),b=try paused.raw(Time(7,2)),c=try bridged.raw(Time(37,10))
         #expect(a != b && a != c)
     }
+    @Test func lineLevelSpansAreNeverEmphasized() {
+        let line=SliceInput.suppliedTimed(text:"Bright skyline",japanese:false,events:[
+            AppearanceEvent(start:0,length:14,begin:SliceTime(1),end:SliceTime(4),verticalEvent:nil)],motion:m)
+        #expect(line.evaluate(Time(4)).spans[0].scale==1 && line.evaluate(Time(4)).spans[0].glow==0)
+    }
 }

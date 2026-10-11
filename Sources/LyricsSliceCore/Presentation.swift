@@ -164,7 +164,9 @@ public struct SliceInput: Codable, Sendable {
             var displacement=p.amplitude*(1+u)*exp(-u),scale=1.0,glow=0.0
             if let motion,let begin=e.begin,let end=e.end {
                 let a=Time(begin.numerator,begin.denominator).seconds,b=Time(end.numerator,end.denominator).seconds,t=time.seconds
-                let k=motion.emphasisFinalOnly && index != events.count-1 ? 0 : motion.emphasis(begin:a,end:b,at:t)
+                // Only a single word is emphasized; a span covering several words is a line-level fallback.
+                let words=(text as NSString).substring(with:NSRange(location:e.start,length:e.length)).split(whereSeparator:\.isWhitespace).count
+                let k=words != 1 || (motion.emphasisFinalOnly && index != events.count-1) ? 0 : motion.emphasis(begin:a,end:b,at:t)
                 displacement -= motion.liftOffset(begin:a,at:t)+motion.emphasisLift*k
                 scale=1+(motion.emphasisScale-1)*k;glow=motion.emphasisGlow*k
             }
