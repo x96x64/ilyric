@@ -258,10 +258,17 @@ class WordTiming(unittest.TestCase):
         self.assertIn('xmlns:ttm="http://www.w3.org/ns/ttml#metadata"',xml);self.assertEqual(xml.count('ttm:role="x-bg"'),2)
         self.assertNotIn('x-bg',to_ttml(r,'paragraph',background=mapping))
 
+    def test_low_confidence_lines_fill_as_one_span(self):
+        from alignment.full_song import fingerprint
+        r=copy.deepcopy(self.fixture());r['lines'][1]['quality']['greedy_similarity']=0.2
+        r['proposal_sha256']=fingerprint(r)
+        xml=to_ttml(r,'word');self.assertEqual(xml.count('<span '),3)
+        self.assertIn('>Don&#x27;t stay</span>',xml.replace("'",'&#x27;'))
+
     def test_standalone_vocable_lines_are_dropped(self):
         from alignment.full_song import nonlexical
-        for t in ['Mm-hmm... Aah-ey, mmm','Ooh','La la la','Whoa-oh']:self.assertTrue(nonlexical(t))
-        for t in ['Oh, I love you','Yeah','Make that change','']:self.assertFalse(nonlexical(t))
+        for t in ['Mm-hmm... Aah-ey, mmm','Ooh','La la la','Whoa-oh','Woo','Hoo, hoo, hoo','Yeah, yeah','Ow']:self.assertTrue(nonlexical(t))
+        for t in ['Oh, I love you','Yeah, make that change','Make that change','']:self.assertFalse(nonlexical(t))
         r=self.fixture(b"Mm-hmm\n\nGo now\n\nDon't stay\n")
         self.assertEqual(to_ttml(r,'line').count('<p '),2);self.assertNotIn('hmm',to_ttml(r,'word'))
         self.assertEqual(to_ttml(r,'line',drop_nonlexical=False).count('<p '),3)

@@ -360,12 +360,21 @@ def review(result, decisions):
     return validate(out)
 
 
-VOCABLE = re.compile(r'(?:h?m+(?:h?m+)*|mh?m+|a+h*|o+h*|u+h+|e+y+|a+y+|la+|na+|da+|whoa+|ha+)')
+VOCABLE = re.compile(r'(?:h?m+(?:h?m+)*|mh?m+|a+h*|o+h*|u+h+|e+y+|a+y+|la+|na+|da+|whoa+|ha+|w?h?o+o+|ow+|hee+|ye+a+h*|hey+|shamone)')
+# Lines below this greedy similarity, or with these flags, misplace many more words (docs/word-confidence-fallback.md).
+LOW_CONFIDENCE_SIMILARITY = 0.4
+LOW_CONFIDENCE_FLAGS = {'uncertain_boundary', 'weak_acoustic_support', 'weak_separated_support'}
+
+
+def low_confidence(row):
+    return (row['quality'].get('greedy_similarity', 1.0) < LOW_CONFIDENCE_SIMILARITY
+            or bool(LOW_CONFIDENCE_FLAGS.intersection(row['flags'])))
 
 
 def nonlexical(text):
-    """True when every word of a line is a vocable such as mm, hmm, aah, ey, ooh, or la; hyphenated
-    forms such as Mm-hmm count word by word. Lines mixing vocables with lexical words are lexical."""
+    """True when every word of a line is a vocable or interjection such as mm, hmm, aah, ey, ooh,
+    la, woo, hoo, ow, yeah, or hey; hyphenated forms such as Mm-hmm count word by word. Lines mixing
+    them with lexical words are lexical."""
     words=re.findall(r'[A-Za-z]+',text)
     return bool(words) and all(VOCABLE.fullmatch(w.lower()) for w in words)
 
@@ -399,7 +408,8 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=No
     remain line-timed. Each span carries its word and the following separator text.
 
     With line or word granularity, lines consisting only of vocables are omitted by default, because
-    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval. Optional
+    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval. With word
+    granularity, low-confidence lines become a single span that fills the line steadily. Optional
     background vocals ({line id: text}) are emitted as untimed ttm:role="x-bg" spans that inherit the
     line's interval.
     """
@@ -423,6 +433,9 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=No
     for row in result['lines'] if granularity!='paragraph' else []:
         if drop and nonlexical(row['text']):continue
         a,b=interval(row);words=row.get('word_estimates') if granularity=='word' and row['correction'] is None else None
+        if words and low_confidence(row):
+            # Unreliable word timing: one span fills the whole line at a steady pace instead of word by word.
+            paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}"><span begin="0s" end="{stamp(b-a)}">{escape(row["text"])}</span>{extra(row)}</p>');continue
         if not words:
             paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">{escape(row["text"])}{extra(row)}</p>');continue
         units=[0];k=0
