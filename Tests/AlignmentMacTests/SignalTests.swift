@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 @testable import AlignmentMac
+import AlignmentCore
 
 /// Signal processing parity with Demucs, PyTorch, and SciPy (scripts/generate_separation_fixture.py).
 struct SignalTests {
@@ -45,5 +46,31 @@ struct SignalTests {
     @Test func polyphaseResamplingMatchesSciPy() {
         let y=resamplePoly(Self.doubles(Self.f.resample_in),up:160,down:441),expected=Self.doubles(Self.f.resample_out)
         #expect(y.count==expected.count && zip(y,expected).allSatisfy { abs($0-$1)<1e-12 })
+    }
+}
+
+/// Native checkpoint reading and weight derivation (scripts/generate_checkpoint_fixture.py).
+struct CheckpointTests {
+    struct Expected: Decodable { let shape: [Int]; let values: [Float] }
+    @Test func readsHalfAndFloatTensorsIncludingNonContiguousViews() throws {
+        let dir=Bundle.module.url(forResource:"Fixtures",withExtension:nil)!
+        let tensors=try TorchCheckpoint(Data(contentsOf:dir.appendingPathComponent("checkpoint.th"))).tensors
+        let expected=try JSONDecoder().decode([String:Expected].self,from:Data(contentsOf:dir.appendingPathComponent("checkpoint.json")))
+        #expect(Set(tensors.keys)==Set(expected.keys))
+        for (k,e) in expected { #expect(tensors[k]?.shape==e.shape && tensors[k]?.values==e.values) }
+    }
+    @Test func derivesRowsPermutationsAndFrequencyEmbedding() throws {
+        let t=TorchCheckpoint.Tensor(shape:[3,2],values:[1,2,3,4,5,6])
+        func entry(_ kind:String,start:Int?=nil,end:Int?=nil,axes:[Int]?=nil,bins:Int?=nil,frames:Int?=nil,scale:Double?=nil,outer:Double?=nil) throws -> SeparationInstaller.Recipe.Entry {
+            var d:[String:Any]=["offset":0,"size":0,"kind":kind,"key":"x"]
+            if let start { d["start"]=start };if let end { d["end"]=end };if let axes { d["axes"]=axes }
+            if let bins { d["bins"]=bins };if let frames { d["frames"]=frames };if let scale { d["scale"]=scale };if let outer { d["outer_scale"]=outer }
+            return try JSONDecoder().decode(SeparationInstaller.Recipe.Entry.self,from:JSONSerialization.data(withJSONObject:d))
+        }
+        #expect(try SeparationInstaller.derive(entry("rows",start:1,end:3),t)==[3,4,5,6])
+        #expect(try SeparationInstaller.derive(entry("permute",axes:[1,0]),t)==[1,3,5,2,4,6])
+        // Embedding rows are bins, columns channels; the output is channels × bins × frames.
+        #expect(try SeparationInstaller.derive(entry("frequency_embedding",bins:2,frames:2,scale:10,outer:0.5),t)==[5,5,15,15,10,10,20,20])
+        #expect(throws:AlignmentError.self) { try SeparationInstaller.derive(entry("unknown"),t) }
     }
 }

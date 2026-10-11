@@ -110,8 +110,9 @@ public final class VocalSeparator {
     let spectrogram=DemucsSpectrogram()
     public static let sourceRate=44100, segment=343_980, vocalsIndex=3
 
-    /// `modelURL` is the converted network (`.mlpackage` compiled on load, or `.mlmodelc`).
-    public init(modelURL: URL, computeUnits: MLComputeUnits = .all) throws {
+    /// `modelURL` is the converted network (`.mlpackage` compiled on load, or `.mlmodelc`). The CPU default is
+    /// deterministic; GPU execution produced run-to-run differences that moved some estimates.
+    public init(modelURL: URL, computeUnits: MLComputeUnits = .cpuOnly) throws {
         let compiled=modelURL.pathExtension=="mlmodelc" ? modelURL : try MLModel.compileModel(at:modelURL)
         let configuration=MLModelConfiguration();configuration.computeUnits=computeUnits
         model=try MLModel(contentsOf:compiled,configuration:configuration)
