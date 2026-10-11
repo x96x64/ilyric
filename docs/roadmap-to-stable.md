@@ -56,6 +56,8 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 3. **Performance.** Reduce export and alignment time where measurements show a clear bottleneck; GPU inference remains opt-in until it is reproducible.
 4. **Packaging.** A signed command-line distribution through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary; first-run model installation with progress reporting; and failure messages that state the exact recovery step.
 
+**Progress (October 11, 2026).** Version 0.1.0 was released as the experimental source release with packaged assets, the distribution channels are prepared ([Distribution](distribution.md)), and the first unseen qualification was run: synchronization does not yet qualify, because 16.5% of lines remain unresolved and one long recording failed, although only 0.9% were misplaced ([Preview Qualification Results](reports/preview-qualification-results.md)). The next gate revises the acceptance rules and bounds long-recording alignment on development data, then requires a new unseen set.
+
 **Confirmation point 2:** the maintainer approves the unseen recording set and any downloads before scoring, approves the qualification report, and approves the preview release.
 
 ## Stage 3: Stable Release
