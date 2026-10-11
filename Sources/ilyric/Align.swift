@@ -44,7 +44,11 @@ enum Align {
         let lines:[[String:Any]]=rows.map { r in
             ["line":r.id+1,"text":r.text,"status":r.estimate != nil ? "aligned" : omitted.contains(r.id) ? "omitted" : "placed",
              "interval_us":(r.estimate ?? fills[r.id]).map { $0 as Any } ?? NSNull(),"flags":r.flags,"background":normalized.background[r.id] ?? NSNull(),
-             "words":r.wordEstimates.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull()]
+             "words":r.wordEstimates.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull(),
+             // Evidence behind the decision: the forced proposal before acceptance, its mean log-probability, and the
+             // greedy transcription's similarity to the line.
+             "proposal_us":r.proposal.map { $0 as Any } ?? NSNull(),"support":r.support ?? NSNull(),"similarity":r.similarity ?? NSNull(),
+             "proposal_words":r.words.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull()]
         }
         let report:[String:Any]=["format":"ilyric-alignment-report-1","audio":audio.lastPathComponent,"duration_us":duration,
             "compute_units":fast ? "all" : "cpu","ignored_input_lines":normalized.dropped,"lines":lines,
