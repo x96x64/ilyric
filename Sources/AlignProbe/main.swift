@@ -8,6 +8,23 @@ import CoreML
 let args=CommandLine.arguments
 // ILYRIC_COMPUTE_UNITS=cpu|gpu|all selects Core ML compute units for development comparisons; cpu is the default.
 let units:MLComputeUnits={ switch ProcessInfo.processInfo.environment["ILYRIC_COMPUTE_UNITS"] { case "gpu": return .cpuAndGPU; case "all": return .all; default: return .cpuOnly } }()
+// Export parity: AlignProbe ttml-artifact ALIGN.json LYRICS_WITH_PARENTHESES.txt rebuilds rows from a Python artifact.
+if args.count==4,args[1]=="ttml-artifact" {
+    do {
+        let a=try JSONSerialization.jsonObject(with:Data(contentsOf:URL(fileURLWithPath:args[2]))) as! [String:Any]
+        let duration=(a["audio"] as! [String:Any])["duration_us"] as! Int
+        let rows:[LineAlignment]=(a["lines"] as! [[String:Any]]).map { r in
+            let q=r["quality"] as? [String:Any] ?? [:]
+            let words=(r["word_estimates"] as? [[String:Any]])?.map { WordSpan(startUTF16:$0["start_utf16"] as! Int,lengthUTF16:$0["length_utf16"] as! Int,interval:$0["interval_us"] as! [Int]) }
+            return LineAlignment(id:r["id"] as! Int,text:r["text"] as! String,alignmentText:r["alignment_text"] as! String,proposal:r["proposal"] as? [Int],
+                estimate:r["estimate"] as? [Int],flags:r["flags"] as! [String],support:q["forced_mean_log_support"] as? Double,similarity:q["greedy_similarity"] as? Double,
+                words:nil,wordEstimates:words,onsetTrim:nil,offsetExtension:nil)
+        }
+        let background=TTMLExport.backgroundVocals(try String(contentsOfFile:args[3],encoding:.utf8),rows:rows)
+        print(try TTMLExport.ttml(rows,fills:TTMLExport.fillUnresolved(rows,duration:duration),background:background),terminator:"")
+    } catch { FileHandle.standardError.write(Data("AlignProbe: \(error)\n".utf8));exit(1) }
+    exit(0)
+}
 // Recognition installation: AlignProbe install-recognition TEMPLATE_DIR model.safetensors DESTINATION_DIR
 if args.count==5,args[1]=="install-recognition" {
     do {
@@ -41,6 +58,11 @@ if args.count==7,args[1]=="native" {
         let lines:[[String:Any]]=rows.map { r in
             ["id":r.id,"flags":r.flags,"estimate":r.estimate ?? NSNull(),
              "word_estimates":r.wordEstimates.map { $0.map { ["start_utf16":$0.startUTF16,"length_utf16":$0.lengthUTF16,"interval_us":$0.interval] } } ?? NSNull()]
+        }
+        if let ttmlPath=ProcessInfo.processInfo.environment["ILYRIC_TTML_OUT"] {
+            // Optional: export word-timed TTML with background vocals from ILYRIC_BACKGROUND_LYRICS.
+            let background=try ProcessInfo.processInfo.environment["ILYRIC_BACKGROUND_LYRICS"].map { TTMLExport.backgroundVocals(try String(contentsOfFile:$0,encoding:.utf8),rows:rows) } ?? [:]
+            try TTMLExport.ttml(rows,fills:TTMLExport.fillUnresolved(rows,duration:duration),background:background).write(toFile:ttmlPath,atomically:true,encoding:.utf8)
         }
         let out:[String:Any]=["duration_us":duration,"samples":vocals.count,"decode_seconds":decoded.timeIntervalSince(started),
             "separation_seconds":separated.timeIntervalSince(decoded),"alignment_seconds":Date().timeIntervalSince(separated),"lines":lines]

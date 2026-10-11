@@ -4,6 +4,7 @@ import Foundation
 public struct WordSpan: Equatable, Sendable {
     public let startUTF16, lengthUTF16: Int
     public var interval: [Int]
+    public init(startUTF16: Int, lengthUTF16: Int, interval: [Int]) { self.startUTF16=startUTF16;self.lengthUTF16=lengthUTF16;self.interval=interval }
 }
 
 /// Line-level result of forced alignment and the vocal rules (Python row of `proposals`).
@@ -19,6 +20,12 @@ public struct LineAlignment: Equatable, Sendable {
     public var wordEstimates: [WordSpan]?
     public var onsetTrim: Int?
     public var offsetExtension: Int?
+    public init(id: Int, text: String, alignmentText: String, proposal: [Int]?, estimate: [Int]?, flags: [String], support: Double?,
+                similarity: Double?, words: [WordSpan]?, wordEstimates: [WordSpan]?, onsetTrim: Int?, offsetExtension: Int?) {
+        self.id=id;self.text=text;self.alignmentText=alignmentText;self.proposal=proposal;self.estimate=estimate;self.flags=flags
+        self.support=support;self.similarity=similarity;self.words=words;self.wordEstimates=wordEstimates
+        self.onsetTrim=onsetTrim;self.offsetExtension=offsetExtension
+    }
 }
 
 /// Forced line proposals with speech-model diagnostics (Python `proposals`).
