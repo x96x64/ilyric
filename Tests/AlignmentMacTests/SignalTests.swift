@@ -74,3 +74,19 @@ struct CheckpointTests {
         #expect(throws:AlignmentError.self) { try SeparationInstaller.derive(entry("unknown"),t) }
     }
 }
+
+struct ModelStoreTests {
+    @Test func downloadsVerifiesAndReuses() async throws {
+        let dir=FileManager.default.temporaryDirectory.appendingPathComponent("ilyric-store-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at:dir) }
+        let source=Bundle.module.url(forResource:"Fixtures",withExtension:nil)!.appendingPathComponent("checkpoint.json")
+        let hash=try ModelStore.digest(source)
+        let first=try await ModelStore.fetch(source,sha256:hash,into:dir,name:"a.json")
+        #expect(try Data(contentsOf:first)==Data(contentsOf:source))
+        // A corrupted cached copy is replaced; a wrong pin is refused and nothing is kept.
+        try Data("x".utf8).write(to:first)
+        #expect(try Data(contentsOf:try await ModelStore.fetch(source,sha256:hash,into:dir,name:"a.json"))==Data(contentsOf:source))
+        await #expect(throws:AlignmentError.self) { _=try await ModelStore.fetch(source,sha256:String(repeating:"0",count:64),into:dir,name:"b.json") }
+        #expect(!FileManager.default.fileExists(atPath:dir.appendingPathComponent("b.json").path))
+    }
+}
