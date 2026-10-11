@@ -25,6 +25,7 @@ let package = Package(
         .target(name: "AlignmentCore"),
         .target(name: "AlignmentMac", dependencies: ["AlignmentCore"]),
         .executableTarget(name: "AlignProbe", dependencies: ["AlignmentCore", "AlignmentMac"]),
+        .executableTarget(name: "DocumentationMedia", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "SpikeCore"]),
         .testTarget(name: "AlignmentMacTests", dependencies: ["AlignmentCore", "AlignmentMac"], resources: [.copy("Fixtures")]),
         .testTarget(name: "AlignmentTests", dependencies: ["AlignmentCore"], resources: [.copy("Fixtures")])
     ],
