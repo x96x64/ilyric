@@ -22,6 +22,8 @@ October 11, 2026. This roadmap carries the project from the current state to the
 7. The HTDemucs checkpoint is never redistributed. iLyric downloads it from Meta's host on first use, verifies its SHA-256, and rebuilds the Core ML weights locally. The wav2vec2 weights (Apache-2.0) are installed the same way from Hugging Face.
 8. The maintainer does not perform manual annotation; evaluation uses public human-annotated data, cross-validation, and isolated scoring.
 9. Commits carry the Claude co-author trailer when Claude contributes; history is not rewritten.
+10. (Added October 11, 2026.) The command design in [Command-Line Interface](command-line-interface.md) is approved. SF Symbols are enabled by default; where they cannot be resolved, the command falls back to the original icon set and says so, and `--icons original` selects the original set explicitly.
+11. (Added October 11, 2026.) The public preview is distributed through Homebrew, npm, and pip; the npm and pip packages are thin installers for the native macOS binary.
 
 ## Where Work Can Run
 
@@ -43,14 +45,14 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 4. **README and documentation.** Rewrite the README for users: what iLyric is, installation, a quick start, the command reference, model downloads and rights, limitations, and acknowledgments (Codex and Claude). Consolidate developer documentation and keep historical reports as records. All titles and headings use MLA title case.
 5. **Repository organization.** Remove or archive superseded spike targets and probes in a dedicated cleanup milestone, keep CI green, and audit history, ignored files, and untracked files before publication.
 
-**Confirmation point 1:** the maintainer reviews the command design before implementation of item 1 begins, and reviews the README, the repository state, and the license notices before any release tag. No tag or release is created without explicit approval.
+**Confirmation point 1:** the maintainer approved the command design on October 11, 2026, and reviews the README, the repository state, and the license notices before any release tag. No tag or release is created without explicit approval.
 
 ## Stage 2: Public Preview
 
 1. **Unseen requalification.** Select English recordings never used in development, with public human annotations where possible, and score them once with the frozen native pipeline in an isolated session that cannot see references during preparation. Report line placement, onset and offset errors, word onset errors, and unresolved lines against the M2 conditions ([M2 Qualification Procedure](m2-qualification-procedure.md)).
 2. **Failure analysis without tuning on the test set.** Improvements found afterwards are developed on development data and require a new unseen set.
 3. **Performance.** Reduce export and alignment time where measurements show a clear bottleneck; GPU inference remains opt-in until it is reproducible.
-4. **Packaging.** A signed command-line distribution (for example a Homebrew formula), first-run model installation with progress reporting, and failure messages that state the exact recovery step.
+4. **Packaging.** A signed command-line distribution through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary; first-run model installation with progress reporting; and failure messages that state the exact recovery step.
 
 **Confirmation point 2:** the maintainer approves the unseen recording set and any downloads before scoring, approves the qualification report, and approves the preview release.
 
