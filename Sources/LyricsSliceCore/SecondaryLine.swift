@@ -2,7 +2,7 @@ import Foundation
 import SpikeCore
 
 /// Background vocals drawn as a smaller line under a paragraph while it holds focus.
-/// Size and offset were measured on the reference capture (docs/background-vocals.md).
+/// Size and offset were measured on the reference capture (docs/reports/background-vocals.md).
 public struct SecondaryLine: Equatable, Sendable {
     public let text: String
     public let begin, end: Time

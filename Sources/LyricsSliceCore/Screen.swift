@@ -71,7 +71,7 @@ public struct ScreenSnapshot: Equatable, Sendable {
     public var lyricsReveal = 0.0
 }
 /// Lower-control hide transition sampled frame by frame from the reference capture at 60 fps
-/// (docs/control-auto-hide.md); values between samples are interpolated linearly.
+/// (docs/reports/control-auto-hide.md); values between samples are interpolated linearly.
 public enum ControlTransition {
     public static let interval = 1.0/60
     public static let offsets: [Double] = [0,29,79,141,208,267,323,372,413,460,500,530,550]
@@ -96,7 +96,7 @@ public struct LyricsScreen: Sendable {
     public static let viewport = ScreenBounds(72,550,1040,950)
     public static let fadeLength = 80.0
     /// While lower controls are hidden, native lyrics extend to the bottom edge and fade over about
-    /// 300 pixels (docs/control-auto-hide.md); the top edge is unchanged.
+    /// 300 pixels (docs/reports/control-auto-hide.md); the top edge is unchanged.
     public static let expandedViewport = ScreenBounds(72,550,1040,2006)
     public static let expandedBottomFade = 300.0
     /// Opt-in: use the expanded viewport whenever lower controls are hidden.
@@ -168,7 +168,7 @@ public struct LyricsScreen: Sendable {
         add(.translation,.init(111,1488,84,84),3,ui.translation)
         add(.singCompact,.init(984,1488,84,84),3,ui.sing == .compact)
         add(.singExpanded,.init(969,1353,114,234),3,ui.sing == .expanded,"measured bounds, approximately ±3 px; original control placeholder only")
-        // The native elapsed label rounds to the nearest second (docs/reference-clock-and-word-motion.md).
+        // The native elapsed label rounds to the nearest second (docs/reports/reference-clock-and-word-motion.md).
         var snapshot=ScreenSnapshot(lyrics:lyrics,components:parts,progress:media/duration.seconds,volume:volume,
                      elapsed:Int(media.rounded()),remaining:Int(max(0,duration.seconds-media).rounded()),playing:playing)
         snapshot.lowerOffset=lowerOffset;snapshot.lowerOpacity=lowerOpacity;snapshot.lyricsReveal=expanded ? 1-lowerOpacity*(hiding ? 1:0) : 0

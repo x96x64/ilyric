@@ -3,7 +3,7 @@ import SpikeCore
 
 /// Three-dot instrumental-gap indicator, evaluated from elapsed media time within a supplied gap.
 ///
-/// Fitted to three private iPhone 16 recordings (docs/gap-indicator.md). Dots fill in order across the
+/// Fitted to three private iPhone 16 recordings (docs/reports/gap-indicator.md). Dots fill in order across the
 /// gap minus a fixed lead; the whole group pulses in scale with a phase that restarts at the gap.
 /// The pulse period differs between songs for an unidentified reason; `period` is a median default.
 public struct GapIndicator: Equatable, Sendable {

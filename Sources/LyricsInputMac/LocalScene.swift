@@ -30,7 +30,7 @@ public struct LocalPresentation: Sendable {
     public static let measuredFillLead = Time(22,100)
     /// Hide lower controls at this time and extend the lyrics to the bottom edge; nil keeps them visible.
     public var hideControls: Time?
-    /// Native controls disappear 3.78 s after playback starts in the reference capture (docs/control-auto-hide.md).
+    /// Native controls disappear 3.78 s after playback starts in the reference capture (docs/reports/control-auto-hide.md).
     public static let measuredControlHide = Time(379,100)
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
                 focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, fillLead: Time = Time(0), hideControls: Time? = nil) {
@@ -38,7 +38,7 @@ public struct LocalPresentation: Sendable {
         self.marquee=marquee;self.wordMotion=wordMotion;self.fillLead=fillLead;self.hideControls=hideControls
     }
     /// Reference-measured presentation: 0.90-second focus lead and staggered motion
-    /// (docs/lyrics-motion-timing.md, lead corrected in docs/reference-clock-and-word-motion.md).
+    /// (docs/reports/lyrics-motion-timing.md, lead corrected in docs/reports/reference-clock-and-word-motion.md).
     public static let measuredMotion = (focusLead: Time(9,10), stagger: FocusStagger.measured)
 }
 

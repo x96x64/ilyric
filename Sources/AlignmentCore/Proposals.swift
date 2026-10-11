@@ -84,7 +84,7 @@ func wordProposals(_ line: SourceLine, indices: [Int], spans: [[Int]], duration:
     }
 }
 
-/// Version 2 vocal rules for separated-vocal CTC (docs/separated-vocal-acceptance.md).
+/// Version 2 vocal rules for separated-vocal CTC (docs/reports/separated-vocal-acceptance.md).
 public enum VocalRules {
     public static let frameMicroseconds=20000
     public static let onsetActivityDB=30.0, offsetActivityDB=20.0

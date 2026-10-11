@@ -6,9 +6,9 @@ October 11, 2026. This roadmap carries the project from the current state to the
 
 ### Current State
 
-- **Video generation** is considered sufficient by the maintainer after the ninth Man in the Mirror video. It covers the measured focus lead, word fill with lift and sustained-word emphasis, background vocals, the title marquee, control auto-hide, gap slots, and the recalibrated artwork background. Reports from [First Complete Real-Song Video](first-real-song-video.md) through [Gap Slot Collapse](gap-slot-collapse.md) record the measurements.
-- **Alignment** runs natively on macOS without Python or FFmpeg, as recorded in [Native Alignment Pipeline](native-alignment-pipeline.md) and [Native Model Installation and Decoding](native-model-installation.md). It reproduces the Python reference on a complete recording and exports word-timed TTML byte-identically from the same alignment.
-- **Export throughput** is about 1.2 times real time with parallel rendering ([Playback Smoothness, Fill Lead, and Control Transition](playback-smoothness-and-fill-lead.md)).
+- **Video generation** is considered sufficient by the maintainer after the ninth Man in the Mirror video. It covers the measured focus lead, word fill with lift and sustained-word emphasis, background vocals, the title marquee, control auto-hide, gap slots, and the recalibrated artwork background. Reports from [First Complete Real-Song Video](reports/first-real-song-video.md) through [Gap Slot Collapse](reports/gap-slot-collapse.md) record the measurements.
+- **Alignment** runs natively on macOS without Python or FFmpeg, as recorded in [Native Alignment Pipeline](reports/native-alignment-pipeline.md) and [Native Model Installation and Decoding](reports/native-model-installation.md). It reproduces the Python reference on a complete recording and exports word-timed TTML byte-identically from the same alignment.
+- **Export throughput** is about 1.2 times real time with parallel rendering ([Playback Smoothness, Fill Lead, and Control Transition](reports/playback-smoothness-and-fill-lead.md)).
 - **Development tools** remain separate probes (`LyricsInputProbe`, `AlignProbe`, and Python scripts); the single `ilyric` command does not yet exist.
 
 ### Decisions in Force
@@ -49,7 +49,7 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 
 ## Stage 2: Public Preview
 
-1. **Unseen requalification.** Select English recordings never used in development, with public human annotations where possible, and score them once with the frozen native pipeline in an isolated session that cannot see references during preparation. Report line placement, onset and offset errors, word onset errors, and unresolved lines against the M2 conditions ([M2 Qualification Procedure](m2-qualification-procedure.md)).
+1. **Unseen requalification.** Select English recordings never used in development, with public human annotations where possible, and score them once with the frozen native pipeline in an isolated session that cannot see references during preparation. Report line placement, onset and offset errors, word onset errors, and unresolved lines against the M2 conditions ([M2 Qualification Procedure](reports/m2-qualification-procedure.md)).
 2. **Failure analysis without tuning on the test set.** Improvements found afterwards are developed on development data and require a new unseen set.
 3. **Performance.** Reduce export and alignment time where measurements show a clear bottleneck; GPU inference remains opt-in until it is reproducible.
 4. **Packaging.** A signed command-line distribution through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary; first-run model installation with progress reporting; and failure messages that state the exact recovery step.

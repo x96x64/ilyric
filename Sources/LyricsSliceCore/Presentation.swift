@@ -44,7 +44,7 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
     }
 }
 /// Latin word-fill motion for supplied word timing; nil keeps the original hard wipe without motion.
-/// Constants are fitted to one reference capture (docs/reference-clock-and-word-motion.md).
+/// Constants are fitted to one reference capture (docs/reports/reference-clock-and-word-motion.md).
 public struct WordMotion: Codable, Equatable, Sendable {
     /// Width, in pixels, of the linear ramp between filled and unfilled ink.
     public var edge: Double

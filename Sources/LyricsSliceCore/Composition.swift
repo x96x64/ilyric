@@ -52,7 +52,7 @@ public struct FocusSegment: Sendable {
 }
 /// Staggered focus motion: a paragraph laid out below the focus target follows the focus segment
 /// with a delay that grows with its layout distance. Measured on the reference Lyrics screen
-/// (docs/lyrics-motion-timing.md); zero values reproduce rigid motion.
+/// (docs/reports/lyrics-motion-timing.md); zero values reproduce rigid motion.
 public struct FocusStagger: Equatable, Sendable {
     public let secondsPerPixel, interceptSeconds, maximumSeconds: Double
     public init(secondsPerPixel: Double, interceptSeconds: Double, maximumSeconds: Double) throws {
@@ -72,7 +72,7 @@ public struct LyricsComposition: Sendable {
     public let tau: Double
     public let stagger: FocusStagger
     /// When set, a gap's layout slot stays closed until focus reaches the gap, opens while it holds focus,
-    /// and closes again afterwards, so no blank slot is shown in advance (docs/gap-slot-collapse.md).
+    /// and closes again afterwards, so no blank slot is shown in advance (docs/reports/gap-slot-collapse.md).
     public let collapsesGaps: Bool
     private let gapWindows: [(open: Double, close: Double)]
     private let segments: [FocusSegment]

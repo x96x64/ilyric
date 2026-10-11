@@ -66,7 +66,7 @@ public struct ArtworkBackground: Equatable, Sendable {
         return total/Double(n)
     }
 
-    /// Current experimental parameter set; see docs/artwork-background.md for its provenance.
+    /// Current experimental parameter set; see docs/reports/artwork-background.md for its provenance.
     /// Appearance from docs/reference-data/background/fit.json (fold "all"); orbit and rotation refitted to
     /// paused-playback recordings with matched durations (docs/reference-data/background/motion.json).
     public static let fitted = try! ArtworkBackground(scale:1.385,orbit:0.0865,orbitRate:0.1233,rotationRate:-0.0259,

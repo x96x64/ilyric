@@ -4,7 +4,7 @@
 Inputs (maintainer only, private): a reference conversion of the HTDemucs network made from the pinned checkpoint,
 a conversion of the same architecture with random weights, and the pinned checkpoint. Output: the converted model
 without any checkpoint-derived values, a zero-filled weight skeleton compressed with zlib, and a recipe that lets
-iLyric rebuild the exact weight file from the official checkpoint on the user's Mac (docs/core-ml-port-feasibility.md).
+iLyric rebuild the exact weight file from the official checkpoint on the user's Mac (docs/reports/core-ml-port-feasibility.md).
 
 Every weight entry must be either derived from the checkpoint by a recorded transform or a constant that is
 byte-identical in the random-weight conversion; anything else stops the build. Small tensors that Core ML stores

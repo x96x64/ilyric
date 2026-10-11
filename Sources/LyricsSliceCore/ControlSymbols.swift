@@ -26,7 +26,7 @@ public struct ControlSymbol: Equatable, Sendable {
     public let knockout: Bool
 }
 
-/// Fits to eight private iPhone 16 screenshots (docs/control-symbols.md). Ink extents repeat within ±1 px.
+/// Fits to eight private iPhone 16 screenshots (docs/reports/control-symbols.md). Ink extents repeat within ±1 px.
 /// The Sing glyph has no public symbol equivalent; `music.mic` is a disclosed approximation.
 public enum ControlSymbols {
     public static let nativeScale = 3.0

@@ -11,7 +11,7 @@ public final class RecognitionModel {
 
     /// `modelURL` is a converted `.mlpackage` (compiled on load) or a compiled `.mlmodelc`;
     /// `vocabularyURL` is the model's `vocab.json`. The CPU default is deterministic: GPU and Neural Engine
-    /// execution varied between runs in a way that could move estimates (docs/native-alignment-pipeline.md).
+    /// execution varied between runs in a way that could move estimates (docs/reports/native-alignment-pipeline.md).
     public init(modelURL: URL, vocabularyURL: URL, computeUnits: MLComputeUnits = .cpuOnly) throws {
         let compiled=modelURL.pathExtension=="mlmodelc" ? modelURL : try MLModel.compileModel(at:modelURL)
         let configuration=MLModelConfiguration();configuration.computeUnits=computeUnits

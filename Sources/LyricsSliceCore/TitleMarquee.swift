@@ -2,7 +2,7 @@ import Foundation
 
 /// Horizontal scrolling of a header label whose ink exceeds its clip, evaluated from output time.
 ///
-/// Constants were fitted to one reference capture of one overflowing title (docs/title-marquee.md).
+/// Constants were fitted to one reference capture of one overflowing title (docs/reports/title-marquee.md).
 /// Scrolling duration is assumed proportional to the cycle distance; that scaling, the overflow
 /// threshold, and the trigger of the initial delay are unmeasured.
 public struct TitleMarquee: Equatable, Sendable {

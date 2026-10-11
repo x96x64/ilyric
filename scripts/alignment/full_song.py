@@ -161,7 +161,7 @@ def proposals(src, duration, emissions, tokens, owners, spans, vocab, blank=0):
 
 
 # Vocal-stem rules for separated-vocal CTC. Version 2 parameters were selected by leave-one-song-out
-# cross-validation on seventeen human-annotated development recordings (docs/separated-vocal-acceptance.md).
+# cross-validation on seventeen human-annotated development recordings (docs/reports/separated-vocal-acceptance.md).
 VOCAL_RULES_VERSION = 2
 VOCAL_FRAME_US = 20000
 VOCAL_ACTIVITY_DB = 30.0
@@ -361,7 +361,7 @@ def review(result, decisions):
 
 
 VOCABLE = re.compile(r'(?:h?m+(?:h?m+)*|mh?m+|a+h*|o+h*|u+h+|e+y+|a+y+|la+|na+|da+|whoa+|ha+|w?h?o+o+|ow+|hee+|ye+a+h*|hey+|shamone)')
-# Lines below this greedy similarity, or with these flags, misplace many more words (docs/word-confidence-fallback.md).
+# Lines below this greedy similarity, or with these flags, misplace many more words (docs/reports/word-confidence-fallback.md).
 LOW_CONFIDENCE_SIMILARITY = 0.4
 LOW_CONFIDENCE_FLAGS = {'uncertain_boundary', 'weak_acoustic_support', 'weak_separated_support'}
 

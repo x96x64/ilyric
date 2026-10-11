@@ -5,7 +5,7 @@ import Compression
 import AlignmentCore
 
 /// Rebuilds the HTDemucs Core ML weights on the user's Mac from the official checkpoint and a weightless template,
-/// so that iLyric never redistributes the checkpoint's values (docs/core-ml-port-feasibility.md).
+/// so that iLyric never redistributes the checkpoint's values (docs/reports/core-ml-port-feasibility.md).
 public enum SeparationInstaller {
     struct Recipe: Decodable {
         struct Checkpoint: Decodable { let file, sha256, url: String }
