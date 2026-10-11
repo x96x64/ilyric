@@ -16,7 +16,7 @@ Raising or lowering the version 2 thresholds alone reached about 91% placement u
 
 ## Rule
 
-After the version 2 evidence is applied, a rejected line with a proposal is accepted, with the flag `neighbour_supported`, when its duration is at most one second per character and either both nearest lines are accepted by version 2, or one is and the line's greedy similarity is at least 0.05. Neighbour acceptance is decided against the version 2 result only, so accepted lines do not chain. Accepted lines then pass through the same vocal-activity refinement as other lines, and because they keep their rejection flags they fill steadily rather than word by word. The version 2 thresholds are unchanged; a cross-validated search over them together with the neighbour parameters selected the same base thresholds in four of five folds.
+After the version 2 evidence is applied, a rejected line with a proposal is accepted, with the flag `neighbour_supported`, when its duration is at most one second per character and either both nearest lines are accepted by version 2, or one is and the line's greedy similarity is at least 0.05. Neighbour acceptance is decided against the version 2 result only, so accepted lines do not chain. Accepted lines then pass through the same vocal-activity refinement as other lines, and because they keep their rejection flags they fill steadily rather than word by word. The version 2 thresholds are unchanged; a cross-validated search over them together with the neighbour parameters selected the version 2 rate and similarity thresholds in four of five folds, with the support threshold at −4 or −3.5.
 
 ## Results
 
