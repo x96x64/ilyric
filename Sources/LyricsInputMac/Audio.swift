@@ -61,9 +61,12 @@ public struct LocalAudio: Sendable {
             // A codec may return a partial final decode block beyond its track edit endpoint.
             // Honor that explicit endpoint; do not shorten media by a lyric-derived rule.
             let frameCount=samples.count/channels
-            guard frameCount>=declaredEnd-1,frameCount-declaredEnd<=4096 else { throw InputError.invalid("Decoded audio duration disagrees with its track endpoint") }
+            // The endpoint is quantized to the track's time scale (for example 1/600 s), so decoding may end short
+            // of it by up to one tick; that remainder is padded with silence.
+            let tick=Int((Double(rate)/Double(endpoint.timescale)).rounded(.up))+1
+            guard frameCount>=declaredEnd-tick,frameCount-declaredEnd<=4096 else { throw InputError.invalid("Decoded audio duration disagrees with its track endpoint (decoded \(frameCount) frames, declared \(declaredEnd))") }
             if frameCount>declaredEnd { samples.removeLast((frameCount-declaredEnd)*channels) }
-            if frameCount<declaredEnd { samples.append(contentsOf:Array(repeating:0,count:channels)) }
+            if frameCount<declaredEnd { samples.append(contentsOf:Array(repeating:0,count:(declaredEnd-frameCount)*channels)) }
             if channels == 2 {
                 samples=stride(from:0,to:samples.count,by:2).map { Int16((Int32(samples[$0])+Int32(samples[$0+1]))/2) }
             }
