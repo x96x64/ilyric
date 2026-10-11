@@ -15,8 +15,8 @@ The test wrapper supplies missing Swift Testing compiler-plugin and runtime disc
 ## Still Frames and Determinism
 
 ```sh
-.build/release/ilyric frame 5 4 artifacts/seek.png
-.build/release/ilyric determinism
+.build/release/SpikeProbe frame 5 4 artifacts/seek.png
+.build/release/SpikeProbe determinism
 ```
 
 The two integers specify an exact rational output timestamp in seconds. The command accepts nonnegative numerators up to one billion and positive denominators up to one million. Time arithmetic is intended for the bounded synthetic experiment, not arbitrary untrusted project input. The determinism command compares full-resolution raw BGRA hashes in sequential, shuffled, repeated, and fresh-renderer evaluations. Run it in separate processes and compare its output to check process-to-process repeatability.
@@ -24,7 +24,7 @@ The two integers specify an exact rational output timestamp in seconds. The comm
 ## Video and Media Validation
 
 ```sh
-/usr/bin/time -l .build/release/ilyric video artifacts/spike.mp4
+/usr/bin/time -l .build/release/SpikeProbe video artifacts/spike.mp4
 python3 scripts/validate_media.py artifacts/spike.mp4
 ```
 
@@ -33,14 +33,14 @@ The default video is four seconds, 240 frames, 1080×1920, exactly 60 fps, H.264
 The optional positional scale is `1` or `2`; the optional frame count is from `1` through `36000`. Longer runs repeat the four-second scene and PCM fixture while preserving monotonic output timestamps. These arguments exist only for scalability and memory experiments.
 
 ```sh
-.build/release/ilyric video artifacts/scale.mp4 2 240
+.build/release/SpikeProbe video artifacts/scale.mp4 2 240
 python3 scripts/validate_media.py artifacts/scale.mp4 2160 3840 240
 ```
 
 A ten-minute repetition exercises sustained memory and timestamp drift:
 
 ```sh
-/usr/bin/time -l .build/release/ilyric video artifacts/long.mp4 1 36000
+/usr/bin/time -l .build/release/SpikeProbe video artifacts/long.mp4 1 36000
 python3 scripts/validate_media.py artifacts/long.mp4 1080 1920 36000
 python3 scripts/compare_frame.py artifacts/seek.png artifacts/spike.mp4 75
 ```

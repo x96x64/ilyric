@@ -8,7 +8,8 @@ let package = Package(
     targets: [
         .target(name: "SpikeCore"),
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
-        .executableTarget(name: "ilyric", dependencies: ["SpikeCore", "RenderMac"]),
+        .executableTarget(name: "ilyric", dependencies: ["AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .executableTarget(name: "SpikeProbe", dependencies: ["SpikeCore", "RenderMac"]),
         .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
         .target(name: "LyricsSliceCore", dependencies: ["SpikeCore"]),
         .target(name: "LyricsSliceMac", dependencies: ["LyricsSliceCore", "SpikeCore"]),

@@ -2,7 +2,7 @@
 
 ## Scope
 
-`LyricsSliceProbe` is a developer experiment, not a stable public CLI. The `ilyric` command and synthetic architecture-spike fixture are unchanged. Run commands from the repository root. The experiment requires macOS and the existing Swift toolchain.
+`LyricsSliceProbe` is a developer experiment, not a stable public CLI. The `SpikeProbe` architecture-spike command and its synthetic fixture are unchanged. Run commands from the repository root. The experiment requires macOS and the existing Swift toolchain.
 
 ## Synthetic Rendering
 
@@ -45,8 +45,8 @@ The last two checks require NumPy and Pillow. `check_slice.py` verifies that rec
 The unchanged export regression remains:
 
 ```sh
-.build/release/ilyric determinism
-.build/release/ilyric video artifacts/slice-spike-regression.mp4
+.build/release/SpikeProbe determinism
+.build/release/SpikeProbe video artifacts/slice-spike-regression.mp4
 python3 scripts/validate_media.py artifacts/slice-spike-regression.mp4
 ```
 
