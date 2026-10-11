@@ -89,4 +89,24 @@ struct ModelStoreTests {
         await #expect(throws:AlignmentError.self) { _=try await ModelStore.fetch(source,sha256:String(repeating:"0",count:64),into:dir,name:"b.json") }
         #expect(!FileManager.default.fileExists(atPath:dir.appendingPathComponent("b.json").path))
     }
+    @Test func installedModelsRequireMatchingManifest() throws {
+        let fm=FileManager.default,root=fm.temporaryDirectory.appendingPathComponent("ilyric-models-\(UUID().uuidString)")
+        defer { try? fm.removeItem(at:root) }
+        let templates=root.appendingPathComponent("templates"),cache=root.appendingPathComponent("cache")
+        try fm.createDirectory(at:templates,withIntermediateDirectories:true)
+        func recipe(_ skeleton: String) -> Data { Data("{\"checkpoint\":{\"file\":\"f\",\"sha256\":\"0\",\"url\":\"u\"},\"weights\":{\"skeleton_sha256\":\"\(skeleton)\"}}".utf8) }
+        try recipe("a").write(to:templates.appendingPathComponent("weight-recipe.json"))
+        try recipe("b").write(to:templates.appendingPathComponent("wav2vec2-recipe.json"))
+        #expect(try InstalledModels.existing(in:cache,templates:templates)==nil)
+        let models=InstalledModels(cache)
+        for url in [models.separator,models.recognizer] { try fm.createDirectory(at:url,withIntermediateDirectories:true) }
+        try Data("{}".utf8).write(to:models.vocabulary)
+        try JSONEncoder().encode(try InstalledModels.manifest(templates)).write(to:cache.appendingPathComponent("installed.json"))
+        #expect(try InstalledModels.existing(in:cache,templates:templates)==models)
+        // Models built from other templates are not reused.
+        try recipe("c").write(to:templates.appendingPathComponent("wav2vec2-recipe.json"))
+        #expect(try InstalledModels.existing(in:cache,templates:templates)==nil)
+        try InstalledModels.remove(from:cache)
+        #expect(try fm.contentsOfDirectory(atPath:cache.path).isEmpty)
+    }
 }

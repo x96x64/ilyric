@@ -20,6 +20,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_separation_template import WEIGHTS, entries
 
 REVISION = '22aad52d435eb6dbaf354bdad9b0da84ce7d6156'
+# SHA-256 of vocab.json at REVISION; its Git blob ID 88181b95… equals the published ETag.
+VOCABULARY_SHA256 = '19727f8944fe6459fc3f240ae2c198395b740f6a029bd23e06656266b83bcf64'
 BASE = f'https://huggingface.co/facebook/wav2vec2-base-960h/resolve/{REVISION}/'
 
 
@@ -65,7 +67,8 @@ def main(reference, weights, out):
     expected = model.predict({'input_values': x[None]})['log_probs'][0]
     manifest = dict(format='ilyric-weight-recipe-1', model='wav2vec2-base-960h',
                     checkpoint=dict(file='model.safetensors', sha256=hashlib.sha256(Path(weights).read_bytes()).hexdigest(),
-                                    url=BASE + 'model.safetensors', vocabulary_url=BASE + 'vocab.json'),
+                                    url=BASE + 'model.safetensors', vocabulary_url=BASE + 'vocab.json',
+                                    vocabulary_sha256=VOCABULARY_SHA256),
                     weights=dict(size=len(blob), skeleton_sha256=hashlib.sha256(bytes(skeleton)).hexdigest()),
                     self_test=dict(samples=len(x), frames=int(expected.shape[0]), labels=int(expected.shape[1]),
                                    log_probs=[float(v) for v in expected.ravel()], tolerance=1e-3),
