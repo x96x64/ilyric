@@ -71,9 +71,13 @@ public struct LyricsComposition: Sendable {
     public let canvasWidth: Int
     public let tau: Double
     public let stagger: FocusStagger
+    /// When set, a gap's layout slot stays closed until focus reaches the gap, opens while it holds focus,
+    /// and closes again afterwards, so no blank slot is shown in advance (docs/gap-slot-collapse.md).
+    public let collapsesGaps: Bool
+    private let gapWindows: [(open: Double, close: Double)]
     private let segments: [FocusSegment]
     public init(paragraphs: [CompositionParagraph], events: [FocusEvent], clocks: [PlaybackAnchor] = [.init(output:Time(0),media:Time(0),running:true)], tau: Double = 0.081,
-                gaps: [CompositionGap] = [], stagger: FocusStagger = .rigid) throws {
+                gaps: [CompositionGap] = [], stagger: FocusStagger = .rigid, collapsesGaps: Bool = false) throws {
         guard (1...256).contains(paragraphs.count),(0.04...0.3).contains(tau),tau.isFinite,
               Set(events.map(\.order)).count==events.count, !events.isEmpty,
               !clocks.isEmpty, clocks[0].output==Time(0),
@@ -97,6 +101,11 @@ public struct LyricsComposition: Sendable {
             let initial=compiled.last!.evaluate(event.time)
             compiled.append(FocusSegment(start:event.time,position:initial.position,velocity:initial.velocity,target:target(event,hold:compiled.last!.target),tau:tau))
         }
+        self.collapsesGaps=collapsesGaps
+        gapWindows=gaps.indices.map { g in
+            guard let i=sorted.firstIndex(where:{$0.gap==g}) else { return (Double.infinity,Double.infinity) }
+            return (sorted[i].time.seconds,i+1<sorted.count ? sorted[i+1].time.seconds : Double.infinity)
+        }
         self.paragraphs=paragraphs;self.gaps=gaps;self.stagger=stagger;self.events=sorted;self.clocks=clocks;self.canvasWidth=paragraphs[0].input.canvasWidth;self.tau=tau;segments=compiled
     }
     public func mediaTime(_ output: Time) -> Time {
@@ -115,18 +124,34 @@ public struct LyricsComposition: Sendable {
         let micro=Int64((delay*1_000_000).rounded())
         return scroll(at:time-Time(micro,1_000_000))
     }
+    /// Openness of a gap slot in [0, 1]: a critically damped approach with the focus time constant.
+    private func openness(_ g: Int, at t: Double) -> Double {
+        let w=gapWindows[g]
+        guard t>w.open else { return 0 }
+        func rise(_ u: Double) -> Double { 1-(1+u/tau)*exp(-u/tau) }
+        if t<=w.close { return rise(t-w.open) }
+        let u=t-w.close;return rise(w.close-w.open)*(1+u/tau)*exp(-u/tau)
+    }
+    /// Height of closed gap slots above a layout position.
+    private func closed(above position: Double, at t: Double) -> Double {
+        guard collapsesGaps else { return 0 }
+        return gaps.indices.reduce(0.0) { sum,g in gaps[g].position<position ? sum+GapIndicator.slotHeight*(1-openness(g,at:t)) : sum }
+    }
     public func evaluate(_ time: Time) -> CompositionSnapshot {
         let index=events.lastIndex(where:{$0.time<=time}) ?? 0
         let movement=segments[index].evaluate(time),media=mediaTime(time),focus=events[index].paragraph
         let target=segments[index].target
+        // Closed slots shift later items up relative to the focus target, which itself never jumps.
+        let t=time.seconds,anchor=closed(above:target,at:t)
+        func shift(_ position: Double) -> Double { closed(above:position,at:t)-anchor }
         let states=paragraphs.enumerated().map { i,p in
             // First-baseline alignment is an explicit synthetic composition anchor.
             // Individual paragraph typography and appearance are untouched.
-            ParagraphPresentation(index:i,translationY:791.25-p.input.parameters.originY-p.input.parameters.size+p.position-scroll(at:time,below:p.position-target),
+            ParagraphPresentation(index:i,translationY:791.25-p.input.parameters.originY-p.input.parameters.size+p.position-shift(p.position)-scroll(at:time,below:p.position-target),
                 opacity:i==focus ? 1:0.38,active:p.begin<=media && media<p.end,appearance:p.input.evaluate(media))
         }
         let gapStates=gaps.enumerated().map { i,g in
-            GapPresentation(index:i,translationY:g.position-scroll(at:time,below:g.position-target),
+            GapPresentation(index:i,translationY:g.position-shift(g.position)-scroll(at:time,below:g.position-target),
                 state:g.indicator.evaluate(elapsed:(media-g.begin).seconds,duration:(g.end-g.begin).seconds))
         }
         return CompositionSnapshot(output:time,media:media,focus:focus,scroll:movement.position,velocity:movement.velocity,paragraphs:states,gaps:gapStates)

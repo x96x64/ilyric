@@ -37,7 +37,7 @@ import SpikeCore
                 marquee:options["--marquee"]=="measured" ? .measured : nil,
                 wordMotion:measured ? .measured : nil,fillLead:measured ? LocalPresentation.measuredFillLead : Time(0),
                 hideControls:options["--controls"]=="auto-hide" ? LocalPresentation.measuredControlHide : nil)
-            presentation.holdsFinishedLine=measured
+            presentation.holdsFinishedLine=measured;presentation.collapsesGaps=measured
             if presentation.icons == .systemSymbols { FileHandle.standardError.write(Data("LyricsInputProbe: SF Symbols are resolved at runtime; Apple terms do not expressly license them in exported videos.\n".utf8)) }
             let output=URL(fileURLWithPath:path).standardizedFileURL,parent=output.deletingLastPathComponent()
             var directory:ObjCBool=false

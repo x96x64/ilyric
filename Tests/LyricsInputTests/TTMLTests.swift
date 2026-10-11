@@ -124,6 +124,13 @@ struct TTMLTests {
         let led=try LocalScene(lyrics:gap,audio:audio,presentation:.init(focusLead:Time(3,10)))
         #expect(led.renderer.screen.evaluate(Time(17,10)).lyrics.focus==1 && scene.renderer.screen.evaluate(Time(17,10)).lyrics.focus == -1)
         #expect(led.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance==scene.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance)
+        // A collapsing gap slot stays closed before the gap, is fully open during it, and closes afterwards.
+        var open=LocalPresentation(minimumGap:Time(1,2)),collapsing=open;collapsing.collapsesGaps=true
+        let reserved=try LocalScene(lyrics:gap,audio:audio,presentation:open),closing=try LocalScene(lyrics:gap,audio:audio,presentation:collapsing)
+        func y(_ s:LocalScene,_ t:Time,_ i:Int) -> Double { s.renderer.screen.evaluate(t).lyrics.paragraphs[i].translationY }
+        #expect(abs(y(closing,Time(1,2),1)-(y(reserved,Time(1,2),1)-GapIndicator.slotHeight))<1e-6)
+        #expect(abs(y(closing,Time(19,10),1)-y(reserved,Time(19,10),1))<0.5)
+        #expect(abs(y(closing,Time(3),1)-y(reserved,Time(3),1))<0.5 && y(closing,Time(3),0)>y(reserved,Time(3),0)+100)
         // Holding keeps a finished line focused through a short gap; a gap indicator still takes focus.
         var hold=LocalPresentation();hold.holdsFinishedLine=true
         #expect(scene.renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)

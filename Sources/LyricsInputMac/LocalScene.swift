@@ -22,6 +22,8 @@ public struct LocalPresentation: Sendable {
     /// Keep a finished line focused until the next line or gap takes focus, as the native screen does,
     /// instead of releasing focus at the line's supplied end.
     public var holdsFinishedLine = false
+    /// Open an instrumental-gap slot only while the gap holds focus, instead of reserving it in advance.
+    public var collapsesGaps = false
     /// Word fill begins this long before each supplied word interval; focus timing is unaffected.
     public var fillLead: Time = Time(0)
     /// Native word fill leads the sung onset by 0.22 s relative to iLyric's estimates (docs/word-fill-lead.md).
@@ -103,7 +105,7 @@ public final class LocalScene {
                 position += SecondaryLine.firstLineSpace+estimate*input.parameters.lineAdvance*SecondaryLine.sizeRatio
             }
         }
-        let composition=try LyricsComposition(paragraphs:paragraphs,events:events,gaps:gaps,stagger:presentation.stagger)
+        let composition=try LyricsComposition(paragraphs:paragraphs,events:events,gaps:gaps,stagger:presentation.stagger,collapsesGaps:presentation.collapsesGaps)
         let v=project?.visibility
         let visibility=ScreenVisibility(artwork:v?.artwork ?? true,metadata:v?.metadata ?? true,
             progress:v?.progress ?? true,transport:v?.transport ?? true,volume:v?.volume ?? true,
