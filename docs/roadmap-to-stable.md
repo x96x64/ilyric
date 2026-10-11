@@ -9,7 +9,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 - **Video generation** is considered sufficient by the maintainer after the ninth Man in the Mirror video. It covers the measured focus lead, word fill with lift and sustained-word emphasis, background vocals, the title marquee, control auto-hide, gap slots, and the recalibrated artwork background. Reports from [First Complete Real-Song Video](reports/first-real-song-video.md) through [Gap Slot Collapse](reports/gap-slot-collapse.md) record the measurements.
 - **Alignment** runs natively on macOS without Python or FFmpeg, as recorded in [Native Alignment Pipeline](reports/native-alignment-pipeline.md) and [Native Model Installation and Decoding](reports/native-model-installation.md). It reproduces the Python reference on a complete recording and exports word-timed TTML byte-identically from the same alignment.
 - **Export throughput** is about 1.2 times real time with parallel rendering ([Playback Smoothness, Fill Lead, and Control Transition](reports/playback-smoothness-and-fill-lead.md)).
-- **Development tools** remain separate probes (`LyricsInputProbe`, `AlignProbe`, and Python scripts); the single `ilyric` command does not yet exist.
+- **The `ilyric` command** provides `render`, `align`, `models`, and `doctor`, replacing the rendering and alignment probes; the probes used by private reference validation remain as developer tools.
 
 ### Decisions in Force
 
@@ -44,6 +44,8 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 3. **Model distribution.** Host the weightless templates (about 3.6 MB for HTDemucs, 1 MB for wav2vec2) as release assets or in the repository, with Apache-2.0 notices for wav2vec2 and a statement that the Demucs checkpoint is downloaded from its publisher.
 4. **README and documentation.** Rewrite the README for users: what iLyric is, installation, a quick start, the command reference, model downloads and rights, limitations, and acknowledgments (Codex and Claude). Consolidate developer documentation and keep historical reports as records. All titles and headings use MLA title case.
 5. **Repository organization.** Remove or archive superseded spike targets and probes in a dedicated cleanup milestone, keep CI green, and audit history, ignored files, and untracked files before publication.
+
+**Progress (October 11, 2026).** Items 1 to 5 are complete except the final publication audit: the command is implemented and verified on the development recording; stereo output, direct 96-kHz Apple Lossless input, and placement reporting are fixed; peak memory fell from 5.4 GB to 1.6 GB for alignment and 3.0 GB for a complete render; the templates are distributed in the repository after removing checkpoint-derived inline values ([Model Template Distribution](reports/model-template-distribution.md)); the README is rewritten with a generated demonstration image; and the reports are indexed in [Documentation](README.md).
 
 **Confirmation point 1:** the maintainer approved the command design on October 11, 2026, and reviews the README, the repository state, and the license notices before any release tag. No tag or release is created without explicit approval.
 

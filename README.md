@@ -218,9 +218,9 @@ Measured on an Apple M4 (10 cores) with a 5 min 19 s recording decoded from 96-k
 | Vocal separation | 42 s |
 | Recognition and alignment | 12 s |
 | Rendering and encoding (19,122 frames) | 5 min 27 s |
-| **Complete `render` of plain lyrics** | **7 min 0 s** |
+| **Complete `render` of plain lyrics** | **6 min 56 s** |
 
-Peak memory was 5.4 GB. Rendering scales with processor cores; use `--jobs` to limit it. `--fast` shortens separation and recognition but may change results slightly between runs.
+Peak memory was 1.6 GB during alignment and 3.0 GB for the complete `render`. Rendering scales with processor cores; use `--jobs` to limit it. `--fast` shortens separation and recognition but may change results slightly between runs.
 
 ## Troubleshooting
 
