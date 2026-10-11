@@ -7,7 +7,10 @@ without any checkpoint-derived values, a zero-filled weight skeleton compressed 
 iLyric rebuild the exact weight file from the official checkpoint on the user's Mac (docs/core-ml-port-feasibility.md).
 
 Every weight entry must be either derived from the checkpoint by a recorded transform or a constant that is
-byte-identical in the random-weight conversion; anything else stops the build.
+byte-identical in the random-weight conversion; anything else stops the build. Small tensors that Core ML stores
+inline in the program (model.mlmodel) are treated the same way: checkpoint-derived values are replaced by recorded
+sentinel values of equal length in the original bytes, which the installer restores, and any other difference from the random-weight
+program stops the build.
 """
 import hashlib
 import json
@@ -19,6 +22,7 @@ from itertools import permutations
 from pathlib import Path
 import numpy as np
 import torch
+from coremltools.proto import Model_pb2
 from demucs.states import load_model
 
 WEIGHTS = 'Data/com.apple.CoreML/weights/weight.bin'
@@ -34,6 +38,61 @@ def entries(blob):
         out.append((pos, offset, size, dtype))
         pos = (offset + size + 63) // 64 * 64
     return out
+
+
+PROGRAM = 'Data/com.apple.CoreML/model.mlmodel'
+
+
+def inline_tensors(spec):
+    """Inline float tensor constants of an ML program, by output name."""
+    out = {}
+
+    def walk(block):
+        for op in block.operations:
+            if op.type == 'const':
+                value = op.attributes['val']
+                if value.WhichOneof('value') == 'immediateValue' and value.immediateValue.WhichOneof('value') == 'tensor':
+                    tensor = value.immediateValue.tensor
+                    if tensor.WhichOneof('value') == 'floats':
+                        out[op.outputs[0].name] = tensor.floats
+            for inner in op.blocks:
+                walk(inner)
+    for function in spec.mlProgram.functions.values():
+        for block in function.block_specializations.values():
+            walk(block)
+    return out
+
+
+def sanitize_program(template, random_reference, candidates):
+    """Replace checkpoint-derived inline tensors of the template program with unique sentinels."""
+    path = template / PROGRAM
+    original = path.read_bytes()
+    spec, random_spec = Model_pb2.Model(), Model_pb2.Model()
+    spec.ParseFromString(original)
+    random_spec.ParseFromString((random_reference / PROGRAM).read_bytes())
+    weightless = {tuple(np.float32(v) for v in values.values) for values in inline_tensors(random_spec).values()}
+    recipe, sanitized = [], bytearray(original)
+    for name, values in inline_tensors(spec).items():
+        array = np.array(values.values, dtype=np.float32)
+        if tuple(array) in weightless:
+            continue
+        derivation = candidates.get(key(array))
+        if derivation is None:
+            raise SystemExit(f'Unexplained inline constant {name}; refusing to build a template')
+        # Packed repeated floats are stored contiguously, so the values are replaced in the original bytes;
+        # re-serializing the parsed program would not preserve its byte order.
+        found = bytes(sanitized).count(array.tobytes())
+        if found != 1:
+            raise SystemExit(f'Inline constant {name} occurs {found} times; refusing to build a template')
+        sentinel = np.random.default_rng(len(recipe) + 1).uniform(-1e6, 1e6, array.size).astype(np.float32)
+        position = bytes(sanitized).index(array.tobytes())
+        sanitized[position:position + len(sentinel.tobytes())] = sentinel.tobytes()
+        recipe.append(dict(name=name, count=int(array.size), sentinel=sentinel.tobytes().hex(), **derivation))
+    for entry in recipe:
+        if bytes(sanitized).count(bytes.fromhex(entry['sentinel'])) != 1:
+            raise SystemExit(f'Sentinel for {entry["name"]} is not unique')
+    path.write_bytes(bytes(sanitized))
+    return recipe, hashlib.sha256(original).hexdigest()
 
 
 def key(a):
@@ -84,14 +143,16 @@ def main(reference, random_reference, checkpoint, out):
         shutil.rmtree(template)
     shutil.copytree(reference, template, ignore=shutil.ignore_patterns('weight.bin'))
     (out / 'weight-skeleton.bin.zlib').write_bytes(zlib.compress(bytes(skeleton), 9))
+    inline, program_sha256 = sanitize_program(template, random_reference, candidates)
     manifest = dict(format='ilyric-weight-recipe-1', model='htdemucs', checkpoint=dict(
         file='955717e8-8726e21a.th', sha256=hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest(),
         url='https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th'),
         weights=dict(size=len(blob), sha256=hashlib.sha256(blob).hexdigest(),
                      skeleton_sha256=hashlib.sha256(bytes(skeleton)).hexdigest()),
+        program=dict(sha256=program_sha256, inline_entries=inline),
         derived_entries=len(recipe), constant_entries=constants, entries=recipe)
     (out / 'weight-recipe.json').write_text(json.dumps(manifest, indent=1) + '\n')
-    print(json.dumps(dict(derived=len(recipe), constants=constants,
+    print(json.dumps(dict(derived=len(recipe), constants=constants, inline=len(inline),
                           kinds={k: sum(r['kind'] == k for r in recipe) for k in {r['kind'] for r in recipe}})))
 
 

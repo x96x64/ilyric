@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import CryptoKit
 @testable import AlignmentMac
 import AlignmentCore
 
@@ -72,6 +73,21 @@ struct CheckpointTests {
         // Embedding rows are bins, columns channels; the output is channels × bins × frames.
         #expect(try SeparationInstaller.derive(entry("frequency_embedding",bins:2,frames:2,scale:10,outer:0.5),t)==[5,5,15,15,10,10,20,20])
         #expect(throws:AlignmentError.self) { try SeparationInstaller.derive(entry("unknown"),t) }
+    }
+    @Test func restoresInlineProgramConstants() throws {
+        // A synthetic program whose packed floats [1.5, -2] were replaced by a sentinel of equal length.
+        let values:[Float]=[1.5,-2],sentinel:[Float]=[123456.5,-654321.25]
+        func bytes(_ v: [Float]) -> Data { v.withUnsafeBytes { Data($0) } }
+        let reference=Data([7,9])+bytes(values)+Data([3]),template=Data([7,9])+bytes(sentinel)+Data([3])
+        let hex={ (d: Data) in d.map { String(format:"%02x",$0) }.joined() }
+        let json:[String:Any]=["sha256":SeparationInstaller.hex(SHA256.hash(data:reference)),
+            "inline_entries":[["name":"bias","sentinel":hex(bytes(sentinel)),"kind":"tensor","key":"b","count":2]]]
+        let program=try JSONDecoder().decode(SeparationInstaller.Recipe.Program.self,from:JSONSerialization.data(withJSONObject:json))
+        let tensors=["b":TorchCheckpoint.Tensor(shape:[2],values:values)]
+        #expect(try SeparationInstaller.restoreProgram(template,program,tensors:tensors)==reference)
+        // Different checkpoint values do not reproduce the reference program.
+        #expect(throws:AlignmentError.self) { try SeparationInstaller.restoreProgram(template,program,tensors:["b":.init(shape:[2],values:[1,2])]) }
+        #expect(Data(hex:"0aFF")==Data([10,255]) && Data(hex:"abc")==nil && Data(hex:"zz")==nil)
     }
 }
 

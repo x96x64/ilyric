@@ -14,7 +14,10 @@ public enum SeparationInstaller {
             let offset, size: Int; let kind, key: String
             let start, end, bins, frames: Int?; let scale, outer_scale: Double?; let axes: [Int]?
         }
-        let format: String; let checkpoint: Checkpoint; let weights: Weights; let entries: [Entry]
+        /// Checkpoint-derived tensors stored inline in the program, replaced by sentinels in the template.
+        struct Inline: Decodable { let name, sentinel, kind, key: String; let count: Int; let start, end: Int?; let axes: [Int]? }
+        struct Program: Decodable { let sha256: String; let inline_entries: [Inline] }
+        let format: String; let checkpoint: Checkpoint; let weights: Weights; let program: Program?; let entries: [Entry]
     }
 
     /// `template` holds htdemucs-template.mlpackage, weight-skeleton.bin.zlib, and weight-recipe.json.
@@ -39,12 +42,32 @@ public enum SeparationInstaller {
         let package=destination.appendingPathComponent("htdemucs.mlpackage"),compiled=destination.appendingPathComponent("htdemucs.mlmodelc")
         for url in [package,compiled] where fm.fileExists(atPath:url.path) { try fm.removeItem(at:url) }
         try fm.copyItem(at:template.appendingPathComponent("htdemucs-template.mlpackage"),to:package)
+        if let program=recipe.program {
+            let url=package.appendingPathComponent("Data/com.apple.CoreML/model.mlmodel")
+            try restoreProgram(Data(contentsOf:url),program,tensors:tensors).write(to:url)
+        }
         let weightsDirectory=package.appendingPathComponent("Data/com.apple.CoreML/weights")
         try fm.createDirectory(at:weightsDirectory,withIntermediateDirectories:true)
         try weights.write(to:weightsDirectory.appendingPathComponent("weight.bin"))
         try fm.moveItem(at:try MLModel.compileModel(at:package),to:compiled)
         try fm.removeItem(at:package)
         return compiled
+    }
+
+    /// Replaces each sentinel in the template program with its checkpoint values; the result must equal the
+    /// reference conversion's program byte for byte.
+    static func restoreProgram(_ data: Data,_ program: Recipe.Program,tensors: [String:TorchCheckpoint.Tensor]) throws -> Data {
+        var bytes=data
+        for e in program.inline_entries {
+            guard let t=tensors[e.key] else { throw AlignmentError.invalid("Checkpoint lacks \(e.key)") }
+            let entry=Recipe.Entry(offset:0,size:e.count*4,kind:e.kind,key:e.key,start:e.start,end:e.end,bins:nil,frames:nil,scale:nil,outer_scale:nil,axes:e.axes)
+            let values=try derive(entry,t)
+            guard values.count==e.count,let sentinel=Data(hex:e.sentinel),sentinel.count==e.count*4,
+                  let range=bytes.range(of:sentinel) else { throw AlignmentError.invalid("Program template lacks the sentinel for \(e.name)") }
+            values.withUnsafeBytes { bytes.replaceSubrange(range,with:$0) }
+        }
+        guard hex(SHA256.hash(data:bytes))==program.sha256 else { throw AlignmentError.invalid("Restored program differs from the reference conversion") }
+        return bytes
     }
 
     static func derive(_ e: Recipe.Entry,_ t: TorchCheckpoint.Tensor) throws -> [Float] {
@@ -195,5 +218,19 @@ public enum RecognitionInstaller {
             }
             guard best==expectedBest else { throw AlignmentError.invalid("Recognition self-test labels differ at frame \(f)") }
         }
+    }
+}
+
+extension Data {
+    /// Bytes of an even-length hexadecimal string, or nil when it is malformed.
+    init?(hex: String) {
+        guard hex.count%2==0 else { return nil }
+        var out=Data(capacity:hex.count/2),index=hex.startIndex
+        while index<hex.endIndex {
+            let next=hex.index(index,offsetBy:2)
+            guard let byte=UInt8(hex[index..<next],radix:16) else { return nil }
+            out.append(byte);index=next
+        }
+        self=out
     }
 }
