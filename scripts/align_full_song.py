@@ -7,7 +7,7 @@ import sys
 import tempfile
 from alignment.core import AlignmentError,source
 from alignment.worker import Unavailable,file_hash
-from alignment.full_song import load,review,to_ttml,unassigned_audio
+from alignment.full_song import background_vocals,load,review,to_ttml,unassigned_audio
 
 
 def unique_fields(items):
@@ -30,6 +30,7 @@ def main():
     export.add_argument('--audio',type=Path,required=True);export.add_argument('--output',type=Path,required=True)
     export.add_argument('--granularity',choices=['paragraph','line','word'],default='paragraph')
     export.add_argument('--keep-nonlexical',action='store_true',help='Keep lines consisting only of vocables (line and word granularity)')
+    export.add_argument('--background',type=Path,help='Lyrics with parenthesized background vocals to attach to aligned lines')
     a=parser.parse_args()
     try:
         output=getattr(a,'output',None)
@@ -52,7 +53,7 @@ def main():
             if not a.audio.is_file():raise Unavailable('Original audio unavailable')
             if file_hash(a.audio)!=result['audio']['sha256']:raise AlignmentError('Export audio identity differs')
         if output:
-            content=to_ttml(result,a.granularity,not a.keep_nonlexical) if a.command=='export' else json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
+            content=to_ttml(result,a.granularity,not a.keep_nonlexical,background_vocals(a.background.read_text(encoding='utf-8'),result) if getattr(a,'background',None) else None) if a.command=='export' else json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False)+'\n'
             with output.open('x',encoding='utf-8') as stream:stream.write(content)
         print(json.dumps(dict(status='review_required' if any(r['review']=='pending' for r in result['lines']) else 'reviewed',
                               occurrences=len(result['lines']),estimated=sum(r['estimate'] is not None for r in result['lines']),

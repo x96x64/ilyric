@@ -248,6 +248,16 @@ class WordTiming(unittest.TestCase):
         self.assertEqual(to_ttml(out,'word').count('<span '),2)
         with self.assertRaises(AlignmentError):to_ttml(r,'syllable')
 
+    def test_background_vocals_attach_and_export(self):
+        from alignment.full_song import background_vocals
+        r=self.fixture()
+        text="Go now (go)\n(stay, stay)\nUnrelated line\nDon't stay (no)\n"
+        mapping=background_vocals(text,r)
+        self.assertEqual(mapping,{r['lines'][0]['id']:'go stay, stay',r['lines'][1]['id']:'no'})
+        xml=to_ttml(r,'word',background=mapping)
+        self.assertIn('xmlns:ttm="http://www.w3.org/ns/ttml#metadata"',xml);self.assertEqual(xml.count('ttm:role="x-bg"'),2)
+        self.assertNotIn('x-bg',to_ttml(r,'paragraph',background=mapping))
+
     def test_standalone_vocable_lines_are_dropped(self):
         from alignment.full_song import nonlexical
         for t in ['Mm-hmm... Aah-ey, mmm','Ooh','La la la','Whoa-oh']:self.assertTrue(nonlexical(t))

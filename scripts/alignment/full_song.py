@@ -370,7 +370,27 @@ def nonlexical(text):
     return bool(words) and all(VOCABLE.fullmatch(w.lower()) for w in words)
 
 
-def to_ttml(result, granularity='paragraph', drop_nonlexical=True):
+def background_vocals(text, result):
+    """Map parenthesized background vocals in a lyrics text onto aligned lines.
+
+    Each text line is matched, after removing parentheses and normalizing whitespace, to the next aligned
+    line with the same text; its parenthesized phrases become that line's background vocals. A line made
+    only of parenthesized phrases attaches to the most recently matched line. Returns {line id: text}.
+    """
+    norm=lambda s:' '.join(s.split())
+    rows=result['lines'];pointer=0;last=None;out={}
+    for raw in text.splitlines():
+        phrases=[norm(x) for x in re.findall(r'\(([^()]*)\)',raw) if norm(x)]
+        main=norm(re.sub(r'\([^()]*\)',' ',raw))
+        if main:
+            match=next((j for j in range(pointer,len(rows)) if norm(rows[j]['text'])==main),None)
+            if match is None:continue
+            pointer=match+1;last=rows[match]['id']
+        if phrases and last is not None:out[last]=' '.join(([out[last]] if last in out else [])+phrases)
+    return out
+
+
+def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=None):
     """Export reviewed intervals as TTML.
 
     'paragraph' emits one timed paragraph per source paragraph. 'line' emits one per sung line, the unit
@@ -379,13 +399,19 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True):
     remain line-timed. Each span carries its word and the following separator text.
 
     With line or word granularity, lines consisting only of vocables are omitted by default, because
-    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval.
+    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval. Optional
+    background vocals ({line id: text}) are emitted as untimed ttm:role="x-bg" spans that inherit the
+    line's interval.
     """
+    background=background or {}
     if granularity not in ['paragraph','line','word']:raise AlignmentError('Unsupported TTML granularity')
     drop=drop_nonlexical and granularity!='paragraph'
     validate(result,ready=not drop)
     if drop and any(not nonlexical(r['text']) and (interval(r) is None or r['review']=='pending') for r in result['lines']):
         raise AlignmentError('Every occurrence requires a reviewed interval before complete export')
+    def extra(row):
+        text=background.get(row['id'])
+        return f'<span ttm:role="x-bg">{escape(text)}</span>' if text else ''
     def stamp(t):
         whole,fraction=divmod(t,1000000)
         return f'{whole}.{fraction:06d}'.rstrip('0').rstrip('.')+'s'
@@ -398,14 +424,15 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True):
         if drop and nonlexical(row['text']):continue
         a,b=interval(row);words=row.get('word_estimates') if granularity=='word' and row['correction'] is None else None
         if not words:
-            paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">{escape(row["text"])}</p>');continue
+            paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">{escape(row["text"])}{extra(row)}</p>');continue
         units=[0];k=0
         for ch in row['text']:k+=len(ch.encode('utf-16-le'))//2;units.append(k)
         index={u:i for i,u in enumerate(units)}
         cuts=[0]+[index[w['start_utf16']] for w in words[1:]]+[len(row['text'])]
         spans=[f'<span begin="{stamp(w["interval_us"][0]-a)}" end="{stamp(w["interval_us"][1]-a)}">{escape(row["text"][cuts[i]:cuts[i+1]])}</span>' for i,w in enumerate(words)]
-        paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">'+''.join(spans)+'</p>')
-    xml='<tt xmlns="http://www.w3.org/ns/ttml" xml:space="preserve"><body><div>'+''.join(paragraphs)+'</div></body></tt>\n'
+        paragraphs.append(f'<p begin="{stamp(a)}" end="{stamp(b)}">'+''.join(spans)+extra(row)+'</p>')
+    namespace=' xmlns:ttm="http://www.w3.org/ns/ttml#metadata"' if background and granularity!='paragraph' else ''
+    xml=f'<tt xmlns="http://www.w3.org/ns/ttml"{namespace} xml:space="preserve"><body><div>'+''.join(paragraphs)+'</div></body></tt>\n'
     if len(xml.encode())>65536:raise AlignmentError('Prepared TTML exceeds the existing importer limit')
     return xml
 
