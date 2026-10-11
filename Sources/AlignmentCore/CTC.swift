@@ -71,10 +71,13 @@ public func ctcPath(_ emissions: [[Double]], targets: [Int], blank: Int = 0) thr
         labels.append(target);labels.append(blank)
     }
     let count=labels.count
-    guard frames*count<=120_000_000 else { throw AlignmentError.invalid("Full-song CTC trace exceeds 120 MB; reduce input, not model limits") }
+    // Each choice (stay, advance, or skip) takes two bits, so the largest permitted input (30,000 frames by 12,001
+    // states) needs at most 90 MB of trace.
+    let cells=frames*count
+    guard cells<=480_000_000 else { throw AlignmentError.invalid("Full-song CTC trace exceeds 120 MB; reduce input, not model limits") }
     var scores=[Double](repeating:-.infinity,count:count);scores[0]=0
     let skip=labels.enumerated().map { j,v in j>1 && v != blank && v != labels[j-2] }
-    var trace=[UInt8](repeating:0,count:frames*count)
+    var trace=[UInt8](repeating:0,count:(cells+3)/4)
     var next=[Double](repeating:-.infinity,count:count)
     for (f,emission) in emissions.enumerated() {
         guard emission.count==width,emission.allSatisfy(\.isFinite) else { throw AlignmentError.invalid("Nonfinite or inconsistent acoustic scores") }
@@ -83,7 +86,8 @@ public func ctcPath(_ emissions: [[Double]], targets: [Int], blank: Int = 0) thr
             var value=scores[j],choice:UInt8=0
             if j>0 && scores[j-1]>value { value=scores[j-1];choice=1 }
             if skip[j] && scores[j-2]>value { value=scores[j-2];choice=2 }
-            next[j]=value+emission[labels[j]];trace[base+j]=choice
+            next[j]=value+emission[labels[j]]
+            if choice != 0 { let cell=base+j;trace[cell>>2] |= choice<<UInt8((cell&3)*2) }
         }
         swap(&scores,&next)
     }
@@ -92,7 +96,8 @@ public func ctcPath(_ emissions: [[Double]], targets: [Int], blank: Int = 0) thr
     var spans=targets.map { _ in [frames,0] }
     for frame in stride(from:frames-1,through:0,by:-1) {
         if state%2==1 { let k=state/2;spans[k][0]=frame;spans[k][1]=max(spans[k][1],frame+1) }
-        state-=Int(trace[frame*count+state])
+        let cell=frame*count+state
+        state-=Int((trace[cell>>2]>>UInt8((cell&3)*2))&3)
     }
     return spans.allSatisfy({ $0[0]<$0[1] }) ? spans : nil
 }
