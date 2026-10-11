@@ -20,7 +20,9 @@ let package = Package(
         .target(name: "LyricsInputMac", dependencies: ["LyricsInputCore", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .executableTarget(name: "LyricsInputProbe", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .testTarget(name: "LyricsInputTests", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
-        .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"])
+        .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"]),
+        .target(name: "AlignmentCore"),
+        .testTarget(name: "AlignmentTests", dependencies: ["AlignmentCore"], resources: [.copy("Fixtures")])
     ],
     swiftLanguageModes: [.v5]
 )

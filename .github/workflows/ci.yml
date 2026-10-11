@@ -32,6 +32,10 @@ jobs:
       - name: Test spike core
         timeout-minutes: 10
         run: swift test --disable-xctest --filter SpikeTests
+      - name: Test native alignment core
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter AlignmentTests
       - name: Test Lyrics slice
         timeout-minutes: 40
         run: swift test --disable-xctest --filter LyricsSliceTests
