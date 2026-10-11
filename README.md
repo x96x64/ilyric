@@ -21,7 +21,7 @@ ilyric render song.m4a lyrics.txt -o video.mp4
 ```
 
 <p align="center">
-  <img src="docs/media/demo.png" alt="Three frames of a rendered Lyrics video: the first line filling while the playback controls are visible, a line filling word by word with a background vocal beneath it, and the instrumental-gap indicator" width="720">
+  <img src="docs/media/demo.png" alt="Three frames of a rendered Lyrics video of Twinkle, Twinkle, Little Star: the first line filling while the playback controls are visible, a line filling word by word under a scrolling title, and the instrumental-gap indicator" width="720">
 </p>
 
 > [!IMPORTANT]
@@ -236,7 +236,9 @@ Run `ilyric doctor` first; it checks each requirement and states the recovery st
 
 ## SF Symbols and Rights
 
-Control icons are SF Symbols, resolved at render time from the Mac running iLyric; iLyric never bundles or redistributes them. Apple's [SF Symbols license](https://developer.apple.com/support/terms/) does not expressly permit their use in exported videos, so you are responsible for how you use and publish the videos you create. The original icon set in this repository is used only for tests and public documentation media. See [SF Symbols Rights Assessment](docs/sf-symbols-rights-assessment.md).
+Control icons are SF Symbols, resolved at render time from the Mac running iLyric; iLyric never bundles or redistributes them. Apple's [SF Symbols license](https://developer.apple.com/support/terms/) does not expressly permit their use in exported videos, so you are responsible for how you use and publish the videos you create. The demonstration image above shows SF Symbols rendered the same way; the original icon set in this repository is used for tests. See [SF Symbols Rights Assessment](docs/sf-symbols-rights-assessment.md).
+
+The demonstration uses "The Star" by Jane Taylor (1806), which is in the public domain, with synthetic timing and no recording.
 
 You are likewise responsible for holding the rights to the recordings, lyrics, and artwork you render. iLyric does not download lyrics or audio.
 

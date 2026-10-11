@@ -20,7 +20,7 @@ The production renderer must support deterministic arbitrary-timestamp evaluatio
 
 Keep the first spike narrow. Do not add production parsers, stabilized schemas, device presets, broad CLI surfaces, release packaging, or speculative abstractions. Use Core Text and ordinary Apple raster facilities or Core Image first; add Metal only for a demonstrated requirement or measured bottleneck.
 
-Resolve SF Symbols and system fonts only at runtime through public APIs, as recorded in `docs/sf-symbols-rights-assessment.md`. Public fixtures, golden images, and documentation media must use the original icon set. Do not incorporate proprietary Apple Music assets, extracted icons, private frameworks, redistributed proprietary font files, commercial media, credentials, or private reference captures. Use original fixtures. Do not select a software license without a separate explicit decision.
+Resolve SF Symbols and system fonts only at runtime through public APIs, as recorded in `docs/sf-symbols-rights-assessment.md`. Public fixtures, golden images, and test outputs must use the original icon set; the README demonstration image alone shows runtime-resolved SF Symbols, as amended in that assessment. Do not incorporate proprietary Apple Music assets, extracted icons, private frameworks, redistributed proprietary font files, commercial media, credentials, or private reference captures. Use original fixtures. Do not select a software license without a separate explicit decision.
 
 ## Verification and History
 

@@ -7,44 +7,44 @@ import LyricsInputMac
 import LyricsSliceCore
 import SpikeCore
 
-// Renders the README demonstration image from original synthetic material: Lorem ipsum text (from Cicero, in the
-// public domain), silent audio, iLyric's placeholder artwork, and the original control icons.
-// Usage: DocumentationMedia OUTPUT.png
+// Renders the README demonstration image from fixtures/demo: "The Star" by Jane Taylor (1806), in the public domain,
+// with synthetic evenly spaced word timing and silent audio. Controls and the placeholder artwork use SF Symbols,
+// resolved at runtime on the rendering Mac, as decided in docs/sf-symbols-rights-assessment.md.
+// Usage: DocumentationMedia LYRICS.txt OUTPUT.png
 
-let lines:[(text:String,background:String?)]=[
-    ("Lorem ipsum dolor sit amet",nil),("Consectetur adipiscing elit",nil),
-    ("Sed do eiusmod tempor",nil),("Incididunt ut labore",nil),
-    ("Ut enim ad minim veniam",nil),("Quis nostrud exercitation",nil),
-    ("Ullamco laboris nisi",nil),("Ut aliquip ex ea commodo","ex ea commodo"),
-    ("Duis aute irure dolor",nil),("In reprehenderit in voluptate",nil),
-    ("Velit esse cillum dolore",nil),("Eu fugiat nulla pariatur",nil)]
-// Each line lasts 2.6 s with evenly timed words; an instrumental gap follows the eighth line.
 func stamp(_ t: Double) -> String { String(format:"%.3fs",t) }
-var paragraphs=[String](),time=1.0
-for (i,line) in lines.enumerated() {
-    if i==8 { time+=7 }
-    let words=line.text.split(separator:" ").map(String.init),step=2.6/Double(words.count)
-    let spans=words.enumerated().map { k,w in
-        "<span begin=\"\(stamp(Double(k)*step))\" end=\"\(stamp(Double(k+1)*step))\">\(w)\(k<words.count-1 ? " " : "")</span>"
-    }.joined()
-    let background=line.background.map { "<span ttm:role=\"x-bg\">\($0)</span>" } ?? ""
-    paragraphs.append("<p begin=\"\(stamp(time))\" end=\"\(stamp(time+2.6))\">\(spans)\(background)</p>")
-    time+=2.8
+func escape(_ s: String) -> String { s.replacingOccurrences(of:"&",with:"&amp;").replacingOccurrences(of:"<",with:"&lt;") }
+/// Each line lasts 2.6 s with evenly timed words; an instrumental gap of 7 s precedes the third stanza.
+func timedLyrics(_ raw: String) throws -> (ttml: String, end: Double) {
+    let stanzas=raw.components(separatedBy:"\n\n").map { $0.split(separator:"\n").map { $0.trimmingCharacters(in:.whitespaces) }.filter { !$0.isEmpty } }.filter { !$0.isEmpty }
+    var paragraphs=[String](),time=1.0
+    for (k,stanza) in stanzas.enumerated() {
+        if k==2 { time+=7 }
+        for line in stanza {
+            let words=line.split(separator:" ").map(String.init),step=2.6/Double(words.count)
+            let spans=words.enumerated().map { i,w in
+                "<span begin=\"\(stamp(Double(i)*step))\" end=\"\(stamp(Double(i+1)*step))\">\(escape(w))\(i<words.count-1 ? " " : "")</span>"
+            }.joined()
+            paragraphs.append("<p begin=\"\(stamp(time))\" end=\"\(stamp(time+2.6))\">\(spans)</p>")
+            time+=2.8
+        }
+    }
+    return ("<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body><div>"+paragraphs.joined()+"</div></body></tt>\n",time)
 }
-let ttml="<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div>"+paragraphs.joined()+"</div></body></tt>\n"
 
 do {
-    guard CommandLine.arguments.count==2 else { throw InputError.invalid("Usage: DocumentationMedia OUTPUT.png") }
+    guard CommandLine.arguments.count==3 else { throw InputError.invalid("Usage: DocumentationMedia LYRICS.txt OUTPUT.png") }
+    let (ttml,time)=try timedLyrics(String(contentsOfFile:CommandLine.arguments[1],encoding:.utf8))
     let lyrics=try LyricsParser.parse(Data(ttml.utf8),format:.ttml)
     let audio=LocalAudio(samples:[Int16](repeating:0,count:Int((time+3)*48_000)),sourceRate:48_000,sourceChannels:1,sourceFormat:0)
-    var presentation=LocalPresentation(background:.fitted,icons:.original,minimumGap:Time(4),
+    var presentation=LocalPresentation(background:.fitted,icons:.systemSymbols,minimumGap:Time(4),
         focusLead:LocalPresentation.measuredMotion.focusLead,stagger:LocalPresentation.measuredMotion.stagger,
         marquee:.measured,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,hideControls:LocalPresentation.measuredControlHide)
     presentation.holdsFinishedLine=true;presentation.collapsesGaps=true
     let scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:PlaceholderArtwork.image(),presentation:presentation,
-                             title:"Lorem Ipsum",artist:"Dolor Sit Amet")
-    // Controls visible during the first line, word fill with a background vocal, and the instrumental gap.
-    let times=[Time(23,10),Time(2107,100),Time(2780,100)]
+                             title:"Twinkle, Twinkle, Little Star",artist:"Jane Taylor")
+    // Controls visible during the first line, word fill in the third stanza, and the instrumental gap.
+    let times=[Time(23,10),Time(3400,100),Time(2580,100)]
     // Frames contain the native 1179 × 2556 screen pillarboxed in 1080 × 1920; only the screen is kept.
     let screenWidth=1920.0*1179/2556,inset=(1080-screenWidth)/2
     let height=960,width=Int((screenWidth*Double(height)/1920).rounded()),gap=32,radius=44.0
@@ -60,7 +60,7 @@ do {
         sheet.addPath(CGPath(roundedRect:rect,cornerWidth:radius,cornerHeight:radius,transform:nil));sheet.clip()
         sheet.draw(screen,in:rect);sheet.restoreGState()
     }
-    let url=URL(fileURLWithPath:CommandLine.arguments[1]) as CFURL
+    let url=URL(fileURLWithPath:CommandLine.arguments[2]) as CFURL
     guard let image=sheet.makeImage(),let destination=CGImageDestinationCreateWithURL(url,UTType.png.identifier as CFString,1,nil) else { throw InputError.invalid("Image encoding failed") }
     CGImageDestinationAddImage(destination,image,nil)
     guard CGImageDestinationFinalize(destination) else { throw InputError.invalid("Image writing failed") }

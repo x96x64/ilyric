@@ -40,3 +40,13 @@ All sources were accessed on October 9, 2026.
 6. Revisit this assessment when Apple publishes revised terms, or if the maintainer obtains written clarification. No inquiry has been sent.
 
 The same runtime-only, no-redistribution policy applies to system fonts used for lyric and interface typography.
+
+## Amendment of October 11, 2026: Documentation Image
+
+The maintainer decided that the README demonstration image, `docs/media/demo.png`, shows the SF Symbols that the `ilyric` command renders, so that the image depicts the command's actual output. This decision amends policies 1 and 2 for that single generated image only:
+
+- The image is rendered by the `DocumentationMedia` target, which resolves the control symbols at runtime through public AppKit APIs. The placeholder artwork is not a symbol: it is the character U+266B of the macOS system font Hiragino Sans W6, under the system-font policy above. No symbol vector, glyph outline, or font file is committed; the committed PNG contains rasterized symbols and text.
+- The image is documentation of iLyric's interface. It is not used as a logo, icon, or other trademark, and no symbol is modified.
+- Public fixtures, golden images, test outputs, and continuous integration remain on the original icon set and never compare against symbol-derived pixels.
+
+The rights status assessed above is unchanged: Apple's terms do not expressly cover this use. If Apple requests discontinuance, the image will be regenerated with the original icon set by switching `DocumentationMedia` to `.original`.
