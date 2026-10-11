@@ -407,8 +407,9 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=No
     spans when the line keeps its automatic estimate; corrected lines and lines without word estimates
     remain line-timed. Each span carries its word and the following separator text.
 
-    With line or word granularity, lines consisting only of vocables are omitted by default, because
-    standalone ad-libs are rarely aligned reliably; such lines need no reviewed interval. With word
+    With line or word granularity, lines consisting only of vocables are omitted by default when the
+    alignment produced no estimate for them, because untimed ad-libs otherwise appear as placeholders;
+    such lines need no reviewed interval. Timed vocable lines are kept, as the native screen shows them. With word
     granularity, low-confidence lines become a single span that fills the line steadily. Optional
     background vocals ({line id: text}) are emitted as untimed ttm:role="x-bg" spans that inherit the
     line's interval.
@@ -417,7 +418,8 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=No
     if granularity not in ['paragraph','line','word']:raise AlignmentError('Unsupported TTML granularity')
     drop=drop_nonlexical and granularity!='paragraph'
     validate(result,ready=not drop)
-    if drop and any(not nonlexical(r['text']) and (interval(r) is None or r['review']=='pending') for r in result['lines']):
+    omitted=lambda r:drop and nonlexical(r['text']) and r['estimate'] is None
+    if drop and any(not omitted(r) and (interval(r) is None or r['review']=='pending') for r in result['lines']):
         raise AlignmentError('Every occurrence requires a reviewed interval before complete export')
     def extra(row):
         text=background.get(row['id'])
@@ -431,7 +433,7 @@ def to_ttml(result, granularity='paragraph', drop_nonlexical=True, background=No
             lines=[r for r in result['lines'] if r['paragraph']==p]
             paragraphs.append(f'<p begin="{stamp(interval(lines[0])[0])}" end="{stamp(interval(lines[-1])[1])}">'+ '<br/>'.join(escape(x) for x in text.split('\n'))+'</p>')
     for row in result['lines'] if granularity!='paragraph' else []:
-        if drop and nonlexical(row['text']):continue
+        if omitted(row):continue
         a,b=interval(row);words=row.get('word_estimates') if granularity=='word' and row['correction'] is None else None
         if words and low_confidence(row):
             # Unreliable word timing: one span fills the whole line at a steady pace instead of word by word.

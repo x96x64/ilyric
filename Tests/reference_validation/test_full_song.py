@@ -269,9 +269,16 @@ class WordTiming(unittest.TestCase):
         from alignment.full_song import nonlexical
         for t in ['Mm-hmm... Aah-ey, mmm','Ooh','La la la','Whoa-oh','Woo','Hoo, hoo, hoo','Yeah, yeah','Ow']:self.assertTrue(nonlexical(t))
         for t in ['Oh, I love you','Yeah, make that change','Make that change','']:self.assertFalse(nonlexical(t))
+        from alignment.full_song import fingerprint
         r=self.fixture(b"Mm-hmm\n\nGo now\n\nDon't stay\n")
-        self.assertEqual(to_ttml(r,'line').count('<p '),2);self.assertNotIn('hmm',to_ttml(r,'word'))
-        self.assertEqual(to_ttml(r,'line',drop_nonlexical=False).count('<p '),3)
+        # A timed vocable line is kept, as the native screen shows it.
+        self.assertEqual(to_ttml(r,'line').count('<p '),3)
+        # Without an automatic estimate it is omitted even when a preview interval was supplied.
+        u=copy.deepcopy(r);u['lines'][0].update(estimate=None,word_estimates=None,review='pending')
+        u['history']=[h for h in u['history'] if h['line']!=0];u['proposal_sha256']=fingerprint(u)
+        u=review(u,[dict(line=0,interval_us=[1,100000],note='Synthetic preview fill')])
+        self.assertEqual(to_ttml(u,'line').count('<p '),2);self.assertNotIn('hmm',to_ttml(u,'word'))
+        self.assertEqual(to_ttml(u,'line',drop_nonlexical=False).count('<p '),3)
         self.assertIn('hmm',to_ttml(r,'paragraph'))
 
 
