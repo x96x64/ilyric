@@ -25,6 +25,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 10. (Added October 11, 2026.) The command design in [Command-Line Interface](command-line-interface.md) is approved. Control icons are always SF Symbols, resolved at runtime, with no option to disable them; the original icon set remains internal for tests and public media.
 11. (Added October 11, 2026.) The public preview is distributed through Homebrew, npm, and pip; the npm and pip packages are thin installers for the native macOS binary.
 12. (Added October 12, 2026.) The product is renamed from iLyric to iLyrics, the command from `ilyric` to `ilyrics`, and the repository to `x96x64/ilyrics`, before any package is published. Version 0.1.0 and historical records keep the former name.
+13. (Added October 12, 2026.) The maintainer approved the public preview on the [third qualification](reports/third-preview-qualification-results.md): every pooled criterion was met and only the per-recording criterion was not, by three of 80 recordings, one of them a since-fixed text defect. Publication of each channel still requires the maintainer's confirmation.
 
 ## Where Work Can Run
 

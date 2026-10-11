@@ -1,8 +1,16 @@
 # Changelog
 
-All notable changes to iLyric are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
+All notable changes to iLyrics are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-10-12
+
+The public preview. English synchronization was qualified on 80 unseen recordings under the revised criteria, with the per-recording criterion narrowly not met; the maintainer approved the preview on that basis.
+
+### Added
+
+- Homebrew, npm, and pip packages of the native binary for Apple silicon.
 
 ### Changed
 
@@ -10,6 +18,10 @@ All notable changes to iLyric are recorded here. The format follows [Keep a Chan
 - Alignment accepts lines framed by accepted neighbours (version 3 of the vocal rules), raising the share of timed lines.
 - Recordings of up to twenty minutes are supported, and long recordings no longer exceed the alignment's trace bound.
 - Alignment reports include each line's forced proposal, support, and similarity.
+
+### Fixed
+
+- Apostrophe variants such as U+02BC in plain lyrics no longer stop alignment.
 
 ## [0.1.0] - 2026-10-11
 
@@ -24,5 +36,6 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.2.0
 [0.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.1.0
