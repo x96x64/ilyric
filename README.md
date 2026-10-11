@@ -25,7 +25,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> iLyrics is an experimental source release. English synchronization and the visual preset have not yet been qualified for a public preview, and command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings, with the weaknesses listed under [Limitations](#limitations); the visual preset is not yet qualified, and command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Contents
 
@@ -62,6 +62,26 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 
 ## Installation
 
+The packages install the same native binary for Apple silicon and need no Swift toolchain.
+
+### Homebrew
+
+```bash
+brew install x96x64/tap/ilyrics
+```
+
+### npm
+
+```bash
+npm install -g ilyrics
+```
+
+### pip
+
+```bash
+pipx install ilyrics    # or: pip install ilyrics
+```
+
 ### From Source
 
 ```bash
@@ -74,8 +94,6 @@ sudo cp -R share/ilyrics/templates /usr/local/share/ilyrics/
 ```
 
 The second and third commands install the weightless model templates beside the executable. Running `.build/release/ilyrics` directly from the checkout needs no installation step.
-
-Homebrew, npm, and pip packages will be added for the public preview. The npm and pip packages will install the same native macOS binary.
 
 ### Alignment Models
 
@@ -245,6 +263,7 @@ You are likewise responsible for holding the rights to the recordings, lyrics, a
 ## Limitations
 
 - Automatic synchronization supports English. Japanese is planned for the release after the stable release.
+- On 80 unseen recordings with manual word timing, 95.9% of lines were placed correctly, 0.5% were misplaced, and 3.6% were left untimed; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without reliable timing are placed between their neighbours and fill steadily rather than word by word.
 - Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.
 - The visual target is the Music app on iOS 27. Its behavior has been measured from private reference recordings, but fidelity has not yet been qualified against acceptance thresholds.
 - Translations, the Sing mode, and landscape layouts are not rendered.

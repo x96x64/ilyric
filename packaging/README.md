@@ -16,7 +16,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
   <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
 </p>
 
-> **Note:** iLyrics is an experimental release. English synchronization and the visual preset have not yet been qualified, and options may change. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> **Note:** iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings; the visual preset is not yet qualified, and options may change. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Features
 
