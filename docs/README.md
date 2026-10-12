@@ -104,6 +104,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-12 — [Third Preview Qualification Results](reports/third-preview-qualification-results.md)
 - 2026-10-12 — [Visual Qualification Plan](reports/visual-qualification-plan.md)
 - 2026-10-12 — [Background Colour Field](reports/background-colour-field.md)
+- 2026-10-12 — [Visual Qualification Results](reports/visual-qualification-results.md) (in progress)
 
 ### Native Pipeline
 
