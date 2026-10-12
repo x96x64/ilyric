@@ -24,6 +24,12 @@ struct LyricsTextTests {
         let n=NormalizedLyrics((1...5).map { "Line \($0)" }.joined(separator:"\n"))
         #expect(try LyricSource(Data(n.text.utf8)).paragraphs.map { $0.split(separator:"\n").count }==[3,2])
     }
+    @Test func acceptsUpTo256Paragraphs() throws {
+        // Songs with many short lines exceed the former limit of 64 paragraphs; the renderer's composition takes 256.
+        let text={ (n:Int) in (1...n).map { "Line \($0)" }.joined(separator:"\n\n") }
+        #expect(try LyricSource(Data(text(256).utf8)).paragraphs.count==256)
+        #expect(throws:AlignmentError.self) { try LyricSource(Data(text(257).utf8)) }
+    }
     @Test func leadingBackgroundWithoutLineIsDropped() {
         let n=NormalizedLyrics("(intro hum)\nFirst line")
         #expect(n.text=="First line\n" && n.background.isEmpty && n.dropped.count==1)

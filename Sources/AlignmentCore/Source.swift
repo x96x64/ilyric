@@ -35,7 +35,7 @@ public struct LyricSource: Equatable, Sendable {
             paragraphs.append(part)
         }
         guard !paragraphs.isEmpty else { throw AlignmentError.invalid("Lyrics must contain nonempty paragraphs") }
-        guard paragraphs.count<=64 else { throw AlignmentError.invalid("At most 64 paragraphs are supported") }
+        guard paragraphs.count<=256 else { throw AlignmentError.invalid("At most 256 paragraphs are supported") }
         var lines=[SourceLine]()
         for (p,paragraph) in paragraphs.enumerated() {
             var offset=0
