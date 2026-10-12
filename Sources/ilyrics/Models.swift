@@ -13,7 +13,9 @@ enum Models {
     /// prefix or in an enclosing source checkout (for `.build/release/ilyrics`).
     static func templates() throws -> URL {
         if let path=ProcessInfo.processInfo.environment["ILYRICS_TEMPLATES"] { return URL(fileURLWithPath:path,isDirectory:true) }
-        var directory=URL(fileURLWithPath:CommandLine.arguments[0]).resolvingSymlinksInPath().deletingLastPathComponent()
+        // The executable's own path, not argv[0], which is a bare name when the command is found through PATH.
+        let executable=Bundle.main.executableURL ?? URL(fileURLWithPath:CommandLine.arguments[0])
+        var directory=executable.resolvingSymlinksInPath().deletingLastPathComponent()
         for _ in 0..<4 {
             directory=directory.deletingLastPathComponent()
             let candidate=directory.appendingPathComponent("share/ilyrics/templates",isDirectory:true)
