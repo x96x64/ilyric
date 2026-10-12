@@ -26,6 +26,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 11. (Added October 11, 2026.) The public preview is distributed through Homebrew, npm, and pip; the npm and pip packages are thin installers for the native macOS binary.
 12. (Added October 12, 2026.) The product is renamed from iLyric to iLyrics, the command from `ilyric` to `ilyrics`, and the repository to `x96x64/ilyrics`, before any package is published. Version 0.1.0 and historical records keep the former name.
 13. (Added October 12, 2026.) The maintainer approved the public preview on the [third qualification](reports/third-preview-qualification-results.md): every pooled criterion was met and only the per-recording criterion was not, by three of 80 recordings, one of them a since-fixed text defect. Publication of each channel still requires the maintainer's confirmation.
+14. (Added October 12, 2026.) All Japanese support, including the display of supplied Japanese timing and automatic Japanese synchronization, is deferred to the release after the stable release. The stable release proceeds on the visual qualification as a documented record of fidelity, with known differences stated, rather than requiring every visual property to pass.
 
 ## Where Work Can Run
 
