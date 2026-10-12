@@ -41,7 +41,7 @@ do {
         marquee:.measured,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,hideControls:LocalPresentation.measuredControlHide)
     presentation.holdsFinishedLine=true;presentation.collapsesGaps=true
     let scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:PlaceholderArtwork.image(),presentation:presentation,
-                             title:"Twinkle, Twinkle, Little Star",artist:"Jane Taylor")
+                             title:"Twinkle, Twinkle, Little Star",artist:"Jane Taylor",placeholderArtwork:true)
     // Controls visible during the first line, word fill of the second line, and the instrumental gap, all before
     // the title marquee's delay so that the title rests at its initial position.
     let times=[Time(23,10),Time(47,10),Time(76,10)]

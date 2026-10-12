@@ -109,7 +109,7 @@ enum Render {
             audio=try await LocalAudio.decode(audioURL)
             scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:artwork?.image ?? PlaceholderArtwork.image(),highlighting:.enabled,presentation:presentation,
                                  title:options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent,
-                                 artist:options.values["artist"] ?? tags.artist ?? "",credits:credits)
+                                 artist:options.values["artist"] ?? tags.artist ?? "",credits:credits,placeholderArtwork:artwork==nil)
         } catch let error as InputError { throw Failure(message:"\(error)") }
 
         // Each worker owns one renderer; frames are pure functions of time, so output does not depend on the count.

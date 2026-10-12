@@ -22,7 +22,7 @@ public final class ScreenRenderer {
     public let marquee: TitleMarquee?
     private let marqueeMask: CGImage?
     private let scrollingParts: Set<ScreenPart>
-    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil, sharing: ScreenRenderer? = nil) throws {
+    public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil, sharing: ScreenRenderer? = nil, placeholderArtwork: Bool = false) throws {
         self.icons=icons;self.marquee=marquee
         if let marquee {
             let width=Int((marquee.clipMaxX-marquee.clipMinX).rounded())
@@ -72,7 +72,7 @@ public final class ScreenRenderer {
         fadeMask=mask { LyricsScreen.fade(at:$0) }
         expandedFadeMask=mask { LyricsScreen.fade(at:$0,viewport:LyricsScreen.expandedViewport,bottomFade:LyricsScreen.expandedBottomFade) }
         if let model=screen.background {
-            dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:2556)
+            dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:2556,abstract:placeholderArtwork)
         } else { dynamicBackdrop=nil }
         if calibratedInactive && !boundedCache {
             for (i,p) in screen.composition.paragraphs.enumerated() where (p.input.paragraphStyle == .latinStatic || p.input.paragraphStyle == .latinTimed) {

@@ -220,6 +220,20 @@ def capture_target(root, out, song):
     return result
 
 
+# With ILYRICS_BACKGROUND_FIELD=1, layers draw the colour field that iLyrics derives from the artwork
+# (LyricsScreenProbe color-field) instead of the artwork itself; results are written with a field- prefix.
+FIELD = __import__('os').environ.get('ILYRICS_BACKGROUND_FIELD') == '1'
+
+
+def color_field(root, out, song, art):
+    """The Swift colour field of a 192-pixel artwork crop, resampled to 192 pixels."""
+    src, dst = out/f'artwork-{song}.png', out/f'field-{song}.png'
+    Image.fromarray((art*255).astype(np.uint8)).save(src)
+    probe = Path(__file__).resolve().parents[2]/'.build'/'debug'/'LyricsScreenProbe'
+    subprocess.run([str(probe), 'color-field', str(src), str(dst)], check=True)
+    return np.asarray(Image.open(dst).convert('RGB').resize((192, 192), Image.BILINEAR)).astype(float)/255
+
+
 def fit_appearance(root, out, mode, evaluations):
     """Refit appearance with lift, adaptive saturation, a blur of at least 100 pixels (smaller blurs leave the
     artwork recognizable although block statistics prefer them), and a canvas-covering layer scale (at least
@@ -236,6 +250,8 @@ def fit_appearance(root, out, mode, evaluations):
         c = capture_target(root, out, s)
         tgt[s], tol[s], hue[s] = np.array([c[k] for k in APPEARANCE_KEYS]), APPEARANCE_FLOORS, None
     arts = {s: artwork(root, s) for s in tgt}
+    if FIELD:
+        arts = {s: color_field(root, out, s, a) for s, a in arts.items()}
 
     def song_loss(s, x, fps=2, count=16):
         p = dict(r=motion['r'], nu=motion['nu'], om=motion['om'], **dict(zip(APPEARANCE_NAMES, x)))
@@ -255,7 +271,7 @@ def fit_appearance(root, out, mode, evaluations):
     result = dict(mode=mode, train=train, params=dict(motion, **dict(zip(APPEARANCE_NAMES, r.x.tolist()))), train_loss=r.fun,
                   per_song={s: dict(zip(['loss', 'stats'], song_loss(s, r.x))) for s in tgt},
                   targets={s: dict(zip(APPEARANCE_KEYS, tgt[s].tolist())) for s in tgt})
-    (out/f'appearance-{mode}.json').write_text(json.dumps(result, indent=1, default=float)+'\n')
+    (out/f"{'field-' if FIELD else ''}appearance-{mode}.json").write_text(json.dumps(result, indent=1, default=float)+'\n')
     return result
 
 

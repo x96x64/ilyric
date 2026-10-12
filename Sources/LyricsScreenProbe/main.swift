@@ -24,6 +24,16 @@ import RenderMac
                 print(String(data:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys]),encoding:.utf8)!)
                 return
             }
+            if args.count==4 && args[1]=="color-field" {
+                // Development calibration: the colour field that the backdrop draws for a supplied artwork, as PNG.
+                guard let source=CGImageSourceCreateWithURL(URL(fileURLWithPath:args[2]) as CFURL,nil),
+                      let art=CGImageSourceCreateImageAtIndex(source,0,nil),
+                      let out=CGImageDestinationCreateWithURL(URL(fileURLWithPath:args[3]) as CFURL,"public.png" as CFString,1,nil) else {
+                    throw SliceError.invalid("color-field ARTWORK.png OUTPUT.png") }
+                CGImageDestinationAddImage(out,ArtworkBackdrop.colorField(art),nil)
+                guard CGImageDestinationFinalize(out) else { throw SliceError.invalid("Field writing failed") }
+                return
+            }
             if args.count==5 && args[1]=="background-frames" {
                 // Development parity check: background-only frames from a supplied artwork, 5 fps, raw RGB at 295×639.
                 guard let source=CGImageSourceCreateWithURL(URL(fileURLWithPath:args[2]) as CFURL,nil),

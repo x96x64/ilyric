@@ -11,13 +11,19 @@ public final class ArtworkBackdrop {
     static let reduction = 8
     let model: ArtworkBackground
     let artwork: CGImage
+    /// The image the layers draw: the artwork, or for placeholder artwork a field of soft colour blobs sampled from it,
+    /// which carries its colours but none of its shapes.
+    let field: CGImage
     let width, height: Int
     /// Saturation after adaptation to the artwork's mean chroma, sampled at 192×192 as in the fitting model.
     let saturation: Double
     private let context = CIContext(options:[.useSoftwareRenderer:true,.workingColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!,
                                              .outputColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!])
 
-    public init(_ model: ArtworkBackground, artwork: CGImage, canvasWidth: Int, canvasHeight: Int) {
+    /// With `abstract`, the layers draw a colour field derived from the artwork instead of the artwork itself. The
+    /// calibration against the reference captures preferred the artwork itself (docs/reports/background-colour-field.md),
+    /// so the field is used only for iLyrics's own placeholder artwork, whose symbol would otherwise show through.
+    public init(_ model: ArtworkBackground, artwork: CGImage, canvasWidth: Int, canvasHeight: Int, abstract: Bool = false) {
         self.model=model;self.artwork=artwork
         width=max(1,canvasWidth/Self.reduction);height=max(1,canvasHeight/Self.reduction)
         let side=192,c=CGContext(data:nil,width:side,height:side,bitsPerComponent:8,bytesPerRow:side*4,
@@ -27,6 +33,58 @@ public final class ArtworkBackdrop {
         var rgb=[UInt8]();rgb.reserveCapacity(side*side*3)
         for p in 0..<(side*side) { rgb.append(contentsOf:rgba[(p*4)..<(p*4+3)]) }
         saturation=model.saturation(artworkChroma:ArtworkBackground.meanChroma(rgb:rgb))
+        field=abstract ? Self.colorField(artwork) : artwork
+    }
+
+    /// Colour clusters of the artwork (k-means at 32×32, deterministic), drawn as radial blobs on a field filled with
+    /// the mean colour. Each cluster contributes blobs in proportion to its share, at positions from a generator
+    /// seeded by the artwork's pixels, so the field is a pure function of the artwork.
+    public static func colorField(_ artwork: CGImage, side: Int = 128) -> CGImage {
+        let n=32,space=CGColorSpace(name:CGColorSpace.sRGB)!
+        let small=CGContext(data:nil,width:n,height:n,bitsPerComponent:8,bytesPerRow:n*4,space:space,bitmapInfo:CGImageAlphaInfo.noneSkipLast.rawValue)!
+        small.interpolationQuality = .high;small.draw(artwork,in:CGRect(x:0,y:0,width:n,height:n))
+        let bytes=[UInt8](Data(bytes:small.data!,count:n*n*4))
+        let pixels=(0..<(n*n)).map { p in [Double(bytes[p*4]),Double(bytes[p*4+1]),Double(bytes[p*4+2])] }
+        // Deterministic k-means: centres start at luminance quantiles.
+        let k=6,order=pixels.indices.sorted { (pixels[$0][0]*0.2126+pixels[$0][1]*0.7152+pixels[$0][2]*0.0722,$0) < (pixels[$1][0]*0.2126+pixels[$1][1]*0.7152+pixels[$1][2]*0.0722,$1) }
+        var centres=(0..<k).map { pixels[order[($0*2+1)*pixels.count/(2*k)]] },assignment=[Int](repeating:0,count:pixels.count)
+        for _ in 0..<12 {
+            for (i,p) in pixels.enumerated() {
+                var best=0,distance=Double.infinity
+                for (j,c) in centres.enumerated() {
+                    let d=(p[0]-c[0])*(p[0]-c[0])+(p[1]-c[1])*(p[1]-c[1])+(p[2]-c[2])*(p[2]-c[2])
+                    if d<distance { distance=d;best=j }
+                }
+                assignment[i]=best
+            }
+            for j in 0..<k {
+                let members=pixels.indices.filter { assignment[$0]==j }
+                guard !members.isEmpty else { continue }
+                centres[j]=(0..<3).map { ch in members.reduce(0.0) { $0+pixels[$1][ch] }/Double(members.count) }
+            }
+        }
+        let shares=(0..<k).map { j in Double(assignment.filter { $0==j }.count)/Double(pixels.count) }
+        // SplitMix64 seeded by an FNV-1a hash of the sampled pixels.
+        var state=bytes.reduce(UInt64(0xcbf29ce484222325)) { ($0^UInt64($1))&*0x100000001b3 }
+        func random() -> Double {
+            state&+=0x9E3779B97F4A7C15
+            var z=state;z=(z^(z>>30))&*0xBF58476D1CE4E5B9;z=(z^(z>>27))&*0x94D049BB133111EB;z^=z>>31
+            return Double(z>>11)/Double(UInt64(1)<<53)
+        }
+        let c=CGContext(data:nil,width:side,height:side,bitsPerComponent:8,bytesPerRow:side*4,space:space,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
+        let mean=(0..<3).map { ch in pixels.reduce(0.0) { $0+$1[ch] }/Double(pixels.count)/255 }
+        c.setFillColor(CGColor(srgbRed:mean[0],green:mean[1],blue:mean[2],alpha:1));c.fill(CGRect(x:0,y:0,width:side,height:side))
+        let s=Double(side)
+        for j in (0..<k).sorted(by:{ (shares[$0],$0) > (shares[$1],$1) }) where shares[j]>0 {
+            let colour=CGColor(srgbRed:centres[j][0]/255,green:centres[j][1]/255,blue:centres[j][2]/255,alpha:1)
+            let clear=CGColor(srgbRed:centres[j][0]/255,green:centres[j][1]/255,blue:centres[j][2]/255,alpha:0)
+            let gradient=CGGradient(colorsSpace:space,colors:[colour,clear] as CFArray,locations:[0,1])!
+            for _ in 0..<max(1,Int((shares[j]*14).rounded())) {
+                let x=random()*s,y=random()*s,r=s*(0.18+0.16*random())
+                c.drawRadialGradient(gradient,startCenter:CGPoint(x:x,y:y),startRadius:0,endCenter:CGPoint(x:x,y:y),endRadius:r,options:[])
+            }
+        }
+        return c.makeImage()!
     }
 
     public func image(at time: Time) -> CGImage {
@@ -39,7 +97,7 @@ public final class ArtworkBackdrop {
         for (index,layer) in model.layers(at:time,width:w,height:h).enumerated() {
             c.saveGState();c.setAlpha(1/Double(index+1))
             c.translateBy(x:layer.centerX,y:h-layer.centerY);c.rotate(by:layer.angle)
-            c.draw(artwork,in:CGRect(x:-layer.side/2,y:-layer.side/2,width:layer.side,height:layer.side))
+            c.draw(field,in:CGRect(x:-layer.side/2,y:-layer.side/2,width:layer.side,height:layer.side))
             c.restoreGState()
         }
         let base=CIImage(cgImage:c.makeImage()!),extent=base.extent

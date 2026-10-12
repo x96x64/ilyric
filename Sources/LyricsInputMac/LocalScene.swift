@@ -50,16 +50,20 @@ public final class LocalScene {
     public let renderer: ScreenRenderer
     private let artwork: CGImage?
     private let presentation: LocalPresentation
+    /// The artwork is iLyrics's placeholder, whose background uses a colour field instead of the artwork's shapes.
+    private let placeholderArtwork: Bool
     /// An independent renderer of the same scene for parallel export; renderers hold caches and are not
     /// shared between threads. Every renderer produces identical frames.
     public func makeRenderer() throws -> ScreenRenderer {
         let r=try ScreenRenderer(renderer.screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,
-                                 icons:presentation.icons,marquee:presentation.marquee,sharing:renderer)
+                                 icons:presentation.icons,marquee:presentation.marquee,sharing:renderer,placeholderArtwork:placeholderArtwork)
         r.secondary=renderer.secondary;r.credits=renderer.credits;return r
     }
     /// `title` and `artist` override the project's header labels; `credits` names the songwriters shown after the last line.
     public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled,
-                presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil, credits: String? = nil) throws {
+                presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil, credits: String? = nil,
+                placeholderArtwork: Bool = false) throws {
+        self.placeholderArtwork=placeholderArtwork
         self.lyrics=lyrics;self.audio=audio;self.artwork=artwork;self.presentation=presentation
         schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
@@ -119,7 +123,7 @@ public final class LocalScene {
             events:[.init(Time(0),order:0,controls:controls)]+(presentation.hideControls.map { [.init($0,order:1,
                 controls:ScreenControls(lower:false,translation:false,handle:controls.handle,sing:.hidden))] } ?? []),
             visibility:visibility,background:presentation.background,expandsLyrics:presentation.hideControls != nil)
-        renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee)
+        renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee,placeholderArtwork:placeholderArtwork)
         renderer.secondary=secondary
         renderer.credits=credits.map { "Written By: "+$0 }
     }
