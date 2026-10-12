@@ -38,4 +38,8 @@ struct LyricsTextTests {
         #expect(n.text=="Paper skies\nOpen rooms\n" && n.credits=="Jane Roe, John Doe, Ann Lee")
         #expect(NormalizedLyrics("Paper skies").credits==nil)
     }
+    @Test func leadingMarkerSelectsTheSecondVoice() throws {
+        let n=NormalizedLyrics("I'll be there\n> I'll be there too (too)\n  >Always")
+        #expect(n.text=="I'll be there\nI'll be there too\nAlways\n" && n.secondVoice==[1,2] && n.background==[1:"too"])
+    }
 }

@@ -13,19 +13,24 @@ public struct NormalizedLyrics: Equatable, Sendable {
     public let dropped: [String]
     /// Songwriters from lines beginning with "Written by:", which are not lyrics.
     public let credits: String?
+    /// Line indices of a duet's second singer, marked by a leading ">".
+    public let secondVoice: Set<Int>
 
     public init(_ raw: String) {
         func collapse(_ s: String) -> String { s.split(whereSeparator:\.isWhitespace).joined(separator:" ") }
         let phrase=try! NSRegularExpression(pattern:"\\(([^()]*)\\)")
         let label=try! NSRegularExpression(pattern:"^\\s*\\[[^\\]]*\\]\\s*$")
         let writers=try! NSRegularExpression(pattern:"^\\s*written\\s+by\\s*:\\s*(.+?)\\s*$",options:.caseInsensitive)
-        var names=[String]()
+        var names=[String](),second=Set<Int>()
         var paragraphs=[[String]](),current=[String](),background=[Int:String](),dropped=[String](),count=0
         func flush() { if !current.isEmpty { paragraphs.append(current);current=[] } }
         // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
         var body=raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw
         for variant in ["\u{02BC}","\u{2018}","\u{0060}","\u{00B4}","\u{FF07}"] { body=body.replacingOccurrences(of:variant,with:"\u{2019}") }
-        for line in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n") {
+        for raw in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n") {
+            // A leading ">" marks a duet's second singer.
+            let marked=raw.drop(while:\.isWhitespace).first==">"
+            let line=marked ? String(raw.drop(while:\.isWhitespace).dropFirst()) : raw
             let ns=line as NSString,range=NSRange(location:0,length:ns.length)
             if line.trimmingCharacters(in:.whitespaces).isEmpty { flush();continue }
             if label.firstMatch(in:line,range:range) != nil { dropped.append(line+" (section label)");continue }
@@ -40,6 +45,7 @@ public struct NormalizedLyrics: Equatable, Sendable {
                 continue
             }
             if !phrases.isEmpty { background[count]=phrases.joined(separator:" ") }
+            if marked { second.insert(count) }
             current.append(main);count+=1
         }
         flush()
@@ -60,6 +66,6 @@ public struct NormalizedLyrics: Equatable, Sendable {
             }
         }
         text=split.map { $0.joined(separator:"\n") }.joined(separator:"\n\n")+"\n"
-        self.background=background;self.dropped=dropped;credits=names.isEmpty ? nil : names.joined(separator:", ")
+        self.background=background;self.dropped=dropped;credits=names.isEmpty ? nil : names.joined(separator:", ");secondVoice=second
     }
 }

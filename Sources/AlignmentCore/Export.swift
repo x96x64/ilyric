@@ -55,7 +55,9 @@ public enum TTMLExport {
     }
 
     /// Word-granularity TTML: one paragraph per line; untimed vocable-only lines are omitted.
-    public static func ttml(_ rows: [LineAlignment], fills: [Int:[Int]], background: [Int:String] = [:], dropNonlexical: Bool = true) throws -> String {
+    /// Lines in `secondVoice` carry `ttm:agent="v2"`, a duet's second singer.
+    public static func ttml(_ rows: [LineAlignment], fills: [Int:[Int]], background: [Int:String] = [:], dropNonlexical: Bool = true,
+                            secondVoice: Set<Int> = []) throws -> String {
         func stamp(_ t: Int) -> String {
             var s=String(format:"%d.%06d",t/1_000_000,t%1_000_000)
             while s.hasSuffix("0") { s.removeLast() };if s.hasSuffix(".") { s.removeLast() }
@@ -63,6 +65,7 @@ public enum TTMLExport {
         }
         func escape(_ s: String) -> String { s.replacingOccurrences(of:"&",with:"&amp;").replacingOccurrences(of:"<",with:"&lt;").replacingOccurrences(of:">",with:"&gt;") }
         func extra(_ row: LineAlignment) -> String { background[row.id].map { "<span ttm:role=\"x-bg\">\(escape($0))</span>" } ?? "" }
+        func agent(_ row: LineAlignment) -> String { secondVoice.contains(row.id) ? " ttm:agent=\"v2\"" : "" }
         var paragraphs=[String]()
         for row in rows {
             if dropNonlexical && row.estimate==nil && nonlexical(row.text) { continue }
@@ -75,14 +78,14 @@ public enum TTMLExport {
                 let spans=words.enumerated().map { k,w in
                     "<span begin=\"\(stamp(w.interval[0]-a))\" end=\"\(stamp(w.interval[1]-a))\">\(escape(String(decoding:units[cuts[k]..<cuts[k+1]],as:UTF16.self)))</span>"
                 }
-                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\">"+spans.joined()+extra(row)+"</p>")
+                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\"\(agent(row))>"+spans.joined()+extra(row)+"</p>")
             } else if let words,!words.isEmpty {
-                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\"><span begin=\"0s\" end=\"\(stamp(b-a))\">\(escape(row.text))</span>\(extra(row))</p>")
+                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\"\(agent(row))><span begin=\"0s\" end=\"\(stamp(b-a))\">\(escape(row.text))</span>\(extra(row))</p>")
             } else {
-                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\">\(escape(row.text))\(extra(row))</p>")
+                paragraphs.append("<p begin=\"\(stamp(a))\" end=\"\(stamp(b))\"\(agent(row))>\(escape(row.text))\(extra(row))</p>")
             }
         }
-        let namespace=background.isEmpty ? "" : " xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\""
+        let namespace=background.isEmpty && secondVoice.isEmpty ? "" : " xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\""
         let xml="<tt xmlns=\"http://www.w3.org/ns/ttml\"\(namespace) xml:space=\"preserve\"><body><div>"+paragraphs.joined()+"</div></body></tt>\n"
         guard xml.utf8.count<=65536 else { throw AlignmentError.invalid("Prepared TTML exceeds the importer limit") }
         return xml

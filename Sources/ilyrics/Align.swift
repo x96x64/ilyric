@@ -35,7 +35,7 @@ enum Align {
         let alignedAt=Date()
         console.detail("  Aligned in \(elapsed(alignedAt.timeIntervalSince(separatedAt)))")
         let fills=TTMLExport.fillUnresolved(rows,duration:duration)
-        let ttml=try TTMLExport.ttml(rows,fills:fills,background:normalized.background,dropNonlexical:!keepAdLibs)
+        let ttml=try TTMLExport.ttml(rows,fills:fills,background:normalized.background,dropNonlexical:!keepAdLibs,secondVoice:normalized.secondVoice)
         let omitted=keepAdLibs ? [] : rows.filter { $0.estimate==nil && TTMLExport.nonlexical($0.text) }.map(\.id)
         let resolved=rows.filter { $0.estimate != nil }.count
         for row in rows where row.estimate==nil {

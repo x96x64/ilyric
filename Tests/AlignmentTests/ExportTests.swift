@@ -27,4 +27,9 @@ struct ExportTests {
         #expect(xml.contains(">Na-na-na</p>") && xml.contains("xmlns:ttm="))     // timed vocable line kept
         #expect(TTMLExport.nonlexical("Hoo, hoo, hoo") && !TTMLExport.nonlexical("Yeah, make that change"))
     }
+    @Test func secondVoiceLinesCarryTheAgent() throws {
+        let rows=[row(0,"Paper skies",[1_000_000,2_000_000]),row(1,"Open rooms",[3_000_000,4_000_000])]
+        let xml=try TTMLExport.ttml(rows,fills:[:],secondVoice:[1])
+        #expect(xml.contains("<p begin=\"3s\" end=\"4s\" ttm:agent=\"v2\">") && xml.contains("xmlns:ttm=") && !xml.contains("1s\" end=\"2s\" ttm"))
+    }
 }

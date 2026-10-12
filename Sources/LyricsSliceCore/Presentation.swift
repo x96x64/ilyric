@@ -106,6 +106,8 @@ public struct SliceInput: Codable, Sendable {
     public let events: [AppearanceEvent]
     /// Applies only to Latin paragraphs with supplied timing.
     public let motion: WordMotion?
+    /// Right-aligns every line within the paragraph width, as for a duet's second singer; nil is left-aligned.
+    public var rightAligned: Bool?
     public init(text: String, canvasWidth: Int = 1179, parameters: SliceParameters = .init(), events: [AppearanceEvent], appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil, breakEvidence: String = "observed-structure-source-semantics-unknown", motion: WordMotion? = nil) {
         self.text = text; self.canvasWidth = canvasWidth; self.breakEvidence = breakEvidence
         self.parameters = parameters; self.events = events; self.appearance = appearance; self.paragraphStyle = paragraphStyle

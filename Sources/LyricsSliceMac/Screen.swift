@@ -187,7 +187,7 @@ public final class ScreenRenderer {
         c.saveGState();c.textMatrix = .identity
         for (k,line) in lines.enumerated() {
             let baseline=p.originY+(count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset+Double(k)*p.lineAdvance*SecondaryLine.sizeRatio
-            let y=2556-baseline,x=p.originX
+            let y=2556-baseline,x=p.originX+(input.rightAligned == true ? p.width-widths[k] : 0)
             c.setAlpha(weight*SecondaryLine.unfilledOpacity);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
             let local=front-preceding
             if local>0 {

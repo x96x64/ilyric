@@ -91,6 +91,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
             else if uri==Self.parameter && name=="tt" && local=="timeBase" {canonical="ttp:timeBase"}
             else if uri.isEmpty && name != "tt" && name != "br" && ["begin","end","dur","timeContainer"].contains(local) {canonical=local}
             else if uri==Self.metadata && name=="span" && local=="role" && value=="x-bg" {canonical="ttm:role"}
+            else if uri==Self.metadata && name=="p" && local=="agent" && value.range(of:"^v[0-9]{1,4}$",options:.regularExpression) != nil {canonical="ttm:agent"}
             else { fail(parser,"Unsupported TTML attribute");return }
             guard clean[canonical]==nil else { fail(parser,"Duplicate TTML attribute");return }
             clean[canonical]=value
@@ -155,7 +156,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
             }.joined()
         }
         let body=try single(root,"body"),div=try single(body,"div")
-        let bounds=try interval(div,interval(body,(Time(0),Time(600)),required:false),required:false)
+        let bounds=try interval(div,interval(body,(Time(0),Time(Int64(InputLimits.maximumSeconds))),required:false),required:false)
         guard (1...256).contains(div.children.count) else {throw InputError.invalid("TTML requires 1–256 paragraphs or gaps")}
         var entries:[LyricEntry]=[],total=0
         for p in div.children {
@@ -191,6 +192,7 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
             guard total<=TTMLParser.totalSpanLimit,value.utf16.count<500,value.components(separatedBy:"\n").count<=4,
                   value.isEmpty || value.components(separatedBy:"\n").allSatisfy({!$0.trimmingCharacters(in:.whitespaces).isEmpty}) else {throw InputError.invalid("TTML text or timing resource limit")}
             var entry=LyricEntry(time:range.0,text:value,sourceLine:p.line,suppliedBreaks:value.contains("\n"),segments:segments,intervalEnd:range.1)
+            entry.secondVoice=p.attributes["ttm:agent"]=="v2"
             if !backgrounds.isEmpty {
                 guard backgrounds.count==1 else {throw InputError.invalid("At most one TTML background-vocal span per paragraph")}
                 let node=backgrounds[0],words=try text(node).trimmingCharacters(in:.whitespacesAndNewlines)

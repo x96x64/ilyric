@@ -188,6 +188,7 @@ Hold the light (hold the light)
 - Section labels in brackets, such as `[Chorus]`, are ignored.
 - Parenthesized phrases are shown as background vocals beneath their line. A line consisting only of parenthesized phrases belongs to the line above.
 - Lines without letters, such as `...`, are ignored.
+- In a duet, a line beginning with `>` belongs to the second singer and is right-aligned, as the Music app shows it. TTML lyrics mark such paragraphs with `ttm:agent="v2"`.
 - A line beginning with `Written by:` lists the songwriters. It is not sung; it is shown as "Written By: …" below the last line, as the Music app does.
 - Sections longer than four lines are split into balanced groups; a six-line verse becomes two groups of three.
 - Lines that consist only of vocables, such as "ooh" or "na-na-na", are omitted when they cannot be timed. Pass `--keep-ad-libs` to keep them in place.

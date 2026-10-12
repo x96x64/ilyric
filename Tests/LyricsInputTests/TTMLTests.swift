@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import CoreGraphics
 import SpikeCore
 import LyricsInputCore
 import LyricsInputMac
@@ -194,4 +195,20 @@ struct TTMLTests {
         }
     }
 
+    @Test func agentV2MarksTheSecondVoiceAndRightAligns() throws {
+        let xml="<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div><p begin=\"0.5s\" end=\"1s\">Paper skies</p><p begin=\"1s\" end=\"2s\" ttm:agent=\"v2\">Open rooms</p></div></body></tt>"
+        let lyrics=try TTMLParser.parse(Data(xml.utf8))
+        #expect(lyrics.entries.map(\.secondVoice)==[false,true])
+        let left=try SliceParagraph(SliceInput.supplied(text:"Open rooms",japanese:false))
+        var input=SliceInput.supplied(text:"Open rooms",japanese:false);input.rightAligned=true
+        let right=try SliceParagraph(input)
+        func inkRange(_ image:CGImage) -> (Int,Int) {
+            let d=image.dataProvider!.data! as Data;var lo=image.width,hi=0
+            for y in stride(from:0,to:image.height,by:4) { for x in 0..<image.width where d[y*image.bytesPerRow+x*4+3]>0 { lo=min(lo,x);hi=max(hi,x) } }
+            return (lo,hi)
+        }
+        let a=inkRange(try left.render(input.evaluate(Time(0)),coverage:true)),b=inkRange(try right.render(input.evaluate(Time(0)),coverage:true))
+        // The right edge moves to the paragraph's right margin; the line keeps its width.
+        #expect(b.0>a.0+300 && abs((b.1-b.0)-(a.1-a.0))<=2 && b.1>1000)
+    }
 }

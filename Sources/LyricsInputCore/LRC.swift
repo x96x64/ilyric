@@ -27,6 +27,8 @@ public struct LyricEntry: Equatable, Sendable {
     public let intervalEnd: Time?
     /// Optional background vocals; nil for formats without them.
     public var background: BackgroundVocal? = nil
+    /// True for lines of a duet's second singer, which the Lyrics screen right-aligns (TTML agent v2).
+    public var secondVoice = false
     public var timingProvenance: String { intervalEnd != nil ? (segments.isEmpty ? "supplied-ttml-paragraph-interval" : "supplied-ttml-paragraph-and-span-intervals") : segments.isEmpty ? "supplied-line-timestamp-with-explicit-offset" : "supplied-segment-boundaries-with-explicit-offset" }
     public init(time:Time,text:String,sourceLine:Int,suppliedBreaks:Bool,segments:[TimedSegment]=[],intervalEnd:Time?=nil) {
         self.time=time;self.text=text;self.sourceLine=sourceLine;self.suppliedBreaks=suppliedBreaks;self.segments=segments;self.intervalEnd=intervalEnd

@@ -87,7 +87,8 @@ public final class LocalScene {
             let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed,motion:presentation.wordMotion)
             // Validate supplied cluster boundaries even when their visualization is disabled.
             if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
-            let input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
+            var input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
+            if entry.secondVoice { input.rightAligned=true }
             let layout=try SliceParagraph(input)
             // Lead never moves focus before the previous focus event or before zero.
             let previous=events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)

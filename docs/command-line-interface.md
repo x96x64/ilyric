@@ -23,7 +23,7 @@ Control icons are always SF Symbols, resolved at runtime; there is no icon optio
 
 ## Lyrics Input
 
-Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines consisting only of a bracketed section label, such as `[Chorus]`, are ignored. Parenthesized phrases become background vocals of their line; a line containing only parenthesized phrases attaches them to the preceding line. Paragraphs longer than four lines are split. Lines consisting only of vocables that the alignment cannot time are omitted unless `--keep-ad-libs` is given. A line beginning with `Written by:` names the songwriters; it is not aligned and is shown after the last line.
+Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines consisting only of a bracketed section label, such as `[Chorus]`, are ignored. Parenthesized phrases become background vocals of their line; a line containing only parenthesized phrases attaches them to the preceding line. Paragraphs longer than four lines are split. Lines consisting only of vocables that the alignment cannot time are omitted unless `--keep-ad-libs` is given. A line beginning with `Written by:` names the songwriters; it is not aligned and is shown after the last line. A line beginning with `>` belongs to a duet's second singer and is right-aligned; in TTML, `ttm:agent="v2"` on a paragraph has the same effect.
 
 ## Options
 

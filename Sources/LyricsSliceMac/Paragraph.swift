@@ -13,7 +13,7 @@ private struct Layer {
     let image: CGImage
     let line: Int
     let event: Int?
-    let left, right: Double
+    var left, right: Double
     var rasterX=0.0, precedingAdvance=0.0, totalAdvance=0.0
 }
 /// Shape once, cache source-range masks, and render immutable presentation state.
@@ -145,6 +145,13 @@ public final class SliceParagraph {
                 guard total>0 else { throw SliceError.invalid("Timed segment has no supported visual advance") }
                 var preceding=0.0
                 for i in indices { storage[i].precedingAdvance=preceding;storage[i].totalAdvance=total;preceding+=storage[i].right-storage[i].left }
+            }
+        }
+        if input.rightAligned == true {
+            // Each line moves right by its unused width; fill positions are relative and remain unchanged.
+            for k in storage.indices {
+                let shift=p.width-details[storage[k].line].width
+                storage[k].rasterX+=shift;storage[k].left+=shift;storage[k].right+=shift
             }
         }
         lines = details;fonts = names.sorted();layers = storage
