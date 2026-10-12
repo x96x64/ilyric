@@ -5,7 +5,7 @@ import AlignmentMac
 
 /// Automatic alignment of untimed lyrics, shared by `align` and `render`.
 enum Align {
-    struct Result { let ttml: String; let report: [String:Any]; let resolved, placed, omitted: Int }
+    struct Result { let ttml: String; let report: [String:Any]; let resolved, placed, omitted: Int; let credits: String? }
 
     static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
         guard let raw=try? String(contentsOf:lyrics,encoding:.utf8) else { throw Failure(message:"\(lyrics.path) is not readable UTF-8 text") }
@@ -53,7 +53,7 @@ enum Align {
         let report:[String:Any]=["format":"ilyrics-alignment-report-1","audio":audio.lastPathComponent,"duration_us":duration,
             "compute_units":fast ? "all" : "cpu","ignored_input_lines":normalized.dropped,"lines":lines,
             "seconds":["decode":decodedAt.timeIntervalSince(started),"separation":separatedAt.timeIntervalSince(decodedAt),"alignment":alignedAt.timeIntervalSince(separatedAt)]]
-        return Result(ttml:ttml,report:report,resolved:resolved,placed:rows.count-resolved-omitted.count,omitted:omitted.count)
+        return Result(ttml:ttml,report:report,resolved:resolved,placed:rows.count-resolved-omitted.count,omitted:omitted.count,credits:normalized.credits)
     }
 
     static func writeReport(_ report: [String:Any], to path: String?) throws {

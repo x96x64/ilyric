@@ -11,11 +11,15 @@ public struct NormalizedLyrics: Equatable, Sendable {
     public let background: [Int:String]
     /// Lines of the input that were dropped, with the reason, for reporting.
     public let dropped: [String]
+    /// Songwriters from lines beginning with "Written by:", which are not lyrics.
+    public let credits: String?
 
     public init(_ raw: String) {
         func collapse(_ s: String) -> String { s.split(whereSeparator:\.isWhitespace).joined(separator:" ") }
         let phrase=try! NSRegularExpression(pattern:"\\(([^()]*)\\)")
         let label=try! NSRegularExpression(pattern:"^\\s*\\[[^\\]]*\\]\\s*$")
+        let writers=try! NSRegularExpression(pattern:"^\\s*written\\s+by\\s*:\\s*(.+?)\\s*$",options:.caseInsensitive)
+        var names=[String]()
         var paragraphs=[[String]](),current=[String](),background=[Int:String](),dropped=[String](),count=0
         func flush() { if !current.isEmpty { paragraphs.append(current);current=[] } }
         // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
@@ -25,6 +29,7 @@ public struct NormalizedLyrics: Equatable, Sendable {
             let ns=line as NSString,range=NSRange(location:0,length:ns.length)
             if line.trimmingCharacters(in:.whitespaces).isEmpty { flush();continue }
             if label.firstMatch(in:line,range:range) != nil { dropped.append(line+" (section label)");continue }
+            if let m=writers.firstMatch(in:line,range:range) { names.append(collapse(ns.substring(with:m.range(at:1))));continue }
             let phrases=phrase.matches(in:line,range:range).map { collapse(ns.substring(with:$0.range(at:1))) }.filter { !$0.isEmpty }
             let main=collapse(phrase.stringByReplacingMatches(in:line,range:range,withTemplate:" "))
                 .replacingOccurrences(of:" ([,.;:!?])",with:"$1",options:.regularExpression)
@@ -55,6 +60,6 @@ public struct NormalizedLyrics: Equatable, Sendable {
             }
         }
         text=split.map { $0.joined(separator:"\n") }.joined(separator:"\n\n")+"\n"
-        self.background=background;self.dropped=dropped
+        self.background=background;self.dropped=dropped;credits=names.isEmpty ? nil : names.joined(separator:", ")
     }
 }

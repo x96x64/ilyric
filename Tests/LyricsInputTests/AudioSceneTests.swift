@@ -79,4 +79,15 @@ struct AudioSceneTests {
         let surround=try wav(rate:48_000,channels:3);defer{try? FileManager.default.removeItem(at:surround)}
         await #expect(throws:InputError.self) { try await LocalAudio.decode(surround) }
     }
+    @Test func creditsDrawBelowTheLastParagraph() async throws {
+        let url=try wav(rate:48_000,channels:1);defer{try? FileManager.default.removeItem(at:url)}
+        let audio=try await LocalAudio.decode(url)
+        let input=try LRCParser.parse(Data("[00:00.200]Paper skies\n[00:01.000]Open rooms".utf8))
+        let plain=try LocalScene(lyrics:input,audio:audio),credited=try LocalScene(lyrics:input,audio:audio,credits:"Jane Roe")
+        #expect(credited.renderer.credits=="Written By: Jane Roe" && plain.renderer.credits==nil)
+        #expect(try credited.makeRenderer().credits=="Written By: Jane Roe")
+        let t=Time(2)
+        let a=try plain.renderer.frame(t).dataProvider!.data! as Data,b=try credited.renderer.frame(t).dataProvider!.data! as Data
+        #expect(a != b)
+    }
 }

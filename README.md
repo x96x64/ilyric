@@ -138,6 +138,7 @@ ilyrics doctor
 | `-o, --output FILE` | render, align | Output file | Required |
 | `--force` | render, align | Replace an existing output | Off |
 | `--title TEXT`, `--artist TEXT` | render | Header text | From the audio file |
+| `--credits TEXT` | render | Songwriters shown after the last line | A `Written by:` line in the lyrics |
 | `--artwork FILE` | render | Artwork image | Embedded artwork |
 | `--background artwork\|static` | render | Artwork-derived or static background | `artwork` |
 | `--controls auto-hide\|visible` | render | Lower controls | `auto-hide` |
@@ -187,6 +188,7 @@ Hold the light (hold the light)
 - Section labels in brackets, such as `[Chorus]`, are ignored.
 - Parenthesized phrases are shown as background vocals beneath their line. A line consisting only of parenthesized phrases belongs to the line above.
 - Lines without letters, such as `...`, are ignored.
+- A line beginning with `Written by:` lists the songwriters. It is not sung; it is shown as "Written By: …" below the last line, as the Music app does.
 - Sections longer than four lines are split into balanced groups; a six-line verse becomes two groups of three.
 - Lines that consist only of vocables, such as "ooh" or "na-na-na", are omitted when they cannot be timed. Pass `--keep-ad-libs` to keep them in place.
 

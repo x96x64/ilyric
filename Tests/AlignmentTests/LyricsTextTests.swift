@@ -33,4 +33,9 @@ struct LyricsTextTests {
         #expect(n.text=="You\u{2019}ll be fine\nDon\u{2019}t you go\n")
         #expect(try textTargets(LyricSource(Data(n.text.utf8))).tokens.filter { $0=="'" }.count==2)
     }
+    @Test func writtenByLinesBecomeCredits() throws {
+        let n=NormalizedLyrics("Paper skies\nOpen rooms\n\nWritten by: Jane  Roe, John Doe\nWRITTEN BY:Ann Lee")
+        #expect(n.text=="Paper skies\nOpen rooms\n" && n.credits=="Jane Roe, John Doe, Ann Lee")
+        #expect(NormalizedLyrics("Paper skies").credits==nil)
+    }
 }

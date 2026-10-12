@@ -26,6 +26,7 @@ enum Render {
                                     Lower controls (default: auto-hide)
           --no-marquee              Keep an overflowing title static
           --no-gaps                 Omit the instrumental-gap indicator
+          --credits TEXT            Songwriters shown after the last line (default: a "Written by:" line in plain lyrics)
           --keep-ad-libs            Keep vocable-only lines that cannot be timed
       -j, --jobs N                  Parallel rendering workers (default: processor count)
           --fast                    GPU and Neural Engine alignment; faster but not reproducible
@@ -46,7 +47,7 @@ enum Render {
     }
 
     @MainActor static func command(_ arguments: ArraySlice<String>) async throws {
-        let options=try Options(arguments,valued:["output","title","artist","artwork","background","controls","jobs","report"],
+        let options=try Options(arguments,valued:["output","title","artist","artwork","background","controls","jobs","report","credits"],
                                 flags:["help","force","no-marquee","no-gaps","keep-ad-libs","fast","quiet","verbose"],
                                 short:["o":"output","j":"jobs","h":"help","q":"quiet","v":"verbose"])
         if options.has("help") { print(help);return }
@@ -69,6 +70,7 @@ enum Render {
         // Lyrics: align untimed text, or parse supplied timing.
         var report:[String:Any]=["format":"ilyrics-render-report-1"]
         let lyrics:LocalLyrics
+        var credits=options.values["credits"]
         do {
             switch lyricsURL.pathExtension.lowercased() {
             case "ttml": lyrics=try LyricsParser.parse(LocalFile.boundedData(lyricsURL,limit:LRCParser.byteLimit,label:"Lyrics"),format:.ttml)
@@ -80,6 +82,7 @@ enum Render {
                 let aligned=try await Align.run(audio:audioURL,lyrics:lyricsURL,keepAdLibs:options.has("keep-ad-libs"),fast:options.has("fast"),console:console)
                 console.say("Aligned \(aligned.resolved) lines, placed \(aligned.placed), omitted \(aligned.omitted)")
                 report["alignment"]=aligned.report
+                credits=credits ?? aligned.credits
                 lyrics=try LyricsParser.parse(Data(aligned.ttml.utf8),format:.ttml)
             }
         } catch let error as InputError { throw Failure(message:"the lyrics could not be read: \(error)") }
@@ -106,7 +109,7 @@ enum Render {
             audio=try await LocalAudio.decode(audioURL)
             scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:artwork?.image ?? PlaceholderArtwork.image(),highlighting:.enabled,presentation:presentation,
                                  title:options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent,
-                                 artist:options.values["artist"] ?? tags.artist ?? "")
+                                 artist:options.values["artist"] ?? tags.artist ?? "",credits:credits)
         } catch let error as InputError { throw Failure(message:"\(error)") }
 
         // Each worker owns one renderer; frames are pure functions of time, so output does not depend on the count.

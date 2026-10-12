@@ -126,6 +126,9 @@ public final class ScreenRenderer {
     }
     /// Optional background vocals by paragraph index, shown while the paragraph holds focus.
     public var secondary: [Int:SecondaryLine] = [:]
+    /// Optional songwriter credits, such as "Written By: A, B", shown below the last paragraph.
+    public var credits: String? { didSet { creditLines=nil } }
+    private var creditLines: [CTLine]?
     private var secondaryLines: [Int:[CTLine]] = [:]
     /// Wrapped secondary lines at the measured size; cached per paragraph.
     func wrappedSecondary(_ i:Int) -> [CTLine] {
@@ -143,6 +146,35 @@ public final class ScreenRenderer {
             lines.append(CTTypesetterCreateLine(setter,CFRange(location:start,length:n)));start+=n
         }
         secondaryLines[i]=lines;return lines
+    }
+    /// Songwriter credits measured on the reference capture: background-vocal size and weight, opacity 0.32, first
+    /// baseline 163 px below the last background-vocal baseline, or at the background-vocal position without one.
+    /// The credits fade with the last paragraph's inactive treatment rather than being blurred.
+    static let creditsOpacity=0.32, creditsGap=163.0
+    private func drawCredits(_ i:Int,translation:Double,weight:Double,into c:CGContext) {
+        guard let text=credits,weight>0,i==lyrics.paragraphs.count-1 else { return }
+        let p=lyrics.paragraphs[i].input.parameters,size=p.size*SecondaryLine.sizeRatio,advance=p.lineAdvance*SecondaryLine.sizeRatio
+        if creditLines==nil {
+            let regular=CTFontCreateUIFontForLanguage(.system,size,nil)!
+            let font=CTFontCreateCopyWithSymbolicTraits(regular,size,nil,.traitBold,.traitBold)!
+            let attributed=NSAttributedString(string:text,attributes:[NSAttributedString.Key(kCTFontAttributeName as String):font,
+                NSAttributedString.Key(kCTForegroundColorAttributeName as String):CGColor(gray:1,alpha:1)])
+            let setter=CTTypesetterCreateWithAttributedString(attributed)
+            var lines=[CTLine](),start=0
+            while start<attributed.length {
+                let n=max(1,CTTypesetterSuggestLineBreak(setter,start,p.width))
+                lines.append(CTTypesetterCreateLine(setter,CFRange(location:start,length:n)));start+=n
+            }
+            creditLines=lines
+        }
+        let last=p.originY+Double(lyrics.paragraphs[i].lines.count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset
+        let secondaryCount=Double(wrappedSecondary(i).count)
+        let first=secondaryCount>0 ? last+(secondaryCount-1)*advance+Self.creditsGap : last
+        c.saveGState();c.textMatrix = .identity;c.setAlpha(weight*Self.creditsOpacity)
+        for (k,line) in (creditLines ?? []).enumerated() {
+            c.textPosition=CGPoint(x:p.originX,y:2556-(first+Double(k)*advance));CTLineDraw(line,c)
+        }
+        c.restoreGState()
     }
     /// Unfilled ink at the paragraph's dim opacity, then filled ink through a soft left-to-right ramp.
     private func drawSecondary(_ i:Int,translation:Double,weight:Double,time:Time,into c:CGContext) {
@@ -228,12 +260,14 @@ public final class ScreenRenderer {
                     c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
                 } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
                 drawSecondary(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),time:state.output,into:c)
+                drawCredits(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),into:c)
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
             let (part,frame)=band(image,paragraph:p.index,translation:p.translationY)
             c.drawSubpixel(part,in:frame,alpha:p.opacity)
             drawSecondary(p.index,translation:p.translationY,weight:state.focus==p.index ? p.opacity:0,time:state.output,into:c)
+            drawCredits(p.index,translation:p.translationY,weight:p.opacity,into:c)
         }
         for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
     }

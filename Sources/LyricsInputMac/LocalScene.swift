@@ -55,11 +55,11 @@ public final class LocalScene {
     public func makeRenderer() throws -> ScreenRenderer {
         let r=try ScreenRenderer(renderer.screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,
                                  icons:presentation.icons,marquee:presentation.marquee,sharing:renderer)
-        r.secondary=renderer.secondary;return r
+        r.secondary=renderer.secondary;r.credits=renderer.credits;return r
     }
-    /// `title` and `artist` override the project's header labels.
+    /// `title` and `artist` override the project's header labels; `credits` names the songwriters shown after the last line.
     public init(lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil, highlighting: Highlighting = .enabled,
-                presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil) throws {
+                presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil, credits: String? = nil) throws {
         self.lyrics=lyrics;self.audio=audio;self.artwork=artwork;self.presentation=presentation
         schedule=try lyrics.validate(audioSamples:audio.sampleCount)
         var paragraphs:[CompositionParagraph]=[],events=[FocusEvent(Time(0),order:0,paragraph:-1)],position=0.0
@@ -120,5 +120,6 @@ public final class LocalScene {
             visibility:visibility,background:presentation.background,expandsLyrics:presentation.hideControls != nil)
         renderer=try ScreenRenderer(screen,calibratedInactive:true,diagnosticMarkers:false,boundedCache:true,suppliedArtwork:artwork,icons:presentation.icons,marquee:presentation.marquee)
         renderer.secondary=secondary
+        renderer.credits=credits.map { "Written By: "+$0 }
     }
 }
