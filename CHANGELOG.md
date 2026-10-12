@@ -4,7 +4,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
-## [1.0.0] - Unreleased
+## [1.0.0] - 2026-10-12
 
 The first stable release. The visual preset was measured against six unseen screen recordings of the Music app on iPhone 16 running iOS 27; the controls meet the approved thresholds, and the other properties are released with the known differences stated in the [visual qualification results](docs/reports/visual-qualification-results.md). Command-line options, input syntax, and the report formats `ilyrics-alignment-report-1` and `ilyrics-render-report-1` are now stable and follow Semantic Versioning.
 
