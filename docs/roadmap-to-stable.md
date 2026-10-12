@@ -69,6 +69,8 @@ Cloud sessions run on Linux. Swift targets that import Apple frameworks cannot b
 2. **Japanese planning.** Prepare the Japanese alignment track for the following release without delaying the stable English release.
 3. **Release engineering.** Versioning, changelog, reproducible builds, and a support statement.
 
+**Progress (October 12, 2026).** The visual qualification is complete ([Visual Qualification Results](reports/visual-qualification-results.md)): the controls meet the approved thresholds and the other properties are recorded with their known differences, as decision 14 provides. The paired comparison exposed three defects, which are fixed: paragraph spacing, a limit of 64 paragraphs, and paragraphs wrapping beyond four lines. Version 1.0.0 is prepared on the branch `release/1.0.0` with its changelog and a [support statement](../SUPPORT.md); Japanese planning remains for the following release. No tag, release, or package has been created.
+
 **Confirmation point 3:** the maintainer approves the visual qualification results and the stable release.
 
 ## Working Rules for Cloud Sessions

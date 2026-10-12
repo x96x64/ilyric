@@ -4,6 +4,27 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.0.0] - Unreleased
+
+The first stable release. The visual preset was measured against six unseen screen recordings of the Music app on iPhone 16 running iOS 27; the controls meet the approved thresholds, and the other properties are released with the known differences stated in the [visual qualification results](docs/reports/visual-qualification-results.md). Command-line options, input syntax, and the report formats `ilyrics-alignment-report-1` and `ilyrics-render-report-1` are now stable and follow Semantic Versioning.
+
+### Added
+
+- Songwriter credits after the last line, from a `Written by:` line in plain lyrics or from `--credits`.
+- Duets: a line beginning with `>`, or a TTML paragraph with `ttm:agent="v2"`, belongs to the second singer and is right-aligned.
+- Plain lyrics containing accented Latin letters can be aligned; the letters are displayed as written.
+
+### Changed
+
+- The space between paragraphs is set from the native screen (200 px between single-line paragraphs, formerly 235.5 px).
+- The background's lightness spread adapts to the artwork, and the header artwork has the native corner radius.
+- When a recording has no cover, the placeholder's background carries its colours without showing its symbol.
+
+### Fixed
+
+- Plain lyrics may contain up to 256 paragraphs; the former limit was 64.
+- Paragraphs whose long lines wrap to more than four lines no longer stop rendering; up to eight rendered lines are supported.
+
 ## [0.2.0] - 2026-10-12
 
 The public preview. English synchronization was qualified on 80 unseen recordings under the revised criteria, with the per-recording criterion narrowly not met; the maintainer approved the preview on that basis.
@@ -36,6 +57,7 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.0
 [0.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.2.0
 [0.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.1.0

@@ -25,7 +25,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings, and the visual preset was measured against unseen screen recordings, with the known differences listed under [Limitations](#limitations); command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> English synchronization was qualified on 80 unseen recordings, and the visual preset was measured against unseen screen recordings of the Music app; the remaining weaknesses and known differences are listed under [Limitations](#limitations). See [Support](SUPPORT.md) for what is covered. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Contents
 
