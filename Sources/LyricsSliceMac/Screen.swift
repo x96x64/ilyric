@@ -304,7 +304,8 @@ public final class ScreenRenderer {
                 else { c.draw(backdrop,in:r) }
             case .lyrics: try drawLyrics(state.lyrics,viewport:part.bounds,reveal:state.lyricsReveal,into:c)
             case .artwork:
-                c.addPath(CGPath(roundedRect:r,cornerWidth:14,cornerHeight:14,transform:nil));c.clip();c.draw(artwork,in:r)
+                // Corner radius fitted to the header artwork of the development screenshots (28.5–31.5 px).
+                c.addPath(CGPath(roundedRect:r,cornerWidth:30,cornerHeight:30,transform:nil));c.clip();c.draw(artwork,in:r)
             case .title,.artist:
                 let alpha=part.part == .title ? 1:0.6
                 if scrolling { scroll(label!,part.bounds,c,seconds:state.lyrics.output.seconds,alpha:alpha) }
