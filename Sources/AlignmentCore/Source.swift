@@ -51,7 +51,7 @@ public struct LyricSource: Equatable, Sendable {
 /// Alignment-side case and punctuation filter, never a display rewrite (Python `canonical`).
 public func canonical(_ text: String) throws -> String {
     var result=""
-    for scalar in text.unicodeScalars {
+    for scalar in foldLatin(text).unicodeScalars {
         switch scalar.properties.generalCategory {
         case .uppercaseLetter,.lowercaseLetter,.titlecaseLetter,.modifierLetter,.otherLetter,
              .decimalNumber,.letterNumber,.otherNumber,.nonspacingMark,.spacingMark,.enclosingMark:
@@ -65,8 +65,25 @@ public func canonical(_ text: String) throws -> String {
     return result
 }
 
-/// English words as used for CTC targets: ASCII letters with internal apostrophes.
+/// English words as used for CTC targets: ASCII letters with internal apostrophes, after `foldLatin`, as ranges of
+/// the original text.
 func words(in text: String) -> [Range<String.Index>] {
-    let regex=try! NSRegularExpression(pattern:"[A-Za-z]+(?:['’][A-Za-z]+)*")
-    return regex.matches(in:text,range:NSRange(text.startIndex...,in:text)).compactMap { Range($0.range,in:text) }
+    let regex=try! NSRegularExpression(pattern:"[A-Za-z]+(?:['’][A-Za-z]+)*"),folded=foldLatin(text)
+    // Folding replaces single BMP scalars by single ASCII letters, so UTF-16 offsets are shared with the original.
+    return regex.matches(in:folded,range:NSRange(folded.startIndex...,in:folded)).compactMap { Range($0.range,in:text) }
+}
+
+/// Latin letters with diacritics become their ASCII base letters (é → e) for alignment only; a letter is folded when
+/// it is one BMP scalar whose canonical decomposition is an ASCII letter followed by combining marks. Display text
+/// is never changed.
+public func foldLatin(_ text: String) -> String {
+    var scalars=String.UnicodeScalarView()
+    for scalar in text.unicodeScalars {
+        guard scalar.value>127,scalar.value<=0xFFFF,scalar.properties.isAlphabetic else { scalars.append(scalar);continue }
+        let parts=String(scalar).decomposedStringWithCanonicalMapping.unicodeScalars
+        if let base=parts.first,base.isASCII,base.properties.isAlphabetic,parts.count>1,
+           parts.dropFirst().allSatisfy({ $0.properties.generalCategory == .nonspacingMark }) { scalars.append(base) }
+        else { scalars.append(scalar) }
+    }
+    return String(scalars)
 }

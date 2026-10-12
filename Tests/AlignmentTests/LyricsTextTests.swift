@@ -42,4 +42,13 @@ struct LyricsTextTests {
         let n=NormalizedLyrics("I'll be there\n> I'll be there too (too)\n  >Always")
         #expect(n.text=="I'll be there\nI'll be there too\nAlways\n" && n.secondVoice==[1,2] && n.background==[1:"too"])
     }
+    @Test func accentedLatinLettersAreAlignable() throws {
+        let n=NormalizedLyrics("Caf\u{0065}\u{0301} na\u{00EF}ve\nJalape\u{00F1}o")
+        #expect(n.text=="Caf\u{00E9} na\u{00EF}ve\nJalape\u{00F1}o\n")
+        let source=try LyricSource(Data(n.text.utf8))
+        #expect(source.lines[0].alignmentText=="cafenaive" && source.lines[0].text=="Caf\u{00E9} na\u{00EF}ve")
+        let targets=try textTargets(source)
+        #expect(targets.tokens.prefix(4).joined()=="CAFE" && !targets.tokens.contains("\u{00C9}"))
+        #expect(words(in:source.lines[1].text).count==1)
+    }
 }

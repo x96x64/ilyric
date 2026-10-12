@@ -25,7 +25,8 @@ public struct NormalizedLyrics: Equatable, Sendable {
         var paragraphs=[[String]](),current=[String](),background=[Int:String](),dropped=[String](),count=0
         func flush() { if !current.isEmpty { paragraphs.append(current);current=[] } }
         // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
-        var body=raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw
+        // Composed form, so that letters with diacritics are single scalars that alignment can fold.
+        var body=(raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw).precomposedStringWithCanonicalMapping
         for variant in ["\u{02BC}","\u{2018}","\u{0060}","\u{00B4}","\u{FF07}"] { body=body.replacingOccurrences(of:variant,with:"\u{2019}") }
         for raw in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n") {
             // A leading ">" marks a duet's second singer.

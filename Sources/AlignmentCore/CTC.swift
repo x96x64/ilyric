@@ -50,7 +50,7 @@ public func textTargets(_ source: LyricSource) throws -> TextTargets {
         guard !found.isEmpty,try canonical(found.joined())==line.alignmentText else {
             throw AlignmentError.invalid("Full-song CTC currently supports English ASCII letters and contractions only; use the existing Japanese excerpt workflow")
         }
-        let text=found.map { $0.replacingOccurrences(of:"’",with:"'").uppercased() }.joined(separator:"|")
+        let text=found.map { foldLatin($0).replacingOccurrences(of:"’",with:"'").uppercased() }.joined(separator:"|")
         if !tokens.isEmpty { tokens.append("|");owners.append(nil) }
         for c in text { tokens.append(String(c));owners.append(line.id) }
     }
