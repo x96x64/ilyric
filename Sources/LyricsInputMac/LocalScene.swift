@@ -44,6 +44,8 @@ public struct LocalPresentation: Sendable {
 
 /// Experimental paragraph focus with optional explicitly supplied segment appearance.
 public final class LocalScene {
+    /// Space between consecutive paragraphs beyond the line advance, in native pixels.
+    public static let paragraphSpacing = 75.0
     public let lyrics: LocalLyrics
     public let audio: LocalAudio
     public let schedule: OutputSchedule
@@ -104,8 +106,9 @@ public final class LocalScene {
             }
             paragraphs.append(.init(input:input,position:position,begin:entry.time,end:end))
             lastEnd=end
-            // Provisional inter-paragraph spacing; measured line advances remain unchanged.
-            position += Double(layout.lines.count)*input.parameters.lineAdvance+110
+            // Inter-paragraph spacing: settled development capture V17 places consecutive paragraphs a median 200.5 px
+            // apart against a 125-px line advance (docs/reports/paragraph-spacing.md).
+            position += Double(layout.lines.count)*input.parameters.lineAdvance+Self.paragraphSpacing
             if let bg=entry.background {
                 // Reserve the measured secondary offset and wrapped secondary lines, estimated from character count.
                 let estimate=max(1,ceil(Double(bg.text.count)*input.parameters.size*SecondaryLine.sizeRatio*0.55/input.parameters.width))
