@@ -56,7 +56,12 @@ struct MoreTests {
                     #expect(a[y*row+1063*4..<(y+1)*row] == b[y*row+1063*4..<(y+1)*row])
                 } else { #expect(a[y*row..<(y+1)*row] == b[y*row..<(y+1)*row]) }
             }
-            let patch=Data((378..<390).flatMap { Array(a[$0*row+1007*4..<$0*row+1063*4]) })
+            var patch=Data()
+            for y in 378..<390 {
+                let start=y*row+1007*4
+                let end=y*row+1063*4
+                patch.append(a[start..<end])
+            }
             if let buttonPixels { #expect(patch == buttonPixels) } else { buttonPixels=patch }
             for x in [1013,1035,1057] {
                 let i=384*row+x*4
