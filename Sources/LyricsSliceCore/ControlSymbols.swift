@@ -26,12 +26,16 @@ public struct ControlSymbol: Equatable, Sendable {
     public let knockout: Bool
 }
 
-/// Fits to eight private iPhone 16 screenshots (docs/reports/control-symbols.md). Ink extents repeat within ±1 px.
+/// Existing controls fit eight private iPhone 16 screenshots (docs/reports/control-symbols.md).
+/// More uses permitted development recordings; measured ink extents vary by at most one pixel.
 /// The Sing glyph has no public symbol equivalent; `music.mic` is a disclosed approximation.
 public enum ControlSymbols {
     public static let nativeScale = 3.0
     public static func symbol(for part: ScreenPart, playing: Bool) -> ControlSymbol? {
         switch part {
+        // Development recordings: 56–57 × 12–13 px at (1035–1035.5, 383.5–384).
+        // Runtime size and weight fit ink geometry; encoded-white opacity is estimated.
+        case .more: return .init(name:"ellipsis",pointSize:20,weight:.medium,opacity:1,centerX:1035,centerY:384,disc:nil,discOpacity:0,knockout:false)
         case .previous: return .init(name:"backward.fill",pointSize:29,weight:.semibold,opacity:1,centerX:269.5,centerY:1948,disc:nil,discOpacity:0,knockout:false)
         case .next: return .init(name:"forward.fill",pointSize:29,weight:.semibold,opacity:1,centerX:910,centerY:1948,disc:nil,discOpacity:0,knockout:false)
         case .playback:

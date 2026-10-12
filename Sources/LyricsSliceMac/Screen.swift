@@ -310,6 +310,12 @@ public final class ScreenRenderer {
                 let alpha=part.part == .title ? 1:0.6
                 if scrolling { scroll(label!,part.bounds,c,seconds:state.lyrics.output.seconds,alpha:alpha) }
                 else { ink(label!,part.bounds,c,alpha:alpha) }
+            case .more:
+                // Project-owned three-dot icon for public fixtures; no symbol asset is copied.
+                c.setFillColor(CGColor(gray:1,alpha:1))
+                for offset in [-22.0,0,22] {
+                    c.fillEllipse(in:CGRect(x:r.midX+offset-6,y:r.midY-6,width:12,height:12))
+                }
             case .handle: rounded(r,6,c,alpha:0.4)
             case .progress,.volume:
                 rounded(r,r.height/2,c,alpha:0.22)

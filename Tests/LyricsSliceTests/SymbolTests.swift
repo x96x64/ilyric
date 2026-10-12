@@ -7,7 +7,7 @@ import LyricsSliceMac
 
 // Symbol pixels are compared only within one run; no SF Symbols raster is stored or published.
 struct SymbolTests {
-    static let parts: [ScreenPart] = [.previous,.playback,.next,.volumeLow,.volumeHigh,.bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact]
+    static let parts: [ScreenPart] = [.more,.previous,.playback,.next,.volumeLow,.volumeHigh,.bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact]
 
     @Test func symbolTableIsCompleteAndBounded() {
         for part in Self.parts { for playing in [true,false] {

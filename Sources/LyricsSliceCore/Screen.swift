@@ -9,7 +9,7 @@ public struct ScreenBounds: Codable, Equatable, Sendable {
     }
 }
 public enum ScreenPart: String, Codable, Sendable {
-    case background, lyrics, artwork, title, artist, handle, progress, elapsed, remaining
+    case background, lyrics, artwork, title, artist, more, handle, progress, elapsed, remaining
     case previous, playback, next, volume, volumeLow, volumeHigh, bottomLeft, bottomCenter, bottomRight
     case translation, singCompact, singExpanded
 }
@@ -47,7 +47,7 @@ public struct ScreenVisibility: Equatable, Sendable {
     public func permits(_ part: ScreenPart) -> Bool {
         switch part {
         case .artwork: return artwork
-        case .title,.artist: return metadata
+        case .title,.artist,.more: return metadata
         case .progress,.elapsed,.remaining: return progress
         case .previous,.playback,.next: return transport
         case .volume,.volumeLow,.volumeHigh: return volume
@@ -152,6 +152,7 @@ public struct LyricsScreen: Sendable {
         add(.artwork,.init(96,276,216,216),2,true,"measured bounds, approximately ±2 px; original artwork")
         add(.title,.init(352,338,650,58),2,true,"measured ink origin; provisional header typography and clipping")
         add(.artist,.init(352,398,650,58),2,true,"measured ink origin; provisional header typography and clipping")
+        add(.more,.init(1007,378,56,12),3,true,"development-recording ink bounds, approximately ±1 px; persists during lower-control hiding; foreground order estimated")
         add(.handle,.init(500,198,180,12),2,ui.handle,"measured bounds, approximately ±1 px")
         add(.progress,.init(96,1683,987,21),2,ui.lower,"measured bounds, approximately ±1 px; supplied media progress")
         add(.elapsed,.init(96,1730,200,48),2,ui.lower,"provisional time-label geometry")

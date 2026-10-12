@@ -27,7 +27,7 @@ enum Doctor {
             switch device { case .cpu: "CPU"; case .gpu: "GPU"; case .neuralEngine: "Neural Engine"; @unknown default: "other" }
         }
         report(true,"Compute units","\(devices.joined(separator:", ")); alignment uses the CPU unless --fast is given")
-        let parts:[ScreenPart]=[.previous,.next,.playback,.volumeLow,.volumeHigh,.bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact,.singExpanded]
+        let parts:[ScreenPart]=[.more,.previous,.next,.playback,.volumeLow,.volumeHigh,.bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact,.singExpanded]
         let names=Set(parts.flatMap { p in [true,false].compactMap { ControlSymbols.symbol(for:p,playing:$0)?.name } })
         let missing=names.filter { NSImage(systemSymbolName:$0,accessibilityDescription:nil)==nil }.sorted()
         report(missing.isEmpty,"SF Symbols",missing.isEmpty ? "all \(names.count) control symbols resolve" : "missing \(missing.joined(separator:", "))",

@@ -49,9 +49,9 @@ struct MarqueeTests {
     @Test func rendererScrollsOnlyOverflowingTitles() throws {
         let long=try Self.screen(title:"Original Fixture Title With Many Long Words"),short=try Self.screen(title:"Paper Skies")
         let moving=try ScreenRenderer(long,diagnosticMarkers:false,marquee:.measured)
-        // At rest, ink starts at the measured origin; the clip edge beyond 977 stays empty.
+        // At rest, title ink starts at the measured origin; the gap before More stays empty.
         let rest=try moving.native(long.evaluate(Time(0)))
-        #expect(Self.ink(rest,316..<348)<Self.ink(rest,360..<400)-200 && Self.ink(rest,980..<1060)<Self.ink(rest,360..<400)-200)
+        #expect(Self.ink(rest,316..<348)<Self.ink(rest,360..<400)-200 && Self.ink(rest,980..<1007)<Self.ink(rest,360..<400)-200)
         // Mid-scroll, ink enters the leading margin left of the resting origin.
         let mid=try moving.native(long.evaluate(Time(11)))
         #expect(Self.ink(mid,334..<348)>Self.ink(rest,334..<348)+200)
