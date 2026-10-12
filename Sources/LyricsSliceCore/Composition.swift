@@ -95,7 +95,11 @@ public struct LyricsComposition: Sendable {
             if let g=e.gap { return gaps[g].position }
             return e.paragraph == -1 ? hold : paragraphs[e.paragraph].position
         }
-        let firstTarget=target(sorted[0],hold:paragraphs[0].position)
+        // An opening gap already owns focus at time zero. The preceding hold event must not
+        // initialize a fictitious scroll from the first lyric into that gap.
+        let initialGap=sorted.last(where:{$0.time==Time(0)})?.gap
+        let openingTarget=initialGap.flatMap { gaps[$0].begin==Time(0) ? gaps[$0].position : nil }
+        let firstTarget=openingTarget ?? target(sorted[0],hold:paragraphs[0].position)
         var compiled=[FocusSegment(start:Time(0),position:firstTarget,velocity:0,target:firstTarget,tau:tau)]
         for event in sorted.dropFirst() {
             let initial=compiled.last!.evaluate(event.time)
@@ -127,10 +131,14 @@ public struct LyricsComposition: Sendable {
     /// Openness of a gap slot in [0, 1]: a critically damped approach with the focus time constant.
     private func openness(_ g: Int, at t: Double) -> Double {
         let w=gapWindows[g]
-        guard t>w.open else { return 0 }
+        guard t>=w.open else { return 0 }
+        // An introduction present at the start has an established slot, not a slot that
+        // grows through the first lyric. Later gaps retain their existing opening motion.
+        let established=w.open==0 && gaps[g].begin==Time(0)
         func rise(_ u: Double) -> Double { 1-(1+u/tau)*exp(-u/tau) }
-        if t<=w.close { return rise(t-w.open) }
-        let u=t-w.close;return rise(w.close-w.open)*(1+u/tau)*exp(-u/tau)
+        if t<=w.close { return established ? 1 : rise(t-w.open) }
+        let u=t-w.close,opened=established ? 1 : rise(w.close-w.open)
+        return opened*(1+u/tau)*exp(-u/tau)
     }
     /// Height of closed gap slots above a layout position.
     private func closed(above position: Double, at t: Double) -> Double {
@@ -151,8 +159,11 @@ public struct LyricsComposition: Sendable {
                 opacity:i==focus ? 1:0.38,active:p.begin<=media && media<p.end,appearance:p.input.evaluate(media))
         }
         let gapStates=gaps.enumerated().map { i,g in
-            GapPresentation(index:i,translationY:g.position-shift(g.position)-scroll(at:time,below:g.position-target),
-                state:g.indicator.evaluate(elapsed:(media-g.begin).seconds,duration:(g.end-g.begin).seconds))
+            // The opening marker belongs to the introduction's focus interval. Its supplied
+            // media interval still determines fill, but cannot extend ownership into the first lyric.
+            let departedOpening=g.begin==Time(0) && events[index].gap != i
+            return GapPresentation(index:i,translationY:g.position-shift(g.position)-scroll(at:time,below:g.position-target),
+                state:departedOpening ? nil : g.indicator.evaluate(elapsed:(media-g.begin).seconds,duration:(g.end-g.begin).seconds))
         }
         return CompositionSnapshot(output:time,media:media,focus:focus,scroll:movement.position,velocity:movement.velocity,paragraphs:states,gaps:gapStates)
     }
