@@ -4,6 +4,10 @@
 
 October 12, 2026. **In progress.** Four of the eight properties of the approved [Visual Qualification Plan](visual-qualification-plan.md) have been measured on the held-out captures N01 to N06 and the six held-out screenshots. Each measurement was made once with the thresholds fixed beforehand; a property, once measured, cannot be refitted on these captures. Typography, focus motion, word fill, the gap indicator, and inactive lines remain; they require the lyric text and timing read from the captures.
 
+## Second Capture Set
+
+On October 12, 2026, the maintainer recorded three further captures, N08 to N10, after the background spread adaptation was developed. Before any of them was analysed, they were assigned to re-qualify the background with the same thresholds; the title band of N08, the only one with an overflowing title, is development material for the marquee, whose background remains held out.
+
 ## Results So Far
 
 | Property | Measure | Threshold | Result | Met |

@@ -63,7 +63,7 @@ def main(names):
     pooled_sl = float(np.mean([abs(r['sL_relative']) for r in result.values()]))
     summary = dict(per_song=result, mean_delta_e00=pooled_de, mean_abs_sL_relative=pooled_sl,
                    passes=dict(colour=pooled_de <= 6, spread=pooled_sl <= 0.2))
-    (out/'background.json').write_text(json.dumps(summary, indent=1)+'\n')
+    (out/f"background-{'-'.join(names)}.json").write_text(json.dumps(summary, indent=1)+'\n')
     print(json.dumps({k: v for k, v in summary.items() if k != 'per_song'}, indent=1))
     for n, r in result.items():
         print(n, 'dE00 %.2f  sL native %.2f ours %.2f (%+.0f%%)' % (r['delta_e00'], r['sL_native'], r['sL_ours'], 100*r['sL_relative']))
