@@ -2,7 +2,7 @@ import Foundation
 
 /// The user-facing iLyrics command (docs/command-line-interface.md).
 enum CLI {
-    static let version="1.0.0"
+    static let version="1.0.1"
     static let usage="""
     Usage:
       ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]

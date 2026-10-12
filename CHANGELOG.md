@@ -4,6 +4,12 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-12
+
+### Fixed
+
+- The model templates are found when `ilyrics` is run by name through `PATH`, as Homebrew, npm, and pip install it; 1.0.0 found them only when it was run by its full path or with `ILYRICS_TEMPLATES` set.
+
 ## [1.0.0] - 2026-10-12
 
 The first stable release. The visual preset was measured against six unseen screen recordings of the Music app on iPhone 16 running iOS 27; the controls meet the approved thresholds, and the other properties are released with the known differences stated in the [visual qualification results](docs/reports/visual-qualification-results.md). Command-line options, input syntax, and the report formats `ilyrics-alignment-report-1` and `ilyrics-render-report-1` are now stable and follow Semantic Versioning.
@@ -57,7 +63,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.1
 [1.0.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.0
 [0.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.2.0
 [0.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.1.0
