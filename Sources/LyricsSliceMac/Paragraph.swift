@@ -130,7 +130,8 @@ public final class SliceParagraph {
             start += length
         }
         if input.paragraphStyle != nil {
-            guard (1...4).contains(details.count) else { throw SliceError.invalid("Experimental static paragraph exceeds four lines") }
+            // At most four explicit lines are supplied; automatic wrapping of long lines may add more.
+            guard (1...8).contains(details.count) else { throw SliceError.invalid("Paragraph wraps to more than eight lines") }
         } else {
             guard details.count == 2, details[0].breakKind == "observed-explicit" else { throw SliceError.invalid("Observed two-line structure did not fit") }
         }

@@ -50,6 +50,12 @@ struct InputTests {
         #expect(try OutputSchedule(audioSamples:InputLimits.maximumSeconds*48_000).samples==57_600_000)
         #expect(throws:InputError.self) { try OutputSchedule(audioSamples:0) }
     }
+    @Test func longExplicitLinesWrapBeyondFourLines() throws {
+        // Three explicit lines long enough to wrap into more than four rendered lines. Synthetic text.
+        let long="Every quiet window holds a lamp"
+        let r=try SliceParagraph(.supplied(text:[long,long,long].joined(separator:"\n"),japanese:false))
+        #expect(r.lines.count>4 && r.lines.count<=8)
+    }
     @Test func staticJapaneseAndSuppliedShaping() throws {
         let jp=SliceInput.supplied(text:"青い点を置く\n次のページへ",japanese:true),r=try SliceParagraph(jp)
         #expect(r.lines.count==2 && r.lines[0].breakKind=="supplied-explicit")
