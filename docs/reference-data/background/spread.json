@@ -1,0 +1,106 @@
+{
+ "evidence": "Development captures A-D as in appearance.json; held-out folds leave one song out",
+ "model": "after blur, deviations from the artwork mean colour scale by (cref/c)^beta, c = lightness standard deviation of the artwork at 16x16",
+ "folds": {
+  "all": {
+   "held_out": null,
+   "params": {
+    "cref": 0.2848,
+    "beta": 0.6828
+   },
+   "train_loss": 66.29,
+   "loss": {
+    "A": 14.09,
+    "B": 5.14,
+    "C": 5.36,
+    "D": 41.7
+   },
+   "loss_without_spread": {
+    "A": 14.08,
+    "B": 5.89,
+    "C": 8.13,
+    "D": 44.69
+   }
+  },
+  "A": {
+   "held_out": "A",
+   "params": {
+    "cref": 0.2869,
+    "beta": 0.6826
+   },
+   "train_loss": 52.2,
+   "loss": {
+    "A": 14.09,
+    "B": 5.14,
+    "C": 5.37,
+    "D": 41.7
+   },
+   "loss_without_spread": {
+    "A": 14.08,
+    "B": 5.89,
+    "C": 8.13,
+    "D": 44.69
+   }
+  },
+  "B": {
+   "held_out": "B",
+   "params": {
+    "cref": 0.2839,
+    "beta": 0.6834
+   },
+   "train_loss": 61.15,
+   "loss": {
+    "A": 14.09,
+    "B": 5.14,
+    "C": 5.37,
+    "D": 41.7
+   },
+   "loss_without_spread": {
+    "A": 14.08,
+    "B": 5.89,
+    "C": 8.13,
+    "D": 44.69
+   }
+  },
+  "C": {
+   "held_out": "C",
+   "params": {
+    "cref": 0.2885,
+    "beta": 0.7342
+   },
+   "train_loss": 60.9,
+   "loss": {
+    "A": 14.1,
+    "B": 5.11,
+    "C": 5.58,
+    "D": 41.7
+   },
+   "loss_without_spread": {
+    "A": 14.08,
+    "B": 5.89,
+    "C": 8.13,
+    "D": 44.69
+   }
+  },
+  "D": {
+   "held_out": "D",
+   "params": {
+    "cref": 0.2834,
+    "beta": 0.6844
+   },
+   "train_loss": 24.59,
+   "loss": {
+    "A": 14.08,
+    "B": 5.14,
+    "C": 5.37,
+    "D": 41.7
+   },
+   "loss_without_spread": {
+    "A": 14.08,
+    "B": 5.89,
+    "C": 8.13,
+    "D": 44.69
+   }
+  }
+ }
+}

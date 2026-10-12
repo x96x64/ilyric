@@ -17,6 +17,8 @@ public final class ArtworkBackdrop {
     let width, height: Int
     /// Saturation after adaptation to the artwork's mean chroma, sampled at 192×192 as in the fitting model.
     let saturation: Double
+    /// Spread adaptation factor and the artwork's mean colour it scales about, in encoded sRGB units.
+    let spread: Double, meanColour: [Double]
     private let context = CIContext(options:[.useSoftwareRenderer:true,.workingColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!,
                                              .outputColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!])
 
@@ -33,6 +35,19 @@ public final class ArtworkBackdrop {
         var rgb=[UInt8]();rgb.reserveCapacity(side*side*3)
         for p in 0..<(side*side) { rgb.append(contentsOf:rgba[(p*4)..<(p*4+3)]) }
         saturation=model.saturation(artworkChroma:ArtworkBackground.meanChroma(rgb:rgb))
+        // Coarse structure: 12×12-pixel block means of the 192-pixel sample give the 16×16 artwork of the fitting model.
+        var coarse=[Double]()
+        for by in 0..<16 { for bx in 0..<16 {
+            var sum=0.0
+            for y in by*12..<(by+1)*12 { for x in bx*12..<(bx+1)*12 {
+                let i=(y*side+x)*3
+                sum+=0.2126*Double(rgb[i])+0.7152*Double(rgb[i+1])+0.0722*Double(rgb[i+2])
+            }}
+            coarse.append(sum/144/255)
+        }}
+        let m=coarse.reduce(0,+)/Double(coarse.count)
+        spread=model.spreadFactor(coarseLightnessDeviation:(coarse.reduce(0.0) { $0+($1-m)*($1-m) }/Double(coarse.count)).squareRoot())
+        meanColour=(0..<3).map { ch in stride(from:ch,to:rgb.count,by:3).reduce(0.0) { $0+Double(rgb[$1]) }/Double(side*side)/255 }
         field=abstract ? Self.colorField(artwork) : artwork
     }
 
@@ -102,13 +117,18 @@ public final class ArtworkBackdrop {
         }
         let base=CIImage(cgImage:c.makeImage()!),extent=base.extent
         let blurred=base.clampedToExtent().applyingGaussianBlur(sigma:model.blur/Double(Self.reduction)).cropped(to:extent)
+        // Spread adaptation about the artwork's mean colour: x' = f·x + (1−f)·mean.
+        let f=spread
+        let adapted=f==1 ? blurred : blurred.applyingFilter("CIColorMatrix",parameters:["inputRVector":CIVector(x:f,y:0,z:0,w:0),
+            "inputGVector":CIVector(x:0,y:f,z:0,w:0),"inputBVector":CIVector(x:0,y:0,z:f,w:0),"inputAVector":CIVector(x:0,y:0,z:0,w:1),
+            "inputBiasVector":CIVector(x:(1-f)*meanColour[0],y:(1-f)*meanColour[1],z:(1-f)*meanColour[2],w:0)])
         // Saturation about Rec. 709 luma: x' = s·x + (1−s)·luma(x), applied to encoded sRGB values.
         let s=saturation,l=(0.2126,0.7152,0.0722),bias=model.gain>0 ? model.lift/model.gain : 0
         func row(_ i:Int) -> CIVector {
             let own=[s,s,s][i]
             return CIVector(x:(i==0 ? own:0)+(1-s)*l.0,y:(i==1 ? own:0)+(1-s)*l.1,z:(i==2 ? own:0)+(1-s)*l.2,w:0)
         }
-        let saturated=blurred.applyingFilter("CIColorMatrix",parameters:["inputRVector":row(0),"inputGVector":row(1),
+        let saturated=adapted.applyingFilter("CIColorMatrix",parameters:["inputRVector":row(0),"inputGVector":row(1),
             "inputBVector":row(2),"inputAVector":CIVector(x:0,y:0,z:0,w:1),"inputBiasVector":CIVector(x:bias,y:bias,z:bias,w:0)])
         // Vertical gain: gain at the top edge, gain·(1−gradient) at the bottom edge; with the bias above,
         // the result is (x·gain + lift)·(1 − gradient·y).

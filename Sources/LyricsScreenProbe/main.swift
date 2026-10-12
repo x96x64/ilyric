@@ -6,6 +6,7 @@ import LyricsSliceCore
 import LyricsSliceMac
 import SpikeCore
 import RenderMac
+import Vision
 
 @main struct Probe {
     @MainActor static func main() async {
@@ -22,6 +23,38 @@ import RenderMac
                         "translation":state.lyrics.paragraphs.map(\.translationY)]
                 }
                 print(String(data:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys]),encoding:.utf8)!)
+                return
+            }
+            if args.count==3 && args[1]=="ocr" {
+                // Development qualification: recognized text lines of a native frame, in native pixels with a top-left
+                // origin, printed as JSON.
+                guard let source=CGImageSourceCreateWithURL(URL(fileURLWithPath:args[2]) as CFURL,nil),
+                      let image=CGImageSourceCreateImageAtIndex(source,0,nil) else { throw SliceError.invalid("ocr IMAGE.png") }
+                let request=VNRecognizeTextRequest();request.recognitionLevel = .accurate;request.recognitionLanguages=["en-US"]
+                request.usesLanguageCorrection=false
+                try VNImageRequestHandler(cgImage:image,options:[:]).perform([request])
+                let w=Double(image.width),h=Double(image.height)
+                let lines:[[String:Any]]=(request.results ?? []).compactMap { o in
+                    guard let c=o.topCandidates(1).first else { return nil }
+                    let b=o.boundingBox
+                    return ["text":c.string,"confidence":Double(c.confidence),"box":[b.minX*w,(1-b.maxY)*h,b.maxX*w,(1-b.minY)*h]]
+                }
+                print(String(data:try JSONSerialization.data(withJSONObject:lines,options:[.sortedKeys]),encoding:.utf8)!)
+                return
+            }
+            if args.count==3 && args[1]=="layout" {
+                // Development qualification: iLyrics's wrapping and per-line ink extents for a paragraph, as JSON.
+                let input=SliceInput.supplied(text:args[2],japanese:false),paragraph=try SliceParagraph(input),p=input.parameters
+                let image=try paragraph.render(input.evaluate(Time(0)),coverage:true)
+                let data=image.dataProvider!.data! as Data,text=args[2] as NSString
+                let lines:[[String:Any]]=paragraph.lines.enumerated().map { k,line in
+                    let top=Int(p.originY+Double(k)*p.lineAdvance),bottom=min(image.height,top+Int(p.size*1.3))
+                    var lo=image.width,hi=0
+                    for y in max(0,top)..<bottom { for x in 0..<image.width where data[y*image.bytesPerRow+x*4+3]>127 { lo=min(lo,x);hi=max(hi,x+1) } }
+                    return ["text":text.substring(with:NSRange(location:line.start,length:line.length)).trimmingCharacters(in:.whitespacesAndNewlines),
+                            "ink":[lo,hi]]
+                }
+                print(String(data:try JSONSerialization.data(withJSONObject:lines,options:[.sortedKeys]),encoding:.utf8)!)
                 return
             }
             if args.count==4 && args[1]=="color-field" {

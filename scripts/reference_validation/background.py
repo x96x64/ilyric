@@ -13,6 +13,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 from analyze import private_root
+REPO_DATA = Path(__file__).resolve().parents[2]/'docs'/'reference-data'/'background'
 
 W,H,B=295,639,8
 LUM=np.array([.2126,.7152,.0722])
@@ -72,6 +73,12 @@ def render(art, t, p, w=W, h=H):
     base=acc/2
     img=Image.fromarray((np.clip(base,0,1)*255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(float(p['sig'])/4))
     x=np.asarray(img,float)/255
+    if p.get('beta',0)>0:
+        # Spread adaptation: deviations from the artwork's mean colour scale by (cref/c)^beta, where c is the lightness
+        # standard deviation of the artwork at 16x16 (its coarse structure), so flat and busy artwork converge.
+        coarse=np.asarray(Image.fromarray((art*255).astype(np.uint8)).resize((16,16),Image.BOX),float)/255
+        c=max(1e-3,float((coarse@LUM).std()));f=(p['cref']/c)**p['beta']
+        m=art.reshape(-1,3).mean(0);x=m+(x-m)*f
     sat=p['sat']
     if p.get('c0',0)>0:
         ca=float(np.hypot(*lab(art)[...,1:].transpose(2,0,1)).mean());sat=sat*ca/(ca+p['c0'])
@@ -275,6 +282,41 @@ def fit_appearance(root, out, mode, evaluations):
     return result
 
 
+SPREAD_NAMES = ['cref', 'beta']
+
+
+def fit_spread(root, out, mode, evaluations):
+    """Fit only the spread adaptation (cref, beta) on top of the published appearance parameters."""
+    from scipy.optimize import minimize
+    base = json.loads((REPO_DATA/'appearance.json').read_text())['folds']['all']['params']
+    T = json.loads((out/'targets.json').read_text())
+    tgt, tol = {}, {}
+    for s, vs in SONGS.items():
+        a = np.array([[T[v][k] for k in APPEARANCE_KEYS] for v in vs])
+        tgt[s], tol[s] = a.mean(0), np.maximum(a.std(0, ddof=1), APPEARANCE_FLOORS)
+    for s in CAPTURE:
+        c = capture_target(root, out, s)
+        tgt[s], tol[s] = np.array([c[k] for k in APPEARANCE_KEYS]), APPEARANCE_FLOORS
+    arts = {s: artwork(root, s) for s in tgt}
+
+    def song_loss(s, x, fps=2, count=16):
+        p = dict(base, **MOTION, cref=x[0], beta=x[1])
+        st = stats(np.stack([field(render(arts[s], i/fps, p)) for i in range(count)]), fps)
+        return float((((np.array([st[k] for k in APPEARANCE_KEYS])-tgt[s])/tol[s])**2).sum()), st
+    train = [s for s in tgt if s != mode]
+
+    def loss(x):
+        if not (0.01 <= x[0] <= 0.5 and 0 <= x[1] <= 1.5):
+            return 1e6
+        return sum(song_loss(s, x)[0] for s in train)
+    r = minimize(loss, np.array([0.12, 0.5]), method='Nelder-Mead', options=dict(maxfev=evaluations))
+    result = dict(mode=mode, train=train, params=dict(cref=r.x[0], beta=r.x[1]), train_loss=r.fun,
+                  per_song={s: dict(zip(['loss', 'stats'], song_loss(s, r.x))) for s in tgt},
+                  baseline={s: song_loss(s, [0.12, 0.0])[0] for s in tgt})
+    (out/f'spread-{mode}.json').write_text(json.dumps(result, indent=1, default=float)+'\n')
+    return result
+
+
 def main():
     root = private_root(Path(__file__).resolve().parents[2]/'reference-private')
     out = root/'analysis'/'background'
@@ -288,6 +330,9 @@ def main():
     elif command == 'appearance' and len(sys.argv) == 4:
         r = fit_appearance(root, out, sys.argv[2], int(sys.argv[3]))
         print(json.dumps({k: r[k] for k in ['mode', 'params', 'train_loss']}, default=float))
+    elif command == 'spread' and len(sys.argv) == 4:
+        r = fit_spread(root, out, sys.argv[2], int(sys.argv[3]))
+        print(json.dumps({k: r[k] for k in ['mode', 'params', 'train_loss', 'baseline']}, default=float))
     elif command == 'motion' and len(sys.argv) == 4:
         r = fit_motion(root, out, sys.argv[2], int(sys.argv[3]))
         print(json.dumps({k: r[k] for k in ['mode', 'params', 'loss']}, default=float))

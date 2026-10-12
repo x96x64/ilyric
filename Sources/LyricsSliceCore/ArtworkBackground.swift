@@ -33,18 +33,27 @@ public struct ArtworkBackground: Equatable, Sendable {
     public let lift: Double
     /// Artwork mean CIELAB chroma at which saturation is halved; 0 disables adaptation.
     public let chromaHalf: Double
+    /// Spread adaptation: deviations from the artwork's mean colour scale by (spreadReference/c)^spreadExponent, where
+    /// c is the lightness standard deviation of the artwork at 16×16; an exponent of 0 disables it.
+    public let spreadReference: Double, spreadExponent: Double
 
     public init(scale: Double, orbit: Double, orbitRate: Double, rotationRate: Double,
-                blur: Double, saturation: Double, gain: Double, gradient: Double, lift: Double = 0, chromaHalf: Double = 0) throws {
-        let values=[scale,orbit,orbitRate,rotationRate,blur,saturation,gain,gradient,lift,chromaHalf]
+                blur: Double, saturation: Double, gain: Double, gradient: Double, lift: Double = 0, chromaHalf: Double = 0,
+                spreadReference: Double = 0, spreadExponent: Double = 0) throws {
+        let values=[scale,orbit,orbitRate,rotationRate,blur,saturation,gain,gradient,lift,chromaHalf,spreadReference,spreadExponent]
         guard values.allSatisfy(\.isFinite), (0.5...4).contains(scale), (0...1).contains(orbit),
               abs(orbitRate)<=2, abs(rotationRate)<=2, (1...600).contains(blur),
               (0...8).contains(saturation), (0...2).contains(gain), (0..<1).contains(gradient),
-              (0...0.5).contains(lift), lift==0 || gain>0, (0...200).contains(chromaHalf)
+              (0...0.5).contains(lift), lift==0 || gain>0, (0...200).contains(chromaHalf),
+              (0...1).contains(spreadReference), (0...2).contains(spreadExponent), spreadExponent==0 || spreadReference>0
         else { throw SliceError.invalid("Artwork background parameters") }
         self.scale=scale;self.orbit=orbit;self.orbitRate=orbitRate;self.rotationRate=rotationRate
         self.blur=blur;self.saturation=saturation;self.gain=gain;self.gradient=gradient;self.lift=lift
-        self.chromaHalf=chromaHalf
+        self.chromaHalf=chromaHalf;self.spreadReference=spreadReference;self.spreadExponent=spreadExponent
+    }
+    /// Contrast factor for artwork whose coarse lightness has standard deviation `c` (encoded units, 0 to 1).
+    public func spreadFactor(coarseLightnessDeviation c: Double) -> Double {
+        spreadExponent>0 && c.isFinite ? pow(spreadReference/max(c,0.001),spreadExponent) : 1
     }
     /// Saturation for artwork of the given mean chroma: nearly neutral artwork keeps little color.
     public func saturation(artworkChroma c: Double) -> Double {
@@ -69,8 +78,10 @@ public struct ArtworkBackground: Equatable, Sendable {
     /// Current experimental parameter set; see docs/reports/artwork-background.md for its provenance.
     /// Appearance from docs/reference-data/background/fit.json (fold "all"); orbit and rotation refitted to
     /// paused-playback recordings with matched durations (docs/reference-data/background/motion.json).
+    /// Spread adaptation fitted on development captures A to D (docs/reports/background-spread-adaptation.md).
     public static let fitted = try! ArtworkBackground(scale:1.385,orbit:0.0865,orbitRate:0.1233,rotationRate:-0.0259,
-                                                       blur:100.0,saturation:4.898,gain:0.3971,gradient:0.4239,lift:0.2212,chromaHalf:7.83)
+                                                       blur:100.0,saturation:4.898,gain:0.3971,gradient:0.4239,lift:0.2212,chromaHalf:7.83,
+                                                       spreadReference:0.285,spreadExponent:0.683)
 
     /// Fixed layer phases and directions. Two counter-moving layers avoid a single rigid rotation.
     public static let phases: [(phase: Double, direction: Double)] = [(0, 1), (2.1, -1)]
