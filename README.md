@@ -25,7 +25,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings, with the weaknesses listed under [Limitations](#limitations); the visual preset is not yet qualified, and command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings, and the visual preset was measured against unseen screen recordings, with the known differences listed under [Limitations](#limitations); command-line options may change before the stable release. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Contents
 
@@ -268,7 +268,7 @@ You are likewise responsible for holding the rights to the recordings, lyrics, a
 - Automatic synchronization supports English. Japanese is planned for the release after the stable release.
 - On 80 unseen recordings with manual word timing, 95.9% of lines were placed correctly, 0.5% were misplaced, and 3.6% were left untimed; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without reliable timing are placed between their neighbours and fill steadily rather than word by word.
 - Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.
-- The visual target is the Music app on iOS 27. Its behavior has been measured from private reference recordings, but fidelity has not yet been qualified against acceptance thresholds.
+- The visual target is the Music app on iPhone 16 running iOS 27, in light appearance with the default text size. Against six unseen screen recordings, control positions and the auto-hide delay match within the approved thresholds; focus motion, word fill timing, title marquee timing, paragraph spacing, and most line wrapping are close; the known differences are the background's colour and contrast, inactive lines that are brighter than native, the timing of the instrumental-gap indicator, and some wrapped lines ([visual qualification results](docs/reports/visual-qualification-results.md)).
 - Translations, the Sing mode, and landscape layouts are not rendered.
 
 ## Documentation
