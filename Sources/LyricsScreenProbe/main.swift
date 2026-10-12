@@ -1,5 +1,6 @@
 import Foundation
 import CoreGraphics
+import CoreText
 import ImageIO
 import UniformTypeIdentifiers
 import LyricsSliceCore
@@ -40,6 +41,41 @@ import Vision
                     return ["text":c.string,"confidence":Double(c.confidence),"box":[b.minX*w,(1-b.maxY)*h,b.maxX*w,(1-b.minY)*h]]
                 }
                 print(String(data:try JSONSerialization.data(withJSONObject:lines,options:[.sortedKeys]),encoding:.utf8)!)
+                return
+            }
+            if args.count==3 && args[1]=="layout-balanced" {
+                // Development experiment: keep the greedy line count of each explicit line, then choose the breaks
+                // that minimise the longest line, and print the balanced text with explicit breaks.
+                let base=SliceInput.supplied(text:"x",japanese:false).parameters
+                let font=CTFontCreateUIFontForLanguage(.system,base.size,nil)!
+                let bold=CTFontCreateCopyWithSymbolicTraits(font,base.size,nil,.traitBold,.traitBold)!
+                func width(_ t:String) -> Double {
+                    let line=CTLineCreateWithAttributedString(NSAttributedString(string:t,attributes:[NSAttributedString.Key(kCTFontAttributeName as String):bold]))
+                    return CTLineGetTypographicBounds(line,nil,nil,nil)-CTLineGetTrailingWhitespaceWidth(line)
+                }
+                var out=[String]()
+                for explicitLine in args[2].components(separatedBy:"\n") {
+                    let words=explicitLine.split(separator:" ").map(String.init)
+                    var greedy=1,current=""
+                    for w in words { let next=current.isEmpty ? w : current+" "+w; if !current.isEmpty && width(next)>base.width { greedy+=1;current=w } else { current=next } }
+                    if greedy==1 || words.count<2 { out.append(explicitLine);continue }
+                    var best:[Int]?=nil,bestWidth=Double.infinity
+                    func search(_ start:Int,_ remaining:Int,_ cuts:[Int]) {
+                        if remaining==1 {
+                            let all=cuts+[words.count];var s=0,widest=0.0
+                            for e in all { widest=max(widest,width(words[s..<e].joined(separator:" ")));s=e }
+                            if widest<=base.width && widest<bestWidth { bestWidth=widest;best=cuts }
+                            return
+                        }
+                        for c in (start+1)..<words.count { search(c,remaining-1,cuts+[c]) }
+                    }
+                    search(0,greedy,[])
+                    guard let cuts=best else { out.append(explicitLine);continue }
+                    var s=0,parts=[String]()
+                    for e in cuts+[words.count] { parts.append(words[s..<e].joined(separator:" "));s=e }
+                    out.append(parts.joined(separator:"\n"))
+                }
+                print(out.joined(separator:"\n"))
                 return
             }
             if args.count==3 && args[1]=="layout" {

@@ -32,7 +32,9 @@ def focused(png):
         band = L[max(0, y0):y1, :]
         if np.percentile(band[:, max(0, x0):x1], 99) < 235:  # focused ink is white; inactive ink is dim
             continue
-        cols = np.nonzero((band > 225).any(0))[0]
+        # Ink includes the dim, not yet filled words of a line in progress: anything clearly above the band's
+        # background counts (a 225 threshold first used here missed them and was corrected before reporting).
+        cols = np.nonzero((band > np.median(band)+35).any(0))[0]
         lines.append(dict(text=o['text'], top=y0, ink=[int(cols.min()), int(cols.max())+1]))
     lines.sort(key=lambda l: l['top'])
     # Keep the first run of lines spaced like one paragraph (line advance about 125 px).
