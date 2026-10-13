@@ -34,12 +34,15 @@ enum Align {
         catch AlignmentError.invalid(let reason) { throw Failure(message:"alignment failed: \(reason)") }
         let alignedAt=Date()
         console.detail("  Aligned in \(elapsed(alignedAt.timeIntervalSince(separatedAt)))")
-        let fills=TTMLExport.fillUnresolved(rows,duration:duration)
-        let ttml=try TTMLExport.ttml(rows,fills:fills,background:normalized.background,dropNonlexical:!keepAdLibs,secondVoice:normalized.secondVoice)
         let omitted=keepAdLibs ? [] : rows.filter { $0.estimate==nil && TTMLExport.nonlexical($0.text) }.map(\.id)
+        let activity=try VocalRules.activity(vocals)
+        let fills=TTMLExport.relocateBoundaryFallbacks(rows,fills:TTMLExport.fillUnresolved(rows,duration:duration),
+            duration:duration,level:activity.level,reference:activity.reference,
+            protectedLines:Set(omitted).union(normalized.background.keys))
+        let ttml=try TTMLExport.ttml(rows,fills:fills,background:normalized.background,dropNonlexical:!keepAdLibs,secondVoice:normalized.secondVoice)
         let resolved=rows.filter { $0.estimate != nil }.count
         for row in rows where row.estimate==nil {
-            console.say(omitted.contains(row.id) ? "  Omitted untimed ad-lib line \(row.id+1)" : "  Placed line \(row.id+1) between its neighbours (no reliable timing: \(row.flags.joined(separator:", ")))")
+            console.say(omitted.contains(row.id) ? "  Omitted untimed ad-lib line \(row.id+1)" : "  Placed line \(row.id+1) (no reliable timing: \(row.flags.joined(separator:", ")))")
         }
         let lines:[[String:Any]]=rows.map { r in
             ["line":r.id+1,"text":r.text,"status":r.estimate != nil ? "aligned" : omitted.contains(r.id) ? "omitted" : "placed",

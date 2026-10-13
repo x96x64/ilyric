@@ -54,6 +54,51 @@ public enum TTMLExport {
         return fills
     }
 
+    /// Translate a boundary run into its nearest wholly unclaimed activity component, when the complete
+    /// existing span fits. Activity hints do not accept a line or establish its textual identity.
+    /// Interior, anchorless and protected runs retain their original placements.
+    public static func relocateBoundaryFallbacks(_ rows: [LineAlignment], fills: [Int:[Int]], duration: Int,
+                                                  level: [Double], reference: Double,
+                                                  protectedLines: Set<Int> = []) -> [Int:[Int]] {
+        // The activity calculation's 1e-12 power floor is -120 dB; silence supplies no placement hint.
+        guard reference.isFinite,reference > -120 else { return fills }
+        let threshold=reference-VocalRules.onsetActivityDB,frame=VocalRules.frameMicroseconds
+        var components=[[Int]](),start:Int?
+        for i in 0...level.count {
+            let active=i<level.count && level[i]>threshold
+            if active && start==nil { start=i*frame }
+            if !active,let begin=start { components.append([begin,i*frame]);start=nil }
+        }
+        let accepted=rows.compactMap(\.estimate)
+        var result=fills,i=0
+        while i<rows.count {
+            if rows[i].estimate != nil { i+=1;continue }
+            var j=i+1
+            while j<rows.count && rows[j].estimate==nil { j+=1 }
+            defer { i=j }
+            let leading=i==0 && j<rows.count,trailing=i>0 && j==rows.count
+            guard leading || trailing,!rows[i..<j].contains(where:{ protectedLines.contains($0.id) }),
+                  let first=fills[rows[i].id],let last=fills[rows[j-1].id],first.count==2,last.count==2,
+                  rows[i..<j].allSatisfy({ row in
+                      guard let interval=fills[row.id],interval.count==2 else { return false }
+                      return interval[0]>=0 && interval[0]<interval[1] && interval[1]<=duration
+                  }) else { continue }
+            let lower=leading ? 0 : rows[i-1].estimate![1]
+            let upper=leading ? rows[j].estimate![0] : duration
+            // Select by temporal proximity before checking capacity; never search farther components.
+            let candidates=components.filter { $0[0]>=lower && $0[1]<=upper }
+            guard let component=leading ? candidates.last : candidates.first else { continue }
+            let span=last[1]-first[0]
+            guard span>0,component[1]-component[0]>=span+1,
+                  !accepted.contains(where:{ max(component[0],$0[0])<min(component[1],$0[1]) }) else { continue }
+            if component[0]<=first[0] && last[1]<=component[1] { continue }
+            // Preserve the existing one-microsecond boundary guard, lengths and relative spacing.
+            let shift=component[0]+1-first[0]
+            for row in rows[i..<j] { result[row.id]=fills[row.id]!.map { $0+shift } }
+        }
+        return result
+    }
+
     /// Word-granularity TTML: one paragraph per line; untimed vocable-only lines are omitted.
     /// Lines in `secondVoice` carry `ttm:agent="v2"`, a duet's second singer.
     public static func ttml(_ rows: [LineAlignment], fills: [Int:[Int]], background: [Int:String] = [:], dropNonlexical: Bool = true,

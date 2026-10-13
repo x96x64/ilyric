@@ -18,7 +18,7 @@ let package = Package(
         .testTarget(name: "LyricsSliceTests", dependencies: ["LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .target(name: "LyricsInputCore", dependencies: ["SpikeCore"]),
         .target(name: "LyricsInputMac", dependencies: ["LyricsInputCore", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
-        .testTarget(name: "LyricsInputTests", dependencies: ["LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
+        .testTarget(name: "LyricsInputTests", dependencies: ["AlignmentCore", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore"]),
         .testTarget(name: "SpikeTests", dependencies: ["SpikeCore", "RenderMac"]),
         .target(name: "AlignmentCore"),
         .target(name: "AlignmentMac", dependencies: ["AlignmentCore"]),
