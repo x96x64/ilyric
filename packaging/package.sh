@@ -9,6 +9,9 @@ trap 'rm -rf "$stage"' EXIT
 mkdir -p "$stage/bin" "$stage/share/ilyrics" "$out"
 out=$(cd "$out" && pwd)
 install -m 755 "$binary" "$stage/bin/ilyrics"
+# Remove local symbols (about 1 MB) and re-sign ad hoc, since Apple silicon refuses to run an unsigned binary.
+strip -x "$stage/bin/ilyrics"
+codesign --force --sign - "$stage/bin/ilyrics"
 cp -R "$root/share/ilyrics/templates" "$stage/share/ilyrics/"
 cp "$root/LICENSE" "$stage/"
 # The package README uses absolute links, unlike the repository README.
