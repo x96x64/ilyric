@@ -32,8 +32,8 @@ enum Render {
       -j, --jobs N                  Parallel rendering workers (default: processor count)
           --fast                    GPU and Neural Engine alignment; faster but not reproducible
           --report FILE             Write a JSON report of alignment and export
-      -q, --quiet                   Print errors only
-      -v, --verbose                 Print step timings and ignored lyrics lines
+      -q, --quiet                   Print only warnings and errors
+      -v, --verbose                 Also print step details, timings, and untimed lines
       -h, --help                    Show this help
     """
 

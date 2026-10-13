@@ -99,8 +99,8 @@ enum Align {
           --keep-ad-libs  Keep vocable-only lines that cannot be timed
           --fast          GPU and Neural Engine inference; faster but not reproducible
           --report FILE   Write a JSON report of estimates, placements, and timings
-      -q, --quiet         Print errors only
-      -v, --verbose       Print step timings and ignored lyrics lines
+      -q, --quiet         Print only warnings and errors
+      -v, --verbose       Also print step details, timings, and untimed lines
       -h, --help          Show this help
     """
 
