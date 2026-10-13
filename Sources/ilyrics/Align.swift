@@ -10,6 +10,9 @@ enum Align {
     static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
         guard let raw=try? String(contentsOf:lyrics,encoding:.utf8) else { throw Failure(message:"\(lyrics.path) is not readable UTF-8 text") }
         let normalized=NormalizedLyrics(raw)
+        if !normalized.background.isEmpty || normalized.dropped.contains(where: { $0.hasSuffix(" (background vocals without a preceding line)") }) {
+            console.say("Warning: Parenthesized backing choruses are experimental, unverified, and unsupported; omit such chorus text from plain lyrics input.")
+        }
         for line in normalized.dropped { console.detail("Ignored lyrics line: \(line)") }
         let source:LyricSource
         do { source=try LyricSource(Data(normalized.text.utf8)) }
