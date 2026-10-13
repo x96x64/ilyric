@@ -25,7 +25,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> English synchronization was qualified on 80 unseen recordings, and the visual preset was measured against unseen screen recordings of the Music app; the remaining weaknesses and known differences are listed under [Limitations](#limitations). See [Support](SUPPORT.md) for what is covered. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> All pooled third-qualification criteria for English synchronization were met on 80 unseen recordings, but three recordings failed the per-recording placement threshold of 80%; the complete locked qualification criteria were not met ([results](docs/reports/third-preview-qualification-results.md)). The visual preset was measured against unseen screen recordings of the Music app; the remaining weaknesses and known differences are listed under [Limitations](#limitations). See [Support](SUPPORT.md) for what is covered. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Contents
 
@@ -48,8 +48,8 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 
 ## Features
 
-- **Automatic synchronization.** Plain text lyrics are aligned line by line and word by word against a separated vocal stem. Lines without reliable timing are placed between their neighbours rather than guessed, and every placement is reported.
-- **A faithful Lyrics screen.** Focus motion, word fill with a gentle lift, emphasis of sustained final words, background vocals beneath their line, instrumental-gap indicators, a scrolling title, an artwork-derived background, and controls that hide after playback starts. Each behavior was measured from reference recordings of the Music app on iPhone running iOS 27.
+- **Automatic synchronization.** Plain text lyrics are aligned line by line and word by word against a separated vocal stem. Lines without accepted acoustic timing receive reported fallback placements. Interior runs retain neighbour-based fallback; only eligible boundary runs may relocate under [Plan C](#reviewing-an-alignment), using activity solely as a hint rather than acoustic acceptance.
+- **A faithful Lyrics screen.** Focus motion, word fill with a gentle lift, emphasis of sustained final words, instrumental-gap indicators, a scrolling title, an artwork-derived background, and controls that hide after playback starts. These visual features are based on reference recordings of the Music app on iPhone running iOS 27, with the limitations stated below. Backing-chorus functionality remains implemented but is experimental, unverified, and unsupported.
 - **Deterministic output.** Every frame is a pure function of its timestamp, so any frame can be rendered independently and in parallel. The default CPU inference reproduces the same alignment on every run.
 - **Supplied timing.** TTML, LRC, and Enhanced LRC files are rendered exactly as supplied, without alignment.
 - **Local and private.** Recordings, lyrics, and videos never leave your Mac; the only network access is the model download.
@@ -93,7 +93,7 @@ sudo mkdir -p /usr/local/share/ilyrics
 sudo cp -R share/ilyrics/templates /usr/local/share/ilyrics/
 ```
 
-The second and third commands install the weightless model templates beside the executable. Running `.build/release/ilyrics` directly from the checkout needs no installation step.
+The `mkdir` command creates the shared data directory, and the `cp -R` command installs the weightless model templates there. Running `.build/release/ilyrics` directly from the checkout needs no installation step.
 
 ### Alignment Models
 
@@ -175,25 +175,31 @@ ilyrics render song.m4a lyrics.txt -o video.mp4 --fast
 
 Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections, as they appear in most lyrics sources.
 
+The following is an original non-chorus example:
+
 ```text
 [Verse 1]
-Paper skies above the harbour
-Lanterns drifting (drifting) out to sea
+A compass rests beside the window
+Morning gathers on the road
 
-[Chorus]
-Hold the light (hold the light)
-(Hold it now)
+[Bridge]
+Footsteps cross the empty station
+Daylight reaches every stone
 ```
 
 - Section labels in brackets, such as `[Chorus]`, are ignored.
-- Parenthesized phrases are shown as background vocals beneath their line. A line consisting only of parenthesized phrases belongs to the line above.
+- Do not include backing choruses in `lyrics.txt`, either as parenthesized phrases or as standalone chorus-only lines, even when written as ordinary lines. This functionality is experimental, unverified, and unsupported. Existing parenthesized input remains accepted: phrases are interpreted as backing vocals beneath their associated lead, and a parentheses-only line attaches to the preceding line. Interpretation and export are unchanged; this is a support restriction, not removal of input syntax.
 - Lines without letters, such as `...`, are ignored.
 - In a duet, a line beginning with `>` belongs to the second singer and is right-aligned, as the Music app shows it. TTML lyrics mark such paragraphs with `ttm:agent="v2"`.
 - A line beginning with `Written by:` lists the songwriters. It is not sung; it is shown as "Written By: …" below the last line, as the Music app does.
 - Sections longer than four lines are split into balanced groups; a six-line verse becomes two groups of three.
-- Lines that consist only of vocables, such as "ooh" or "na-na-na", are omitted when they cannot be timed. Pass `--keep-ad-libs` to keep them in place.
+- Vocable-only lines, such as "ooh" or "na-na", remain usable. They may be omitted when reliable timing is unavailable. `--keep-ad-libs` retains them without guaranteeing accurate timing.
 
-The lyrics must match what is sung, in order. Repeated choruses should be written out in full rather than abbreviated as "Chorus ×2".
+The lyrics must match the lead singer's sung sequence, in order. Ordinary lead-sung refrains remain permitted and should be repeated in full when sung again. A `[Chorus]` section label is also permitted and is ignored; neither a lead-sung refrain nor that label is a prohibited backing chorus.
+
+Backing cues have been observed to disappear late or unevenly, and predominantly chorus-only lines can align into subsequent non-singing audio. These issues are not claimed to be fixed or to reproduce verified native iOS 27 behavior. Unsupported chorus inputs remain accepted, interpreted, and exported as before; no output change accompanies this support notice. Plain-text commands emit one nonfatal stderr warning when existing parsing recognizes parenthesized backing phrases, including parentheses-only lines. `--quiet` suppresses it; normal and verbose modes show it. Ordinary chorus-only lines cannot be identified reliably from text alone and do not trigger this warning. Timed formats do not trigger it.
+
+In the [third English qualification](docs/reports/third-preview-qualification-results.md), all nine observed vocable-only lines were aligned correctly. This small sample was excluded from the main scored-line denominator and does not establish backing-chorus accuracy.
 
 ### Timed Lyrics
 
@@ -214,8 +220,10 @@ Any unprotected audio file that AVFoundation can decode is accepted, including A
 Automatic synchronization is reliable for most lines, but not all. iLyrics never invents word timing it cannot support:
 
 - **Aligned** lines have line and word timing derived from the vocal stem.
-- **Placed** lines lacked reliable evidence and are spread evenly between their aligned neighbours; they fill steadily instead of word by word.
+- **Placed** lines lack accepted acoustic timing and receive fallback intervals; they fill steadily rather than word by word. Interior unresolved runs retain their existing neighbour-based fallback.
 - **Omitted** lines are untimed vocable-only lines, unless `--keep-ad-libs` is given.
+
+At leading and trailing boundaries, [Plan C](docs/reports/fallback-placement-plan-c.md) considers only the nearest eligible activity component beside the accepted anchor: the last component before the next accepted onset for a leading run, or the first component after the preceding accepted end for a trailing run. An eligible run moves only if its complete existing span, including spacing and the boundary guard, fits that component without crossing accepted intervals or audio bounds. If the nearest component is unsuitable, the original fallback placement is retained without searching farther components. Runs already fitting that component, protected runs, and runs without accepted anchors also remain unchanged. Activity is a placement hint, not evidence that the particular words were sung, and relocation does not promote a placed line to acoustic acceptance.
 
 The summary line states how many lines fell into each group, and `--report FILE` writes every line's status, interval, word intervals, and reasons as JSON. To correct a result, edit the TTML written by `align` and render it as supplied timing.
 
@@ -265,8 +273,9 @@ You are likewise responsible for holding the rights to the recordings, lyrics, a
 
 ## Limitations
 
-- Automatic synchronization supports English. Japanese is planned for the release after the stable release.
-- On 80 unseen recordings with manual word timing, 95.9% of lines were placed correctly, 0.5% were misplaced, and 3.6% were left untimed; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without reliable timing are placed between their neighbours and fill steadily rather than word by word.
+- Automatic synchronization supports English. Japanese and other languages are planned for a later release, currently targeted as v1.2.0.
+- Backing choruses, including parenthesized phrases and standalone chorus-only lines written as ordinary lines, are experimental, unverified, and unsupported. Exclude them from `lyrics.txt`; lead-sung refrains, `[Chorus]` labels, and vocable-only lines remain permitted. See [Plain Text](#plain-text) for observed issues and unchanged compatibility.
+- On 80 unseen recordings with manual word timing, 95.9% of lines were placed correctly, 0.5% were misplaced, and 3.6% were left untimed; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without accepted timing use fallback placements and fill steadily rather than word by word. Interior runs retain neighbour-based fallback; an eligible leading or trailing run may move only if its full existing span fits the nearest eligible activity component beside its accepted anchor. Otherwise its original placement remains; no farther component is searched. Activity is a hint, not proof of the supplied words or acoustic acceptance. See [Reviewing an Alignment](#reviewing-an-alignment).
 - Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.
 - The visual target is the Music app on iPhone 16 running iOS 27, in light appearance with the default text size. Against six unseen screen recordings, control positions and the auto-hide delay match within the approved thresholds; focus motion, word fill timing, title marquee timing, paragraph spacing, and most line wrapping are close; the known differences are the background's colour and contrast, inactive lines that are brighter than native, the timing of the instrumental-gap indicator, and some wrapped lines ([visual qualification results](docs/reports/visual-qualification-results.md)).
 - Translations, the Sing mode, and landscape layouts are not rendered.

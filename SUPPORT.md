@@ -11,10 +11,20 @@ Only the latest release receives fixes. Releases follow [Semantic Versioning](ht
 | Operating system | macOS 14 or later |
 | Processor | Apple silicon; packaged binaries are built for arm64 only |
 | Installation | Homebrew, npm, pip, or a source build with a Swift 6 toolchain |
-| Synchronization | English lyrics; Japanese is planned for the release after 1.0 |
+| Synchronization | English lyrics; Japanese and other languages are planned for a later release, currently targeted as v1.2.0 |
 | Visual target | The Music app on iPhone 16 running iOS 27, light appearance, default text size |
 
 Release binaries are built by the repository's `release.yml` workflow from the tagged source on GitHub-hosted macOS runners. The alignment models are downloaded from their publishers and verified by SHA-256 on first use.
+
+## Backing Choruses and Vocables
+
+Backing-chorus functionality is experimental, unverified, and unsupported. Users should not include backing choruses in `lyrics.txt`, whether written as parenthesized phrases or standalone chorus-only lines, including ordinary lines containing only a secondary chorus part. Ordinary lead-sung refrains and `[Chorus]` section headings remain permitted; section headings are ignored by parsing.
+
+Backing cues have been observed to disappear late or unevenly. Predominantly chorus-only lines may align into subsequent non-singing audio. Neither issue is claimed to be fixed or verified against native iOS 27 behavior. The functionality remains implemented and reversible. Unsupported chorus inputs remain accepted, interpreted, and exported as before. This support classification does not change the v1.0.0 input-syntax or report-format stability promise, and no rendering or other output change is introduced.
+
+A plain-text invocation emits one nonfatal stderr warning when existing parsing recognizes parenthesized backing phrases, including parentheses-only lines. Normal and verbose modes show it; `--quiet` suppresses it. It neither rejects input nor changes exit status. Ordinary chorus-only lines do not receive automatic vocal-role detection, and timed formats do not trigger the warning.
+
+Vocable-only lines such as "ooh" and "na-na" remain usable. The [third English qualification](docs/reports/third-preview-qualification-results.md) aligned all nine observed vocable-only lines correctly, but this small sample was excluded from its main scored-line denominator. These results do not qualify backing choruses. Untimed vocables may be omitted; `--keep-ad-libs` retains them without guaranteeing accurate timing.
 
 ## Getting Help
 
