@@ -24,6 +24,8 @@ enum Align {
         let source:LyricSource
         do { source=try LyricSource(Data(normalized.text.utf8)) }
         catch AlignmentError.invalid(let reason) { throw Failure(message:"the lyrics cannot be aligned: \(reason)") }
+        // Unsupported audio fails here, after the lyrics checks and before model installation or alignment.
+        do { _=try await LocalAudio.inspect(audio) } catch let error as InputError { throw Failure(message:"\(audio.lastPathComponent): \(error)") }
         let models=try await Models.ready(console)
         let units:MLComputeUnits=fast ? .all : .cpuOnly
         console.detail("Aligning \(source.lines.count) lines to \(audio.lastPathComponent)\(fast ? " (fast, not reproducible)" : "")")
@@ -141,7 +143,6 @@ enum Align {
         guard !["ttml","lrc"].contains(lyrics.pathExtension.lowercased()) else { throw Failure(message:"\(lyrics.lastPathComponent) is already timed; 'align' takes untimed text") }
         let target=try checkOutput(output,force:options.has("force"))
         let started=Date()
-        do { _=try await LocalAudio.inspect(audio) } catch let error as InputError { throw Failure(message:"\(audio.lastPathComponent): \(error)") }
         let result=try await run(audio:audio,lyrics:lyrics,keepAdLibs:options.has("keep-ad-libs"),fast:options.has("fast"),console:console)
         try result.ttml.write(to:target,atomically:true,encoding:.utf8)
         try writeReport(result.report,to:options.values["report"])
