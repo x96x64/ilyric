@@ -7,6 +7,8 @@ let package = Package(
     products: [.executable(name: "ilyrics", targets: ["ilyrics"])],
     targets: [
         .target(name: "SpikeCore"),
+        .target(name: "ProgressDisplay"),
+        .testTarget(name: "ProgressDisplayTests", dependencies: ["ProgressDisplay"]),
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
         .executableTarget(name: "ilyrics", dependencies: ["AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
