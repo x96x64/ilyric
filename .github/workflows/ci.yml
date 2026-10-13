@@ -68,6 +68,10 @@ jobs:
         timeout-minutes: 10
         # AVFoundation decoding intermittently stalled when these tests ran in parallel on the runner.
         run: swift test --disable-xctest --no-parallel --filter LyricsInputTests.AudioSceneTests
+      - name: Test Lyrics input VideoLayoutTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.VideoLayoutTests
 
   python:
     name: Python Public Validation Tests
