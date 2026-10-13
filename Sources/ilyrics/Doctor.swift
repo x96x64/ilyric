@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 import CoreML
 import AlignmentMac
-import LyricsSliceCore
+import LyricsScreenCore
 
 /// The `doctor` subcommand: environment checks, each with its recovery step.
 enum Doctor {

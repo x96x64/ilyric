@@ -5,20 +5,20 @@ import CoreText
 import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
-import RenderMac
-import SpikeCore
+import VideoExport
+import TimelineCore
 
 struct Motion: Decodable {
     let model: String
     let onset, duration, offset, amplitude: Double
     func position(_ time: Time) throws -> Double {
-        guard duration > 0 else { throw SpikeError.failure("Invalid fitted duration") }
+        guard duration > 0 else { throw RenderError.failure("Invalid fitted duration") }
         let u = max(0, (time.seconds - onset) / duration)
         let progress: Double
         switch model {
         case "hermite": let v = min(1, u); progress = v * v * (3 - 2 * v)
         case "critical": progress = 1 - (1 + u) * exp(-u)
-        default: throw SpikeError.failure("Unknown fitted model")
+        default: throw RenderError.failure("Unknown fitted model")
         }
         return offset + amplitude * progress
     }
@@ -74,7 +74,7 @@ func canonicalURL(_ url: URL) -> URL {
 
 do {
     let args = CommandLine.arguments
-    if args.count != 3 { throw SpikeError.failure("Usage: ReferenceProbe input.json output-directory") }
+    if args.count != 3 { throw RenderError.failure("Usage: ReferenceProbe input.json output-directory") }
     let repository = canonicalURL(URL(fileURLWithPath: FileManager.default.currentDirectoryPath))
     let inputURL = canonicalURL(URL(fileURLWithPath: args[1]))
     let output = canonicalURL(URL(fileURLWithPath: args[2], isDirectory: true))
@@ -83,13 +83,13 @@ do {
         return inputURL.path.hasPrefix(prefix) && output.path.hasPrefix(prefix)
     }
     guard allowed else {
-        throw SpikeError.failure("Run from the repository root; keep inputs and outputs together under reference-private or artifacts")
+        throw RenderError.failure("Run from the repository root; keep inputs and outputs together under reference-private or artifacts")
     }
     let input = try JSONDecoder().decode(Input.self, from: Data(contentsOf: inputURL))
     guard input.width > 0, input.width <= 4096, input.size > 0, input.size <= 512,
           input.lineAdvance > 0, input.text.utf16.count < 10000,
           (input.denominator ?? 1) > 0, (input.numerator ?? 0) != Int64.min else {
-        throw SpikeError.failure("Invalid probe input")
+        throw RenderError.failure("Invalid probe input")
     }
     let time = Time(input.numerator ?? 0, input.denominator ?? 1)
     try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
@@ -103,12 +103,12 @@ do {
         image = layout.image; fonts = layout.fonts
         metrics = layout.metrics.map { Metric(start: $0.start, length: $0.length, width: $0.width * 3, baseline: $0.baseline * 3) }
     } else {
-        guard input.font == "system-bold" else { throw SpikeError.failure("Unknown candidate font") }
+        guard input.font == "system-bold" else { throw RenderError.failure("Unknown candidate font") }
         let selection = input.fontSelection ?? "symbolic-bold"
         guard ["symbolic-bold", "emphasized"].contains(selection),
               [nil, "left", "right"].contains(input.alignment),
               input.weight.map({ $0.isFinite && (-1...1).contains($0) }) ?? true else {
-            throw SpikeError.failure("Invalid calibration configuration")
+            throw RenderError.failure("Invalid calibration configuration")
         }
         let regular = CTFontCreateUIFontForLanguage(selection == "emphasized" ? .emphasizedSystem : .system,
                                                     input.size, input.language as CFString?)!
@@ -119,7 +119,7 @@ do {
             if ["auto", "none"].contains(optical) { attributes[kCTFontOpticalSizeAttribute] = optical }
             else if let value = Double(optical), value.isFinite, value > 0 {
                 attributes[kCTFontOpticalSizeAttribute] = value
-            } else { throw SpikeError.failure("Invalid optical size") }
+            } else { throw RenderError.failure("Invalid optical size") }
         }
         if let weight = input.weight { attributes[kCTFontTraitsAttribute] = [kCTFontWeightTrait: weight] }
         if !attributes.isEmpty {
@@ -134,7 +134,7 @@ do {
         var lines: [(CTLine, Metric)] = []; var names = Set<String>(); var start = 0
         while start < attributed.length {
             let length = CTTypesetterSuggestLineBreak(setter, start, input.width)
-            guard length > 0 else { throw SpikeError.failure("Unbreakable input") }
+            guard length > 0 else { throw RenderError.failure("Unbreakable input") }
             let line = CTTypesetterCreateLine(setter, CFRange(location: start, length: length))
             var ascent: CGFloat = 0, descent: CGFloat = 0, leading: CGFloat = 0
             let width = CTLineGetTypographicBounds(line, &ascent, &descent, &leading) - CTLineGetTrailingWhitespaceWidth(line)
@@ -165,7 +165,7 @@ do {
         }
         fonts = names.sorted(); metrics = lines.map(\.1)
         let height = Int(ceil(input.size * 2 + Double(lines.count) * input.lineAdvance))
-        guard height <= 16384 else { throw SpikeError.failure("Probe image too tall") }
+        guard height <= 16384 else { throw RenderError.failure("Probe image too tall") }
         let ctx = CGContext(data: nil, width: Int(ceil(input.width)), height: height, bitsPerComponent: 8,
                             bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
                             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
@@ -187,11 +187,11 @@ do {
                                      width: Double(image.width), height: Double(image.height)))
         let sceneDestination = CGImageDestinationCreateWithURL(output.appendingPathComponent("scene.png") as CFURL, UTType.png.identifier as CFString, 1, nil)!
         CGImageDestinationAddImage(sceneDestination, canvas.makeImage()!, nil)
-        guard CGImageDestinationFinalize(sceneDestination) else { throw SpikeError.failure("Scene write failed") }
+        guard CGImageDestinationFinalize(sceneDestination) else { throw RenderError.failure("Scene write failed") }
     }
     let destination = CGImageDestinationCreateWithURL(output.appendingPathComponent("text.png") as CFURL, UTType.png.identifier as CFString, 1, nil)!
     CGImageDestinationAddImage(destination, image, nil)
-    guard CGImageDestinationFinalize(destination) else { throw SpikeError.failure("PNG write failed") }
+    guard CGImageDestinationFinalize(destination) else { throw RenderError.failure("PNG write failed") }
     let result = Result(status: "rendered", fonts: fonts, lines: metrics,
                         timestampNumerator: time.numerator, timestampDenominator: time.denominator,
                         fittedY: try input.motion?.position(time))

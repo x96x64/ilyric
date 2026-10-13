@@ -1,9 +1,9 @@
 import Foundation
 import CoreGraphics
 import LyricsInputCore
-import LyricsSliceCore
-import LyricsSliceMac
-import SpikeCore
+import LyricsScreenCore
+import LyricsScreenMac
+import TimelineCore
 
 /// Opt-in presentation features; defaults reproduce the established output exactly.
 public struct LocalPresentation: Sendable {
@@ -89,16 +89,16 @@ public final class LocalScene {
             let lead=presentation.fillLead
             let timed=entry.segments.map { s -> AppearanceEvent in
                 let begin=max(Time(0),s.begin-lead),end=max(begin+Time(1,1000),s.end-lead)
-                return AppearanceEvent(start:s.start,length:s.length,begin:SliceTime(begin.numerator,begin.denominator),
-                    end:SliceTime(end.numerator,end.denominator),verticalEvent:nil)
+                return AppearanceEvent(start:s.start,length:s.length,begin:ParagraphTime(begin.numerator,begin.denominator),
+                    end:ParagraphTime(end.numerator,end.denominator),verticalEvent:nil)
             }
-            let timedInput=timed.isEmpty ? nil : SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed,motion:presentation.wordMotion)
+            let timedInput=timed.isEmpty ? nil : ParagraphInput.suppliedTimed(text:entry.text,japanese:japanese,events:timed,motion:presentation.wordMotion)
             // Validate supplied cluster boundaries even when their visualization is disabled.
-            if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
-            var input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
+            if let timedInput,highlighting == .disabled { _=try ParagraphLayout(timedInput) }
+            var input=highlighting == .enabled && timedInput != nil ? timedInput! : ParagraphInput.supplied(text:entry.text,japanese:japanese)
             if entry.secondVoice { input.rightAligned=true }
             if presentation.canvas == .video { input=input.adapted(to:.video) }
-            let layout=try SliceParagraph(input)
+            let layout=try ParagraphLayout(input)
             // Lead never moves focus before the previous focus event or before zero.
             let previous=events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
             let led=entry.time-presentation.focusLead

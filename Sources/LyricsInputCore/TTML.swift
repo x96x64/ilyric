@@ -2,7 +2,7 @@ import Foundation
 #if canImport(FoundationXML)
 import FoundationXML
 #endif
-import SpikeCore
+import TimelineCore
 
 /// Bounded TTML2 content/timing import, not a general TTML presentation processor.
 public enum TTMLParser {

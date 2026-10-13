@@ -1,5 +1,5 @@
 import Foundation
-import SpikeCore
+import TimelineCore
 
 public enum LyricsFormat: String, Sendable { case lrc, enhancedLRC = "enhanced-lrc", ttml }
 public enum Highlighting: String, Sendable { case enabled, disabled }

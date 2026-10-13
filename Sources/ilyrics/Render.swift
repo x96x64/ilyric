@@ -3,9 +3,9 @@ import ProgressDisplay
 import AVFoundation
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import RenderMac
-import SpikeCore
+import LyricsScreenCore
+import VideoExport
+import TimelineCore
 
 /// The `render` subcommand: a Lyrics video from audio and untimed or timed lyrics.
 enum Render {

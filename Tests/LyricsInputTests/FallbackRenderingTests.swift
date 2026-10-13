@@ -2,11 +2,11 @@ import Foundation
 import CoreGraphics
 import Testing
 import AlignmentCore
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 // The existing CI filter includes AudioSceneTests; numerical fixtures contain no source lyrics.
 extension AudioSceneTests {
@@ -37,7 +37,7 @@ extension AudioSceneTests {
         for i in after.entries.indices {
             let old=a.renderer.screen.composition.paragraphs[i],new=b.renderer.screen.composition.paragraphs[i]
             #expect(try encoder.encode(old.input)==encoder.encode(new.input))
-            let x=try SliceParagraph(old.input),y=try SliceParagraph(new.input)
+            let x=try ParagraphLayout(old.input),y=try ParagraphLayout(new.input)
             #expect(try x.render(x.input.evaluate(Time(0))).dataProvider!.data! as Data == y.render(y.input.evaluate(Time(0))).dataProvider!.data! as Data)
             let onset=after.entries[i].time,end=after.entries[i].intervalEnd!
             #expect(!renderer.screen.composition.evaluate(onset-Time(1,1_000_000)).paragraphs[i].active)

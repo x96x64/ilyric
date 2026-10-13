@@ -1,13 +1,13 @@
 import Testing
 import Foundation
-import SpikeCore
-import LyricsSliceCore
-import LyricsSliceMac
+import TimelineCore
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct ProgressionTests {
     @Test func secondLineCoverageAndAuthoredDeparture() throws {
         let old=try LyricsComposition.synthetic(),demo=try LyricsComposition.progressionDemonstration()
-        let input=demo.paragraphs[1].input,paragraph=try SliceParagraph(input),split=paragraph.lines[1].start
+        let input=demo.paragraphs[1].input,paragraph=try ParagraphLayout(input),split=paragraph.lines[1].start
         let second=input.events.filter{$0.start>=split}
         #expect(!second.isEmpty && paragraph.lines.count==2)
         #expect(old.evaluate(Time(4)).focus==2 && demo.evaluate(Time(4)).focus==1)
@@ -19,8 +19,8 @@ struct ProgressionTests {
         #expect(demo.evaluate(Time(5999,1000)).focus==1 && demo.evaluate(Time(6)).focus==2)
         #expect(try paragraph.raw(Time(3)) != paragraph.raw(Time(23,4)))
         // Line-only input has two complete shaped lines, but no fine-grained events.
-        let lineOnly=SliceInput.supplied(text:input.text,japanese:true)
+        let lineOnly=ParagraphInput.supplied(text:input.text,japanese:true)
         #expect(lineOnly.events.isEmpty && lineOnly.evaluate(Time(3)).spans.isEmpty)
-        #expect(try SliceParagraph(lineOnly).lines.count==2)
+        #expect(try ParagraphLayout(lineOnly).lines.count==2)
     }
 }

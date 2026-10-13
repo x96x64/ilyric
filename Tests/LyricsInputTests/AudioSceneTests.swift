@@ -1,10 +1,10 @@
 import Testing
 import Foundation
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct AudioSceneTests {
     /// Independently generated RIFF PCM, avoiding a binary fixture in public history.

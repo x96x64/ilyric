@@ -1,5 +1,5 @@
 import Foundation
-import SpikeCore
+import TimelineCore
 
 /// Resource bounds shared by every input path.
 public enum InputLimits {

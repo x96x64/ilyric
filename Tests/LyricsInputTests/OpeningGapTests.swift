@@ -1,11 +1,11 @@
 import Testing
 import Foundation
 import CoreGraphics
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-@testable import LyricsSliceCore
-import LyricsSliceMac
+@testable import LyricsScreenCore
+import LyricsScreenMac
 
 /// Original timing fixture: a six-second introduction, then two supplied lyric paragraphs.
 // The existing CI filter runs AudioSceneTests; keep this regression within that suite.

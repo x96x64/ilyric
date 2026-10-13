@@ -1,11 +1,11 @@
 import Foundation
 import CoreGraphics
 import Testing
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 /// Original generated identifiers exercise import and drawing without storing lyric text.
 private enum BackingPolicyFixture {

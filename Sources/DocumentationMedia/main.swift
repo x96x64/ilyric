@@ -4,8 +4,8 @@ import ImageIO
 import UniformTypeIdentifiers
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import SpikeCore
+import LyricsScreenCore
+import TimelineCore
 
 // Renders the README demonstration image from fixtures/demo: "The Star" by Jane Taylor (1806), in the public domain,
 // with synthetic evenly spaced word timing and silent audio. Controls and the placeholder artwork use SF Symbols,

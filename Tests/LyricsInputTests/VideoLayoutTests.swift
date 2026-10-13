@@ -1,11 +1,11 @@
 import Foundation
 import CoreGraphics
 import Testing
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 /// Original generated identifiers and silent PCM; no private text, media, or symbol assets.
 private enum VideoFixture {
@@ -172,7 +172,7 @@ struct VideoLayoutTests {
                 #expect(width==height && (10...12).contains(width))
             }
         }
-        var input=SliceInput.supplied(text:VideoFixture.word,japanese:false);input.rightAligned=true
+        var input=ParagraphInput.supplied(text:VideoFixture.word,japanese:false);input.rightAligned=true
         #expect(input.adapted(to:.video).rightAligned==true)
     }
 }

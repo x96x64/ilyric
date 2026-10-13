@@ -1,11 +1,11 @@
 import Testing
 import Foundation
 import CoreGraphics
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct TTMLTests {
     func parse(_ p:String,outer:String="") throws -> LocalLyrics {
@@ -185,13 +185,13 @@ struct TTMLTests {
             let entry=try parse("<p begin=\"0s\" end=\"3s\"><span begin=\"0.001234s\" end=\"2.501s\">\(content)</span></p>").entries[0]
             let segment=entry.segments[0]
             let event=AppearanceEvent(start:segment.start,length:segment.length,begin:.init(segment.begin.numerator,segment.begin.denominator),end:.init(segment.end.numerator,segment.end.denominator),verticalEvent:nil)
-            let renderer=try SliceParagraph(.suppliedTimed(text:entry.text,japanese:false,events:[event]))
-            let plain=try SliceParagraph(.supplied(text:entry.text,japanese:false))
+            let renderer=try ParagraphLayout(.suppliedTimed(text:entry.text,japanese:false,events:[event]))
+            let plain=try ParagraphLayout(.supplied(text:entry.text,japanese:false))
             #expect(renderer.lines.count>1 && renderer.lines==plain.lines)
             #expect(try renderer.raw(Time(3))==plain.raw(Time(3)))
             let raw=try renderer.raw(Time(1234567,1_000_000))
             #expect(raw != (try renderer.raw(Time(0))))
-            #expect(try SliceParagraph(.suppliedTimed(text:entry.text,japanese:false,events:[event])).raw(Time(1234567,1_000_000))==raw)
+            #expect(try ParagraphLayout(.suppliedTimed(text:entry.text,japanese:false,events:[event])).raw(Time(1234567,1_000_000))==raw)
         }
     }
 
@@ -199,9 +199,9 @@ struct TTMLTests {
         let xml="<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div><p begin=\"0.5s\" end=\"1s\">Paper skies</p><p begin=\"1s\" end=\"2s\" ttm:agent=\"v2\">Open rooms</p></div></body></tt>"
         let lyrics=try TTMLParser.parse(Data(xml.utf8))
         #expect(lyrics.entries.map(\.secondVoice)==[false,true])
-        let left=try SliceParagraph(SliceInput.supplied(text:"Open rooms",japanese:false))
-        var input=SliceInput.supplied(text:"Open rooms",japanese:false);input.rightAligned=true
-        let right=try SliceParagraph(input)
+        let left=try ParagraphLayout(ParagraphInput.supplied(text:"Open rooms",japanese:false))
+        var input=ParagraphInput.supplied(text:"Open rooms",japanese:false);input.rightAligned=true
+        let right=try ParagraphLayout(input)
         func inkRange(_ image:CGImage) -> (Int,Int) {
             let d=image.dataProvider!.data! as Data;var lo=image.width,hi=0
             for y in stride(from:0,to:image.height,by:4) { for x in 0..<image.width where d[y*image.bytesPerRow+x*4+3]>0 { lo=min(lo,x);hi=max(hi,x) } }

@@ -1,10 +1,10 @@
 import Testing
 import Foundation
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct EnhancedTests {
     func parse(_ text:String) throws -> LocalLyrics { try EnhancedLRCParser.parse(Data(text.utf8)) }
@@ -81,8 +81,8 @@ struct EnhancedTests {
     @Test func wrappedRangesClusterMappingAndRandomRaster() throws {
         let text="AV office, careful pages move into clear daylight."
         let events=[AppearanceEvent(start:0,length:text.utf16.count,begin:.init(601,1000),end:.init(2003,1000),verticalEvent:nil)]
-        let input=SliceInput.suppliedTimed(text:text,japanese:false,events:events),timed=try SliceParagraph(input)
-        let plain=try SliceParagraph(.supplied(text:text,japanese:false))
+        let input=ParagraphInput.suppliedTimed(text:text,japanese:false,events:events),timed=try ParagraphLayout(input)
+        let plain=try ParagraphLayout(.supplied(text:text,japanese:false))
         #expect(timed.lines==plain.lines && timed.lines.count>1)
         #expect(timed.lines[0].breakKind=="automatic")
         #expect(input.evaluate(Time(601,1000)).spans[0].progress==0)
@@ -95,27 +95,27 @@ struct EnhancedTests {
         // A ligature-prone case remains whole-paragraph shaped. This system font resolves the tested boundary separately.
         let split=[AppearanceEvent(start:0,length:2,begin:.init(0),end:.init(1),verticalEvent:nil),AppearanceEvent(start:2,length:4,begin:.init(1),end:.init(2),verticalEvent:nil)]
         do {
-            let splitLayout=try SliceParagraph(.suppliedTimed(text:"office",japanese:false,events:split))
-            #expect(splitLayout.lines == (try SliceParagraph(.supplied(text:"office",japanese:false))).lines)
-        } catch SliceError.invalid(let message) { #expect(message=="Event splits a shaped cluster") }
+            let splitLayout=try ParagraphLayout(.suppliedTimed(text:"office",japanese:false,events:split))
+            #expect(splitLayout.lines == (try ParagraphLayout(.supplied(text:"office",japanese:false))).lines)
+        } catch ScreenError.invalid(let message) { #expect(message=="Event splits a shaped cluster") }
         // An independently supplied cluster map exercises the rejection policy without assuming a font's ligatures.
-        #expect(throws:SliceError.self) { try SliceParagraph.validateShapedRange(0,2,boundaries:[0,3,6]) }
-        try SliceParagraph.validateShapedRange(0,3,boundaries:[0,3,6])
+        #expect(throws:ScreenError.self) { try ParagraphLayout.validateShapedRange(0,2,boundaries:[0,3,6]) }
+        try ParagraphLayout.validateShapedRange(0,3,boundaries:[0,3,6])
     }
     @Test func unicodeShapingAndAppearanceEndpoints() throws {
         let lyrics=try parse("[00:00]<00:00.601>e\u{301}, <00:01.003>👩‍💻 <00:01.777>✈️, <00:02.501>AV office.<00:03.001>")
         let entry=lyrics.entries[0]
         let events=entry.segments.map { AppearanceEvent(start:$0.start,length:$0.length,begin:.init($0.begin.numerator,$0.begin.denominator),end:.init($0.end.numerator,$0.end.denominator),verticalEvent:nil) }
         for japanese in [false,true] {
-            let input=SliceInput.suppliedTimed(text:entry.text,japanese:japanese,events:events)
-            #expect(throws:SliceError.self) { try SliceParagraph(input) }
+            let input=ParagraphInput.suppliedTimed(text:entry.text,japanese:japanese,events:events)
+            #expect(throws:ScreenError.self) { try ParagraphLayout(input) }
         }
         // Color glyphs preserve source and graphemes, but progressive raster support is explicitly unqualified.
         let original="e\u{301}, AV office."
         let event=AppearanceEvent(start:0,length:original.utf16.count,begin:.init(601,1000),end:.init(3001,1000),verticalEvent:nil)
         for japanese in [false,true] {
-            let input=SliceInput.suppliedTimed(text:original,japanese:japanese,events:[event])
-            let renderer=try SliceParagraph(input),staticRenderer=try SliceParagraph(.supplied(text:original,japanese:japanese))
+            let input=ParagraphInput.suppliedTimed(text:original,japanese:japanese,events:[event])
+            let renderer=try ParagraphLayout(input),staticRenderer=try ParagraphLayout(.supplied(text:original,japanese:japanese))
             #expect(renderer.lines==staticRenderer.lines)
             #expect(try renderer.raw(Time(4),coverage:true)==staticRenderer.raw(Time(4)))
             #expect(try renderer.raw(Time(4))==staticRenderer.raw(Time(4)))
@@ -123,7 +123,7 @@ struct EnhancedTests {
             #expect(input.evaluate(before).spans[0].progress==0 && input.evaluate(boundary).spans[0].progress==0)
             #expect(input.evaluate(after).spans[0].progress>0)
             let raw=try renderer.raw(Time(777,500))
-            #expect(try SliceParagraph(input).raw(Time(777,500))==raw)
+            #expect(try ParagraphLayout(input).raw(Time(777,500))==raw)
         }
     }
     @Test func multilineFocusAndDisabledNonregression() async throws {

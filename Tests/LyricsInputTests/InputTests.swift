@@ -1,10 +1,10 @@
 import Testing
 import Foundation
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct InputTests {
     func parse(_ value: String) throws -> LocalLyrics { try LRCParser.parse(Data(value.utf8)) }
@@ -53,16 +53,16 @@ struct InputTests {
     @Test func longExplicitLinesWrapBeyondFourLines() throws {
         // Three explicit lines long enough to wrap into more than four rendered lines. Synthetic text.
         let long="Every quiet window holds a lamp"
-        let r=try SliceParagraph(.supplied(text:[long,long,long].joined(separator:"\n"),japanese:false))
+        let r=try ParagraphLayout(.supplied(text:[long,long,long].joined(separator:"\n"),japanese:false))
         #expect(r.lines.count>4 && r.lines.count<=8)
     }
     @Test func staticJapaneseAndSuppliedShaping() throws {
-        let jp=SliceInput.supplied(text:"青い点を置く\n次のページへ",japanese:true),r=try SliceParagraph(jp)
+        let jp=ParagraphInput.supplied(text:"青い点を置く\n次のページへ",japanese:true),r=try ParagraphLayout(jp)
         #expect(r.lines.count==2 && r.lines[0].breakKind=="supplied-explicit")
         #expect(jp.events.isEmpty && jp.parameters.amplitude==0 && jp.appearance==nil)
         #expect(try r.raw(Time(0))==r.raw(Time(19,7)))
-        let latin=try SliceParagraph(.supplied(text:"AV office: e\u{301}, café.",japanese:false))
-        let previous=try SliceParagraph(.latin(text:"AV office: e\u{301}, café."))
+        let latin=try ParagraphLayout(.supplied(text:"AV office: e\u{301}, café.",japanese:false))
+        let previous=try ParagraphLayout(.latin(text:"AV office: e\u{301}, café."))
         #expect(latin.lines.map(\.width)==previous.lines.map(\.width))
         #expect(try latin.raw(Time(0))==previous.raw(Time(0)))
     }

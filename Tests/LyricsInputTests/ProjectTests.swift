@@ -3,11 +3,11 @@ import Foundation
 import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
-import SpikeCore
+import TimelineCore
 import LyricsInputCore
 import LyricsInputMac
-import LyricsSliceCore
-import LyricsSliceMac
+import LyricsScreenCore
+import LyricsScreenMac
 
 struct ProjectTests {
     let base=URL(fileURLWithPath:"/tmp/ilyric-fixture/project.json")

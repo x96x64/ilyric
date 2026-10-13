@@ -1,6 +1,6 @@
 import Foundation
 import CoreFoundation
-import SpikeCore
+import TimelineCore
 
 /// Experimental versioned settings. Paths are resolved once, independently of rendering.
 public struct ProjectVisibility: Equatable, Sendable {
