@@ -69,12 +69,12 @@ public struct LocalArtwork {
 }
 /// Full preparation occurs before export, including hidden assets and paragraph bounds.
 public struct PreparedProject {
-    public let project: ExperimentalProject
+    public let project: ProjectSettings
     public let scene: LocalScene
     public let artworkInfo: ArtworkInfo?
     public static func load(_ url: URL, presentation: LocalPresentation = .init()) async throws -> PreparedProject {
-        let project = try ExperimentalProject.parse(
-            LocalFile.boundedData(url, limit: ExperimentalProject.byteLimit, label: "Project"), at: url)
+        let project = try ProjectSettings.parse(
+            LocalFile.boundedData(url, limit: ProjectSettings.byteLimit, label: "Project"), at: url)
         let lyrics = try LyricsParser.parse(
             LocalFile.boundedData(project.lyrics, limit: LRCParser.byteLimit, label: "Lyrics"),
             format: project.lyricsFormat

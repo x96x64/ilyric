@@ -117,7 +117,7 @@ struct TTMLTests {
         #expect(throws: InputError.self) { try input.applyingProjectOffset(-126) }
     }
     @Test func configurationCompatibility() throws {
-        func project(_ v: Int, _ format: String) throws -> ExperimentalProject {
+        func project(_ v: Int, _ format: String) throws -> ProjectSettings {
             try .parse(
                 Data(
                     "{\"version\":\(v),\"inputs\":{\"audio\":\"a.wav\",\"lyrics\":\"a.ttml\",\"lyricsFormat\":\"\(format)\"},\"timing\":{\"highlighting\":\"disabled\"}}"

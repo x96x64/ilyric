@@ -11,8 +11,8 @@ import LyricsScreenMac
 
 struct ProjectTests {
     let base = URL(fileURLWithPath: "/tmp/ilyric-fixture/project.json")
-    func parse(_ extra: String = "") throws -> ExperimentalProject {
-        try ExperimentalProject.parse(
+    func parse(_ extra: String = "") throws -> ProjectSettings {
+        try ProjectSettings.parse(
             Data(("{\"version\":1,\"inputs\":{\"audio\":\"source.wav\",\"lyrics\":\"lines.lrc\"}" + extra + "}").utf8),
             at: base)
     }
@@ -22,7 +22,7 @@ struct ProjectTests {
             "{\"version\":1,\"inputs\":[]}", "{}", "[]", "{\"version\":2,\"inputs\":{}}",
             "{\"version\":true,\"inputs\":{}}", "{\"version\":1,\"inputs\":{\"audio\":\"a\"}}",
         ] {
-            #expect(throws: InputError.self) { try ExperimentalProject.parse(Data(json.utf8), at: base) }
+            #expect(throws: InputError.self) { try ProjectSettings.parse(Data(json.utf8), at: base) }
         }
         for extra in [
             ",\"metadata\":{\"unknown\":false}", ",\"output\":{\"future\":true}", ",\"future\":1", ",\"metadata\":null",
@@ -37,15 +37,15 @@ struct ProjectTests {
             "{\"version\":1,\"version\":1}",
             "{\"version\":1,\"inputs\":{\"audio\":\"a\",\"\\u0061udio\":\"b\",\"lyrics\":\"c\"}}",
         ] {
-            #expect(throws: InputError.self) { try ExperimentalProject.parse(Data(json.utf8), at: base) }
+            #expect(throws: InputError.self) { try ProjectSettings.parse(Data(json.utf8), at: base) }
         }
-        #expect(throws: InputError.self) { try ExperimentalProject.parse(Data([255]), at: base) }
+        #expect(throws: InputError.self) { try ProjectSettings.parse(Data([255]), at: base) }
         #expect(throws: InputError.self) {
-            try ExperimentalProject.parse(Data([0xef, 0xbb, 0xbf]) + Data("{}".utf8), at: base)
+            try ProjectSettings.parse(Data([0xef, 0xbb, 0xbf]) + Data("{}".utf8), at: base)
         }
-        #expect(throws: InputError.self) { try ExperimentalProject.parse(Data(repeating: 32, count: 65_537), at: base) }
+        #expect(throws: InputError.self) { try ProjectSettings.parse(Data(repeating: 32, count: 65_537), at: base) }
         let nested = "{\"version\":" + String(repeating: "[", count: 17) + "1" + String(repeating: "]", count: 17) + "}"
-        #expect(throws: InputError.self) { try ExperimentalProject.parse(Data(nested.utf8), at: base) }
+        #expect(throws: InputError.self) { try ProjectSettings.parse(Data(nested.utf8), at: base) }
     }
     @Test func pathsUnicodeAndExactOffset() throws {
         let p = try parse(
@@ -54,7 +54,7 @@ struct ProjectTests {
         #expect(p.audio.path == "/tmp/ilyric-fixture/source.wav" && p.lyrics.path == "/tmp/ilyric-fixture/lines.lrc")
         #expect(p.title.utf8.elementsEqual("e\u{301}・青".utf8))
         #expect(try parse() == parse())
-        let absolute = try ExperimentalProject.parse(
+        let absolute = try ProjectSettings.parse(
             Data("{\"version\":1,\"inputs\":{\"audio\":\"/tmp/source.wav\",\"lyrics\":\"../lines.lrc\"}}".utf8),
             at: base)
         #expect(absolute.audio.path == "/tmp/source.wav" && absolute.lyrics.path == "/tmp/lines.lrc")

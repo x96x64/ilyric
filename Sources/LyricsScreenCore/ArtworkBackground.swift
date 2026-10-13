@@ -98,7 +98,7 @@ public struct ArtworkBackground: Equatable, Sendable {
         return total / Double(n)
     }
 
-    /// Current experimental parameter set; see docs/reports/artwork-background.md for its provenance.
+    /// Current parameter set; see docs/reports/artwork-background.md for its provenance.
     /// Appearance from docs/reference-data/background/fit.json (fold "all"); orbit and rotation refitted to
     /// paused-playback recordings with matched durations (docs/reference-data/background/motion.json).
     /// Spread adaptation fitted on development captures A to D (docs/reports/background-spread-adaptation.md).

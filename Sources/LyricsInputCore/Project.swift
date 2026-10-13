@@ -2,12 +2,12 @@ import Foundation
 import CoreFoundation
 import TimelineCore
 
-/// Experimental versioned settings. Paths are resolved once, independently of rendering.
+/// Versioned project settings. Paths are resolved once, independently of rendering.
 public struct ProjectVisibility: Equatable, Sendable {
     public let artwork, metadata, progress, transport, volume, bottom, handle, translation: Bool
     public let sing: String
 }
-public struct ExperimentalProject: Equatable, Sendable {
+public struct ProjectSettings: Equatable, Sendable {
     public let version: Int
     public let lyricsFormat: LyricsFormat
     public let highlighting: Highlighting
@@ -18,7 +18,7 @@ public struct ExperimentalProject: Equatable, Sendable {
     public let visibility: ProjectVisibility
     public static let byteLimit = 65_536
 
-    public static func parse(_ data: Data, at url: URL) throws -> ExperimentalProject {
+    public static func parse(_ data: Data, at url: URL) throws -> ProjectSettings {
         guard data.count <= byteLimit, !data.starts(with: [0xef, 0xbb, 0xbf]),
             String(data: data, encoding: .utf8) != nil
         else {
@@ -35,7 +35,7 @@ public struct ExperimentalProject: Equatable, Sendable {
         let root = try Object(json, "project", ["version", "inputs", "metadata", "timing", "output", "visibility"])
         let version = try root.integer("version", required: true)!
         guard [1, 2, 3].contains(version) else {
-            throw InputError.invalid("Unsupported experimental project version; expected 1, 2, or 3")
+            throw InputError.invalid("Unsupported project version; expected 1, 2, or 3")
         }
         let input = try root.object(
             "inputs", required: true,

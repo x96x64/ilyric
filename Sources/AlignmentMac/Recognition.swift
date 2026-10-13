@@ -75,40 +75,6 @@ public final class RecognitionModel {
     }
 }
 
-/// Mono 16-kHz Float samples from an audio file; multichannel input is averaged.
-public func readMono16k(_ url: URL) throws -> [Float] {
-    let file = try AVAudioFile(forReading: url)
-    let target = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16000, channels: 1, interleaved: false)!
-    let source = file.processingFormat
-    guard let input = AVAudioPCMBuffer(pcmFormat: source, frameCapacity: AVAudioFrameCount(file.length)) else {
-        throw AlignmentError.invalid("Audio buffer allocation failed")
-    }
-    try file.read(into: input)
-    if source.sampleRate == 16000 && source.channelCount == 1 {
-        return Array(UnsafeBufferPointer(start: input.floatChannelData![0], count: Int(input.frameLength)))
-    }
-    guard let converter = AVAudioConverter(from: source, to: target) else {
-        throw AlignmentError.invalid("Unsupported audio format")
-    }
-    let capacity = AVAudioFrameCount(Double(input.frameLength) * 16000 / source.sampleRate) + 1024
-    guard let output = AVAudioPCMBuffer(pcmFormat: target, frameCapacity: capacity) else {
-        throw AlignmentError.invalid("Audio buffer allocation failed")
-    }
-    var consumed = false
-    var error: NSError?
-    converter.convert(to: output, error: &error) { _, status in
-        if consumed {
-            status.pointee = .endOfStream
-            return nil
-        }
-        consumed = true
-        status.pointee = .haveData
-        return input
-    }
-    if let error { throw error }
-    return Array(UnsafeBufferPointer(start: output.floatChannelData![0], count: Int(output.frameLength)))
-}
-
 /// Complete native line and word alignment of separated vocals against untimed lyrics.
 /// `neighbourAcceptance` selects the version 3 acceptance rules; the default reproduces the Python reference (version 2).
 public func alignLyrics(

@@ -1,7 +1,7 @@
 import Foundation
 import TimelineCore
 
-/// Bounded experimental inputs. Capture onset is not inferred from media time.
+/// Bounded composition inputs. Capture onset is not inferred from media time.
 public struct FocusEvent: Sendable {
     public let time: Time
     public let order, paragraph: Int

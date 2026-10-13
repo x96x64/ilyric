@@ -73,7 +73,7 @@ struct EnhancedTests {
     }
     @Test func projectCompatibility() throws {
         let url = URL(fileURLWithPath: "/tmp/example/project.json")
-        func project(_ json: String) throws -> ExperimentalProject { try .parse(Data(json.utf8), at: url) }
+        func project(_ json: String) throws -> ProjectSettings { try .parse(Data(json.utf8), at: url) }
         let v2 = try project(
             #"{"version":2,"inputs":{"audio":"audio.wav","lyrics":"lines.lrc","lyricsFormat":"enhanced-lrc"},"timing":{"highlighting":"disabled","offsetMilliseconds":125}}"#
         )

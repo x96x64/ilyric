@@ -103,7 +103,7 @@ public enum ControlTransition {
         return (offsets[i] + (offsets[i + 1] - offsets[i]) * f, opacities[i] + (opacities[i + 1] - opacities[i]) * f)
     }
 }
-/// Small fixed Music-like experimental composition, not a generic UI tree.
+/// The fixed Music-like screen composition, not a generic UI tree.
 public struct LyricsScreen: Sendable {
     public let composition: LyricsComposition
     public var canvas: LyricsCanvas { composition.canvas }
@@ -135,7 +135,7 @@ public struct LyricsScreen: Sendable {
             !title.isEmpty, !artist.isEmpty, title.utf16.count <= 80, artist.utf16.count <= 80,
             !events.isEmpty, Set(events.map(\.order)).count == events.count,
             events.allSatisfy({ $0.time >= Time(0) })
-        else { throw ScreenError.invalid("Experimental screen inputs") }
+        else { throw ScreenError.invalid("Screen input violates its constraints") }
         let sorted = events.sorted { $0.time == $1.time ? $0.order < $1.order : $0.time < $1.time }
         guard sorted[0].time == Time(0) else { throw ScreenError.invalid("Initial screen controls required") }
         self.composition = composition

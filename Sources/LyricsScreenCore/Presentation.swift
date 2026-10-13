@@ -32,7 +32,7 @@ public struct ParagraphParameters: Codable, Equatable, Sendable {
     public var lineAdvance = 123.0, amplitude = 6.0, tau = 0.195, dimOpacity = 0.42
     public init() {}
 }
-/// Optional experimental spatial appearance; nil preserves the original hard wipe.
+/// Optional spatial appearance; nil preserves the original hard wipe.
 /// Intervals remain explicit inputs, not inferred native lyric timestamps.
 public struct SoftAppearance: Codable, Equatable, Sendable {
     public var intervalScale = 3.0, phaseOffset = 0.0, softness = 1.0, completedOpacity = 0.981
@@ -42,7 +42,7 @@ public struct SoftAppearance: Codable, Equatable, Sendable {
             (1...6).contains(intervalScale), (-1...1).contains(phaseOffset),
             (0.25...3).contains(softness), (0.9...1).contains(completedOpacity)
         else {
-            throw ScreenError.invalid("Experimental appearance bounds")
+            throw ScreenError.invalid("Appearance parameters out of bounds")
         }
     }
     public func fraction(position: Double, phase: Double?) -> Double {
@@ -185,7 +185,7 @@ public struct ParagraphInput: Codable, Sendable {
             (0...150).contains(p.originX), (500...900).contains(p.originY),
             (110...140).contains(p.lineAdvance), (0...10).contains(p.amplitude),
             (0.08...0.4).contains(p.tau), (0...1).contains(p.dimOpacity)
-        else { throw ScreenError.invalid("Experimental paragraph constraints") }
+        else { throw ScreenError.invalid("Paragraph input violates its constraints") }
         var boundaries = Set([0])
         var boundary = 0
         for c in text {

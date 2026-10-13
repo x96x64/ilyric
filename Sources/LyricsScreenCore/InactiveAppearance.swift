@@ -4,7 +4,7 @@ import TimelineCore
 public struct InactiveAppearance: Equatable, Sendable {
     public let blur, opacity: Double
 }
-/// Experimental Latin reconstruction. Eight-pixel blur and 0.15-second ingress
+/// Latin reconstruction of the inactive-line appearance. Eight-pixel blur and 0.15-second ingress
 /// are bounded fits; contrast ratio 0.42 is qualified, not measured native alpha.
 public enum InactiveTreatment {
     public static func evaluate(_ time: Time, paragraph: Int, events: [FocusEvent]) -> InactiveAppearance {

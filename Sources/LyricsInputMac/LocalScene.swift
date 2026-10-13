@@ -55,7 +55,7 @@ public struct LocalPresentation: Sendable {
     public static let measuredMotion = (focusLead: Time(9, 10), stagger: FocusStagger.measured)
 }
 
-/// Experimental paragraph focus with optional explicitly supplied segment appearance.
+/// A lyrics scene: paragraph focus, timing, and presentation for one recording.
 public final class LocalScene {
     /// Space between consecutive paragraphs beyond the line advance, in native pixels.
     public static let paragraphSpacing = 75.0
@@ -81,7 +81,7 @@ public final class LocalScene {
     }
     /// `title` and `artist` override the project's header labels; `credits` names the songwriters shown after the last line.
     public init(
-        lyrics: LocalLyrics, audio: LocalAudio, project: ExperimentalProject? = nil, artwork: CGImage? = nil,
+        lyrics: LocalLyrics, audio: LocalAudio, project: ProjectSettings? = nil, artwork: CGImage? = nil,
         highlighting: Highlighting = .enabled,
         presentation: LocalPresentation = .init(), title: String? = nil, artist: String? = nil, credits: String? = nil,
         placeholderArtwork: Bool = false
