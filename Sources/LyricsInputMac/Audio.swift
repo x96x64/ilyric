@@ -24,28 +24,59 @@ public struct LocalAudio: Sendable {
     public init(samples: [Int16], stereo: [Int16]? = nil, sourceRate: Double, sourceChannels: Int, sourceFormat: UInt32) {
         self.samples=samples;self.stereo=stereo;self.sourceRate=sourceRate;self.sourceChannels=sourceChannels;self.sourceFormat=sourceFormat
     }
-    public static func decode(_ url: URL) async throws -> LocalAudio {
+    /// Largest accepted audio file; files are read incrementally, so this bounds work rather than memory.
+    public static let maximumBytes=2*1024*1024*1024
+    /// Sources above this rate are decoded directly at 48 kHz; at or below it they keep their source rate until the
+    /// existing resampling step, so their output is unchanged.
+    static let directDecodeAbove=96_000.0
+
+    /// The audio checks that need no decoding, for rejecting unsupported input before alignment starts.
+    public struct Inspection: @unchecked Sendable {
+        let asset: AVURLAsset, track: AVAssetTrack, format: AudioStreamBasicDescription, range: CMTimeRange
+        public var sampleRate: Double { format.mSampleRate }
+        public var channels: Int { Int(format.mChannelsPerFrame) }
+    }
+
+    public static func inspect(_ url: URL) async throws -> Inspection {
         let values: URLResourceValues
         do { values=try url.resourceValues(forKeys:[.isRegularFileKey,.fileSizeKey,.isReadableKey]) }
         catch { throw InputError.invalid("Audio file is missing or inaccessible") }
-        guard values.isRegularFile==true,values.isReadable==true,let bytes=values.fileSize,bytes>0,bytes<=256*1024*1024 else { throw InputError.invalid("Audio must be a readable regular file no larger than 256 MiB") }
+        guard values.isRegularFile==true,values.isReadable==true,let bytes=values.fileSize,bytes>0 else { throw InputError.invalid("Audio must be a readable, nonempty regular file") }
+        guard bytes<=maximumBytes else { throw InputError.invalid("Audio file is \(bytes/1_048_576) MiB; at most \(maximumBytes/1_073_741_824) GiB is supported") }
         let asset=AVURLAsset(url:url)
         do {
             guard try await !asset.load(.hasProtectedContent) else { throw InputError.invalid("Protected audio is unsupported") }
             let tracks=try await asset.loadTracks(withMediaType:.audio)
-            guard tracks.count==1 else { throw InputError.invalid("Exactly one audio track is required") }
+            guard tracks.count==1 else { throw InputError.invalid("Exactly one audio track is required; the file has \(tracks.count)") }
             let track=tracks[0],descriptions=try await track.load(.formatDescriptions),range=try await track.load(.timeRange)
             guard let description=descriptions.first,let asbd=CMAudioFormatDescriptionGetStreamBasicDescription(description)?.pointee,
-                  asbd.mSampleRate.isFinite,(8_000...96_000).contains(asbd.mSampleRate),asbd.mSampleRate.rounded()==asbd.mSampleRate,(1...2).contains(asbd.mChannelsPerFrame),
-                  range.start.isNumeric,range.duration.isNumeric,range.start >= .zero,range.duration > .zero else { throw InputError.invalid("Unsupported audio format, channels, or presentation range") }
+                  asbd.mSampleRate.isFinite,asbd.mSampleRate.rounded()==asbd.mSampleRate,
+                  range.start.isNumeric,range.duration.isNumeric,range.start >= .zero,range.duration > .zero else { throw InputError.invalid("Unsupported audio format or presentation range") }
+            guard (8_000...384_000).contains(asbd.mSampleRate) else {
+                throw InputError.invalid("Audio sample rate \(Int(asbd.mSampleRate)) Hz is unsupported; 8 kHz to 384 kHz is supported")
+            }
+            guard (1...2).contains(asbd.mChannelsPerFrame) else {
+                throw InputError.invalid("Audio has \(asbd.mChannelsPerFrame) channels; only mono and stereo are supported, so mix it down to stereo first")
+            }
+            guard CMTimeGetSeconds(CMTimeAdd(range.start,range.duration))<=Double(InputLimits.maximumSeconds) else { throw InputError.invalid("Audio exceeds the twenty-minute bound") }
+            return Inspection(asset:asset,track:track,format:asbd,range:range)
+        } catch let error as InputError { throw error }
+        catch { throw InputError.invalid("Audio inspection failed; use an unprotected local file supported by AVFoundation") }
+    }
+
+    public static func decode(_ url: URL) async throws -> LocalAudio {
+        let inspection=try await inspect(url)
+        let asset=inspection.asset,track=inspection.track,asbd=inspection.format,range=inspection.range
+        do {
             let endpoint=CMTimeAdd(range.start,range.duration)
-            guard CMTimeGetSeconds(endpoint)<=Double(InputLimits.maximumSeconds) else { throw InputError.invalid("Audio exceeds the twenty-minute bound") }
-            let rate=Int32(asbd.mSampleRate),channels=Int(asbd.mChannelsPerFrame)
+            // High-resolution sources are converted by the decoder itself to 48 kHz, the export rate.
+            let decodeRate=asbd.mSampleRate>directDecodeAbove ? 48_000 : asbd.mSampleRate
+            let rate=Int32(decodeRate),channels=Int(asbd.mChannelsPerFrame)
             let declaredEnd=Int(CMTimeConvertScale(endpoint,timescale:rate,method:.roundHalfAwayFromZero).value)
             guard declaredEnd>0 else { throw InputError.invalid("Audio presentation is shorter than one source sample") }
             let reader=try AVAssetReader(asset:asset)
             let output=AVAssetReaderTrackOutput(track:track,outputSettings:[
-                AVFormatIDKey:kAudioFormatLinearPCM,AVSampleRateKey:asbd.mSampleRate,AVNumberOfChannelsKey:channels,
+                AVFormatIDKey:kAudioFormatLinearPCM,AVSampleRateKey:decodeRate,AVNumberOfChannelsKey:channels,
                 AVLinearPCMBitDepthKey:16,AVLinearPCMIsFloatKey:false,
                 AVLinearPCMIsBigEndianKey:false,AVLinearPCMIsNonInterleaved:false])
             output.alwaysCopiesSampleData=false
@@ -75,7 +106,8 @@ public struct LocalAudio: Sendable {
             let frameCount=samples.count/channels
             // The endpoint is quantized to the track's time scale (for example 1/600 s), so decoding may end short
             // of it by up to one tick; that remainder is padded with silence.
-            let tick=Int((Double(rate)/Double(endpoint.timescale)).rounded(.up))+1
+            // A decoder that also resamples may end a few output frames early as well (at most 64, 1.3 ms at 48 kHz).
+            let tick=Int((Double(rate)/Double(endpoint.timescale)).rounded(.up))+1+(decodeRate != asbd.mSampleRate ? 64 : 0)
             guard frameCount>=declaredEnd-tick,frameCount-declaredEnd<=4096 else { throw InputError.invalid("Decoded audio duration disagrees with its track endpoint (decoded \(frameCount) frames, declared \(declaredEnd))") }
             if frameCount>declaredEnd { samples.removeLast((frameCount-declaredEnd)*channels) }
             if frameCount<declaredEnd { samples.append(contentsOf:Array(repeating:0,count:(declaredEnd-frameCount)*channels)) }

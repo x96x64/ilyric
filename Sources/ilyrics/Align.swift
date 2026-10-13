@@ -3,6 +3,8 @@ import CoreML
 import AlignmentCore
 import AlignmentMac
 import ProgressDisplay
+import LyricsInputCore
+import LyricsInputMac
 
 /// Automatic alignment of untimed lyrics, shared by `align` and `render`.
 enum Align {
@@ -139,6 +141,7 @@ enum Align {
         guard !["ttml","lrc"].contains(lyrics.pathExtension.lowercased()) else { throw Failure(message:"\(lyrics.lastPathComponent) is already timed; 'align' takes untimed text") }
         let target=try checkOutput(output,force:options.has("force"))
         let started=Date()
+        do { _=try await LocalAudio.inspect(audio) } catch let error as InputError { throw Failure(message:"\(audio.lastPathComponent): \(error)") }
         let result=try await run(audio:audio,lyrics:lyrics,keepAdLibs:options.has("keep-ad-libs"),fast:options.has("fast"),console:console)
         try result.ttml.write(to:target,atomically:true,encoding:.utf8)
         try writeReport(result.report,to:options.values["report"])

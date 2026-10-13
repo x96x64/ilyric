@@ -69,6 +69,8 @@ enum Render {
         }
         let target=try checkOutput(output,force:options.has("force")).standardizedFileURL
         let started=Date()
+        // Reject unsupported audio before alignment, which would otherwise run first and fail only at export.
+        do { _=try await LocalAudio.inspect(audioURL) } catch let error as InputError { throw Failure(message:"\(audioURL.lastPathComponent): \(error)") }
 
         // Lyrics: align untimed text, or parse supplied timing.
         var report:[String:Any]=["format":"ilyrics-render-report-1"]
