@@ -198,7 +198,8 @@ private final class TTMLReader: NSObject, XMLParserDelegate {
                 let node=backgrounds[0],words=try text(node).trimmingCharacters(in:.whitespacesAndNewlines)
                 guard !words.isEmpty,words.utf16.count<300,!words.contains("\n") else {throw InputError.invalid("TTML background vocals must be one nonempty line")}
                 let timing=try interval(node,range,required:false)
-                entry.background=BackgroundVocal(text:words,begin:timing.0,end:timing.1)
+                let explicit=node.attributes["begin"] != nil && (node.attributes["end"] != nil || node.attributes["dur"] != nil)
+                entry.background=BackgroundVocal(text:words,begin:timing.0,end:timing.1,hasExplicitTiming:explicit)
             }
             entries.append(entry)
         }

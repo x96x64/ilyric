@@ -124,7 +124,7 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    /// Optional background vocals by paragraph index, shown while the paragraph holds focus.
+    /// Optional backing text by paragraph index; inherited cues retain dim ink independently of focus.
     public var secondary: [Int:SecondaryLine] = [:]
     /// Optional songwriter credits, such as "Written By: A, B", shown below the last paragraph.
     public var credits: String? { didSet { creditLines=nil } }
@@ -176,9 +176,11 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    /// Unfilled ink at the paragraph's dim opacity, then filled ink through a soft left-to-right ramp.
+    /// Inherited cues retain unfilled ink; explicit cues retain focus-weighted ink and the soft fill ramp.
     private func drawSecondary(_ i:Int,translation:Double,weight:Double,time:Time,into c:CGContext) {
-        guard let s=secondary[i],weight>0 else { return }
+        guard let s=secondary[i] else { return }
+        let inkWeight=s.hasExplicitTiming ? weight : 1
+        guard inkWeight>0 else { return }
         let input=lyrics.paragraphs[i].input,p=input.parameters,lines=wrappedSecondary(i),edge=30.0
         let count=Double(lyrics.paragraphs[i].lines.count)
         let widths=lines.map { CTLineGetTypographicBounds($0,nil,nil,nil) },total=widths.reduce(0,+)
@@ -188,7 +190,7 @@ public final class ScreenRenderer {
         for (k,line) in lines.enumerated() {
             let baseline=p.originY+(count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset+Double(k)*p.lineAdvance*SecondaryLine.sizeRatio
             let y=2556-baseline,x=p.originX+(input.rightAligned == true ? p.width-widths[k] : 0)
-            c.setAlpha(weight*SecondaryLine.unfilledOpacity);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
+            c.setAlpha(inkWeight*SecondaryLine.unfilledOpacity);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
             let local=front-preceding
             if local>0 {
                 let w=Int(ceil(widths[k]))+2,bytes=(0..<w).map { UInt8((min(1,max(0,(local-Double($0)-0.5)/edge+0.5))*255).rounded()) }
@@ -196,7 +198,7 @@ public final class ScreenRenderer {
                     provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:true,intent:.defaultIntent)!
                 c.saveGState();c.clip(to:CGRect(x:x,y:y-p.size,width:Double(w),height:p.size*2),mask:mask)
                 // Filled ink composites over the unfilled ink, so its own alpha completes the measured opacity.
-                c.setAlpha(weight*(SecondaryLine.filledOpacity-SecondaryLine.unfilledOpacity)/(1-SecondaryLine.unfilledOpacity))
+                c.setAlpha(inkWeight*(SecondaryLine.filledOpacity-SecondaryLine.unfilledOpacity)/(1-SecondaryLine.unfilledOpacity))
                 c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c);c.restoreGState()
             }
             preceding+=widths[k]
@@ -239,7 +241,13 @@ public final class ScreenRenderer {
                 let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
                 let top=input.parameters.originY+p.translationY-40
                 let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
-                if bottom<v.y || top>v.y+v.height { continue }
+                if bottom<v.y || top>v.y+v.height {
+                    // The secondary band can remain in view after its main paragraph leaves the viewport.
+                    if secondary[p.index]?.hasExplicitTiming == false {
+                        drawSecondary(p.index,translation:p.translationY,weight:1,time:state.output,into:c)
+                    }
+                    continue
+                }
             }
             let style=lyrics.paragraphs[p.index].input.paragraphStyle
             let tiles=calibratedInactive && (style == .latinStatic || style == .latinTimed) ? try tileCache.tiles(p.index) {

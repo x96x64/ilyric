@@ -15,7 +15,14 @@ public enum InputError: Error, CustomStringConvertible {
 public struct BackgroundVocal: Equatable, Sendable {
     public let text: String
     public let begin, end: Time
-    public init(text: String, begin: Time, end: Time) { self.text=text;self.begin=begin;self.end=end }
+    /// Internal timing provenance; inherited parent bounds are not independently supplied backing timing.
+    package let hasExplicitTiming: Bool
+    public init(text: String, begin: Time, end: Time) {
+        self.init(text:text,begin:begin,end:end,hasExplicitTiming:false)
+    }
+    package init(text: String, begin: Time, end: Time, hasExplicitTiming: Bool) {
+        self.text=text;self.begin=begin;self.end=end;self.hasExplicitTiming=hasExplicitTiming
+    }
 }
 public struct LyricEntry: Equatable, Sendable {
     public let time: Time

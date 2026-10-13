@@ -164,7 +164,7 @@ public extension LocalLyrics {
         let offset=Time(milliseconds,1000)
         let shifted=entries.map { e -> LyricEntry in
             var entry=LyricEntry(time:e.time+offset,text:e.text,sourceLine:e.sourceLine,suppliedBreaks:e.suppliedBreaks,segments:e.segments.map { $0.shifted(offset) },intervalEnd:e.intervalEnd.map { $0+offset })
-            entry.background=e.background.map { BackgroundVocal(text:$0.text,begin:$0.begin+offset,end:$0.end+offset) }
+            entry.background=e.background.map { BackgroundVocal(text:$0.text,begin:$0.begin+offset,end:$0.end+offset,hasExplicitTiming:$0.hasExplicitTiming) }
             return entry
         }
         let limit=Time(Int64(InputLimits.maximumSeconds))

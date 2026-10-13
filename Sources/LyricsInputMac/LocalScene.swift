@@ -102,7 +102,7 @@ public final class LocalScene {
             events.append(.init(led>previous ? led : max(previous,Time(0)),order:i+1,paragraph:paragraphs.count))
             if let bg=entry.background {
                 let lead=presentation.fillLead,begin=max(Time(0),bg.begin-lead)
-                secondary[paragraphs.count]=try SecondaryLine(text:bg.text,begin:begin,end:max(begin+Time(1,1000),bg.end-lead))
+                secondary[paragraphs.count]=try SecondaryLine(text:bg.text,begin:begin,end:max(begin+Time(1,1000),bg.end-lead),hasExplicitTiming:bg.hasExplicitTiming)
             }
             paragraphs.append(.init(input:input,position:position,begin:entry.time,end:end))
             lastEnd=end
