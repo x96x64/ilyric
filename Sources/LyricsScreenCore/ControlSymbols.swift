@@ -32,29 +32,65 @@ public struct ControlSymbol: Equatable, Sendable {
 public enum ControlSymbols {
     public static let nativeScale = 3.0
     public static func symbol(for part: ScreenPart, playing: Bool, canvas: LyricsCanvas = .native) -> ControlSymbol? {
-        guard let native = nativeSymbol(for:part,playing:playing) else { return nil }
-        let shift = canvas.offset(for:part)
-        return .init(name:native.name,pointSize:native.pointSize,weight:native.weight,opacity:native.opacity,
-            centerX:native.centerX+shift.x,centerY:native.centerY+shift.y,
-            disc:native.disc,discOpacity:native.discOpacity,knockout:native.knockout)
+        guard let native = nativeSymbol(for: part, playing: playing) else { return nil }
+        let shift = canvas.offset(for: part)
+        return .init(
+            name: native.name, pointSize: native.pointSize, weight: native.weight, opacity: native.opacity,
+            centerX: native.centerX + shift.x, centerY: native.centerY + shift.y,
+            disc: native.disc, discOpacity: native.discOpacity, knockout: native.knockout)
     }
     private static func nativeSymbol(for part: ScreenPart, playing: Bool) -> ControlSymbol? {
         switch part {
         // Development recordings: 56–57 × 12–13 px at (1035–1035.5, 383.5–384).
         // Runtime size and weight fit ink geometry; encoded-white opacity is estimated.
-        case .more: return .init(name:"ellipsis",pointSize:20,weight:.medium,opacity:1,centerX:1035,centerY:384,disc:nil,discOpacity:0,knockout:false)
-        case .previous: return .init(name:"backward.fill",pointSize:29,weight:.semibold,opacity:1,centerX:269.5,centerY:1948,disc:nil,discOpacity:0,knockout:false)
-        case .next: return .init(name:"forward.fill",pointSize:29,weight:.semibold,opacity:1,centerX:910,centerY:1948,disc:nil,discOpacity:0,knockout:false)
+        case .more:
+            return .init(
+                name: "ellipsis", pointSize: 20, weight: .medium, opacity: 1, centerX: 1035, centerY: 384, disc: nil,
+                discOpacity: 0, knockout: false)
+        case .previous:
+            return .init(
+                name: "backward.fill", pointSize: 29, weight: .semibold, opacity: 1, centerX: 269.5, centerY: 1948,
+                disc: nil, discOpacity: 0, knockout: false)
+        case .next:
+            return .init(
+                name: "forward.fill", pointSize: 29, weight: .semibold, opacity: 1, centerX: 910, centerY: 1948,
+                disc: nil, discOpacity: 0, knockout: false)
         case .playback:
-            return playing ? .init(name:"pause.fill",pointSize:47,weight:.semibold,opacity:1,centerX:590,centerY:1948.5,disc:nil,discOpacity:0,knockout:false)
-                           : .init(name:"play.fill",pointSize:40,weight:.semibold,opacity:1,centerX:595.5,centerY:1949.5,disc:nil,discOpacity:0,knockout:false)
-        case .volumeLow: return .init(name:"speaker.fill",pointSize:13.5,weight:.medium,opacity:0.56,centerX:114,centerY:2203.5,disc:nil,discOpacity:0,knockout:false)
-        case .volumeHigh: return .init(name:"speaker.wave.3.fill",pointSize:13.5,weight:.medium,opacity:0.58,centerX:1048.5,centerY:2203.5,disc:nil,discOpacity:0,knockout:false)
-        case .bottomLeft: return .init(name:"quote.bubble.fill",pointSize:21,weight:.regular,opacity:1,centerX:248,centerY:2361,disc:114,discOpacity:0.57,knockout:true)
-        case .bottomCenter: return .init(name:"airplay.audio",pointSize:21,weight:.medium,opacity:0.69,centerX:590.5,centerY:2358,disc:nil,discOpacity:0,knockout:false)
-        case .bottomRight: return .init(name:"list.bullet",pointSize:21,weight:.medium,opacity:0.57,centerX:931.5,centerY:2358.5,disc:nil,discOpacity:0,knockout:false)
-        case .translation: return .init(name:"translate",pointSize:17,weight:.medium,opacity:1,centerX:153,centerY:1531,disc:84,discOpacity:0.30,knockout:false)
-        case .singCompact: return .init(name:"music.mic",pointSize:20,weight:.semibold,opacity:1,centerX:1026,centerY:1532.5,disc:84,discOpacity:0.30,knockout:false)
+            return playing
+                ? .init(
+                    name: "pause.fill", pointSize: 47, weight: .semibold, opacity: 1, centerX: 590, centerY: 1948.5,
+                    disc: nil, discOpacity: 0, knockout: false)
+                : .init(
+                    name: "play.fill", pointSize: 40, weight: .semibold, opacity: 1, centerX: 595.5, centerY: 1949.5,
+                    disc: nil, discOpacity: 0, knockout: false)
+        case .volumeLow:
+            return .init(
+                name: "speaker.fill", pointSize: 13.5, weight: .medium, opacity: 0.56, centerX: 114, centerY: 2203.5,
+                disc: nil, discOpacity: 0, knockout: false)
+        case .volumeHigh:
+            return .init(
+                name: "speaker.wave.3.fill", pointSize: 13.5, weight: .medium, opacity: 0.58, centerX: 1048.5,
+                centerY: 2203.5, disc: nil, discOpacity: 0, knockout: false)
+        case .bottomLeft:
+            return .init(
+                name: "quote.bubble.fill", pointSize: 21, weight: .regular, opacity: 1, centerX: 248, centerY: 2361,
+                disc: 114, discOpacity: 0.57, knockout: true)
+        case .bottomCenter:
+            return .init(
+                name: "airplay.audio", pointSize: 21, weight: .medium, opacity: 0.69, centerX: 590.5, centerY: 2358,
+                disc: nil, discOpacity: 0, knockout: false)
+        case .bottomRight:
+            return .init(
+                name: "list.bullet", pointSize: 21, weight: .medium, opacity: 0.57, centerX: 931.5, centerY: 2358.5,
+                disc: nil, discOpacity: 0, knockout: false)
+        case .translation:
+            return .init(
+                name: "translate", pointSize: 17, weight: .medium, opacity: 1, centerX: 153, centerY: 1531, disc: 84,
+                discOpacity: 0.30, knockout: false)
+        case .singCompact:
+            return .init(
+                name: "music.mic", pointSize: 20, weight: .semibold, opacity: 1, centerX: 1026, centerY: 1532.5,
+                disc: 84, discOpacity: 0.30, knockout: false)
         default: return nil
         }
     }

@@ -8,207 +8,357 @@ import LyricsScreenCore
 import LyricsScreenMac
 
 struct TTMLTests {
-    func parse(_ p:String,outer:String="") throws -> LocalLyrics {
-        try TTMLParser.parse(Data("<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body \(outer)><div>\(p)</div></body></tt>".utf8))
+    func parse(_ p: String, outer: String = "") throws -> LocalLyrics {
+        try TTMLParser.parse(
+            Data(
+                "<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body \(outer)><div>\(p)</div></body></tt>"
+                    .utf8))
     }
     @Test func exactExpressionsAndParentResolution() throws {
-        #expect(try TTMLParser.time("00:00:01.000001")==Time(1_000_001,1_000_000))
-        #expect(try TTMLParser.time("0.001ms")==Time(1,1_000_000))
-        #expect(try TTMLParser.time("0.1m")==Time(6))
-        #expect(try TTMLParser.time("0.01h")==Time(36))
-        let input=try parse("<p begin=\"0.025s\" dur=\"2s\"><span begin=\"0.001234s\" end=\"0.201234s\">Paper </span><br/><span begin=\"1s\" dur=\"0.5s\">skies.</span></p>",outer:"begin=\"0.1s\" end=\"3s\"")
-        let e=input.entries[0]
-        #expect(e.time==Time(1,8) && e.intervalEnd==Time(17,8))
-        #expect(e.segments[0].begin==Time(126234,1_000_000))
-        #expect(e.segments[1].start==7 && e.text=="Paper \nskies." && e.suppliedBreaks)
-        let offset=try input.applyingProjectOffset(125).entries[0]
-        #expect(offset.time==Time(1,4) && offset.intervalEnd==Time(9,4))
-        #expect(offset.segments[0].begin==Time(251234,1_000_000))
-        for bad in ["1","1f","1t","wallclock(12:00:00)","-1s","+1s","1e2s",".1s","1.1234567s","00:00:60","00:00:01:01","0:00:01","1200.000001s","9999999999h","1 s"] {
-            #expect(throws:InputError.self) {try TTMLParser.time(bad)}
+        #expect(try TTMLParser.time("00:00:01.000001") == Time(1_000_001, 1_000_000))
+        #expect(try TTMLParser.time("0.001ms") == Time(1, 1_000_000))
+        #expect(try TTMLParser.time("0.1m") == Time(6))
+        #expect(try TTMLParser.time("0.01h") == Time(36))
+        let input = try parse(
+            "<p begin=\"0.025s\" dur=\"2s\"><span begin=\"0.001234s\" end=\"0.201234s\">Paper </span><br/><span begin=\"1s\" dur=\"0.5s\">skies.</span></p>",
+            outer: "begin=\"0.1s\" end=\"3s\"")
+        let e = input.entries[0]
+        #expect(e.time == Time(1, 8) && e.intervalEnd == Time(17, 8))
+        #expect(e.segments[0].begin == Time(126234, 1_000_000))
+        #expect(e.segments[1].start == 7 && e.text == "Paper \nskies." && e.suppliedBreaks)
+        let offset = try input.applyingProjectOffset(125).entries[0]
+        #expect(offset.time == Time(1, 4) && offset.intervalEnd == Time(9, 4))
+        #expect(offset.segments[0].begin == Time(251234, 1_000_000))
+        for bad in [
+            "1", "1f", "1t", "wallclock(12:00:00)", "-1s", "+1s", "1e2s", ".1s", "1.1234567s", "00:00:60",
+            "00:00:01:01", "0:00:01", "1200.000001s", "9999999999h", "1 s",
+        ] {
+            #expect(throws: InputError.self) { try TTMLParser.time(bad) }
         }
     }
     @Test func xmlSafetyNamespacesAndLimits() throws {
-        let doc="<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body><div><p begin=\"0s\" end=\"1s\">Paper</p></div></body></tt>"
-        for bad in [Data([0xff]),Data(repeating:65,count:65537),Data("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\(doc)".utf8),Data(("<!DOCTYPE tt SYSTEM \"file:///unavailable\">"+doc).utf8),Data(("<!DOCTYPE tt [<!ENTITY e 'expanded'>]>"+doc).utf8),Data(("<?resource href=\"https://invalid.example/\"?>"+doc).utf8),Data(doc.replacingOccurrences(of:"Paper",with:"&missing;").utf8),Data(doc.replacingOccurrences(of:"http://www.w3.org/ns/ttml",with:"urn:unsupported").utf8),Data(doc.replacingOccurrences(of:"</tt>",with:"").utf8),Data((doc+doc).utf8),Data(doc.replacingOccurrences(of:"xml:space=\"preserve\"",with:"").utf8),Data(doc.replacingOccurrences(of:"xml:space=\"preserve\"",with:"xml:space=\"default\"").utf8)] {
-            #expect(throws:InputError.self) {try TTMLParser.parse(bad)}
+        let doc =
+            "<tt xmlns=\"http://www.w3.org/ns/ttml\" xml:space=\"preserve\"><body><div><p begin=\"0s\" end=\"1s\">Paper</p></div></body></tt>"
+        for bad in [
+            Data([0xff]), Data(repeating: 65, count: 65537),
+            Data("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\(doc)".utf8),
+            Data(("<!DOCTYPE tt SYSTEM \"file:///unavailable\">" + doc).utf8),
+            Data(("<!DOCTYPE tt [<!ENTITY e 'expanded'>]>" + doc).utf8),
+            Data(("<?resource href=\"https://invalid.example/\"?>" + doc).utf8),
+            Data(doc.replacingOccurrences(of: "Paper", with: "&missing;").utf8),
+            Data(doc.replacingOccurrences(of: "http://www.w3.org/ns/ttml", with: "urn:unsupported").utf8),
+            Data(doc.replacingOccurrences(of: "</tt>", with: "").utf8), Data((doc + doc).utf8),
+            Data(doc.replacingOccurrences(of: "xml:space=\"preserve\"", with: "").utf8),
+            Data(doc.replacingOccurrences(of: "xml:space=\"preserve\"", with: "xml:space=\"default\"").utf8),
+        ] {
+            #expect(throws: InputError.self) { try TTMLParser.parse(bad) }
         }
         // UTF-16 without a BOM contains ASCII/NUL bytes that can decode as a UTF-8 String.
         // Refuse it before XML's automatic encoding recognition or declaration handling.
-        let alternate="<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE tt [<!ENTITY e \"expanded\">]>"+doc
-        for encoding in [String.Encoding.utf16LittleEndian,.utf16BigEndian] {
-            let bytes=alternate.data(using:encoding)!
-            #expect(String(data:bytes,encoding:.utf8) != nil)
-            #expect(throws:InputError.self) {try TTMLParser.parse(bytes)}
+        let alternate = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE tt [<!ENTITY e \"expanded\">]>" + doc
+        for encoding in [String.Encoding.utf16LittleEndian, .utf16BigEndian] {
+            let bytes = alternate.data(using: encoding)!
+            #expect(String(data: bytes, encoding: .utf8) != nil)
+            #expect(throws: InputError.self) { try TTMLParser.parse(bytes) }
         }
-        let alias="<t:tt xmlns:t=\"http://www.w3.org/ns/ttml\" xmlns:q=\"http://www.w3.org/ns/ttml#parameter\" q:timeBase=\"media\" xml:space=\"preserve\"><t:body><t:div><t:p begin=\"0s\" dur=\"1s\">A&amp;B&#x301;</t:p></t:div></t:body></t:tt>"
+        let alias =
+            "<t:tt xmlns:t=\"http://www.w3.org/ns/ttml\" xmlns:q=\"http://www.w3.org/ns/ttml#parameter\" q:timeBase=\"media\" xml:space=\"preserve\"><t:body><t:div><t:p begin=\"0s\" dur=\"1s\">A&amp;B&#x301;</t:p></t:div></t:body></t:tt>"
         #expect(try TTMLParser.parse(Data(alias.utf8)).entries[0].text.utf8.elementsEqual("A&B\u{301}".utf8))
-        #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"<span>",count:20)+"A"+String(repeating:"</span>",count:20)+"</p>")}
-        #expect(throws:InputError.self) {try parse(String(repeating:"<p begin=\"0s\" end=\"1s\">A</p>",count:257))}
-        #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"x",count:500)+"</p>")}
-        #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"1s\">"+String(repeating:"<br/>",count:1024)+"A</p>")}
+        #expect(throws: InputError.self) {
+            try parse(
+                "<p begin=\"0s\" end=\"1s\">" + String(repeating: "<span>", count: 20) + "A"
+                    + String(repeating: "</span>", count: 20) + "</p>")
+        }
+        #expect(throws: InputError.self) {
+            try parse(String(repeating: "<p begin=\"0s\" end=\"1s\">A</p>", count: 257))
+        }
+        #expect(throws: InputError.self) {
+            try parse("<p begin=\"0s\" end=\"1s\">" + String(repeating: "x", count: 500) + "</p>")
+        }
+        #expect(throws: InputError.self) {
+            try parse("<p begin=\"0s\" end=\"1s\">" + String(repeating: "<br/>", count: 1024) + "A</p>")
+        }
     }
     @Test func unsupportedIntervalsStructureAndUnicode() throws {
-        for p in ["<p>Text</p>","<p begin=\"0s\">A</p>","<p begin=\"0s\" dur=\"0s\">A</p>","<p begin=\"0s\" end=\"1s\" dur=\"1s\">A</p>","<p begin=\"1s\" end=\"2s\">A</p><p begin=\"0s\" end=\"1s\">B</p>","<p begin=\"0s\" end=\"2s\">A</p><p begin=\"1s\" end=\"3s\">B</p>","<p begin=\"0s\" end=\"1s\" timeContainer=\"seq\">A</p>","<p begin=\"0s\" end=\"1s\" style=\"unimplemented\">A</p>","<p begin=\"0s\" end=\"1s\"><span begin=\"0s\" end=\"2s\">A</span></p>","<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">A</span> <span begin=\"1s\" end=\"2s\">B</span></p>","<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1.1s\">A</span><span begin=\"1s\" end=\"2s\">B</span></p>","<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">e</span><span begin=\"1s\" end=\"2s\">&#x301;</span></p>","<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">👩</span><span begin=\"1s\" end=\"2s\">‍💻</span></p>","<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">✈</span><span begin=\"1s\" end=\"2s\">️</span></p>","<p begin=\"0s\" end=\"1s\">A\nB</p>","<p begin=\"0s\" end=\"1s\"><![CDATA[A\tB]]></p>"] {
-            #expect(throws:InputError.self) {try parse(p)}
+        for p in [
+            "<p>Text</p>", "<p begin=\"0s\">A</p>", "<p begin=\"0s\" dur=\"0s\">A</p>",
+            "<p begin=\"0s\" end=\"1s\" dur=\"1s\">A</p>",
+            "<p begin=\"1s\" end=\"2s\">A</p><p begin=\"0s\" end=\"1s\">B</p>",
+            "<p begin=\"0s\" end=\"2s\">A</p><p begin=\"1s\" end=\"3s\">B</p>",
+            "<p begin=\"0s\" end=\"1s\" timeContainer=\"seq\">A</p>",
+            "<p begin=\"0s\" end=\"1s\" style=\"unimplemented\">A</p>",
+            "<p begin=\"0s\" end=\"1s\"><span begin=\"0s\" end=\"2s\">A</span></p>",
+            "<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">A</span> <span begin=\"1s\" end=\"2s\">B</span></p>",
+            "<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1.1s\">A</span><span begin=\"1s\" end=\"2s\">B</span></p>",
+            "<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">e</span><span begin=\"1s\" end=\"2s\">&#x301;</span></p>",
+            "<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">👩</span><span begin=\"1s\" end=\"2s\">‍💻</span></p>",
+            "<p begin=\"0s\" end=\"2s\"><span begin=\"0s\" end=\"1s\">✈</span><span begin=\"1s\" end=\"2s\">️</span></p>",
+            "<p begin=\"0s\" end=\"1s\">A\nB</p>", "<p begin=\"0s\" end=\"1s\"><![CDATA[A\tB]]></p>",
+        ] {
+            #expect(throws: InputError.self) { try parse(p) }
         }
-        #expect(throws:InputError.self) {try parse("<p begin=\"0s\" end=\"3s\">A</p>",outer:"end=\"2s\"")}
-        let original="e\u{301} 👩‍💻 ✈️, AV office."
-        #expect(try parse("<p begin=\"0s\" end=\"1s\"><![CDATA[\(original)]]></p>").entries[0].text.utf8.elementsEqual(original.utf8))
+        #expect(throws: InputError.self) { try parse("<p begin=\"0s\" end=\"3s\">A</p>", outer: "end=\"2s\"") }
+        let original = "e\u{301} 👩‍💻 ✈️, AV office."
+        #expect(
+            try parse("<p begin=\"0s\" end=\"1s\"><![CDATA[\(original)]]></p>").entries[0].text.utf8.elementsEqual(
+                original.utf8))
     }
     @Test func explicitEndsAndGapFocus() throws {
-        let input=try parse("<p begin=\"0.125s\" end=\"1.003s\">A</p><p begin=\"2s\" end=\"2.5s\"/><p begin=\"2.5s\" end=\"3s\">B</p>")
-        for (time,focus) in [(Time(0),nil),(Time(1,8),0),(Time(1),0),(Time(1003,1000),nil),(Time(2),nil),(Time(5,2),2),(Time(3),nil)] {
-            #expect(input.focus(at:time)==focus)
+        let input = try parse(
+            "<p begin=\"0.125s\" end=\"1.003s\">A</p><p begin=\"2s\" end=\"2.5s\"/><p begin=\"2.5s\" end=\"3s\">B</p>")
+        for (time, focus) in [
+            (Time(0), nil), (Time(1, 8), 0), (Time(1), 0), (Time(1003, 1000), nil), (Time(2), nil), (Time(5, 2), 2),
+            (Time(3), nil),
+        ] {
+            #expect(input.focus(at: time) == focus)
         }
-        #expect(try input.validate(audioSamples:144000).frames==180)
-        #expect(throws:InputError.self) {try input.validate(audioSamples:143999)}
-        #expect(throws:InputError.self) {try input.applyingProjectOffset(-126)}
+        #expect(try input.validate(audioSamples: 144000).frames == 180)
+        #expect(throws: InputError.self) { try input.validate(audioSamples: 143999) }
+        #expect(throws: InputError.self) { try input.applyingProjectOffset(-126) }
     }
     @Test func configurationCompatibility() throws {
-        func project(_ v:Int,_ format:String) throws -> ExperimentalProject {try .parse(Data("{\"version\":\(v),\"inputs\":{\"audio\":\"a.wav\",\"lyrics\":\"a.ttml\",\"lyricsFormat\":\"\(format)\"},\"timing\":{\"highlighting\":\"disabled\"}}".utf8),at:URL(fileURLWithPath:"/tmp/project.json"))}
-        #expect(try project(3,"ttml").lyricsFormat == .ttml)
-        #expect(try project(3,"enhanced-lrc").lyricsFormat == .enhancedLRC)
-        #expect(try project(2,"enhanced-lrc").version==2)
-        for (v,f) in [(1,"ttml"),(2,"ttml"),(4,"ttml"),(3,"unknown"),(3,"lrc")] {#expect(throws:InputError.self) {try project(v,f)}}
+        func project(_ v: Int, _ format: String) throws -> ExperimentalProject {
+            try .parse(
+                Data(
+                    "{\"version\":\(v),\"inputs\":{\"audio\":\"a.wav\",\"lyrics\":\"a.ttml\",\"lyricsFormat\":\"\(format)\"},\"timing\":{\"highlighting\":\"disabled\"}}"
+                        .utf8), at: URL(fileURLWithPath: "/tmp/project.json"))
+        }
+        #expect(try project(3, "ttml").lyricsFormat == .ttml)
+        #expect(try project(3, "enhanced-lrc").lyricsFormat == .enhancedLRC)
+        #expect(try project(2, "enhanced-lrc").version == 2)
+        for (v, f) in [(1, "ttml"), (2, "ttml"), (4, "ttml"), (3, "unknown"), (3, "lrc")] {
+            #expect(throws: InputError.self) { try project(v, f) }
+        }
     }
     @Test func equivalenceWholeParagraphAndRandomRaster() async throws {
-        let p="<p begin=\"0.125s\" end=\"2.5s\"><span begin=\"0.075s\" end=\"0.775s\">青い点</span><br/><span begin=\"0.876s\" end=\"2.075s\">二つ置く</span></p><p begin=\"2.5s\" end=\"3s\"><span begin=\"0.1s\" dur=\"0.3s\">Final</span></p>"
-        let ttml=try parse(p),enhanced=try EnhancedTests().parse("[00:00.125]<00:00.200>青い点<00:00.900>\n|<00:01.001>二つ置く<00:02.200>\n[00:02.500]<00:02.600>Final<00:02.900>")
-        let url=try AudioSceneTests().wav();defer {try? FileManager.default.removeItem(at:url)}
-        let audio=try await LocalAudio.decode(url),a=try LocalScene(lyrics:ttml,audio:audio),b=try LocalScene(lyrics:enhanced,audio:audio),off=try LocalScene(lyrics:ttml,audio:audio,highlighting:.disabled)
-        for (t,e) in zip(ttml.entries,enhanced.entries) {#expect(t.time==e.time && t.text==e.text && t.segments==e.segments)}
-        let times=[Time(0),Time(1,8),Time(1),Time(3,2),Time(12,5),Time(5,2),Time(2999,1000)]
-        let states=times.map(a.renderer.screen.evaluate),raw=try times.map {try a.renderer.frame($0).dataProvider!.data! as Data}
-        for i in [6,2,0,4,3,1,5,2] {
-            #expect(a.renderer.screen.evaluate(times[i])==states[i])
-            #expect(try a.renderer.frame(times[i]).dataProvider!.data! as Data==raw[i])
-            #expect(try b.renderer.frame(times[i]).dataProvider!.data! as Data==raw[i])
-            let disabled=off.renderer.screen.evaluate(times[i])
-            #expect(disabled.components==states[i].components && disabled.progress==states[i].progress && disabled.lyrics.focus==states[i].lyrics.focus && disabled.lyrics.scroll==states[i].lyrics.scroll)
+        let p =
+            "<p begin=\"0.125s\" end=\"2.5s\"><span begin=\"0.075s\" end=\"0.775s\">青い点</span><br/><span begin=\"0.876s\" end=\"2.075s\">二つ置く</span></p><p begin=\"2.5s\" end=\"3s\"><span begin=\"0.1s\" dur=\"0.3s\">Final</span></p>"
+        let ttml = try parse(p)
+        let enhanced = try EnhancedTests().parse(
+            "[00:00.125]<00:00.200>青い点<00:00.900>\n|<00:01.001>二つ置く<00:02.200>\n[00:02.500]<00:02.600>Final<00:02.900>")
+        let url = try AudioSceneTests().wav()
+        defer { try? FileManager.default.removeItem(at: url) }
+        let audio = try await LocalAudio.decode(url)
+        let a = try LocalScene(lyrics: ttml, audio: audio)
+        let b = try LocalScene(lyrics: enhanced, audio: audio)
+        let off = try LocalScene(lyrics: ttml, audio: audio, highlighting: .disabled)
+        for (t, e) in zip(ttml.entries, enhanced.entries) {
+            #expect(t.time == e.time && t.text == e.text && t.segments == e.segments)
         }
-        #expect(states[4].lyrics.paragraphs[0].appearance.spans.allSatisfy{$0.progress==1} && states[4].lyrics.focus==0)
-        #expect(a.renderer.lyrics.paragraphs[0].lines==off.renderer.lyrics.paragraphs[0].lines)
+        let times = [Time(0), Time(1, 8), Time(1), Time(3, 2), Time(12, 5), Time(5, 2), Time(2999, 1000)]
+        let states = times.map(a.renderer.screen.evaluate)
+        let raw = try times.map { try a.renderer.frame($0).dataProvider!.data! as Data }
+        for i in [6, 2, 0, 4, 3, 1, 5, 2] {
+            #expect(a.renderer.screen.evaluate(times[i]) == states[i])
+            #expect(try a.renderer.frame(times[i]).dataProvider!.data! as Data == raw[i])
+            #expect(try b.renderer.frame(times[i]).dataProvider!.data! as Data == raw[i])
+            let disabled = off.renderer.screen.evaluate(times[i])
+            #expect(
+                disabled.components == states[i].components && disabled.progress == states[i].progress
+                    && disabled.lyrics.focus == states[i].lyrics.focus
+                    && disabled.lyrics.scroll == states[i].lyrics.scroll)
+        }
+        #expect(
+            states[4].lyrics.paragraphs[0].appearance.spans.allSatisfy { $0.progress == 1 }
+                && states[4].lyrics.focus == 0)
+        #expect(a.renderer.lyrics.paragraphs[0].lines == off.renderer.lyrics.paragraphs[0].lines)
         // Independent renderers drawing concurrently produce frames identical to serial rendering.
-        let workers=try [a.makeRenderer(),a.makeRenderer(),a.makeRenderer()]
+        let workers = try [a.makeRenderer(), a.makeRenderer(), a.makeRenderer()]
         final class Frames: @unchecked Sendable {
-            let data=UnsafeMutableBufferPointer<Data?>.allocate(capacity:7)
-            init() { data.initialize(repeating:nil) }
+            let data = UnsafeMutableBufferPointer<Data?>.allocate(capacity: 7)
+            init() { data.initialize(repeating: nil) }
             deinit { data.deallocate() }
         }
-        let parallel=Frames()
-        DispatchQueue.concurrentPerform(iterations:3) { w in
-            var k=w
-            while k<times.count { parallel.data[k]=try? workers[w].frame(times[k]).dataProvider!.data! as Data;k+=3 }
+        let parallel = Frames()
+        DispatchQueue.concurrentPerform(iterations: 3) { w in
+            var k = w
+            while k < times.count {
+                parallel.data[k] = try? workers[w].frame(times[k]).dataProvider!.data! as Data
+                k += 3
+            }
         }
-        #expect(parallel.data.enumerated().allSatisfy { $0.element==raw[$0.offset] })
+        #expect(parallel.data.enumerated().allSatisfy { $0.element == raw[$0.offset] })
         // A fill lead moves supplied word intervals earlier without changing focus or layout.
-        let early=try LocalScene(lyrics:ttml,audio:audio,presentation:.init(fillLead:Time(22,100)))
-        let shifted=early.renderer.screen.composition.paragraphs[0].input.events[0],original=a.renderer.screen.composition.paragraphs[0].input.events[0]
-        let sb=try shifted.begin!.validated().seconds,ob=try original.begin!.validated().seconds
-        let se=try shifted.end!.validated().seconds,oe=try original.end!.validated().seconds
-        #expect(abs(sb-max(0,ob-0.22))<1e-9 && abs(se-(oe-0.22))<1e-9)
-        #expect(early.renderer.screen.evaluate(Time(1)).lyrics.focus==states[2].lyrics.focus && early.renderer.lyrics.paragraphs[0].lines==a.renderer.lyrics.paragraphs[0].lines)
-        let gap=try parse("<p begin=\"0s\" end=\"1s\">Paper</p><p begin=\"2s\" end=\"3s\">Skies</p>")
-        let scene=try LocalScene(lyrics:gap,audio:audio)
+        let early = try LocalScene(lyrics: ttml, audio: audio, presentation: .init(fillLead: Time(22, 100)))
+        let shifted = early.renderer.screen.composition.paragraphs[0].input.events[0]
+        let original = a.renderer.screen.composition.paragraphs[0].input.events[0]
+        let sb = try shifted.begin!.validated().seconds
+        let ob = try original.begin!.validated().seconds
+        let se = try shifted.end!.validated().seconds
+        let oe = try original.end!.validated().seconds
+        #expect(abs(sb - max(0, ob - 0.22)) < 1e-9 && abs(se - (oe - 0.22)) < 1e-9)
+        #expect(
+            early.renderer.screen.evaluate(Time(1)).lyrics.focus == states[2].lyrics.focus
+                && early.renderer.lyrics.paragraphs[0].lines == a.renderer.lyrics.paragraphs[0].lines)
+        let gap = try parse("<p begin=\"0s\" end=\"1s\">Paper</p><p begin=\"2s\" end=\"3s\">Skies</p>")
+        let scene = try LocalScene(lyrics: gap, audio: audio)
         #expect(scene.renderer.screen.evaluate(Time(1)).lyrics.focus == -1)
-        #expect(scene.renderer.screen.evaluate(Time(2)).lyrics.focus==1)
+        #expect(scene.renderer.screen.evaluate(Time(2)).lyrics.focus == 1)
         // Presentation options are opt-in; defaults insert no gaps and keep the static backdrop and original icons.
-        #expect(scene.renderer.screen.composition.gaps.isEmpty && scene.renderer.screen.background==nil && scene.renderer.icons == .original)
-        let presented=try LocalScene(lyrics:gap,audio:audio,presentation:.init(background:.fitted,icons:.systemSymbols,minimumGap:Time(1,2)))
-        let composition=presented.renderer.screen.composition
-        #expect(composition.gaps.count==1 && composition.gaps[0].begin==Time(1) && composition.gaps[0].end==Time(2))
-        let during=presented.renderer.screen.evaluate(Time(19,10))
-        #expect(during.lyrics.focus == -1 && during.lyrics.gaps[0].state != nil && abs(during.lyrics.gaps[0].translationY)<1)
-        #expect(presented.renderer.screen.evaluate(Time(5,2)).lyrics.focus==1)
+        #expect(
+            scene.renderer.screen.composition.gaps.isEmpty && scene.renderer.screen.background == nil
+                && scene.renderer.icons == .original)
+        let presented = try LocalScene(
+            lyrics: gap, audio: audio,
+            presentation: .init(background: .fitted, icons: .systemSymbols, minimumGap: Time(1, 2)))
+        let composition = presented.renderer.screen.composition
+        #expect(
+            composition.gaps.count == 1 && composition.gaps[0].begin == Time(1) && composition.gaps[0].end == Time(2))
+        let during = presented.renderer.screen.evaluate(Time(19, 10))
+        #expect(
+            during.lyrics.focus == -1 && during.lyrics.gaps[0].state != nil
+                && abs(during.lyrics.gaps[0].translationY) < 1)
+        #expect(presented.renderer.screen.evaluate(Time(5, 2)).lyrics.focus == 1)
         #expect(presented.renderer.screen.background != nil && presented.renderer.icons == .systemSymbols)
-        let led=try LocalScene(lyrics:gap,audio:audio,presentation:.init(focusLead:Time(3,10)))
-        #expect(led.renderer.screen.evaluate(Time(17,10)).lyrics.focus==1 && scene.renderer.screen.evaluate(Time(17,10)).lyrics.focus == -1)
-        #expect(led.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance==scene.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance)
+        let led = try LocalScene(lyrics: gap, audio: audio, presentation: .init(focusLead: Time(3, 10)))
+        #expect(
+            led.renderer.screen.evaluate(Time(17, 10)).lyrics.focus == 1
+                && scene.renderer.screen.evaluate(Time(17, 10)).lyrics.focus == -1)
+        #expect(
+            led.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance
+                == scene.renderer.screen.evaluate(Time(1)).lyrics.paragraphs[1].appearance)
         // A collapsing gap slot stays closed before the gap, is fully open during it, and closes afterwards.
-        var open=LocalPresentation(minimumGap:Time(1,2)),collapsing=open;collapsing.collapsesGaps=true
-        let reserved=try LocalScene(lyrics:gap,audio:audio,presentation:open),closing=try LocalScene(lyrics:gap,audio:audio,presentation:collapsing)
-        func y(_ s:LocalScene,_ t:Time,_ i:Int) -> Double { s.renderer.screen.evaluate(t).lyrics.paragraphs[i].translationY }
-        #expect(abs(y(closing,Time(1,2),1)-(y(reserved,Time(1,2),1)-GapIndicator.slotHeight))<1e-6)
-        #expect(abs(y(closing,Time(19,10),1)-y(reserved,Time(19,10),1))<0.5)
-        #expect(abs(y(closing,Time(3),1)-y(reserved,Time(3),1))<0.5 && y(closing,Time(3),0)>y(reserved,Time(3),0)+100)
-        // Holding keeps a finished line focused through a short gap; a gap indicator still takes focus.
-        var hold=LocalPresentation();hold.holdsFinishedLine=true
-        #expect(scene.renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)
-        #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus==0)
-        hold.minimumGap=Time(1,2)
-        #expect(try LocalScene(lyrics:gap,audio:audio,presentation:hold).renderer.screen.evaluate(Time(3,2)).lyrics.focus == -1)
-        // Background vocals parse from ttm:role="x-bg" spans and reserve space under their line.
-        func document(_ body:String) -> Data {
-            Data(("<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div>"+body+"</div></body></tt>").utf8)
+        var open = LocalPresentation(minimumGap: Time(1, 2))
+        var collapsing = open
+        collapsing.collapsesGaps = true
+        let reserved = try LocalScene(lyrics: gap, audio: audio, presentation: open)
+        let closing = try LocalScene(lyrics: gap, audio: audio, presentation: collapsing)
+        func y(_ s: LocalScene, _ t: Time, _ i: Int) -> Double {
+            s.renderer.screen.evaluate(t).lyrics.paragraphs[i].translationY
         }
-        let first="<p begin=\"0s\" end=\"1s\"><span begin=\"0s\" end=\"0.5s\">Paper </span><span begin=\"0.5s\" end=\"1s\">skies</span>"
-        let second="<p begin=\"2s\" end=\"3s\">Skies</p>"
-        let withBackground=try TTMLParser.parse(document(first+"<span ttm:role=\"x-bg\">high above</span></p>"+second))
-        let without=try TTMLParser.parse(document(first+"</p>"+second))
-        #expect(withBackground.entries[0].text=="Paper skies" && withBackground.entries[0].background==BackgroundVocal(text:"high above",begin:Time(0),end:Time(1)))
-        #expect(withBackground.entries[1].background==nil)
+        #expect(abs(y(closing, Time(1, 2), 1) - (y(reserved, Time(1, 2), 1) - GapIndicator.slotHeight)) < 1e-6)
+        #expect(abs(y(closing, Time(19, 10), 1) - y(reserved, Time(19, 10), 1)) < 0.5)
+        #expect(
+            abs(y(closing, Time(3), 1) - y(reserved, Time(3), 1)) < 0.5
+                && y(closing, Time(3), 0) > y(reserved, Time(3), 0) + 100)
+        // Holding keeps a finished line focused through a short gap; a gap indicator still takes focus.
+        var hold = LocalPresentation()
+        hold.holdsFinishedLine = true
+        #expect(scene.renderer.screen.evaluate(Time(3, 2)).lyrics.focus == -1)
+        #expect(
+            try LocalScene(lyrics: gap, audio: audio, presentation: hold).renderer.screen.evaluate(Time(3, 2)).lyrics
+                .focus == 0)
+        hold.minimumGap = Time(1, 2)
+        #expect(
+            try LocalScene(lyrics: gap, audio: audio, presentation: hold).renderer.screen.evaluate(Time(3, 2)).lyrics
+                .focus == -1)
+        // Background vocals parse from ttm:role="x-bg" spans and reserve space under their line.
+        func document(_ body: String) -> Data {
+            Data(
+                ("<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div>"
+                    + body + "</div></body></tt>").utf8)
+        }
+        let first =
+            "<p begin=\"0s\" end=\"1s\"><span begin=\"0s\" end=\"0.5s\">Paper </span><span begin=\"0.5s\" end=\"1s\">skies</span>"
+        let second = "<p begin=\"2s\" end=\"3s\">Skies</p>"
+        let withBackground = try TTMLParser.parse(
+            document(first + "<span ttm:role=\"x-bg\">high above</span></p>" + second))
+        let without = try TTMLParser.parse(document(first + "</p>" + second))
+        #expect(
+            withBackground.entries[0].text == "Paper skies"
+                && withBackground.entries[0].background
+                    == BackgroundVocal(text: "high above", begin: Time(0), end: Time(1))
+        )
+        #expect(withBackground.entries[1].background == nil)
         // Project offsets keep and shift background vocals with their line.
-        #expect(try withBackground.applyingProjectOffset(250).entries[0].background==BackgroundVocal(text:"high above",begin:Time(1,4),end:Time(5,4)))
-        #expect(throws:InputError.self) { try TTMLParser.parse(document("<p begin=\"0s\" end=\"1s\">A<span ttm:role=\"x-other\">b</span></p>")) }
-        let backed=try LocalScene(lyrics:withBackground,audio:audio),plain=try LocalScene(lyrics:without,audio:audio)
-        #expect(backed.renderer.secondary[0]?.text=="high above" && backed.renderer.secondary[1]==nil && plain.renderer.secondary.isEmpty)
-        #expect(backed.renderer.screen.composition.paragraphs[1].position>plain.renderer.screen.composition.paragraphs[1].position)
-        let long=try LocalScene(lyrics:gap,audio:audio,presentation:.init(minimumGap:Time(2)))
+        #expect(
+            try withBackground.applyingProjectOffset(250).entries[0].background
+                == BackgroundVocal(text: "high above", begin: Time(1, 4), end: Time(5, 4)))
+        #expect(throws: InputError.self) {
+            try TTMLParser.parse(document("<p begin=\"0s\" end=\"1s\">A<span ttm:role=\"x-other\">b</span></p>"))
+        }
+        let backed = try LocalScene(lyrics: withBackground, audio: audio)
+        let plain = try LocalScene(lyrics: without, audio: audio)
+        #expect(
+            backed.renderer.secondary[0]?.text == "high above" && backed.renderer.secondary[1] == nil
+                && plain.renderer.secondary.isEmpty)
+        #expect(
+            backed.renderer.screen.composition.paragraphs[1].position
+                > plain.renderer.screen.composition.paragraphs[1].position)
+        let long = try LocalScene(lyrics: gap, audio: audio, presentation: .init(minimumGap: Time(2)))
         #expect(long.renderer.screen.composition.gaps.isEmpty)
     }
     @Test func fixtureEquivalenceAndResourceBounds() throws {
-        let root=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let xml=try Data(contentsOf:root.appendingPathComponent("fixtures/ttml/lines.ttml"))
-        let lrc=try Data(contentsOf:root.appendingPathComponent("fixtures/enhanced-lrc/lines.lrc"))
-        let a=try TTMLParser.parse(xml),b=try EnhancedLRCParser.parse(lrc)
-        for (x,y) in zip(a.entries,b.entries) {#expect(x.time==y.time && x.text.utf8.elementsEqual(y.text.utf8) && x.segments==y.segments)}
-        let prefix="<p begin=\"0s\" end=\"2s\">"
-        let spans=(0..<129).map {"<span begin=\"\($0*10)ms\" dur=\"10ms\">a</span>"}.joined()
-        #expect(throws:InputError.self) {try parse(prefix+spans+"</p>")}
-        // A word-timed complete song may use up to 1,536 spans; one more is rejected.
-        func timed(_ counts:[Int]) -> String {
-            counts.enumerated().map { j,n in "<p begin=\"\(j)s\" dur=\"1s\">"+(0..<n).map {"<span begin=\"\($0)ms\" dur=\"1ms\">a</span>"}.joined()+"</p>" }.joined()
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let xml = try Data(contentsOf: root.appendingPathComponent("fixtures/ttml/lines.ttml"))
+        let lrc = try Data(contentsOf: root.appendingPathComponent("fixtures/enhanced-lrc/lines.lrc"))
+        let a = try TTMLParser.parse(xml)
+        let b = try EnhancedLRCParser.parse(lrc)
+        for (x, y) in zip(a.entries, b.entries) {
+            #expect(x.time == y.time && x.text.utf8.elementsEqual(y.text.utf8) && x.segments == y.segments)
         }
-        #expect(try parse(timed(Array(repeating:128,count:12))).entries.reduce(0) { $0+$1.segments.count }==TTMLParser.totalSpanLimit)
-        #expect(throws:InputError.self) {try parse(timed(Array(repeating:128,count:12)+[1]))}
+        let prefix = "<p begin=\"0s\" end=\"2s\">"
+        let spans = (0..<129).map { "<span begin=\"\($0*10)ms\" dur=\"10ms\">a</span>" }.joined()
+        #expect(throws: InputError.self) { try parse(prefix + spans + "</p>") }
+        // A word-timed complete song may use up to 1,536 spans; one more is rejected.
+        func timed(_ counts: [Int]) -> String {
+            counts.enumerated().map { j, n in
+                "<p begin=\"\(j)s\" dur=\"1s\">"
+                    + (0..<n).map { "<span begin=\"\($0)ms\" dur=\"1ms\">a</span>" }.joined() + "</p>"
+            }.joined()
+        }
+        #expect(
+            try parse(timed(Array(repeating: 128, count: 12))).entries.reduce(0) { $0 + $1.segments.count }
+                == TTMLParser.totalSpanLimit)
+        #expect(throws: InputError.self) { try parse(timed(Array(repeating: 128, count: 12) + [1])) }
         // Wall-clock measurement is diagnostic only; timeline and export state never use it.
-        for format in [LyricsFormat.enhancedLRC,.ttml] {
-            let data=format == .ttml ? xml:lrc,start=Date()
-            for _ in 0..<100 {#expect(try LyricsParser.parse(data,format:format).entries.count==4)}
-            print("Bounded conversion diagnostic \(format.rawValue): 100 iterations, \(Date().timeIntervalSince(start)) seconds")
+        for format in [LyricsFormat.enhancedLRC, .ttml] {
+            let data = format == .ttml ? xml : lrc
+            let start = Date()
+            for _ in 0..<100 { #expect(try LyricsParser.parse(data, format: format).entries.count == 4) }
+            print(
+                "Bounded conversion diagnostic \(format.rawValue): 100 iterations, \(Date().timeIntervalSince(start)) seconds"
+            )
         }
     }
 
     @Test func spansCrossExplicitAndAutomaticLines() throws {
-        for content in ["AV office,<br/>careful pages.","Careful pages move through clear daylight."] {
-            let entry=try parse("<p begin=\"0s\" end=\"3s\"><span begin=\"0.001234s\" end=\"2.501s\">\(content)</span></p>").entries[0]
-            let segment=entry.segments[0]
-            let event=AppearanceEvent(start:segment.start,length:segment.length,begin:.init(segment.begin.numerator,segment.begin.denominator),end:.init(segment.end.numerator,segment.end.denominator),verticalEvent:nil)
-            let renderer=try ParagraphLayout(.suppliedTimed(text:entry.text,japanese:false,events:[event]))
-            let plain=try ParagraphLayout(.supplied(text:entry.text,japanese:false))
-            #expect(renderer.lines.count>1 && renderer.lines==plain.lines)
-            #expect(try renderer.raw(Time(3))==plain.raw(Time(3)))
-            let raw=try renderer.raw(Time(1234567,1_000_000))
+        for content in ["AV office,<br/>careful pages.", "Careful pages move through clear daylight."] {
+            let entry = try parse(
+                "<p begin=\"0s\" end=\"3s\"><span begin=\"0.001234s\" end=\"2.501s\">\(content)</span></p>"
+            ).entries[0]
+            let segment = entry.segments[0]
+            let event = AppearanceEvent(
+                start: segment.start, length: segment.length,
+                begin: .init(segment.begin.numerator, segment.begin.denominator),
+                end: .init(segment.end.numerator, segment.end.denominator), verticalEvent: nil)
+            let renderer = try ParagraphLayout(.suppliedTimed(text: entry.text, japanese: false, events: [event]))
+            let plain = try ParagraphLayout(.supplied(text: entry.text, japanese: false))
+            #expect(renderer.lines.count > 1 && renderer.lines == plain.lines)
+            #expect(try renderer.raw(Time(3)) == plain.raw(Time(3)))
+            let raw = try renderer.raw(Time(1_234_567, 1_000_000))
             #expect(raw != (try renderer.raw(Time(0))))
-            #expect(try ParagraphLayout(.suppliedTimed(text:entry.text,japanese:false,events:[event])).raw(Time(1234567,1_000_000))==raw)
+            #expect(
+                try ParagraphLayout(.suppliedTimed(text: entry.text, japanese: false, events: [event])).raw(
+                    Time(1_234_567, 1_000_000)) == raw)
         }
     }
 
     @Test func agentV2MarksTheSecondVoiceAndRightAligns() throws {
-        let xml="<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div><p begin=\"0.5s\" end=\"1s\">Paper skies</p><p begin=\"1s\" end=\"2s\" ttm:agent=\"v2\">Open rooms</p></div></body></tt>"
-        let lyrics=try TTMLParser.parse(Data(xml.utf8))
-        #expect(lyrics.entries.map(\.secondVoice)==[false,true])
-        let left=try ParagraphLayout(ParagraphInput.supplied(text:"Open rooms",japanese:false))
-        var input=ParagraphInput.supplied(text:"Open rooms",japanese:false);input.rightAligned=true
-        let right=try ParagraphLayout(input)
-        func inkRange(_ image:CGImage) -> (Int,Int) {
-            let d=image.dataProvider!.data! as Data;var lo=image.width,hi=0
-            for y in stride(from:0,to:image.height,by:4) { for x in 0..<image.width where d[y*image.bytesPerRow+x*4+3]>0 { lo=min(lo,x);hi=max(hi,x) } }
-            return (lo,hi)
+        let xml =
+            "<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div><p begin=\"0.5s\" end=\"1s\">Paper skies</p><p begin=\"1s\" end=\"2s\" ttm:agent=\"v2\">Open rooms</p></div></body></tt>"
+        let lyrics = try TTMLParser.parse(Data(xml.utf8))
+        #expect(lyrics.entries.map(\.secondVoice) == [false, true])
+        let left = try ParagraphLayout(ParagraphInput.supplied(text: "Open rooms", japanese: false))
+        var input = ParagraphInput.supplied(text: "Open rooms", japanese: false)
+        input.rightAligned = true
+        let right = try ParagraphLayout(input)
+        func inkRange(_ image: CGImage) -> (Int, Int) {
+            let d = image.dataProvider!.data! as Data
+            var lo = image.width
+            var hi = 0
+            for y in stride(from: 0, to: image.height, by: 4) {
+                for x in 0..<image.width where d[y * image.bytesPerRow + x * 4 + 3] > 0 {
+                    lo = min(lo, x)
+                    hi = max(hi, x)
+                }
+            }
+            return (lo, hi)
         }
-        let a=inkRange(try left.render(input.evaluate(Time(0)),coverage:true)),b=inkRange(try right.render(input.evaluate(Time(0)),coverage:true))
+        let a = inkRange(try left.render(input.evaluate(Time(0)), coverage: true))
+        let b = inkRange(try right.render(input.evaluate(Time(0)), coverage: true))
         // The right edge moves to the paragraph's right margin; the line keeps its width.
-        #expect(b.0>a.0+300 && abs((b.1-b.0)-(a.1-a.0))<=2 && b.1>1000)
+        #expect(b.0 > a.0 + 300 && abs((b.1 - b.0) - (a.1 - a.0)) <= 2 && b.1 > 1000)
     }
 }

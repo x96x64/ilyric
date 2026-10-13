@@ -23,7 +23,7 @@ public enum LyricsCanvas: Sendable, Equatable {
         let y: Double
         switch part {
         case .progress, .elapsed, .remaining, .previous, .playback, .next, .volume, .volumeLow, .volumeHigh,
-             .bottomLeft, .bottomCenter, .bottomRight, .translation, .singCompact, .singExpanded:
+            .bottomLeft, .bottomCenter, .bottomRight, .translation, .singCompact, .singExpanded:
             y = bottomExtension
         default: y = 0
         }
@@ -33,8 +33,9 @@ public enum LyricsCanvas: Sendable, Equatable {
     public func bounds(_ native: ScreenBounds, for part: ScreenPart) -> ScreenBounds {
         let shift = offset(for: part)
         let grows = [.title, .artist, .progress, .volume].contains(part)
-        return .init(native.x + shift.x, native.y + shift.y,
-                     native.width + (grows ? widthExtension : 0), native.height)
+        return .init(
+            native.x + shift.x, native.y + shift.y,
+            native.width + (grows ? widthExtension : 0), native.height)
     }
     public var viewport: ScreenBounds { .init(72, 550, 1040 + widthExtension, 950 + bottomExtension) }
     public var expandedViewport: ScreenBounds { .init(72, 550, 1040 + widthExtension, Double(height) - 550) }

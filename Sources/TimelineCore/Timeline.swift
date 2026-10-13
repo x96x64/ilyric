@@ -46,7 +46,10 @@ public struct Event: Equatable, Sendable {
     public let focus: Double
     public let seek: Time?
     public init(time: Time, order: Int, focus: Double, seek: Time? = nil) {
-        self.time = time; self.order = order; self.focus = focus; self.seek = seek
+        self.time = time
+        self.order = order
+        self.focus = focus
+        self.seek = seek
     }
 }
 
@@ -70,10 +73,12 @@ private struct Segment {
     func evaluate(_ time: Time) -> (Double, Double) {
         let duration = 0.8
         let u = max(0, min(1, (time - start).seconds / duration))
-        let p = (2*u*u*u - 3*u*u + 1)*position + (u*u*u - 2*u*u + u)*duration*velocity
-            + (-2*u*u*u + 3*u*u)*target
-        let v = ((6*u*u - 6*u)*position + (3*u*u - 4*u + 1)*duration*velocity
-            + (-6*u*u + 6*u)*target) / duration
+        let p =
+            (2 * u * u * u - 3 * u * u + 1) * position + (u * u * u - 2 * u * u + u) * duration * velocity
+            + (-2 * u * u * u + 3 * u * u) * target
+        let v =
+            ((6 * u * u - 6 * u) * position + (3 * u * u - 4 * u + 1) * duration * velocity
+                + (-6 * u * u + 6 * u) * target) / duration
         return (p, u == 1 ? 0 : v)
     }
 }
@@ -84,11 +89,13 @@ public struct Timeline {
     public static let japanese = "朝の光が海を渡る。\n静かな波を見つめる。"
     public let events: [Event]
     private let segments: [Segment]
-    public init(events: [Event] = [
-        Event(time: Time(1), order: 0, focus: 1),
-        Event(time: Time(5, 4), order: 1, focus: 0, seek: Time(1, 4)),
-        Event(time: Time(3), order: 2, focus: 1)
-    ]) {
+    public init(
+        events: [Event] = [
+            Event(time: Time(1), order: 0, focus: 1),
+            Event(time: Time(5, 4), order: 1, focus: 0, seek: Time(1, 4)),
+            Event(time: Time(3), order: 2, focus: 1),
+        ]
+    ) {
         precondition(Set(events.map(\.order)).count == events.count)
         self.events = events.sorted { $0.time == $1.time ? $0.order < $1.order : $0.time < $1.time }
         var result = [Segment(start: Time(0), position: 0, velocity: 0, target: 0)]
@@ -112,8 +119,9 @@ public struct Timeline {
             max(0, min(1, (media - Time(Int64(index), 4)).seconds / 0.25))
         }
         let marker = Self.markerTimes.contains { time >= $0 && time < $0 + Time(1, 20) }
-        return Snapshot(output: time, media: media, focus: focus, velocity: velocity,
-                        highlights: highlights, marker: marker, gap: time >= Time(18, 5))
+        return Snapshot(
+            output: time, media: media, focus: focus, velocity: velocity,
+            highlights: highlights, marker: marker, gap: time >= Time(18, 5))
     }
     /// Output-time sync markers plus media-time tone make the seek audible and testable.
     public func audioSample(_ index: Int) -> Int16 {

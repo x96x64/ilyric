@@ -11,10 +11,12 @@ public enum SpokenNumbers {
     static let token = "'?[0-9]+(?:[,:][0-9]+)*(?:st|nd|rd|th|s)?"
     /// A whole numeric token: not part of a longer word, and not followed by more digits after a point or
     /// separator, so that a decimal such as 3.5 stays unsupported rather than being read as two numbers.
-    public static let pattern = "(?<![A-Za-z0-9.,:])"+token+"(?![A-Za-z0-9]|[.,:][0-9])"
+    public static let pattern = "(?<![A-Za-z0-9.,:])" + token + "(?![A-Za-z0-9]|[.,:][0-9])"
 
-    static let ones = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
-                       "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
+    static let ones = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
+        "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen",
+    ]
     static let tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
 
     /// The spoken words of a numeric token, or nil for an unsupported form.
@@ -25,13 +27,16 @@ public enum SpokenNumbers {
         if text.contains(":") {
             let parts = text.split(separator: ":", omittingEmptySubsequences: false)
             guard !decade, parts.count == 2, let h = Int(parts[0]), (0...24).contains(h), parts[1].count == 2,
-                  let m = Int(parts[1]), m < 60 else { return nil }
+                let m = Int(parts[1]), m < 60
+            else { return nil }
             let hour = cardinal(h)
             if m == 0 { return "\(hour) o'clock" }
             return m < 10 ? "\(hour) oh \(ones[m])" : "\(hour) \(cardinal(m))"
         }
         for suffix in ["st", "nd", "rd", "th"] where text.hasSuffix(suffix) {
-            guard !decade, let n = integer(String(text.dropLast(2))), n > 0, ordinalSuffix(n) == suffix else { return nil }
+            guard !decade, let n = integer(String(text.dropLast(2))), n > 0, ordinalSuffix(n) == suffix else {
+                return nil
+            }
             return ordinal(n)
         }
         if text.hasSuffix("s") {
@@ -63,8 +68,10 @@ public enum SpokenNumbers {
     /// Digits with optional groups of three after commas, up to 999,999,999.
     static func integer(_ text: String) -> Int? {
         let groups = text.split(separator: ",", omittingEmptySubsequences: false)
-        guard !groups.isEmpty, groups.dropFirst().allSatisfy({ $0.count == 3 }), groups.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isASCII) }),
-              let n = Int(groups.joined()), n < 1_000_000_000 else { return nil }
+        guard !groups.isEmpty, groups.dropFirst().allSatisfy({ $0.count == 3 }),
+            groups.allSatisfy({ !$0.isEmpty && $0.allSatisfy(\.isASCII) }),
+            let n = Int(groups.joined()), n < 1_000_000_000
+        else { return nil }
         if groups.count == 1 && text.count > 1 && text.hasPrefix("0") { return nil }
         return n
     }
@@ -82,7 +89,8 @@ public enum SpokenNumbers {
     /// Years as usually sung: 1999 nineteen ninety-nine, 1905 nineteen oh five, 1900 nineteen hundred,
     /// 2000 two thousand, 2005 two thousand five, 2015 twenty fifteen.
     static func year(_ n: Int) -> String {
-        let high = n / 100, low = n % 100
+        let high = n / 100
+        let low = n % 100
         if (2000...2009).contains(n) { return cardinal(n) }
         if low == 0 { return cardinal(high) + " hundred" }
         return cardinal(high) + " " + (low < 10 ? "oh " + ones[low] : cardinal(low))
@@ -90,20 +98,31 @@ public enum SpokenNumbers {
 
     static func ordinalSuffix(_ n: Int) -> String {
         if (11...13).contains(n % 100) { return "th" }
-        switch n % 10 { case 1: return "st"; case 2: return "nd"; case 3: return "rd"; default: return "th" }
+        switch n % 10 {
+        case 1: return "st"
+        case 2: return "nd"
+        case 3: return "rd"
+        default: return "th"
+        }
     }
 
     static func ordinal(_ n: Int) -> String {
         let words = cardinal(n)
-        let irregular = ["one": "first", "two": "second", "three": "third", "five": "fifth", "eight": "eighth",
-                         "nine": "ninth", "twelve": "twelfth"]
+        let irregular = [
+            "one": "first", "two": "second", "three": "third", "five": "fifth", "eight": "eighth",
+            "nine": "ninth", "twelve": "twelfth",
+        ]
         var parts = words.components(separatedBy: CharacterSet(charactersIn: " -"))
         let separators = words.filter { $0 == " " || $0 == "-" }.map(String.init)
         let last = parts.removeLast()
         let ending: String
-        if let word = irregular[last] { ending = word }
-        else if last.hasSuffix("y") { ending = String(last.dropLast()) + "ieth" }
-        else { ending = last + "th" }
+        if let word = irregular[last] {
+            ending = word
+        } else if last.hasSuffix("y") {
+            ending = String(last.dropLast()) + "ieth"
+        } else {
+            ending = last + "th"
+        }
         parts.append(ending)
         var result = parts[0]
         for (i, part) in parts.dropFirst().enumerated() { result += separators[i] + part }

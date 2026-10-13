@@ -5,56 +5,59 @@ import Foundation
 /// Normalization of untimed lyrics as people write them (docs/command-line-interface.md, Lyrics Input). Synthetic text.
 struct LyricsTextTests {
     @Test func dropsLabelsAndAttachesBackgroundVocals() throws {
-        let raw="\u{FEFF}[Verse 1]\r\nPaper  skies (high above)\n(far away)\n...\n\n[Chorus]\nOpen (wide) rooms, (ah) now\n"
-        let n=NormalizedLyrics(raw)
-        #expect(n.text=="Paper skies\n\nOpen rooms, now\n")
-        #expect(n.background==[0:"high above far away",1:"wide ah"])
-        #expect(n.dropped.count==3)
-        let source=try LyricSource(Data(n.text.utf8))
-        #expect(source.lines.map(\.text)==["Paper skies","Open rooms, now"])
+        let raw =
+            "\u{FEFF}[Verse 1]\r\nPaper  skies (high above)\n(far away)\n...\n\n[Chorus]\nOpen (wide) rooms, (ah) now\n"
+        let n = NormalizedLyrics(raw)
+        #expect(n.text == "Paper skies\n\nOpen rooms, now\n")
+        #expect(n.background == [0: "high above far away", 1: "wide ah"])
+        #expect(n.dropped.count == 3)
+        let source = try LyricSource(Data(n.text.utf8))
+        #expect(source.lines.map(\.text) == ["Paper skies", "Open rooms, now"])
     }
     @Test func splitsLongParagraphsKeepingLineOrder() throws {
-        let raw=(1...9).map { "Line number \($0) (echo \($0))" }.joined(separator:"\n")
-        let n=NormalizedLyrics(raw)
-        let source=try LyricSource(Data(n.text.utf8))
-        #expect(source.paragraphs.map { $0.split(separator:"\n").count }==[3,3,3] && source.lines.count==9)
-        #expect(source.lines[8].text=="Line number 9" && n.background[8]=="echo 9")
+        let raw = (1...9).map { "Line number \($0) (echo \($0))" }.joined(separator: "\n")
+        let n = NormalizedLyrics(raw)
+        let source = try LyricSource(Data(n.text.utf8))
+        #expect(source.paragraphs.map { $0.split(separator: "\n").count } == [3, 3, 3] && source.lines.count == 9)
+        #expect(source.lines[8].text == "Line number 9" && n.background[8] == "echo 9")
     }
     @Test func splitsFiveLinesAsThreeAndTwo() throws {
-        let n=NormalizedLyrics((1...5).map { "Line \($0)" }.joined(separator:"\n"))
-        #expect(try LyricSource(Data(n.text.utf8)).paragraphs.map { $0.split(separator:"\n").count }==[3,2])
+        let n = NormalizedLyrics((1...5).map { "Line \($0)" }.joined(separator: "\n"))
+        #expect(try LyricSource(Data(n.text.utf8)).paragraphs.map { $0.split(separator: "\n").count } == [3, 2])
     }
     @Test func acceptsUpTo256Paragraphs() throws {
         // Songs with many short lines exceed the former limit of 64 paragraphs; the renderer's composition takes 256.
-        let text={ (n:Int) in (1...n).map { "Line \($0)" }.joined(separator:"\n\n") }
-        #expect(try LyricSource(Data(text(256).utf8)).paragraphs.count==256)
-        #expect(throws:AlignmentError.self) { try LyricSource(Data(text(257).utf8)) }
+        let text = { (n: Int) in (1...n).map { "Line \($0)" }.joined(separator: "\n\n") }
+        #expect(try LyricSource(Data(text(256).utf8)).paragraphs.count == 256)
+        #expect(throws: AlignmentError.self) { try LyricSource(Data(text(257).utf8)) }
     }
     @Test func leadingBackgroundWithoutLineIsDropped() {
-        let n=NormalizedLyrics("(intro hum)\nFirst line")
-        #expect(n.text=="First line\n" && n.background.isEmpty && n.dropped.count==1)
+        let n = NormalizedLyrics("(intro hum)\nFirst line")
+        #expect(n.text == "First line\n" && n.background.isEmpty && n.dropped.count == 1)
     }
     @Test func apostropheVariantsBecomeAlignable() throws {
-        let n=NormalizedLyrics("You\u{02BC}ll be fine\nDon\u{2018}t you go")
-        #expect(n.text=="You\u{2019}ll be fine\nDon\u{2019}t you go\n")
-        #expect(try textTargets(LyricSource(Data(n.text.utf8))).tokens.filter { $0=="'" }.count==2)
+        let n = NormalizedLyrics("You\u{02BC}ll be fine\nDon\u{2018}t you go")
+        #expect(n.text == "You\u{2019}ll be fine\nDon\u{2019}t you go\n")
+        #expect(try textTargets(LyricSource(Data(n.text.utf8))).tokens.filter { $0 == "'" }.count == 2)
     }
     @Test func writtenByLinesBecomeCredits() throws {
-        let n=NormalizedLyrics("Paper skies\nOpen rooms\n\nWritten by: Jane  Roe, John Doe\nWRITTEN BY:Ann Lee")
-        #expect(n.text=="Paper skies\nOpen rooms\n" && n.credits=="Jane Roe, John Doe, Ann Lee")
-        #expect(NormalizedLyrics("Paper skies").credits==nil)
+        let n = NormalizedLyrics("Paper skies\nOpen rooms\n\nWritten by: Jane  Roe, John Doe\nWRITTEN BY:Ann Lee")
+        #expect(n.text == "Paper skies\nOpen rooms\n" && n.credits == "Jane Roe, John Doe, Ann Lee")
+        #expect(NormalizedLyrics("Paper skies").credits == nil)
     }
     @Test func leadingMarkerSelectsTheSecondVoice() throws {
-        let n=NormalizedLyrics("I'll be there\n> I'll be there too (too)\n  >Always")
-        #expect(n.text=="I'll be there\nI'll be there too\nAlways\n" && n.secondVoice==[1,2] && n.background==[1:"too"])
+        let n = NormalizedLyrics("I'll be there\n> I'll be there too (too)\n  >Always")
+        #expect(
+            n.text == "I'll be there\nI'll be there too\nAlways\n" && n.secondVoice == [1, 2]
+                && n.background == [1: "too"])
     }
     @Test func accentedLatinLettersAreAlignable() throws {
-        let n=NormalizedLyrics("Caf\u{0065}\u{0301} na\u{00EF}ve\nJalape\u{00F1}o")
-        #expect(n.text=="Caf\u{00E9} na\u{00EF}ve\nJalape\u{00F1}o\n")
-        let source=try LyricSource(Data(n.text.utf8))
-        #expect(source.lines[0].alignmentText=="cafenaive" && source.lines[0].text=="Caf\u{00E9} na\u{00EF}ve")
-        let targets=try textTargets(source)
-        #expect(targets.tokens.prefix(4).joined()=="CAFE" && !targets.tokens.contains("\u{00C9}"))
-        #expect(words(in:source.lines[1].text).count==1)
+        let n = NormalizedLyrics("Caf\u{0065}\u{0301} na\u{00EF}ve\nJalape\u{00F1}o")
+        #expect(n.text == "Caf\u{00E9} na\u{00EF}ve\nJalape\u{00F1}o\n")
+        let source = try LyricSource(Data(n.text.utf8))
+        #expect(source.lines[0].alignmentText == "cafenaive" && source.lines[0].text == "Caf\u{00E9} na\u{00EF}ve")
+        let targets = try textTargets(source)
+        #expect(targets.tokens.prefix(4).joined() == "CAFE" && !targets.tokens.contains("\u{00C9}"))
+        #expect(words(in: source.lines[1].text).count == 1)
     }
 }

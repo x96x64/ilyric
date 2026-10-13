@@ -26,6 +26,8 @@ jobs:
           swift --version
       - name: Build release products
         run: swift build -c release
+      - name: Check formatting
+        run: swift format lint --strict --recursive Sources Tests Package.swift
       - name: Build tests
         timeout-minutes: 20
         run: swift build --build-tests

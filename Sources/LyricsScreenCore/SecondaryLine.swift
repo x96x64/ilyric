@@ -18,15 +18,20 @@ public struct SecondaryLine: Equatable, Sendable {
     /// Extra layout space reserved below a paragraph for its first secondary line, beyond the usual spacing.
     public static let firstLineSpace = 56.0
     public init(text: String, begin: Time, end: Time) throws {
-        try self.init(text:text,begin:begin,end:end,hasExplicitTiming:true)
+        try self.init(text: text, begin: begin, end: end, hasExplicitTiming: true)
     }
     package init(text: String, begin: Time, end: Time, hasExplicitTiming: Bool) throws {
-        guard !text.isEmpty, text.utf16.count<300, !text.contains("\n"), begin<end else { throw ScreenError.invalid("Secondary line") }
-        self.text=text;self.begin=begin;self.end=end;self.hasExplicitTiming=hasExplicitTiming
+        guard !text.isEmpty, text.utf16.count < 300, !text.contains("\n"), begin < end else {
+            throw ScreenError.invalid("Secondary line")
+        }
+        self.text = text
+        self.begin = begin
+        self.end = end
+        self.hasExplicitTiming = hasExplicitTiming
     }
     /// Fill progress in [0, 1] over the supplied interval.
     public func progress(at time: Time) -> Double {
         guard hasExplicitTiming else { return 0 }
-        return time<=begin ? 0 : time>=end ? 1 : (time-begin).seconds/(end-begin).seconds
+        return time <= begin ? 0 : time >= end ? 1 : (time - begin).seconds / (end - begin).seconds
     }
 }

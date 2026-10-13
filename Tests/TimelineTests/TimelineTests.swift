@@ -8,8 +8,8 @@ struct TimelineTests {
         #expect((Time(2, 4)) == (Time(1, 2)))
         #expect((Time(1, 3) + Time(1, 6)) == (Time(1, 2)))
         #expect((Time(5, 4) - Time(1)) == (Time(1, 4)))
-        #expect(Time(1000000000, 999999) > Time(999999999, 1000000))
-        #expect(Timeline().evaluate(Time(1000000000, 999983)).output == Time(1000000000, 999983))
+        #expect(Time(1_000_000_000, 999999) > Time(999_999_999, 1_000_000))
+        #expect(Timeline().evaluate(Time(1_000_000_000, 999983)).output == Time(1_000_000_000, 999983))
         #expect(Time(Int64.max, 2) > Time(Int64.max - 1, 3))
         #expect((Time.frame(240)) == (Time(4)))
         #expect((Time.frame(30000, fpsNumerator: 30000, fpsDenominator: 1001)) == (Time(1001)))
@@ -35,9 +35,12 @@ struct TimelineTests {
         #expect(abs((full.evaluate(Time(21, 10)).velocity) - (0)) <= 1e-12)
     }
     @Test func testSimultaneousEventsHaveExplicitOrder() {
-        let events = [Event(time: Time(1), order: 9, focus: 2, seek: Time(3)),
-                      Event(time: Time(1), order: 2, focus: 1, seek: Time(2))]
-        let a = Timeline(events: events), b = Timeline(events: events.reversed())
+        let events = [
+            Event(time: Time(1), order: 9, focus: 2, seek: Time(3)),
+            Event(time: Time(1), order: 2, focus: 1, seek: Time(2)),
+        ]
+        let a = Timeline(events: events)
+        let b = Timeline(events: events.reversed())
         #expect((a.evaluate(Time(2))) == (b.evaluate(Time(2))))
         #expect((a.evaluate(Time(2)).focus) == (2))
         #expect((a.evaluate(Time(1)).media) == (Time(3)))
@@ -46,7 +49,10 @@ struct TimelineTests {
         let t = Timeline()
         let expected = (0..<240).map { t.evaluate(.frame(Int64($0))) }
         // Fixed coprime permutation covers every frame without a random seed.
-        for n in 0..<240 { let i = (n * 137) % 240; #expect((t.evaluate(.frame(Int64(i)))) == (expected[i])) }
+        for n in 0..<240 {
+            let i = (n * 137) % 240
+            #expect((t.evaluate(.frame(Int64(i)))) == (expected[i]))
+        }
         #expect((t.evaluate(Time(1, 8)).highlights[0]) == (0.5))
         #expect((t.evaluate(Time(1, 4)).highlights[0]) == (1))
         #expect((t.evaluate(Time(1, 4)).highlights[1]) == (0))
@@ -58,7 +64,10 @@ struct TimelineTests {
         #expect(abs((fit.x * 2 + fit.scale * 402) - (1080)) <= 1e-9)
     }
     @Test func testCoreTextLayoutAndSourceCoverage() throws {
-        for text in [Timeline.text, Timeline.japanese, "A e\u{301} 日本語。\n次の行 123", "A deliberately longer paragraph wraps across the constrained width."] {
+        for text in [
+            Timeline.text, Timeline.japanese, "A e\u{301} 日本語。\n次の行 123",
+            "A deliberately longer paragraph wraps across the constrained width.",
+        ] {
             let a = try TextLayout(text: text, scale: 2)
             let b = try TextLayout(text: text, scale: 2)
             #expect((a.metrics) == (b.metrics))
