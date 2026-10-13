@@ -46,7 +46,12 @@ public struct TextTargets: Equatable, Sendable {
 public func textTargets(_ source: LyricSource) throws -> TextTargets {
     var tokens=[String](),owners=[Int?]()
     for line in source.lines {
-        let found=words(in:line.text).map { String(line.text[$0]) }
+        // A number is one word whose letters are its spoken form, so word timing still maps to the digits.
+        let found=words(in:line.text).map { range -> String in
+            let word=String(line.text[range])
+            guard word.contains(where:\.isNumber),let spoken=SpokenNumbers.spoken(word) else { return word }
+            return spoken.filter { $0.isLetter || $0=="'" }
+        }
         guard !found.isEmpty,try canonical(found.joined())==line.alignmentText else {
             throw AlignmentError.invalid("lyric line \(line.id+1) contains characters that cannot be aligned; only English letters, apostrophes, and punctuation are supported")
         }

@@ -102,7 +102,7 @@ enum Align {
             let number=k<normalized.sourceLines.count ? normalized.sourceLines[k] : k+1
             let code=c.unicodeScalars.map { String(format:"U+%04X",$0.value) }.joined(separator:" ")
             let advice: String
-            if c.isNumber && c.isASCII { advice="write numbers as they are sung, for example 40 as forty" }
+            if c.isNumber && c.isASCII { advice="this way of writing a number is not supported; write it as it is sung, for example 3.5 as three point five" }
             else if c.isLetter || c.isNumber { advice="only English lyrics can be aligned; other languages are planned for a later release" }
             else { advice="remove it or write it as it is sung" }
             throw Failure(message:"line \(number) of \(name) contains \"\(c)\" (\(code)), which cannot be aligned; \(advice)")

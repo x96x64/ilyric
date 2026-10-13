@@ -40,7 +40,7 @@ public struct LyricSource: Equatable, Sendable {
         for (p,paragraph) in paragraphs.enumerated() {
             var offset=0
             for line in paragraph.components(separatedBy:"\n") {
-                lines.append(SourceLine(id:lines.count,paragraph:p,startUTF16:offset,lengthUTF16:line.utf16.count,text:line,alignmentText:try canonical(line)))
+                lines.append(SourceLine(id:lines.count,paragraph:p,startUTF16:offset,lengthUTF16:line.utf16.count,text:line,alignmentText:try canonical(SpokenNumbers.expand(line))))
                 offset+=line.utf16.count+1
             }
         }
@@ -69,7 +69,8 @@ public func canonical(_ text: String) throws -> String {
 /// Latin letters with diacritics (folded for alignment), apostrophes, punctuation, and whitespace; digits, letters of
 /// other scripts, and symbols such as $ or + are rejected so that the user can be told exactly what to change.
 public func unsupportedCharacter(in line: String) -> Character? {
-    for character in line {
+    // Supported numbers are checked in their spoken form; any digit left over belongs to an unsupported form.
+    for character in SpokenNumbers.expand(line) {
         for scalar in character.unicodeScalars {
             let folded=foldLatin(String(scalar)).unicodeScalars.first!
             if folded.isASCII, folded.properties.isAlphabetic { continue }
@@ -86,7 +87,8 @@ public func unsupportedCharacter(in line: String) -> Character? {
 /// English words as used for CTC targets: ASCII letters with internal apostrophes, after `foldLatin`, as ranges of
 /// the original text.
 func words(in text: String) -> [Range<String.Index>] {
-    let regex=try! NSRegularExpression(pattern:"[A-Za-z]+(?:['’][A-Za-z]+)*"),folded=foldLatin(text)
+    // Numeric tokens such as 40 or 3:00 are words too; alignment uses their spoken form (`SpokenNumbers`).
+    let regex=try! NSRegularExpression(pattern:SpokenNumbers.pattern+"|[A-Za-z]+(?:['’][A-Za-z]+)*"),folded=foldLatin(text)
     // Folding replaces single BMP scalars by single ASCII letters, so UTF-16 offsets are shared with the original.
     return regex.matches(in:folded,range:NSRange(folded.startIndex...,in:folded)).compactMap { Range($0.range,in:text) }
 }

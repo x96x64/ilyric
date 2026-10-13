@@ -14,7 +14,7 @@ extension InputTests {
             ("","input.txt is empty"),
             ("\n  \n","input.txt is empty"),
             ("[Verse 1]\nWritten by: Somebody\n...\n","input.txt contains no lines to sing"),
-            ("[Verse 1]\nFirst line\n\nWe walked 40 miles\n","line 4 of input.txt contains \"4\" (U+0034)"),
+            ("[Verse 1]\nFirst line\n\nWe walked 3.5 miles\n","line 4 of input.txt contains \"3\" (U+0033)"),
             ("First line\nSecond 日\n","line 2 of input.txt contains \"日\" (U+65E5)"),
             ("Pay me $5\n","line 1 of input.txt contains \"$\" (U+0024)")]
         for (text,expected) in cases {
