@@ -33,7 +33,7 @@ Backing-chorus functionality is experimental, unverified, and unsupported. Do no
 
 Two issues have been observed: backing cues sometimes disappear late or unevenly, and predominantly chorus-only lines may align into subsequent non-singing audio. Neither issue is claimed to be fixed or to match verified native iOS 27 behavior. The implementation remains available and reversible. Existing syntax, interpretation, TTML export, rendered output, and report formats are unchanged; this notice restricts support rather than removing syntax or rejecting inputs.
 
-For plain-text alignment in `align` or `render`, existing recognition of parenthesized backing phrases, including parentheses-only lines, produces one nonfatal warning on standard error per invocation. It states that the feature is experimental, unverified, and unsupported and recommends excluding such chorus text. It does not quote lyrics or paths. Normal and verbose modes show it; `--quiet` suppresses it under the existing console convention. Section labels, ordinary lead lines, vocables, and timed formats do not trigger it. Chorus-only ordinary lines remain accepted without automatic vocal-role detection. The warning changes no option, exit status, alignment decision, or output.
+For plain-text alignment in `align` or `render`, existing recognition of parenthesized backing phrases, including parentheses-only lines, produces one nonfatal warning on standard error per invocation. It states that the feature is experimental, unverified, and unsupported and recommends excluding such chorus text. It does not quote lyrics or paths. It appears in every mode, including `--quiet`, which hides only progress and informational output. Section labels, ordinary lead lines, vocables, and timed formats do not trigger it. Chorus-only ordinary lines remain accepted without automatic vocal-role detection. The warning changes no option, exit status, alignment decision, or output.
 
 Vocable-only lines such as "ooh" and "na-na" remain usable. All nine observed vocable-only lines were aligned correctly in the [third English qualification](reports/third-preview-qualification-results.md); the sample was small and excluded from the main scored-line denominator. This does not establish broader chorus accuracy. Vocables without supported timing may be omitted; `--keep-ad-libs` retains them without guaranteeing accurate timing.
 
@@ -53,9 +53,19 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. All nine observed vo
 | `-j, --jobs N` | render | Parallel rendering workers | Active processor count |
 | `--fast` | render, align | GPU and Neural Engine inference; faster but not reproducible | Off: CPU, reproducible |
 | `--report FILE` | render, align | JSON report of estimates, placements, and timings | None |
-| `-q, --quiet` / `-v, --verbose` | all | Less or more progress output | Normal |
+| `-q, --quiet` / `-v, --verbose` | all | Only warnings and errors, or additional details | Progress and notes |
 
-Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Error messages name the cause and the recovery step.
+Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Error messages begin with `Error:` and name the cause and the recovery step.
+
+## Progress Output
+
+Progress, notes, warnings, and errors go to standard error; standard output carries only help and version text. `render` has four stages and `align` the first three: Reading audio, Separating vocals, Aligning lyrics, and Rendering video. Each stage is one line in the form `==> [2/4] Separating vocals`, followed by a status column of six characters at the right edge: a percentage, a spinner, `done`, or `skip`. Stage names are padded to a common width so that bars and status columns align.
+
+On an interactive terminal, the active line is redrawn in place at most five times per second. A bar fills the columns between the name and the status only where the amount of work is known: completed separation segments, and video frames accepted by the encoder. Other work shows a spinner, including the resampling after separation and the finishing of the video file. The line follows the terminal's width while the command runs and is written with automatic wrapping turned off, so resizing the window lengthens or shortens the bar without adding rows; lines already finished keep the width they had. Narrow terminals omit the bar first and then shorten stage names. `==>` is blue and stage names are bold unless `NO_COLOR` is set. Standard error counts as interactive only when it is a terminal whose `TERM` is set and not `dumb`, and no CI environment variable is present.
+
+In files, pipes, and CI logs, each finished or skipped stage is one plain line, such as `==> [2/4] Separating vocals  done`, without bars, spinners, colour, or carriage returns. Lyrics with supplied timing show stages 2 and 3 as `skip`. A successful command ends with `==> Generated FILE in DURATION`, with the duration in words, such as `5 minutes 9 seconds`.
+
+Notes begin with `Note:`, such as the number of lines without word timing; `--verbose` lists those lines and adds step timings and other details on separate lines. Warnings begin with `Warning:` and errors with `Error:`. `--quiet` hides progress, notes, details, and the final line, but never warnings or errors. Percentages describe the active stage only; there is no overall percentage, because the stages take very different amounts of time.
 
 ## Environment
 

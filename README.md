@@ -120,7 +120,24 @@ ilyrics doctor
 ilyrics render "Paper Skies.m4a" paper-skies.txt -o paper-skies.mp4
 ```
 
-iLyrics reports each step on standard error: model installation on first use, alignment, any lines it could not time, and rendering progress. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
+iLyrics reports its progress on standard error, one line per stage. In a terminal, the active stage is redrawn in place, with a bar and a percentage where the amount of work is known:
+
+```text
+==> [1/4] Reading audio                                              done
+==> [2/4] Separating vocals   ##########################-----------  68.0%
+```
+
+When the command finishes:
+
+```text
+==> [1/4] Reading audio                                              done
+==> [2/4] Separating vocals                                          done
+==> [3/4] Aligning lyrics                                            done
+==> [4/4] Rendering video                                            done
+==> Generated paper-skies.mp4 in 5 minutes 9 seconds
+```
+
+In files, pipes, and CI logs, each finished stage is one plain line without a bar. Lyrics with supplied timing show the separation and alignment stages as `skip`. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
 
 ## Usage
 
@@ -148,7 +165,7 @@ ilyrics doctor
 | `-j, --jobs N` | render | Parallel rendering workers | Processor count |
 | `--fast` | render, align | GPU and Neural Engine inference | CPU |
 | `--report FILE` | render, align | JSON report of alignment and export | None |
-| `-q, --quiet`, `-v, --verbose` | all | Less or more progress output | Normal |
+| `-q, --quiet`, `-v, --verbose` | all | Only warnings and errors, or additional details | Progress and notes |
 
 Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. See [Command-Line Interface](docs/command-line-interface.md) for the complete reference and environment variables.
 
@@ -225,7 +242,7 @@ Automatic synchronization is reliable for most lines, but not all. iLyrics never
 
 At leading and trailing boundaries, [Plan C](docs/reports/fallback-placement-plan-c.md) considers only the nearest eligible activity component beside the accepted anchor: the last component before the next accepted onset for a leading run, or the first component after the preceding accepted end for a trailing run. An eligible run moves only if its complete existing span, including spacing and the boundary guard, fits that component without crossing accepted intervals or audio bounds. If the nearest component is unsuitable, the original fallback placement is retained without searching farther components. Runs already fitting that component, protected runs, and runs without accepted anchors also remain unchanged. Activity is a placement hint, not evidence that the particular words were sung, and relocation does not promote a placed line to acoustic acceptance.
 
-The summary line states how many lines fell into each group, and `--report FILE` writes every line's status, interval, word intervals, and reasons as JSON. To correct a result, edit the TTML written by `align` and render it as supplied timing.
+A `Note:` line states how many lines have no word timing or were omitted, `--verbose` lists them, and `--report FILE` writes every line's status, interval, word intervals, and reasons as JSON. To correct a result, edit the TTML written by `align` and render it as supplied timing.
 
 ## How It Works
 
