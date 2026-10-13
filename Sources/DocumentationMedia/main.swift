@@ -47,7 +47,7 @@ do {
     // the title marquee's delay so that the title rests at its initial position.
     let times=[Time(23,10),Time(47,10),Time(76,10)]
     // Each frame is the full-width 9:16 video frame that `render` exports, scaled to the sheet.
-    let height=960,width=540,gap=32,radius=44.0
+    let height=960,width=540,gap=32
     let sheet=CGContext(data:nil,width:3*width+2*gap,height:height,bitsPerComponent:8,bytesPerRow:(3*width+2*gap)*4,
                         space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
     sheet.interpolationQuality = .high
@@ -57,9 +57,8 @@ do {
         try scene.renderer.draw(t,into:frame)
         guard let screen=frame.makeImage() else { throw InputError.invalid("Frame rendering failed") }
         let rect=CGRect(x:k*(width+gap),y:0,width:width,height:height)
-        sheet.saveGState()
-        sheet.addPath(CGPath(roundedRect:rect,cornerWidth:radius,cornerHeight:radius,transform:nil));sheet.clip()
-        sheet.draw(screen,in:rect);sheet.restoreGState()
+        // Square corners, as the exported video frame has.
+        sheet.draw(screen,in:rect)
     }
     let url=URL(fileURLWithPath:CommandLine.arguments[2]) as CFURL
     guard let image=sheet.makeImage(),let destination=CGImageDestinationCreateWithURL(url,UTType.png.identifier as CFString,1,nil) else { throw InputError.invalid("Image encoding failed") }
