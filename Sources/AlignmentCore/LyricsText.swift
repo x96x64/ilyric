@@ -15,20 +15,22 @@ public struct NormalizedLyrics: Equatable, Sendable {
     public let credits: String?
     /// Line indices of a duet's second singer, marked by a leading ">".
     public let secondVoice: Set<Int>
+    /// One-based line numbers in the input of each lyric line, in the order of `LyricSource.lines`.
+    public let sourceLines: [Int]
 
     public init(_ raw: String) {
         func collapse(_ s: String) -> String { s.split(whereSeparator:\.isWhitespace).joined(separator:" ") }
         let phrase=try! NSRegularExpression(pattern:"\\(([^()]*)\\)")
         let label=try! NSRegularExpression(pattern:"^\\s*\\[[^\\]]*\\]\\s*$")
         let writers=try! NSRegularExpression(pattern:"^\\s*written\\s+by\\s*:\\s*(.+?)\\s*$",options:.caseInsensitive)
-        var names=[String](),second=Set<Int>()
+        var names=[String](),second=Set<Int>(),origins=[Int]()
         var paragraphs=[[String]](),current=[String](),background=[Int:String](),dropped=[String](),count=0
         func flush() { if !current.isEmpty { paragraphs.append(current);current=[] } }
         // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
         // Composed form, so that letters with diacritics are single scalars that alignment can fold.
         var body=(raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw).precomposedStringWithCanonicalMapping
         for variant in ["\u{02BC}","\u{2018}","\u{0060}","\u{00B4}","\u{FF07}"] { body=body.replacingOccurrences(of:variant,with:"\u{2019}") }
-        for raw in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n") {
+        for (number,raw) in body.replacingOccurrences(of:"\r\n",with:"\n").replacingOccurrences(of:"\r",with:"\n").components(separatedBy:"\n").enumerated() {
             // A leading ">" marks a duet's second singer.
             let marked=raw.drop(while:\.isWhitespace).first==">"
             let line=marked ? String(raw.drop(while:\.isWhitespace).dropFirst()) : raw
@@ -47,7 +49,7 @@ public struct NormalizedLyrics: Equatable, Sendable {
             }
             if !phrases.isEmpty { background[count]=phrases.joined(separator:" ") }
             if marked { second.insert(count) }
-            current.append(main);count+=1
+            current.append(main);origins.append(number+1);count+=1
         }
         flush()
         // Split long paragraphs into the fewest balanced chunks of at most four lines, earlier chunks taking the extra
@@ -68,5 +70,6 @@ public struct NormalizedLyrics: Equatable, Sendable {
         }
         text=split.map { $0.joined(separator:"\n") }.joined(separator:"\n\n")+"\n"
         self.background=background;self.dropped=dropped;credits=names.isEmpty ? nil : names.joined(separator:", ");secondVoice=second
+        sourceLines=origins
     }
 }

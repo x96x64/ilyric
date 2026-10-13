@@ -14,6 +14,7 @@ enum Align {
     static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
         guard let raw=try? String(contentsOf:lyrics,encoding:.utf8) else { throw Failure(message:"\(lyrics.path) is not readable UTF-8 text") }
         let normalized=NormalizedLyrics(raw)
+        try checkLyrics(raw,normalized,name:lyrics.lastPathComponent)
         if !normalized.background.isEmpty || normalized.dropped.contains(where: { $0.hasSuffix(" (background vocals without a preceding line)") }) {
             console.warning("Parenthesized backing choruses are experimental, unverified, and unsupported; omit such chorus text from plain lyrics input.")
         }
@@ -81,6 +82,27 @@ enum Align {
             "compute_units":fast ? "all" : "cpu","ignored_input_lines":normalized.dropped,"lines":lines,
             "seconds":["decode":decodedAt.timeIntervalSince(started),"separation":separatedAt.timeIntervalSince(decodedAt),"alignment":alignedAt.timeIntervalSince(separatedAt)]]
         return Result(ttml:ttml,report:report,resolved:resolved,placed:rows.count-resolved-omitted.count,omitted:omitted.count,credits:normalized.credits)
+    }
+
+    /// Rejects lyrics that cannot be aligned before any model work, naming the file, the line, and the character.
+    static func checkLyrics(_ raw: String, _ normalized: NormalizedLyrics, name: String) throws {
+        guard !normalized.sourceLines.isEmpty else {
+            if raw.trimmingCharacters(in:.whitespacesAndNewlines.union(CharacterSet(charactersIn:"\u{FEFF}"))).isEmpty {
+                throw Failure(message:"\(name) is empty; write the lyrics with one sung line per line")
+            }
+            throw Failure(message:"\(name) contains no lines to sing; section labels such as [Chorus], \"Written by:\" lines, and lines without letters are not lyrics")
+        }
+        let lines=normalized.text.components(separatedBy:"\n").filter { !$0.isEmpty }
+        for (k,line) in lines.enumerated() {
+            guard let c=unsupportedCharacter(in:line) else { continue }
+            let number=k<normalized.sourceLines.count ? normalized.sourceLines[k] : k+1
+            let code=c.unicodeScalars.map { String(format:"U+%04X",$0.value) }.joined(separator:" ")
+            let advice: String
+            if c.isNumber && c.isASCII { advice="write numbers as they are sung, for example 40 as forty" }
+            else if c.isLetter || c.isNumber { advice="only English lyrics can be aligned; other languages are planned for a later release" }
+            else { advice="remove it or write it as it is sung" }
+            throw Failure(message:"line \(number) of \(name) contains \"\(c)\" (\(code)), which cannot be aligned; \(advice)")
+        }
     }
 
     static func writeReport(_ report: [String:Any], to path: String?) throws {

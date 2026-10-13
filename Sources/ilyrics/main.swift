@@ -1,4 +1,5 @@
 import Foundation
+import AlignmentCore
 
 /// The user-facing iLyrics command (docs/command-line-interface.md).
 enum CLI {
@@ -33,6 +34,8 @@ do {
     fail("\(error.message)\n\n\(CLI.usage)",status:2)
 } catch let error as Failure {
     fail(error.message,status:1)
+} catch AlignmentError.invalid(let reason) {
+    fail(reason,status:1)
 } catch {
     fail("\(error)",status:1)
 }

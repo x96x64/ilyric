@@ -65,6 +65,24 @@ public func canonical(_ text: String) throws -> String {
     return result
 }
 
+/// The first character of a lyric line that alignment cannot use, or nil. English alignment accepts ASCII letters,
+/// Latin letters with diacritics (folded for alignment), apostrophes, punctuation, and whitespace; digits, letters of
+/// other scripts, and symbols such as $ or + are rejected so that the user can be told exactly what to change.
+public func unsupportedCharacter(in line: String) -> Character? {
+    for character in line {
+        for scalar in character.unicodeScalars {
+            let folded=foldLatin(String(scalar)).unicodeScalars.first!
+            if folded.isASCII, folded.properties.isAlphabetic { continue }
+            switch scalar.properties.generalCategory {
+            case .connectorPunctuation,.dashPunctuation,.openPunctuation,.closePunctuation,.initialPunctuation,.finalPunctuation,
+                 .otherPunctuation,.spaceSeparator,.nonspacingMark,.spacingMark,.enclosingMark: continue
+            default: if scalar.properties.isWhitespace { continue }; return character
+            }
+        }
+    }
+    return nil
+}
+
 /// English words as used for CTC targets: ASCII letters with internal apostrophes, after `foldLatin`, as ranges of
 /// the original text.
 func words(in text: String) -> [Range<String.Index>] {
