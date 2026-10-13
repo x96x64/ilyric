@@ -4,6 +4,32 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.1.0] - Unreleased
+
+Usability and screen-fidelity improvements found in real use after 1.0. Japanese and other languages are planned for 1.2.0.
+
+### Added
+
+- Stage progress on standard error in the style of Homebrew: one line per stage with a bar and percentage where the amount of work is known, `done` or `skip` at the right edge, and a final `Generated FILE in DURATION` line. Plain lines are written to files, pipes, and CI logs.
+- Numbers in plain lyrics are aligned as they are usually sung and displayed as written: cardinals, four-digit years, clock times, ordinals, and decades.
+- High-resolution audio from 8 to 384 kHz, such as 176.4- and 192-kHz Apple Lossless, and audio files up to 2 GiB.
+- The More (⋯) button at the top right of the screen.
+- A warning when plain lyrics contain parenthesized backing choruses, which are experimental and unsupported.
+
+### Changed
+
+- Videos fill the full 9:16 frame with a layout adapted from the iPhone screen, instead of showing the iPhone screen between black side bars. Export takes about 20% longer.
+- Backing vocals without their own timing appear dim beneath the focused line, without being filled with it.
+- Lines without reliable timing at the start or end of a song move into the nearest stretch of vocal activity when they fit there.
+- Errors begin with `Error:` and name the problem precisely: an empty lyrics file, a lyric line and character that cannot be aligned, or an unsupported sample rate or channel count. Audio is checked before alignment starts.
+- `--quiet` hides progress and notes but no longer hides warnings.
+- The packaged binary is about 1 MB smaller.
+
+### Fixed
+
+- The instrumental-gap indicator at the start of a song no longer overlaps the first lyric line.
+- Audio above 96 kHz no longer fails after alignment has finished.
+
 ## [1.0.1] - 2026-10-12
 
 ### Fixed
@@ -63,7 +89,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.1.0
 [1.0.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.1
 [1.0.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.0
 [0.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v0.2.0

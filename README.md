@@ -257,17 +257,17 @@ The native pipeline reproduces the original Python research implementation exact
 
 ## Performance
 
-Measured on an Apple M4 (10 cores) with a 5 min 19 s recording decoded from 96-kHz Apple Lossless:
+Measured with iLyrics 1.1.0 on an Apple M4 (10 cores, 16 GB) with a 4 min 54 s recording decoded from 176.4-kHz Apple Lossless:
 
 | Step | Time |
 | --- | ---: |
-| Decoding | 7 s |
-| Vocal separation | 42 s |
-| Recognition and alignment | 12 s |
-| Rendering and encoding (19,122 frames) | 5 min 27 s |
-| **Complete `render` of plain lyrics** | **6 min 56 s** |
+| Decoding | 6 s |
+| Vocal separation | 39 s |
+| Recognition and alignment | 11 s |
+| Rendering and encoding (17,629 frames) | 5 min 59 s |
+| **Complete `render` of plain lyrics** | **6 min 58 s** |
 
-Peak memory was 1.6 GB during alignment and 3.0 GB for the complete `render`. Rendering scales with processor cores; use `--jobs` to limit it. `--fast` shortens separation and recognition but may change results slightly between runs.
+Peak memory was 2.3 GB for the complete `render`. Rendering scales with processor cores; use `--jobs` to limit it. `--fast` shortens separation and recognition but may change results slightly between runs.
 
 ## Troubleshooting
 
@@ -316,9 +316,10 @@ Issues and pull requests are welcome. Before submitting a change:
 ```bash
 swift build
 swift test
+swift format lint --strict --recursive Sources Tests Package.swift
 ```
 
-The public test suite uses only original synthetic fixtures and needs neither the network nor private recordings. Read [AGENTS.md](AGENTS.md) for the engineering constraints, including determinism, evidence classification, and the rules for private reference material. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
+The public test suite uses only original synthetic fixtures and needs neither the network nor private recordings. Read [AGENTS.md](AGENTS.md) for the engineering constraints, including determinism, evidence classification, and the rules for private reference material. Code is formatted with the toolchain's `swift format` (`.swift-format`), which CI checks. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## Acknowledgments
 
