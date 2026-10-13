@@ -4,8 +4,8 @@ import Testing
 /// Stage-line layout, duration wording, terminal detection, and reporter behaviour. Synthetic stage names.
 struct ProgressDisplayTests {
     let stages=["Reading audio", "Separating vocals", "Aligning lyrics", "Rendering video"]
-    func style(_ width: Int, color: Bool = false, unicode: Bool = false) -> ProgressStyle {
-        ProgressStyle(interactive: true, color: color, unicode: unicode, width: width)
+    func style(_ width: Int, color: Bool = false, unicode: Bool = false, reflows: Bool = false) -> ProgressStyle {
+        ProgressStyle(interactive: true, color: color, unicode: unicode, width: width, reflows: reflows)
     }
 
     @Test func statusColumnNeverShifts() {
@@ -90,10 +90,46 @@ struct ProgressDisplayTests {
 
     /// A reporter writing to a buffer with a controllable clock.
     final class Capture: @unchecked Sendable {
-        var now=0.0, out=""
+        var now=0.0, out="", raw="", columns: Int?=nil
         func reporter(_ style: ProgressStyle, quiet: Bool = false, verbose: Bool = false, stages: [String]) -> StageReporter {
-            StageReporter(stages: stages, style: style, quiet: quiet, verbose: verbose, clock: { self.now }, sink: { self.out+=$0 })
+            StageReporter(stages: stages, style: style, quiet: quiet, verbose: verbose, clock: { self.now }, sink: { self.raw+=$0
+                // Assertions read the visible text; autowrap toggling is checked separately.
+                self.out+=$0.replacingOccurrences(of: "\u{1B}[?7l", with: "").replacingOccurrences(of: "\u{1B}[?7h", with: "") }, columns: { self.columns })
         }
+    }
+
+    @Test func resizingKeepsTheActiveLineOnOneRow() {
+        // A rewrapping terminal: the 119-column line occupies two 80-column rows after narrowing.
+        let c=Capture(), r=c.reporter(style(120, reflows: true), stages: stages)
+        r.begin(2); c.now+=1; r.update(fraction: 0.4)
+        #expect(StageLine.visibleWidth(c.out.components(separatedBy: "\r").last!)==119)
+        c.columns=80; c.out=""; r.tick()
+        #expect(c.out.hasPrefix("\r\u{1B}[1A\u{1B}[J==> [2/4]") && c.out.hasSuffix(" 40.0%"))
+        #expect(StageLine.visibleWidth(String(c.out.dropFirst("\r\u{1B}[1A\u{1B}[J".count)))==79)
+        // Widening lengthens the bar to the new edge.
+        c.columns=150; c.out=""; r.tick()
+        #expect(StageLine.visibleWidth(String(c.out.dropFirst(4)))==149)
+        c.out=""; c.now+=1; r.tick()
+        #expect(c.out.isEmpty)
+        c.now+=1; r.finish()
+        #expect(StageLine.visibleWidth(String(c.out.dropFirst(4)))==150 && c.out.hasSuffix("  done\n"))
+    }
+
+    @Test func stageLinesAreWrittenWithoutAutomaticWrapping() {
+        let c=Capture(), r=c.reporter(style(80), stages: stages)
+        r.begin(2); c.now+=1; r.update(fraction: 0.5); r.finish()
+        #expect(c.raw.components(separatedBy: "\u{1B}[?7l").count==c.raw.components(separatedBy: "\u{1B}[?7h").count)
+        #expect(c.raw.hasSuffix("\u{1B}[?7h\n") && c.raw.contains("\u{1B}[?7l\r"))
+        let p=Capture(), q=p.reporter(.plain, stages: stages)
+        q.begin(2); q.finish()
+        #expect(!p.raw.contains("\u{1B}"))
+    }
+
+    @Test func truncatingTerminalsNeverEraseEarlierLines() {
+        let c=Capture(), r=c.reporter(style(120), stages: stages)
+        r.begin(1); r.finish(); r.begin(2); c.now+=1; r.update(fraction: 0.4)
+        c.columns=80; c.out=""; r.tick()
+        #expect(c.out.hasPrefix("\r\u{1B}[K==> [2/4]") && !c.out.contains("A"))
     }
 
     @Test func plainOutputHasOneLinePerFinishedStage() {
@@ -121,7 +157,7 @@ struct ProgressDisplayTests {
         let draws=c.out.components(separatedBy: "\r").count-1
         #expect(draws<=4, "\(draws)")
         c.now+=1; r.finish()
-        #expect(c.out.hasSuffix("  done\n") && !c.out.contains("\u{1B}"))
+        #expect(c.out.hasSuffix("  done\n") && !c.out.contains("\u{1B}[1"))
     }
 
     @Test func diagnosticsInterleaveWithoutCorruptingTheActiveLine() {

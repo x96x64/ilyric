@@ -10,8 +10,11 @@ public struct ProgressStyle: Equatable, Sendable {
     public var unicode: Bool
     /// Terminal columns; lines are drawn one column narrower to avoid automatic wrapping.
     public var width: Int
-    public init(interactive: Bool, color: Bool, unicode: Bool, width: Int) {
-        self.interactive=interactive; self.color=color; self.unicode=unicode; self.width=width
+    /// Whether the terminal rewraps existing lines when it is narrowed (Terminal, iTerm2, and others) rather
+    /// than truncating them (xterm.js-based terminals). It decides how a narrowed active line is erased.
+    public var reflows: Bool
+    public init(interactive: Bool, color: Bool, unicode: Bool, width: Int, reflows: Bool = false) {
+        self.interactive=interactive; self.color=color; self.unicode=unicode; self.width=width; self.reflows=reflows
     }
     /// Plain append-only output for files, pipes, and CI logs.
     public static let plain = ProgressStyle(interactive: false, color: false, unicode: false, width: 80)

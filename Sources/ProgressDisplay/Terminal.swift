@@ -20,7 +20,11 @@ extension ProgressStyle {
         let locale=[environment["LC_ALL"], environment["LC_CTYPE"], environment["LANG"]].compactMap { $0 }.first { !$0.isEmpty } ?? ""
         let utf8=locale.uppercased().contains("UTF-8") || locale.uppercased().contains("UTF8")
         let width=columns ?? Int(environment["COLUMNS"] ?? "") ?? 80
-        return ProgressStyle(interactive: interactive, color: interactive && !noColor, unicode: interactive && utf8, width: max(20, width))
+        // Terminals known to rewrap lines on resize; others are assumed to truncate, which never erases
+        // earlier output if the assumption is wrong.
+        let program=environment["TERM_PROGRAM"] ?? ""
+        let reflows=["Apple_Terminal", "iTerm.app", "WezTerm", "ghostty"].contains(program) || term.contains("kitty") || term.contains("alacritty")
+        return ProgressStyle(interactive: interactive, color: interactive && !noColor, unicode: interactive && utf8, width: max(20, width), reflows: reflows)
     }
 }
 

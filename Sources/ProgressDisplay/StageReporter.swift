@@ -8,14 +8,19 @@ import Foundation
 /// suppresses stage lines, informational messages, details, and the summary, but never warnings or errors.
 /// The display clock is wall time for presentation only; it never influences media or alignment results.
 public final class StageReporter: @unchecked Sendable {
-    public let style: ProgressStyle
+    /// The current style; its width follows the terminal while the command runs.
+    public private(set) var style: ProgressStyle
     public let quiet, verbose: Bool
     public let stages: [String]
     let nameWidth: Int
     let interval: Double
     let clock: () -> Double
     let sink: (String) -> Void
+    let columns: () -> Int?
     let lock=NSLock()
+    /// Visible columns of the line currently drawn in place.
+    var drawnWidth=0
+
     var active: (index: Int, state: StageState)?
     var drawn=false
     var lastDraw = -Double.infinity
@@ -24,9 +29,10 @@ public final class StageReporter: @unchecked Sendable {
 
     public init(stages: [String], style: ProgressStyle, quiet: Bool, verbose: Bool, interval: Double = 0.2,
                 clock: @escaping () -> Double = { ProcessInfo.processInfo.systemUptime },
-                sink: @escaping (String) -> Void = { FileHandle.standardError.write(Data($0.utf8)) }) {
+                sink: @escaping (String) -> Void = { FileHandle.standardError.write(Data($0.utf8)) },
+                columns: @escaping () -> Int? = terminalColumns) {
         self.stages=stages; self.style=style; self.quiet=quiet; self.verbose=verbose && !quiet
-        self.interval=interval; self.clock=clock; self.sink=sink
+        self.interval=interval; self.clock=clock; self.sink=sink; self.columns=columns
         nameWidth=stages.map(\.count).max() ?? 0
     }
     deinit { ticker?.cancel() }
@@ -77,7 +83,9 @@ public final class StageReporter: @unchecked Sendable {
     /// Advances the spinner; call periodically while a stage is indeterminate.
     public func tick() {
         lock.lock(); defer { lock.unlock() }
-        guard let a=active, case .working=a.state, style.interactive else { return }
+        guard let a=active, style.interactive else { return }
+        if resized() { draw(force: true); return }
+        guard case .working=a.state else { return }
         let now=clock()
         guard now-lastDraw>=interval else { return }
         spinner+=1
@@ -124,6 +132,8 @@ public final class StageReporter: @unchecked Sendable {
         ticker?.cancel(); ticker=nil
         clearActive()
         active=nil
+        // Restore automatic wrapping in case a draw was interrupted; harmless when it is already on.
+        if style.interactive && showsStages && lastDraw > -Double.infinity { sink(Self.wrap) }
     }
 
     // MARK: Drawing (lock held)
@@ -135,20 +145,43 @@ public final class StageReporter: @unchecked Sendable {
     func draw(force: Bool) {
         guard showsStages, style.interactive, let a=active else { return }
         let now=clock()
-        guard force || now-lastDraw>=interval else { return }
-        sink("\r"+line(a.index, a.state))
-        drawn=true; lastDraw=now
+        let changed=resized()
+        guard force || changed || now-lastDraw>=interval else { return }
+        let text=line(a.index, a.state)
+        sink(Self.noWrap+rewind()+text+Self.wrap)
+        drawn=true; drawnWidth=StageLine.visibleWidth(text); lastDraw=now
     }
 
     func settle(_ index: Int, _ state: StageState) {
         guard showsStages else { return }
-        if style.interactive { sink("\r"+line(index, state)+"\n"); drawn=false }
+        if style.interactive { _=resized(); sink(Self.noWrap+rewind()+line(index, state)+Self.wrap+"\n"); drawn=false; drawnWidth=0 }
         else { sink(line(index, state)+"\n") }
         lastDraw=clock()
     }
 
     func clearActive() {
-        if drawn { sink("\r\u{1B}[K"); drawn=false }
+        if drawn { sink(rewind()); drawn=false; drawnWidth=0 }
+    }
+
+    /// Automatic wrapping is off while a stage line is written, so a line that is momentarily wider than a
+    /// terminal being resized is clipped at the edge instead of spilling onto a second row.
+    static let noWrap="\u{1B}[?7l", wrap="\u{1B}[?7h"
+
+    /// Updates the width from the terminal; true when it changed.
+    func resized() -> Bool {
+        guard style.interactive, let w=columns(), w>0 else { return false }
+        let target=max(20, w)
+        guard target != style.width else { return false }
+        style.width=target
+        return true
+    }
+
+    /// Returns the cursor to the start of the line drawn in place. A terminal narrowed since the last draw
+    /// reflows that line onto several rows; those rows are cleared so that the new line stays on one row.
+    func rewind() -> String {
+        guard drawn else { return "\r" }
+        let rows=style.reflows ? (drawnWidth+style.width-1)/max(1, style.width) : 1
+        return rows>1 ? "\r\u{1B}[\(rows-1)A\u{1B}[J" : "\r\u{1B}[K"
     }
 
     func emit(_ message: String, show: Bool) {
