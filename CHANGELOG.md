@@ -4,7 +4,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
-## [1.1.0] - Unreleased
+## [1.1.0] - 2026-10-14
 
 Usability and screen-fidelity improvements found in real use after 1.0. Japanese and other languages are planned for 1.2.0.
 
