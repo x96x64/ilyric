@@ -26,6 +26,21 @@ private enum BackingPolicyFixture {
         p.holdsFinishedLine=true;p.collapsesGaps=true
         return try LocalScene(lyrics:lyrics(attributes,opening:opening),audio:audio,presentation:p,title:"Numerical Policy Fixture",artist:"Synthetic")
     }
+    static func adjacent(_ attributes:String,opening:Bool) throws -> LocalScene {
+        let starts=opening ? [6,8,10,18]:[2,4,6,14]
+        let rows=starts.enumerated().map { i,start in
+            let main=String((0..<18).map { Character(UnicodeScalar(65+($0+i*3)%26)!) })
+            let bg=String((0..<(i==2 ? 30:12)).map { Character(UnicodeScalar(97+($0+i*3)%26)!) })
+            return "<p begin=\"\(start)s\" end=\"\(start+2)s\"><span begin=\"0s\" end=\"2s\">\(main)</span><span ttm:role=\"x-bg\"\(attributes)>\(bg)</span></p>"
+        }.joined()
+        let xml="<tt xmlns=\"http://www.w3.org/ns/ttml\" xmlns:ttm=\"http://www.w3.org/ns/ttml#metadata\" xml:space=\"preserve\"><body><div>\(rows)</div></body></tt>"
+        let audio=LocalAudio(samples:Array(repeating:0,count:24*48_000),sourceRate:48_000,sourceChannels:1,sourceFormat:0)
+        var p=LocalPresentation(icons:.original,minimumGap:Time(4),focusLead:LocalPresentation.measuredMotion.focusLead,
+            stagger:LocalPresentation.measuredMotion.stagger,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,
+            hideControls:LocalPresentation.measuredControlHide)
+        p.holdsFinishedLine=true;p.collapsesGaps=true
+        return try LocalScene(lyrics:TTMLParser.parse(Data(xml.utf8)),audio:audio,presentation:p,title:"Numerical Policy Fixture",artist:"Synthetic")
+    }
 }
 
 extension TTMLTests {
@@ -55,33 +70,54 @@ extension TTMLTests {
 }
 
 extension AudioSceneTests {
-    @Test func inheritedBackingRetainsUnfilledInkAcrossLeadFocusAndBoundaries() throws {
+    @Test func inheritedBackingHasNoUnfocusedInkAnywhereInFullFrame() throws {
+        for attributes in [""," begin=\"0s\""," end=\"2s\""," dur=\"2s\""] {
+            for opening in [false,true] {
+                let scene=try BackingPolicyFixture.adjacent(attributes,opening:opening)
+                let plain=try ScreenRenderer(scene.renderer.screen,calibratedInactive:false,diagnosticMarkers:false,icons:.original)
+                plain.secondary=scene.renderer.secondary
+                let events=scene.renderer.screen.composition.events
+                let boundaries=events.flatMap { [$0.time-Time(1,1_000_000),$0.time,$0.time+Time(1,1_000_000),$0.time+Time(15,100)] }.filter {$0>=Time(0)}
+                let times=boundaries+[Time(2),Time(3),Time(379,100),Time(6),Time(8),Time(14),Time(20)]
+                for r in [scene.renderer,plain] {
+                    let saved=r.secondary
+                    #expect(saved.count==4 && scene.lyrics.entries.count==4)
+                    #expect(scene.lyrics.entries.enumerated().allSatisfy { saved[$0.offset]?.text==$0.element.background?.text })
+                    var frames=[Time:Data]()
+                    for time in times {
+                        let state=r.screen.evaluate(time),with=try r.native(state).dataProvider!.data! as Data
+                        r.secondary=saved.filter {$0.key==state.lyrics.focus}
+                        #expect(try r.native(state).dataProvider!.data! as Data==with)
+                        r.secondary=[:];let main=try r.native(state).dataProvider!.data! as Data
+                        for i in saved.keys where i != state.lyrics.focus {
+                            r.secondary=[i:saved[i]!]
+                            #expect(try r.native(state).dataProvider!.data! as Data==main)
+                        }
+                        r.secondary=saved
+                        for cue in saved.values { #expect(cue.progress(at:time)==0) }
+                        frames[time]=with
+                    }
+                    for time in Array(times.reversed())+Array(times.prefix(3)) {
+                        #expect(try r.native(r.screen.evaluate(time)).dataProvider!.data! as Data==frames[time])
+                    }
+                }
+            }
+        }
+    }
+    @Test func inheritedBackingRetainsDimInkOnlyDuringLeadFocusAndBoundaries() throws {
         let scene=try BackingPolicyFixture.scene(),r=scene.renderer,bg=r.secondary[0]!
         #expect(!bg.hasExplicitTiming && r.screen.composition.paragraphs.count==2)
         #expect(scene.lyrics.entries[0].background!.text==bg.text)
         let times=[Time(0),Time(1_099_999,1_000_000),Time(11,10),Time(5,4),Time(1_779_999,1_000_000),
                    Time(178,100),Time(2),Time(3),Time(379,100),Time(4),Time(578,100),Time(6),Time(6_000_001,1_000_000),Time(31,5),Time(8)]
         for time in times { #expect(bg.progress(at:time)==0) }
-        let input=r.screen.composition.paragraphs[0].input,p=input.parameters
-        let count=r.lyrics.paragraphs[0].lines.count
-        let baseline=p.originY+Double(count-1)*p.lineAdvance+p.size+SecondaryLine.baselineOffset
-        let y0=Int((baseline-p.size*SecondaryLine.sizeRatio*1.1).rounded(.down))
-        let y1=Int((baseline+p.size*SecondaryLine.sizeRatio*0.3).rounded(.up))
-        func band(_ t: Time) throws -> Data {
-            let image=try r.lyricLayer(r.screen.composition.evaluate(t))
-            return (image.dataProvider!.data! as Data).subdata(in:y0*image.bytesPerRow..<y1*image.bytesPerRow)
-        }
-        let reference=try band(Time(5,4))
-        #expect(reference.contains { $0 != 0 })
-        for time in [Time(11,10),Time(178,100),Time(2),Time(3),Time(379,100),Time(4),Time(578,100),Time(6)] {
-            #expect(try band(time)==reference)
-        }
-        for time in [Time(31,5),Time(8)] {
-            let with=try r.lyricLayer(r.screen.composition.evaluate(time)).dataProvider!.data! as Data
-            let saved=r.secondary;r.secondary=[:]
-            let without=try r.lyricLayer(r.screen.composition.evaluate(time)).dataProvider!.data! as Data
-            r.secondary=saved
-            #expect(with != without)
+        let saved=r.secondary
+        for time in times {
+            let state=r.screen.evaluate(time),with=try r.native(state).dataProvider!.data! as Data
+            r.secondary=[:];let without=try r.native(state).dataProvider!.data! as Data;r.secondary=saved
+            let a=InactiveTreatment.evaluate(time,paragraph:0,events:r.screen.composition.events)
+            if state.lyrics.focus != 0 || a.blur==8 { #expect(with==without) }
+            else { #expect(with != without) }
         }
     }
     @Test func explicitBackingFillsItsOwnIntervalWithExactEndpoints() throws {

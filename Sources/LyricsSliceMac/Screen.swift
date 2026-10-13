@@ -124,7 +124,7 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    /// Optional backing text by paragraph index; inherited cues retain dim ink independently of focus.
+    /// Optional backing text by paragraph index; inherited cues retain dim ink only during lead focus.
     public var secondary: [Int:SecondaryLine] = [:]
     /// Optional songwriter credits, such as "Written By: A, B", shown below the last paragraph.
     public var credits: String? { didSet { creditLines=nil } }
@@ -176,11 +176,10 @@ public final class ScreenRenderer {
         }
         c.restoreGState()
     }
-    /// Inherited cues retain unfilled ink; explicit cues retain focus-weighted ink and the soft fill ramp.
-    private func drawSecondary(_ i:Int,translation:Double,weight:Double,time:Time,into c:CGContext) {
-        guard let s=secondary[i] else { return }
-        let inkWeight=s.hasExplicitTiming ? weight : 1
-        guard inkWeight>0 else { return }
+    /// Inherited cues follow lead visibility without fill; explicit cues retain their existing soft fill ramp.
+    private func drawSecondary(_ i:Int,translation:Double,weight:Double,focused:Bool,time:Time,into c:CGContext) {
+        guard let s=secondary[i],weight>0,s.hasExplicitTiming || focused else { return }
+        let inkWeight=weight
         let input=lyrics.paragraphs[i].input,p=input.parameters,lines=wrappedSecondary(i),edge=30.0
         let count=Double(lyrics.paragraphs[i].lines.count)
         let widths=lines.map { CTLineGetTypographicBounds($0,nil,nil,nil) },total=widths.reduce(0,+)
@@ -241,13 +240,7 @@ public final class ScreenRenderer {
                 let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
                 let top=input.parameters.originY+p.translationY-40
                 let bottom=top+Double(lines.count-1)*input.parameters.lineAdvance+input.parameters.size*2+80
-                if bottom<v.y || top>v.y+v.height {
-                    // The secondary band can remain in view after its main paragraph leaves the viewport.
-                    if secondary[p.index]?.hasExplicitTiming == false {
-                        drawSecondary(p.index,translation:p.translationY,weight:1,time:state.output,into:c)
-                    }
-                    continue
-                }
+                if bottom<v.y || top>v.y+v.height { continue }
             }
             let style=lyrics.paragraphs[p.index].input.paragraphStyle
             let tiles=calibratedInactive && (style == .latinStatic || style == .latinTimed) ? try tileCache.tiles(p.index) {
@@ -267,14 +260,14 @@ public final class ScreenRenderer {
                     if let (part,frame)=banded { c.drawSubpixel(part,in:frame,alpha:a.opacity*weight) }
                     c.setBlendMode(.normal);c.endTransparencyLayer();c.restoreGState()
                 } else { tiles.draw(a.blur,opacity:a.opacity,translation:p.translationY,into:c) }
-                drawSecondary(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),time:state.output,into:c)
+                drawSecondary(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),focused:state.focus==p.index,time:state.output,into:c)
                 drawCredits(p.index,translation:p.translationY,weight:a.opacity*max(0,1-a.blur/8),into:c)
                 continue
             }
             let image=try lyrics.paragraphs[p.index].render(p.appearance)
             let (part,frame)=band(image,paragraph:p.index,translation:p.translationY)
             c.drawSubpixel(part,in:frame,alpha:p.opacity)
-            drawSecondary(p.index,translation:p.translationY,weight:state.focus==p.index ? p.opacity:0,time:state.output,into:c)
+            drawSecondary(p.index,translation:p.translationY,weight:state.focus==p.index ? p.opacity:0,focused:state.focus==p.index,time:state.output,into:c)
             drawCredits(p.index,translation:p.translationY,weight:p.opacity,into:c)
         }
         for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
