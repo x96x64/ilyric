@@ -85,6 +85,7 @@ public enum ControlTransition {
 /// Small fixed Music-like experimental composition, not a generic UI tree.
 public struct LyricsScreen: Sendable {
     public let composition: LyricsComposition
+    public var canvas: LyricsCanvas { composition.canvas }
     public let title, artist: String
     public let duration: Time
     public let volume: Double
@@ -122,9 +123,9 @@ public struct LyricsScreen: Sendable {
         let q=min(1,max(0,min((y-v.y)/fadeLength,(v.y+v.height-y)/bottomFade)))
         return q*q*(3-2*q)
     }
-    public static func contain(width: Double, height: Double, canvasWidth: Int) -> ScreenBounds {
-        let s=min(width/Double(canvasWidth),height/2556)
-        return .init((width-Double(canvasWidth)*s)/2,(height-2556*s)/2,Double(canvasWidth)*s,2556*s)
+    public static func contain(width: Double, height: Double, canvasWidth: Int, canvasHeight: Int = 2556) -> ScreenBounds {
+        let h=Double(canvasHeight),s=min(width/Double(canvasWidth),height/h)
+        return .init((width-Double(canvasWidth)*s)/2,(height-h*s)/2,Double(canvasWidth)*s,h*s)
     }
     public func evaluate(_ time: Time) -> ScreenSnapshot {
         let lyrics=composition.evaluate(time),current=events.lastIndex(where:{$0.time<=time}) ?? 0
@@ -141,13 +142,14 @@ public struct LyricsScreen: Sendable {
         let playing=(composition.clocks.last(where:{$0.output<=time}) ?? composition.clocks[0]).running
         var parts=[ScreenComponent]()
         func add(_ id: ScreenPart,_ b: ScreenBounds,_ z: Int,_ visible: Bool = true,_ evidence: String = "provisional shape at approximate measured position") {
-            parts.append(.init(part:id,bounds:b,z:z,visible:visible && visibility.permits(id),clips:true,evidence:evidence))
+            let provenance=canvas == .video ? "synthetic 9:16 adaptation of: "+evidence : evidence
+            parts.append(.init(part:id,bounds:canvas.bounds(b,for:id),z:z,visible:visible && visibility.permits(id),clips:true,evidence:provenance))
         }
-        add(.background,.init(0,0,Double(composition.canvasWidth),2556),0,true,background == nil ?
+        add(.background,.init(0,0,Double(composition.canvasWidth),Double(canvas.height)),0,true,background == nil ?
             "original static palette gradient; provisional material" :
             "fitted artwork-derived layers, blur, and color transfer; statistical reconstruction, unmatched phase")
         let expanded=expandsLyrics && (!ui.lower || hiding)
-        add(.lyrics,expanded ? Self.expandedViewport : Self.viewport,1,true,expanded ?
+        add(.lyrics,expanded ? canvas.expandedViewport : canvas.viewport,1,true,expanded ?
             "measured expanded extent with controls hidden; provisional fade" : "provisional clip and fade; inherited fitted typography and motion")
         add(.artwork,.init(96,276,216,216),2,true,"measured bounds, approximately ±2 px; original artwork")
         add(.title,.init(352,338,650,58),2,true,"measured ink origin; provisional header typography and clipping")

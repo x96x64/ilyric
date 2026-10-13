@@ -69,6 +69,7 @@ public struct LyricsComposition: Sendable {
     public let events: [FocusEvent]
     public let clocks: [PlaybackAnchor]
     public let canvasWidth: Int
+    public var canvas: LyricsCanvas { .forWidth(canvasWidth) }
     public let tau: Double
     public let stagger: FocusStagger
     /// When set, a gap's layout slot stays closed until focus reaches the gap, opens while it holds focus,

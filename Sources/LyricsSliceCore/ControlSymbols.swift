@@ -31,7 +31,14 @@ public struct ControlSymbol: Equatable, Sendable {
 /// The Sing glyph has no public symbol equivalent; `music.mic` is a disclosed approximation.
 public enum ControlSymbols {
     public static let nativeScale = 3.0
-    public static func symbol(for part: ScreenPart, playing: Bool) -> ControlSymbol? {
+    public static func symbol(for part: ScreenPart, playing: Bool, canvas: LyricsCanvas = .native) -> ControlSymbol? {
+        guard let native = nativeSymbol(for:part,playing:playing) else { return nil }
+        let shift = canvas.offset(for:part)
+        return .init(name:native.name,pointSize:native.pointSize,weight:native.weight,opacity:native.opacity,
+            centerX:native.centerX+shift.x,centerY:native.centerY+shift.y,
+            disc:native.disc,discOpacity:native.discOpacity,knockout:native.knockout)
+    }
+    private static func nativeSymbol(for part: ScreenPart, playing: Bool) -> ControlSymbol? {
         switch part {
         // Development recordings: 56–57 × 12–13 px at (1035–1035.5, 383.5–384).
         // Runtime size and weight fit ink geometry; encoded-white opacity is estimated.

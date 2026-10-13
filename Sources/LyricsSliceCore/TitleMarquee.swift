@@ -28,6 +28,12 @@ public struct TitleMarquee: Equatable, Sendable {
     public static let measured = try! TitleMarquee(clipMinX:312,clipMaxX:977,leadingFade:20,trailingFade:22,gap:104,
         speed:104.3,delay:8.11,pause:4.42,curve:[0.296,0.340,0.567,1.0])
 
+    /// Extend only the clip; the established time mapping and edge treatment remain unchanged.
+    public func adapted(to canvas: LyricsCanvas) -> TitleMarquee {
+        try! .init(clipMinX:clipMinX,clipMaxX:clipMaxX+canvas.widthExtension,
+            leadingFade:leadingFade,trailingFade:trailingFade,gap:gap,speed:speed,delay:delay,pause:pause,curve:curve)
+    }
+
     /// Provisional rule: scrolling starts only when resting ink would enter the trailing fade.
     public func overflows(origin: Double, inkWidth: Double) -> Bool { origin+inkWidth>clipMaxX-trailingFade }
     /// Leftward displacement in [0, inkWidth + gap); zero while resting or when the label fits.

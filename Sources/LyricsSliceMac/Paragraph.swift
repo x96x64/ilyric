@@ -183,14 +183,14 @@ public final class SliceParagraph {
               zip(state.spans,input.events).allSatisfy({ $0.start == $1.start && $0.length == $1.length }) else {
             throw SliceError.invalid("Snapshot does not match paragraph")
         }
-        let p = input.parameters;let context = Self.context(width:input.canvasWidth,height:2556)
+        let p = input.parameters;let context = Self.context(width:input.canvasWidth,height:input.canvas.height)
         context.interpolationQuality = .none
         for layer in layers {
             let span = layer.event.map { state.spans[$0] }
             // Integer mask translation follows the measured diagnostic raster convention.
             // Typography baselines remain explicit and are not altered by appearance.
             let top = (p.originY+Double(layer.line)*p.lineAdvance+(span?.displacement ?? 0)).rounded()
-            let rect = CGRect(x:p.originX+layer.rasterX,y:2556-top-Double(maskHeight),width:Double(layer.image.width),height:Double(maskHeight))
+            let rect = CGRect(x:p.originX+layer.rasterX,y:Double(input.canvas.height)-top-Double(maskHeight),width:Double(layer.image.width),height:Double(maskHeight))
             if layer.event == nil {
                 context.saveGState();context.setAlpha(coverage ? 1 : p.dimOpacity)
                 context.draw(layer.image,in:rect);context.restoreGState();continue
@@ -235,9 +235,9 @@ public final class SliceParagraph {
             let unbounded = p.originX+layer.left+(input.paragraphStyle?.timed == true ? layer.totalAdvance*span.progress-layer.precedingAdvance : (layer.right-layer.left)*span.progress)
             let boundary=min(Double(input.canvasWidth),max(0,unbounded))
             // Disjoint clips avoid double-compositing antialiased glyph edges.
-            context.saveGState();context.clip(to:CGRect(x:0,y:0,width:boundary,height:2556))
+            context.saveGState();context.clip(to:CGRect(x:0,y:0,width:boundary,height:Double(input.canvas.height)))
             context.draw(layer.image,in:rect);context.restoreGState()
-            context.saveGState();context.clip(to:CGRect(x:boundary,y:0,width:Double(input.canvasWidth)-boundary,height:2556))
+            context.saveGState();context.clip(to:CGRect(x:boundary,y:0,width:Double(input.canvasWidth)-boundary,height:Double(input.canvas.height)))
             context.setAlpha(p.dimOpacity);context.draw(layer.image,in:rect);context.restoreGState()
         }
         return context.makeImage()!
@@ -249,7 +249,7 @@ public final class SliceParagraph {
         let previousQuality=context.interpolationQuality
         context.interpolationQuality = span.scale != 1 ? .high : previousQuality
         defer { context.interpolationQuality=previousQuality }
-        let base=CGRect(x:p.originX+layer.rasterX,y:2556-top-height,width:width,height:height)
+        let base=CGRect(x:p.originX+layer.rasterX,y:Double(input.canvas.height)-top-height,width:width,height:height)
         // Scale about the ink center so neighboring words keep their positions.
         let rect=CGRect(x:base.midX-width*span.scale/2,y:base.midY-height*span.scale/2,width:width*span.scale,height:height*span.scale)
         // The ramp starts fully before the word and ends fully after it, so endpoints are exact.

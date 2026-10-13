@@ -7,6 +7,7 @@ import SpikeCore
 
 /// Opt-in presentation features; defaults reproduce the established output exactly.
 public struct LocalPresentation: Sendable {
+    public var canvas: LyricsCanvas
     public var background: ArtworkBackground?
     public var icons: ScreenIconSet
     /// Insert the instrumental-gap indicator where supplied lyric timing leaves at least this much silence.
@@ -33,7 +34,8 @@ public struct LocalPresentation: Sendable {
     /// Native controls disappear 3.78 s after playback starts in the reference capture (docs/reports/control-auto-hide.md).
     public static let measuredControlHide = Time(379,100)
     public init(background: ArtworkBackground? = nil, icons: ScreenIconSet = .original, minimumGap: Time? = nil,
-                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, fillLead: Time = Time(0), hideControls: Time? = nil) {
+                focusLead: Time = Time(0), stagger: FocusStagger = .rigid, marquee: TitleMarquee? = nil, wordMotion: WordMotion? = nil, fillLead: Time = Time(0), hideControls: Time? = nil, canvas: LyricsCanvas = .native) {
+        self.canvas=canvas
         self.background=background;self.icons=icons;self.minimumGap=minimumGap;self.focusLead=focusLead;self.stagger=stagger
         self.marquee=marquee;self.wordMotion=wordMotion;self.fillLead=fillLead;self.hideControls=hideControls
     }
@@ -95,6 +97,7 @@ public final class LocalScene {
             if let timedInput,highlighting == .disabled { _=try SliceParagraph(timedInput) }
             var input=highlighting == .enabled && timedInput != nil ? timedInput! : SliceInput.supplied(text:entry.text,japanese:japanese)
             if entry.secondVoice { input.rightAligned=true }
+            if presentation.canvas == .video { input=input.adapted(to:.video) }
             let layout=try SliceParagraph(input)
             // Lead never moves focus before the previous focus event or before zero.
             let previous=events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)

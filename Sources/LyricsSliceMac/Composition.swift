@@ -7,30 +7,30 @@ import SpikeCore
 public final class CompositionRenderer {
     public let composition: LyricsComposition
     public let paragraphs: [SliceParagraph]
-    public let viewport = CGRect(x:72,y:550,width:1040,height:1000) // Synthetic clip, not measured safe area.
+    public var viewport: CGRect { CGRect(x:72,y:550,width:1040+composition.canvas.widthExtension,height:1000+composition.canvas.bottomExtension) } // Synthetic clip, not measured safe area.
     public init(_ composition: LyricsComposition) throws {
         self.composition=composition;paragraphs=try composition.paragraphs.map { try SliceParagraph($0.input) }
     }
     /// Native top-left paragraph transforms, in fixed source order.
     public func native(_ state: CompositionSnapshot, transparent: Bool = false) throws -> CGImage {
-        let width=composition.canvasWidth,height=2556
+        let width=composition.canvasWidth,height=composition.canvas.height
         let c=CGContext(data:nil,width:width,height:height,bitsPerComponent:8,bytesPerRow:width*4,
             space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
         if !transparent { c.setFillColor(CGColor(srgbRed:0.08,green:0.10,blue:0.14,alpha:1));c.fill(CGRect(x:0,y:0,width:width,height:height)) }
-        c.saveGState();c.clip(to:CGRect(x:viewport.minX,y:2556-viewport.maxY,width:viewport.width,height:viewport.height))
+        c.saveGState();c.clip(to:CGRect(x:viewport.minX,y:Double(height)-viewport.maxY,width:viewport.width,height:viewport.height))
         for p in state.paragraphs {
             let image=try paragraphs[p.index].render(p.appearance)
-            c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(width),height:2556),alpha:p.opacity)
+            c.drawSubpixel(image,in:CGRect(x:0,y:-p.translationY,width:Double(width),height:Double(height)),alpha:p.opacity)
         }
         c.restoreGState();return c.makeImage()!
     }
     public func draw(_ time: Time, into context: CGContext) throws {
         let width=Double(context.width),height=Double(context.height)
         context.setFillColor(CGColor(gray:0,alpha:1));context.fill(CGRect(x:0,y:0,width:width,height:height))
-        let scale=min(width/Double(composition.canvasWidth),height/2556)
+        let scale=min(width/Double(composition.canvasWidth),height/Double(composition.canvas.height))
         let image=try native(composition.evaluate(time))
         context.interpolationQuality = .high
-        context.draw(image,in:CGRect(x:(width-Double(image.width)*scale)/2,y:(height-2556*scale)/2,width:Double(image.width)*scale,height:2556*scale))
+        context.draw(image,in:CGRect(x:(width-Double(image.width)*scale)/2,y:(height-Double(composition.canvas.height)*scale)/2,width:Double(image.width)*scale,height:Double(composition.canvas.height)*scale))
         // Reuse the existing output-space audiovisual test marker. It is not native UI.
         let t=Time(time.numerator % (4*time.denominator),time.denominator)
         if Timeline.markerTimes.contains(where:{t >= $0 && t < $0+Time(1,20)}) {

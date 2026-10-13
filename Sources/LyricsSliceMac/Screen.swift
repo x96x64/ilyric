@@ -9,6 +9,7 @@ import SpikeCore
 /// Original assets and fixed component ordering. No system assets or native chrome.
 public final class ScreenRenderer {
     public let screen: LyricsScreen
+    private var canvasHeight: Double { Double(screen.canvas.height) }
     public let lyrics: CompositionRenderer
     private let backdrop, artwork, fadeMask, expandedFadeMask: CGImage
     private let tileCache: TileCache
@@ -23,6 +24,8 @@ public final class ScreenRenderer {
     private let marqueeMask: CGImage?
     private let scrollingParts: Set<ScreenPart>
     public init(_ screen: LyricsScreen, calibratedInactive: Bool = false, diagnosticMarkers: Bool = true, boundedCache: Bool = false, suppliedArtwork: CGImage? = nil, icons: ScreenIconSet = .original, marquee: TitleMarquee? = nil, sharing: ScreenRenderer? = nil, placeholderArtwork: Bool = false) throws {
+        let marquee=marquee?.adapted(to:screen.canvas)
+        let canvasHeight=Double(screen.canvas.height)
         self.icons=icons;self.marquee=marquee
         if let marquee {
             let width=Int((marquee.clipMaxX-marquee.clipMinX).rounded())
@@ -32,7 +35,7 @@ public final class ScreenRenderer {
         } else { marqueeMask=nil }
         self.diagnosticMarkers=diagnosticMarkers;self.calibratedInactive=calibratedInactive;self.boundedCache=boundedCache
         // Renderers of the same scene share immutable layouts and inactive tiles; caches stay bounded.
-        if let sharing,sharing.screen.composition.paragraphs.count==screen.composition.paragraphs.count {
+        if let sharing,sharing.screen.composition.paragraphs.count==screen.composition.paragraphs.count,sharing.screen.composition.canvasWidth==screen.composition.canvasWidth {
             lyrics=sharing.lyrics;tileCache=sharing.tileCache
         } else {
             lyrics=try CompositionRenderer(screen.composition);tileCache=TileCache(capacity:boundedCache ? 16 : Int.max)
@@ -47,9 +50,9 @@ public final class ScreenRenderer {
         })
         // Palette shared by the original artwork and background; no source artwork.
         let colors=[CGColor(srgbRed:0.12,green:0.21,blue:0.25,alpha:1),CGColor(srgbRed:0.29,green:0.23,blue:0.35,alpha:1),CGColor(srgbRed:0.16,green:0.12,blue:0.24,alpha:1)]
-        let bg=Self.context(screen.composition.canvasWidth,2556)
+        let bg=Self.context(screen.composition.canvasWidth,screen.canvas.height)
         let gradient=CGGradient(colorsSpace:CGColorSpace(name:CGColorSpace.sRGB),colors:colors as CFArray,locations:[0,0.45,1])!
-        bg.drawLinearGradient(gradient,start:CGPoint(x:0,y:2556),end:CGPoint(x:1179,y:0),options:[.drawsBeforeStartLocation,.drawsAfterEndLocation])
+        bg.drawLinearGradient(gradient,start:CGPoint(x:0,y:canvasHeight),end:CGPoint(x:screen.canvas.width,y:0),options:[.drawsBeforeStartLocation,.drawsAfterEndLocation])
         backdrop=bg.makeImage()!
         let art=Self.context(216,216)
         art.drawLinearGradient(gradient,start:.zero,end:CGPoint(x:216,y:216),options:[])
@@ -65,14 +68,14 @@ public final class ScreenRenderer {
             artwork=target.makeImage()!
         } else { artwork=art.makeImage()! }
         func mask(_ fade:(Double)->Double) -> CGImage {
-            let bytes=(0..<2556).map { UInt8((fade(Double($0)+0.5)*255).rounded()) }
-            return CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
+            let bytes=(0..<screen.canvas.height).map { UInt8((fade(Double($0)+0.5)*255).rounded()) }
+            return CGImage(width:1,height:screen.canvas.height,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,
                 space:CGColorSpaceCreateDeviceGray(),bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
         }
-        fadeMask=mask { LyricsScreen.fade(at:$0) }
-        expandedFadeMask=mask { LyricsScreen.fade(at:$0,viewport:LyricsScreen.expandedViewport,bottomFade:LyricsScreen.expandedBottomFade) }
+        fadeMask=mask { LyricsScreen.fade(at:$0,viewport:screen.canvas.viewport,bottomFade:LyricsScreen.fadeLength) }
+        expandedFadeMask=mask { LyricsScreen.fade(at:$0,viewport:screen.canvas.expandedViewport,bottomFade:LyricsScreen.expandedBottomFade) }
         if let model=screen.background {
-            dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:2556,abstract:placeholderArtwork)
+            dynamicBackdrop=ArtworkBackdrop(model,artwork:artwork,canvasWidth:screen.composition.canvasWidth,canvasHeight:screen.canvas.height,abstract:placeholderArtwork)
         } else { dynamicBackdrop=nil }
         if calibratedInactive && !boundedCache {
             for (i,p) in screen.composition.paragraphs.enumerated() where (p.input.paragraphStyle == .latinStatic || p.input.paragraphStyle == .latinTimed) {
@@ -104,13 +107,13 @@ public final class ScreenRenderer {
         c.saveGState();c.setAlpha(0.55);c.textMatrix = .identity;c.textPosition = .zero
         let reference=CTLineGetImageBounds(line(right ? "−0:00":"0:00"),c),shown=line(text)
         let x=right ? b.x+b.width-CTLineGetTypographicBounds(shown,nil,nil,nil) : b.x-reference.minX
-        c.textPosition=CGPoint(x:x,y:2556-b.y-reference.maxY);CTLineDraw(shown,c);c.restoreGState()
+        c.textPosition=CGPoint(x:x,y:canvasHeight-b.y-reference.maxY);CTLineDraw(shown,c);c.restoreGState()
     }
-    private func rect(_ b:ScreenBounds) -> CGRect { CGRect(x:b.x,y:2556-b.y-b.height,width:b.width,height:b.height) }
+    private func rect(_ b:ScreenBounds) -> CGRect { CGRect(x:b.x,y:canvasHeight-b.y-b.height,width:b.width,height:b.height) }
     private func ink(_ line:CTLine,_ b:ScreenBounds,_ c:CGContext,alpha:Double=1,right:Bool=false) {
         c.saveGState();c.setAlpha(alpha);c.textMatrix = .identity;c.textPosition = .zero
         let bounds=CTLineGetImageBounds(line,c)
-        c.textPosition=CGPoint(x:(right ? b.x+b.width-bounds.width : b.x)-bounds.minX,y:2556-b.y-bounds.maxY)
+        c.textPosition=CGPoint(x:(right ? b.x+b.width-bounds.width : b.x)-bounds.minX,y:canvasHeight-b.y-bounds.maxY)
         CTLineDraw(line,c);c.restoreGState()
     }
     /// Two copies separated by the measured gap, clipped to the measured header span with edge fades.
@@ -120,7 +123,7 @@ public final class ScreenRenderer {
         let bounds=CTLineGetImageBounds(line,c),offset=marquee.offset(at:seconds,origin:b.x,inkWidth:bounds.width)
         let r=rect(b);c.clip(to:CGRect(x:marquee.clipMinX,y:r.minY,width:marquee.clipMaxX-marquee.clipMinX,height:r.height),mask:marqueeMask)
         for copy in [0.0,bounds.width+marquee.gap] {
-            c.textPosition=CGPoint(x:b.x-offset+copy-bounds.minX,y:2556-b.y-bounds.maxY);CTLineDraw(line,c)
+            c.textPosition=CGPoint(x:b.x-offset+copy-bounds.minX,y:canvasHeight-b.y-bounds.maxY);CTLineDraw(line,c)
         }
         c.restoreGState()
     }
@@ -172,7 +175,7 @@ public final class ScreenRenderer {
         let first=secondaryCount>0 ? last+(secondaryCount-1)*advance+Self.creditsGap : last
         c.saveGState();c.textMatrix = .identity;c.setAlpha(weight*Self.creditsOpacity)
         for (k,line) in (creditLines ?? []).enumerated() {
-            c.textPosition=CGPoint(x:p.originX,y:2556-(first+Double(k)*advance));CTLineDraw(line,c)
+            c.textPosition=CGPoint(x:p.originX,y:canvasHeight-(first+Double(k)*advance));CTLineDraw(line,c)
         }
         c.restoreGState()
     }
@@ -188,7 +191,7 @@ public final class ScreenRenderer {
         c.saveGState();c.textMatrix = .identity
         for (k,line) in lines.enumerated() {
             let baseline=p.originY+(count-1)*p.lineAdvance+p.size+translation+SecondaryLine.baselineOffset+Double(k)*p.lineAdvance*SecondaryLine.sizeRatio
-            let y=2556-baseline,x=p.originX+(input.rightAligned == true ? p.width-widths[k] : 0)
+            let y=canvasHeight-baseline,x=p.originX+(input.rightAligned == true ? p.width-widths[k] : 0)
             c.setAlpha(inkWeight*SecondaryLine.unfilledOpacity);c.textPosition=CGPoint(x:x,y:y);CTLineDraw(line,c)
             let local=front-preceding
             if local>0 {
@@ -214,9 +217,9 @@ public final class ScreenRenderer {
         }
         return (cropped,CGRect(x:0,y:Double(image.height)-bottom-translation,width:w,height:bottom-top))
     }
-    public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds=LyricsScreen.viewport,reveal:Double=1) throws -> CGImage {
-        let c=Self.context(screen.composition.canvasWidth,2556)
-        try drawLyrics(state,viewport:v,reveal:reveal,into:c)
+    public func lyricLayer(_ state:CompositionSnapshot,viewport v:ScreenBounds?=nil,reveal:Double=1) throws -> CGImage {
+        let c=Self.context(screen.composition.canvasWidth,screen.canvas.height)
+        try drawLyrics(state,viewport:v ?? screen.canvas.viewport,reveal:reveal,into:c)
         return c.makeImage()!
     }
     /// Draws the lyric layer into any native-sized context, clipped and faded; used directly by the screen
@@ -224,17 +227,17 @@ public final class ScreenRenderer {
     func drawLyrics(_ state:CompositionSnapshot,viewport v:ScreenBounds,reveal:Double,into c:CGContext) throws {
         let w=screen.composition.canvasWidth
         c.saveGState();defer { c.restoreGState() }
-        var mask=v == LyricsScreen.expandedViewport ? expandedFadeMask : fadeMask
-        if v == LyricsScreen.expandedViewport && reveal<1 {
+        var mask=v == screen.canvas.expandedViewport ? expandedFadeMask : fadeMask
+        if v == screen.canvas.expandedViewport && reveal<1 {
             // During the hide transition the vacated area fades in: max(original fade, revealed expanded fade).
-            let bytes=(0..<2556).map { y -> UInt8 in
+            let bytes=(0..<screen.canvas.height).map { y -> UInt8 in
                 let yy=Double(y)+0.5,e=LyricsScreen.fade(at:yy,viewport:v,bottomFade:LyricsScreen.expandedBottomFade)
-                return UInt8((max(LyricsScreen.fade(at:yy),e*reveal)*255).rounded())
+                return UInt8((max(LyricsScreen.fade(at:yy,viewport:screen.canvas.viewport,bottomFade:LyricsScreen.fadeLength),e*reveal)*255).rounded())
             }
-            mask=CGImage(width:1,height:2556,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,space:CGColorSpaceCreateDeviceGray(),
+            mask=CGImage(width:1,height:screen.canvas.height,bitsPerComponent:8,bitsPerPixel:8,bytesPerRow:1,space:CGColorSpaceCreateDeviceGray(),
                 bitmapInfo:[],provider:CGDataProvider(data:Data(bytes) as CFData)!,decode:nil,shouldInterpolate:false,intent:.defaultIntent)!
         }
-        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:w,height:2556),mask:mask)
+        c.clip(to:rect(v));c.clip(to:CGRect(x:0,y:0,width:Double(w),height:canvasHeight),mask:mask)
         for p in state.paragraphs {
             if boundedCache {
                 let input=lyrics.paragraphs[p.index].input,lines=lyrics.paragraphs[p.index].lines
@@ -270,11 +273,11 @@ public final class ScreenRenderer {
             drawSecondary(p.index,translation:p.translationY,weight:state.focus==p.index ? p.opacity:0,focused:state.focus==p.index,time:state.output,into:c)
             drawCredits(p.index,translation:p.translationY,weight:p.opacity,into:c)
         }
-        for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,into:c) } }
+        for g in state.gaps { if let s=g.state { Self.drawGap(s,centerY:GapIndicator.focusedCenterY+g.translationY,canvasHeight:canvasHeight,into:c) } }
     }
     /// Three white dots scaled as a group about the middle dot; native coordinates, top-left origin.
-    static func drawGap(_ s:GapIndicatorState,centerY:Double,into c:CGContext) {
-        let middle=GapIndicator.firstCenterX+GapIndicator.spacing,d=GapIndicator.diameter*s.scale,y=2556-centerY
+    static func drawGap(_ s:GapIndicatorState,centerY:Double,canvasHeight:Double=2556,into c:CGContext) {
+        let middle=GapIndicator.firstCenterX+GapIndicator.spacing,d=GapIndicator.diameter*s.scale,y=canvasHeight-centerY
         for (k,opacity) in s.opacities.enumerated() {
             let x=middle+(Double(k)-1)*GapIndicator.spacing*s.scale
             c.setFillColor(CGColor(gray:1,alpha:opacity*s.visibility))
@@ -282,7 +285,7 @@ public final class ScreenRenderer {
         }
     }
     public func native(_ state:ScreenSnapshot) throws -> CGImage {
-        let c=Self.context(screen.composition.canvasWidth,2556)
+        let c=Self.context(screen.composition.canvasWidth,screen.canvas.height)
         let lowerGroup:Set<ScreenPart>=[.progress,.elapsed,.remaining,.previous,.playback,.next,.volume,.volumeLow,.volumeHigh,
                                          .bottomLeft,.bottomCenter,.bottomRight,.translation,.singCompact,.singExpanded]
         for part in state.components.sorted(by:{$0.z<$1.z}) where part.visible {
@@ -290,8 +293,8 @@ public final class ScreenRenderer {
             if moving { c.saveGState();c.translateBy(x:0,y:-state.lowerOffset);c.setAlpha(state.lowerOpacity) }
             defer { if moving { c.restoreGState() } }
             // Measured symbol placement may exceed the provisional component rectangle, so it is not clipped.
-            if icons == .systemSymbols,let symbol=ControlSymbols.symbol(for:part.part,playing:state.playing) {
-                try symbols.draw(symbol,canvasHeight:2556,into:c);continue
+            if icons == .systemSymbols,let symbol=ControlSymbols.symbol(for:part.part,playing:state.playing,canvas:screen.canvas) {
+                try symbols.draw(symbol,canvasHeight:canvasHeight,into:c);continue
             }
             c.saveGState();let r=rect(part.bounds)
             let label=part.part == .title ? title : part.part == .artist ? artist : nil
@@ -370,7 +373,7 @@ public final class ScreenRenderer {
         gpu=CIContext(mtlDevice:device,options:[.workingColorSpace:CGColorSpace(name:CGColorSpace.sRGB)!,.cacheIntermediates:false])
     }
     public func draw(_ time:Time,into c:CGContext) throws {
-        let w=Double(c.width),h=Double(c.height),fit=LyricsScreen.contain(width:w,height:h,canvasWidth:screen.composition.canvasWidth)
+        let w=Double(c.width),h=Double(c.height),fit=LyricsScreen.contain(width:w,height:h,canvasWidth:screen.composition.canvasWidth,canvasHeight:screen.canvas.height)
         let image=try native(screen.evaluate(time))
         if let gpu,let data=c.data,let space=c.colorSpace,c.bitsPerPixel==32,c.bitmapInfo.contains(.byteOrder32Little) {
             let scaled=CIImage(cgImage:image).applyingFilter("CILanczosScaleTransform",parameters:[kCIInputScaleKey:fit.width/Double(image.width),kCIInputAspectRatioKey:1.0])

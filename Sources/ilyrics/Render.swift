@@ -101,7 +101,7 @@ enum Render {
             minimumGap:options.has("no-gaps") ? nil : Time(4),
             focusLead:LocalPresentation.measuredMotion.focusLead,stagger:LocalPresentation.measuredMotion.stagger,
             marquee:options.has("no-marquee") ? nil : .measured,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,
-            hideControls:controls=="auto-hide" ? LocalPresentation.measuredControlHide : nil)
+            hideControls:controls=="auto-hide" ? LocalPresentation.measuredControlHide : nil,canvas:.video)
         presentation.holdsFinishedLine=true;presentation.collapsesGaps=true
 
         let audio:LocalAudio,scene:LocalScene

@@ -99,7 +99,8 @@ public enum ParagraphStyle: String, Codable, Sendable { case latinStatic, japane
 public struct SliceInput: Codable, Sendable {
     public let text: String
     public let paragraphStyle: ParagraphStyle?
-    public let canvasWidth: Int // 1179 screenshot or 1180 recording; no rescaling.
+    public let canvasWidth: Int // Native 1179/1180, or the synthetic 1440-pixel video adaptation.
+    public var canvas: LyricsCanvas { .forWidth(canvasWidth) }
     public let breakEvidence: String
     public let parameters: SliceParameters
     public let appearance: SoftAppearance?
@@ -127,12 +128,12 @@ public struct SliceInput: Codable, Sendable {
                 throw SliceError.invalid("Static paragraph integration; timed appearance and vertical treatment are unvalidated")
             }
         }
-        guard [1179,1180].contains(canvasWidth), text.utf16.count < 500,
+        guard [1179,1180,1440].contains(canvasWidth), text.utf16.count < 500,
               structureValid, !text.isEmpty, !text.contains("\n\n"),
               !text.hasPrefix("\n"), !text.hasSuffix("\n"),
               ["observed-structure-source-semantics-unknown","supplied-explicit-structure"].contains(breakEvidence),
               [p.size,p.width,p.originX,p.originY,p.lineAdvance,p.amplitude,p.tau,p.dimOpacity].allSatisfy({ $0.isFinite }),
-              (90...110).contains(p.size), (900...1000).contains(p.width),
+              (90...110).contains(p.size), (900+canvas.widthExtension...1000+canvas.widthExtension).contains(p.width),
               (0...150).contains(p.originX), (500...900).contains(p.originY),
               (110...140).contains(p.lineAdvance), (0...10).contains(p.amplitude),
               (0.08...0.4).contains(p.tau), (0...1).contains(p.dimOpacity) else { throw SliceError.invalid("Experimental paragraph constraints") }
@@ -176,6 +177,15 @@ public struct SliceInput: Codable, Sendable {
                 displacement:displacement,phase:phase,scale:scale,glow:glow)
         }
         return SliceSnapshot(time:time,spans:states)
+    }
+    /// Reflow into a fixed canvas without changing source ranges or timing events.
+    public func adapted(to canvas: LyricsCanvas) -> SliceInput {
+        var parameters = self.parameters
+        parameters.width += canvas.widthExtension - self.canvas.widthExtension
+        var result = SliceInput(text:text,canvasWidth:canvas.width,parameters:parameters,events:events,
+            appearance:appearance,paragraphStyle:paragraphStyle,breakEvidence:breakEvidence,motion:motion)
+        result.rightAligned = rightAligned
+        return result
     }
     /// Fitted static reconstruction, conditional on observed line structure.
     public static func latin(text: String = "A careful draft—\nwith room to revise.") -> SliceInput {
