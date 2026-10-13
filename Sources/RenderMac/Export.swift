@@ -56,9 +56,11 @@ public enum Exporter {
     /// itself. Workers claim the batch's frames one at a time, so faster cores render more of them; frames
     /// are appended strictly in order, and every frame remains a pure function of its time.
     /// With two `audioChannels`, `audioSample` takes interleaved indices (frame × 2 + channel).
+    /// `submitted` receives the count of frames accepted by the video writer, in order; it is presentation
+    /// progress only and does not mean those frames are encoded or written to disk.
     @MainActor public static func video(width: Int, height: Int, to url: URL, frames: Int,
         workers draws: [(Time, CGContext) throws -> Void], audioChannels: Int = 1,
-        audioSample: @escaping (Int) -> Int16) async throws -> ExportMetrics {
+        audioSample: @escaping (Int) -> Int16, submitted: ((Int) -> Void)? = nil) async throws -> ExportMetrics {
         guard audioChannels == 1 || audioChannels == 2 else { throw SpikeError.failure("Audio must be mono or stereo") }
         guard !draws.isEmpty else { throw SpikeError.failure("At least one frame worker is required") }
         guard frames > 0, !FileManager.default.fileExists(atPath: url.path) else { throw SpikeError.failure("Invalid frame count or existing output") }
@@ -158,6 +160,7 @@ public enum Exporter {
                         throw writer.error ?? SpikeError.failure("Video append failed")
                     }
                     append += Date().timeIntervalSince(writing)
+                    submitted?(first + k + 1)
                 }
                 first += n
             }

@@ -1,4 +1,5 @@
 import Foundation
+import ProgressDisplay
 import AVFoundation
 import LyricsInputCore
 import LyricsInputMac
@@ -59,7 +60,9 @@ enum Render {
         guard ["auto-hide","visible"].contains(controls) else { throw UsageError(message:"--controls takes auto-hide or visible") }
         let jobs=options.values["jobs"].map { Int($0) ?? 0 } ?? max(1,ProcessInfo.processInfo.activeProcessorCount)
         guard (1...64).contains(jobs) else { throw UsageError(message:"--jobs takes a number from 1 to 64") }
-        let console=Console(quiet:options.has("quiet"),verbose:options.has("verbose"))
+        let console=Console(quiet:options.has("quiet"),verbose:options.has("verbose"),stages:Align.stages+["Rendering video"])
+        defer { console.progress.close() }
+        let progress=console.progress
         let audioURL=URL(fileURLWithPath:options.operands[0]),lyricsURL=URL(fileURLWithPath:options.operands[1])
         for url in [audioURL,lyricsURL]+(options.values["artwork"].map { [URL(fileURLWithPath:$0)] } ?? []) where !FileManager.default.fileExists(atPath:url.path) {
             throw Failure(message:"\(url.path) does not exist")
@@ -71,6 +74,7 @@ enum Render {
         var report:[String:Any]=["format":"ilyrics-render-report-1"]
         let lyrics:LocalLyrics
         var credits=options.values["credits"]
+        var timed=true
         do {
             switch lyricsURL.pathExtension.lowercased() {
             case "ttml": lyrics=try LyricsParser.parse(LocalFile.boundedData(lyricsURL,limit:LRCParser.byteLimit,label:"Lyrics"),format:.ttml)
@@ -79,14 +83,17 @@ enum Render {
                 let enhanced=String(decoding:data,as:UTF8.self).range(of:"<[0-9]+:[0-9]+(\\.[0-9]+)?>",options:.regularExpression) != nil
                 lyrics=try LyricsParser.parse(data,format:enhanced ? .enhancedLRC : .lrc)
             default:
+                timed=false
                 let aligned=try await Align.run(audio:audioURL,lyrics:lyricsURL,keepAdLibs:options.has("keep-ad-libs"),fast:options.has("fast"),console:console)
-                console.say("Aligned \(aligned.resolved) lines, placed \(aligned.placed), omitted \(aligned.omitted)")
                 report["alignment"]=aligned.report
                 credits=credits ?? aligned.credits
                 lyrics=try LyricsParser.parse(Data(aligned.ttml.utf8),format:.ttml)
             }
         } catch let error as InputError { throw Failure(message:"the lyrics could not be read: \(error)") }
         for diagnostic in lyrics.diagnostics { console.detail("Lyrics: \(diagnostic)") }
+        // Supplied timing skips separation and alignment; its audio is read here. Untimed lyrics read the audio
+        // during alignment, and the export's own decoding belongs to the rendering stage.
+        if timed { progress.begin(1) } else { progress.begin(4) }
 
         // Header and artwork: options first, then the audio file's metadata.
         let tags=await metadata(audioURL)
@@ -95,7 +102,7 @@ enum Render {
             if let path=options.values["artwork"] { artwork=try LocalArtwork.decode(URL(fileURLWithPath:path)) }
             else { artwork=try tags.artwork.map { try LocalArtwork.decode(data:$0) } }
         } catch { throw Failure(message:"the artwork could not be decoded: \(error)") }
-        if artwork==nil { console.say("No artwork found; using the placeholder artwork (pass --artwork FILE to supply one)") }
+        if artwork==nil { console.say("Note: no artwork found; using the placeholder artwork (pass --artwork FILE to supply one)") }
 
         var presentation=LocalPresentation(background:background=="artwork" ? .fitted : nil,icons:.systemSymbols,
             minimumGap:options.has("no-gaps") ? nil : Time(4),
@@ -107,6 +114,7 @@ enum Render {
         let audio:LocalAudio,scene:LocalScene
         do {
             audio=try await LocalAudio.decode(audioURL)
+            if timed { progress.finish();progress.skip(2);progress.skip(3);progress.begin(4) }
             scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:artwork?.image ?? PlaceholderArtwork.image(),highlighting:.enabled,presentation:presentation,
                                  title:options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent,
                                  artist:options.values["artist"] ?? tags.artist ?? "",credits:credits,placeholderArtwork:artwork==nil)
@@ -115,36 +123,22 @@ enum Render {
         // Each worker owns one renderer; frames are pure functions of time, so output does not depend on the count.
         let renderers=try [scene.renderer]+(1..<jobs).map { _ in try scene.makeRenderer() }
         renderers.forEach { $0.enableGPUScaling() }
-        let frames=scene.schedule.frames,progress=Progress(total:frames,console:console)
-        console.say("Rendering \(frames) frames with \(jobs) workers")
+        let frames=scene.schedule.frames
+        console.detail("Rendering \(frames) frames with \(jobs) workers")
         let temporary=target.deletingLastPathComponent().appendingPathComponent(".ilyrics-\(UUID().uuidString).mp4")
         defer { try? FileManager.default.removeItem(at:temporary) }
         let metrics=try await Exporter.video(width:1080,height:1920,to:temporary,frames:frames,
-            workers:renderers.map { r in { time,context in try r.draw(time,into:context);progress.advance() } },
-            audioChannels:audio.channels,audioSample:{ audio.interleavedSample($0) })
-        progress.finish()
+            workers:renderers.map { r in { time,context in try r.draw(time,into:context) } },
+            audioChannels:audio.channels,audioSample:{ audio.interleavedSample($0) }) { submitted in
+                // After the last frame the writer still finishes the file, shown as a spinner.
+                if submitted<frames { progress.update(fraction:Double(submitted)/Double(frames)) } else { progress.indeterminate() }
+            }
         if FileManager.default.fileExists(atPath:target.path) { _=try FileManager.default.replaceItemAt(target,withItemAt:temporary) }
         else { try FileManager.default.moveItem(at:temporary,to:target) }
         report["export"]=try JSONSerialization.jsonObject(with:JSONEncoder().encode(metrics))
         report["frames"]=frames;report["jobs"]=jobs
         try Align.writeReport(report,to:options.values["report"])
-        console.say("Wrote \(output) in \(elapsed(Date().timeIntervalSince(started)))")
+        progress.finish()
+        progress.summary("Generated \(target.lastPathComponent) in \(durationInWords(Date().timeIntervalSince(started)))")
     }
-}
-
-/// Thread-safe frame progress on standard error, updated in whole percent.
-final class Progress: @unchecked Sendable {
-    let total: Int, console: Console, terminal=isatty(2) != 0
-    private var done=0,shown = -1
-    private let lock=NSLock()
-    init(total: Int, console: Console) { self.total=total;self.console=console }
-    func advance() {
-        lock.lock();defer { lock.unlock() }
-        done+=1
-        let percent=done*100/total
-        guard percent != shown,!console.quiet,terminal || percent%10==0 else { return }
-        shown=percent
-        FileHandle.standardError.write(Data((terminal ? "\r  \(percent)%" : "  \(percent)%\n").utf8))
-    }
-    func finish() { if terminal && !console.quiet { FileHandle.standardError.write(Data("\n".utf8)) } }
 }

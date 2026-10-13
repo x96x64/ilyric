@@ -27,7 +27,8 @@ extension InputTests {
                 let stderr=String(decoding:err.fileHandleForReading.readDataToEndOfFile(),as:UTF8.self)
                 let warnings=stderr.components(separatedBy:"\n").filter {$0.hasPrefix("Warning:")}
                 #expect(p.terminationStatus==1 && out.fileHandleForReading.readDataToEndOfFile().isEmpty)
-                #expect(warnings.count==(fixture.1 && mode != ["--quiet"] ? 1:0))
+                // Warnings remain visible with --quiet, which hides only progress and informational output.
+                #expect(warnings.count==(fixture.1 ? 1:0))
                 for warning in warnings {
                     #expect(warning.contains("experimental, unverified, and unsupported"))
                     #expect(!warning.contains(main) && !warning.contains(bg) && !warning.contains(dir.path))

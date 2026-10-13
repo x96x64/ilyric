@@ -7,7 +7,7 @@ import Foundation
 /// files, pipes, and CI receive one line per finished or skipped stage and nothing in between. `quiet`
 /// suppresses stage lines, informational messages, details, and the summary, but never warnings or errors.
 /// The display clock is wall time for presentation only; it never influences media or alignment results.
-public final class ProgressReporter: @unchecked Sendable {
+public final class StageReporter: @unchecked Sendable {
     public let style: ProgressStyle
     public let quiet, verbose: Bool
     public let stages: [String]

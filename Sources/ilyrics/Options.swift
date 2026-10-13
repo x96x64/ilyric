@@ -1,4 +1,5 @@
 import Foundation
+import ProgressDisplay
 
 /// A usage error: reported with the command's usage and exit status 2.
 struct UsageError: Error { let message: String }
@@ -36,11 +37,19 @@ struct Options {
     func has(_ flag: String) -> Bool { flags.contains(flag) }
 }
 
-/// Progress on standard error, silenced by `--quiet`; details only with `--verbose`.
+/// Messages and stage progress on standard error through one serialized reporter. `--quiet` keeps only
+/// warnings and errors; details appear only with `--verbose`.
 struct Console {
     let quiet, verbose: Bool
-    func say(_ s: String) { if !quiet { FileHandle.standardError.write(Data((s+"\n").utf8)) } }
-    func detail(_ s: String) { if verbose { FileHandle.standardError.write(Data((s+"\n").utf8)) } }
+    let progress: StageReporter
+    init(quiet: Bool, verbose: Bool, stages: [String] = []) {
+        self.quiet=quiet;self.verbose=verbose && !quiet
+        progress=StageReporter(stages:stages,style:.detect(),quiet:quiet,verbose:verbose)
+        if !stages.isEmpty { progress.startTicker() }
+    }
+    func say(_ s: String) { progress.info(s) }
+    func detail(_ s: String) { progress.detail(s) }
+    func warning(_ s: String) { progress.warning(s) }
 }
 
 /// Elapsed time as "1 min 05 s" or "8.2 s".

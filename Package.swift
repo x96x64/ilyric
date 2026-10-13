@@ -10,7 +10,7 @@ let package = Package(
         .target(name: "ProgressDisplay"),
         .testTarget(name: "ProgressDisplayTests", dependencies: ["ProgressDisplay"]),
         .target(name: "RenderMac", dependencies: ["SpikeCore"]),
-        .executableTarget(name: "ilyrics", dependencies: ["AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
+        .executableTarget(name: "ilyrics", dependencies: ["ProgressDisplay", "AlignmentCore", "AlignmentMac", "LyricsInputCore", "LyricsInputMac", "LyricsSliceCore", "LyricsSliceMac", "SpikeCore", "RenderMac"]),
         .executableTarget(name: "ReferenceProbe", dependencies: ["SpikeCore", "RenderMac"]),
         .target(name: "LyricsSliceCore", dependencies: ["SpikeCore"]),
         .target(name: "LyricsSliceMac", dependencies: ["LyricsSliceCore", "SpikeCore"]),

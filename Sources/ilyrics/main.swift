@@ -17,7 +17,7 @@ enum CLI {
 
 let arguments=Array(CommandLine.arguments.dropFirst())
 func fail(_ message: String, status: Int32) -> Never {
-    FileHandle.standardError.write(Data("ilyrics: \(message)\n".utf8));exit(status)
+    FileHandle.standardError.write(Data("Error: \(message)\n".utf8));exit(status)
 }
 do {
     switch arguments.first {

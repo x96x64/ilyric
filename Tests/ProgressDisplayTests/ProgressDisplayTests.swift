@@ -91,8 +91,8 @@ struct ProgressDisplayTests {
     /// A reporter writing to a buffer with a controllable clock.
     final class Capture: @unchecked Sendable {
         var now=0.0, out=""
-        func reporter(_ style: ProgressStyle, quiet: Bool = false, verbose: Bool = false, stages: [String]) -> ProgressReporter {
-            ProgressReporter(stages: stages, style: style, quiet: quiet, verbose: verbose, clock: { self.now }, sink: { self.out+=$0 })
+        func reporter(_ style: ProgressStyle, quiet: Bool = false, verbose: Bool = false, stages: [String]) -> StageReporter {
+            StageReporter(stages: stages, style: style, quiet: quiet, verbose: verbose, clock: { self.now }, sink: { self.out+=$0 })
         }
     }
 

@@ -119,7 +119,8 @@ public final class VocalSeparator {
     }
 
     /// Mono 16-kHz vocals from a 44.1-kHz stereo mixture, trimmed or padded to `expectedSamples`.
-    public func vocals16k(left: [Float], right: [Float], expectedSamples: Int) throws -> [Float] {
+    /// `progress` receives (completed, total) segments after each segment is accumulated; it never affects the result.
+    public func vocals16k(left: [Float], right: [Float], expectedSamples: Int, progress: ((Int, Int) -> Void)? = nil) throws -> [Float] {
         let n=left.count
         guard right.count==n,n>0 else { throw AlignmentError.invalid("Stereo channels differ in length") }
         // Track normalization over the channel mean, with the unbiased standard deviation as torch computes it.
@@ -128,7 +129,7 @@ public final class VocalSeparator {
         let std=(reference.reduce(0.0) { $0+($1-mean)*($1-mean) }/Double(n-1)).squareRoot()
         guard std.isFinite,std>0 else { throw AlignmentError.invalid("Silent or invalid separation input") }
         let mix=[left.map { (Double($0)-mean)/std },right.map { (Double($0)-mean)/std }]
-        let stem=try separate(mix)
+        let stem=try separate(mix,progress:progress)
         let mono=(0..<n).map { ((stem[0][$0]*std+mean)+(stem[1][$0]*std+mean))/2 }
         let resampled=resamplePoly(mono,up:160,down:441).map { Float($0) }
         guard abs(resampled.count-expectedSamples)<=2 else { throw AlignmentError.invalid("Separated recognition input duration differs from the mixture") }
@@ -136,8 +137,9 @@ public final class VocalSeparator {
     }
 
     /// Vocal stem of a normalized stereo mixture by overlapping, triangularly weighted segments.
-    func separate(_ mix: [[Double]]) throws -> [[Double]] {
+    func separate(_ mix: [[Double]], progress: ((Int, Int) -> Void)? = nil) throws -> [[Double]] {
         let length=mix[0].count,segment=Self.segment,stride=Int(0.75*Double(segment))
+        let segments=(length+stride-1)/stride
         let weight:[Double]={
             let w=(1...(segment/2)).map(Double.init)+(Swift.stride(from:segment-segment/2,through:1,by:-1)).map(Double.init)
             let peak=w.max()!;return w.map { $0/peak }
@@ -149,6 +151,7 @@ public final class VocalSeparator {
             let chunk=try autoreleasepool { try runSegment(mix,offset:offset,chunkLength:chunkLength) }
             for c in 0..<2 { for k in 0..<chunkLength { out[c][offset+k]+=weight[k]*chunk[c][k] } }
             for k in 0..<chunkLength { sum[offset+k]+=weight[k] }
+            progress?(offset/stride+1,segments)
         }
         for c in 0..<2 { for k in 0..<length { out[c][k]/=sum[k] } }
         return out

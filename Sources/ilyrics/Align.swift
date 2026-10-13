@@ -2,16 +2,20 @@ import Foundation
 import CoreML
 import AlignmentCore
 import AlignmentMac
+import ProgressDisplay
 
 /// Automatic alignment of untimed lyrics, shared by `align` and `render`.
 enum Align {
+    /// Stages shared by `align` and the alignment part of `render`, whose fourth stage renders the video.
+    static let stages=["Reading audio","Separating vocals","Aligning lyrics"]
+
     struct Result { let ttml: String; let report: [String:Any]; let resolved, placed, omitted: Int; let credits: String? }
 
     static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
         guard let raw=try? String(contentsOf:lyrics,encoding:.utf8) else { throw Failure(message:"\(lyrics.path) is not readable UTF-8 text") }
         let normalized=NormalizedLyrics(raw)
         if !normalized.background.isEmpty || normalized.dropped.contains(where: { $0.hasSuffix(" (background vocals without a preceding line)") }) {
-            console.say("Warning: Parenthesized backing choruses are experimental, unverified, and unsupported; omit such chorus text from plain lyrics input.")
+            console.warning("Parenthesized backing choruses are experimental, unverified, and unsupported; omit such chorus text from plain lyrics input.")
         }
         for line in normalized.dropped { console.detail("Ignored lyrics line: \(line)") }
         let source:LyricSource
@@ -19,18 +23,27 @@ enum Align {
         catch AlignmentError.invalid(let reason) { throw Failure(message:"the lyrics cannot be aligned: \(reason)") }
         let models=try await Models.ready(console)
         let units:MLComputeUnits=fast ? .all : .cpuOnly
-        console.say("Aligning \(source.lines.count) lines to \(audio.lastPathComponent)\(fast ? " (fast, not reproducible)" : "")")
+        console.detail("Aligning \(source.lines.count) lines to \(audio.lastPathComponent)\(fast ? " (fast, not reproducible)" : "")")
+        let progress=console.progress
         let started=Date()
+        progress.begin(1)
         let decoded:(left:[Float],right:[Float],durationMicroseconds:Int)
         do { decoded=try readStereo44k(audio) } catch { throw Failure(message:"\(audio.path) could not be decoded (\(error.localizedDescription))") }
         let duration=decoded.durationMicroseconds
         let decodedAt=Date()
+        progress.finish()
         console.detail("  Decoded in \(elapsed(decodedAt.timeIntervalSince(started)))")
+        progress.begin(2)
         // Analysis samples follow the reference pipeline: 48-kHz frames of the source, one third at 16 kHz.
         let expected=(Int((Double(duration)*48000/1_000_000).rounded())+2)/3
-        let vocals=try VocalSeparator(modelURL:models.separator,computeUnits:units).vocals16k(left:decoded.left,right:decoded.right,expectedSamples:expected)
+        let vocals=try VocalSeparator(modelURL:models.separator,computeUnits:units).vocals16k(left:decoded.left,right:decoded.right,expectedSamples:expected) { done,total in
+            // Normalization and resampling follow the last segment, so the line returns to a spinner.
+            if done<total { progress.update(fraction:Double(done)/Double(total)) } else { progress.indeterminate() }
+        }
         let separatedAt=Date()
+        progress.finish()
         console.detail("  Separated vocals in \(elapsed(separatedAt.timeIntervalSince(decodedAt)))")
+        progress.begin(3)
         let model=try RecognitionModel(modelURL:models.recognizer,vocabularyURL:models.vocabulary,computeUnits:units)
         let rows:[LineAlignment]
         do { rows=try alignLyrics(Data(normalized.text.utf8),vocals:vocals,durationMicroseconds:duration,model:model,neighbourAcceptance:true) }
@@ -44,8 +57,16 @@ enum Align {
             protectedLines:Set(omitted).union(normalized.background.keys))
         let ttml=try TTMLExport.ttml(rows,fills:fills,background:normalized.background,dropNonlexical:!keepAdLibs,secondVoice:normalized.secondVoice)
         let resolved=rows.filter { $0.estimate != nil }.count
+        progress.finish()
+        console.detail("Aligned \(resolved) lines, placed \(rows.count-resolved-omitted.count), omitted \(omitted.count)")
         for row in rows where row.estimate==nil {
-            console.say(omitted.contains(row.id) ? "  Omitted untimed ad-lib line \(row.id+1)" : "  Placed line \(row.id+1) (no reliable timing: \(row.flags.joined(separator:", ")))")
+            console.detail(omitted.contains(row.id) ? "  Omitted untimed ad-lib line \(row.id+1)" : "  Placed line \(row.id+1) (no reliable timing: \(row.flags.joined(separator:", ")))")
+        }
+        let placed=rows.count-resolved-omitted.count
+        if placed>0 || !omitted.isEmpty {
+            let parts=[placed>0 ? "\(placed) \(placed==1 ? "line has" : "lines have") no word timing" : nil,
+                       omitted.isEmpty ? nil : "\(omitted.count) untimed ad-lib \(omitted.count==1 ? "line was" : "lines were") omitted"].compactMap { $0 }
+            console.say("Note: \(parts.joined(separator:"; ")) (run with --verbose to list them)")
         }
         let lines:[[String:Any]]=rows.map { r in
             ["line":r.id+1,"text":r.text,"status":r.estimate != nil ? "aligned" : omitted.contains(r.id) ? "omitted" : "placed",
@@ -89,7 +110,8 @@ enum Align {
         if options.has("help") { print(help);return }
         guard options.operands.count==2 else { throw UsageError(message:"expected AUDIO and LYRICS") }
         guard let output=options.values["output"] else { throw UsageError(message:"missing -o, --output") }
-        let console=Console(quiet:options.has("quiet"),verbose:options.has("verbose"))
+        let console=Console(quiet:options.has("quiet"),verbose:options.has("verbose"),stages:stages)
+        defer { console.progress.close() }
         let audio=URL(fileURLWithPath:options.operands[0]),lyrics=URL(fileURLWithPath:options.operands[1])
         for url in [audio,lyrics] where !FileManager.default.fileExists(atPath:url.path) { throw Failure(message:"\(url.path) does not exist") }
         guard !["ttml","lrc"].contains(lyrics.pathExtension.lowercased()) else { throw Failure(message:"\(lyrics.lastPathComponent) is already timed; 'align' takes untimed text") }
@@ -98,6 +120,6 @@ enum Align {
         let result=try await run(audio:audio,lyrics:lyrics,keepAdLibs:options.has("keep-ad-libs"),fast:options.has("fast"),console:console)
         try result.ttml.write(to:target,atomically:true,encoding:.utf8)
         try writeReport(result.report,to:options.values["report"])
-        console.say("Wrote \(output): \(result.resolved) lines aligned, \(result.placed) placed, \(result.omitted) omitted, in \(elapsed(Date().timeIntervalSince(started)))")
+        console.progress.summary("Generated \(target.lastPathComponent) in \(durationInWords(Date().timeIntervalSince(started)))")
     }
 }
