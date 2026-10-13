@@ -38,23 +38,24 @@ do {
     let audio=LocalAudio(samples:[Int16](repeating:0,count:Int((time+3)*48_000)),sourceRate:48_000,sourceChannels:1,sourceFormat:0)
     var presentation=LocalPresentation(background:.fitted,icons:.systemSymbols,minimumGap:Time(4),
         focusLead:LocalPresentation.measuredMotion.focusLead,stagger:LocalPresentation.measuredMotion.stagger,
-        marquee:.measured,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,hideControls:LocalPresentation.measuredControlHide)
+        marquee:.measured,wordMotion:.measured,fillLead:LocalPresentation.measuredFillLead,hideControls:LocalPresentation.measuredControlHide,
+        canvas:.video)
     presentation.holdsFinishedLine=true;presentation.collapsesGaps=true
     let scene=try LocalScene(lyrics:lyrics,audio:audio,artwork:PlaceholderArtwork.image(),presentation:presentation,
                              title:"Twinkle, Twinkle, Little Star",artist:"Jane Taylor",placeholderArtwork:true)
     // Controls visible during the first line, word fill of the second line, and the instrumental gap, all before
     // the title marquee's delay so that the title rests at its initial position.
     let times=[Time(23,10),Time(47,10),Time(76,10)]
-    // Frames contain the native 1179 × 2556 screen pillarboxed in 1080 × 1920; only the screen is kept.
-    let screenWidth=1920.0*1179/2556,inset=(1080-screenWidth)/2
-    let height=960,width=Int((screenWidth*Double(height)/1920).rounded()),gap=32,radius=44.0
+    // Each frame is the full-width 9:16 video frame that `render` exports, scaled to the sheet.
+    let height=960,width=540,gap=32,radius=44.0
     let sheet=CGContext(data:nil,width:3*width+2*gap,height:height,bitsPerComponent:8,bytesPerRow:(3*width+2*gap)*4,
                         space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
     sheet.interpolationQuality = .high
     for (k,t) in times.enumerated() {
-        guard let screen=try scene.renderer.frame(t).cropping(to:CGRect(x:inset.rounded(.up),y:0,width:screenWidth.rounded(.down),height:1920)) else {
-            throw InputError.invalid("Frame cropping failed")
-        }
+        let frame=CGContext(data:nil,width:1080,height:1920,bitsPerComponent:8,bytesPerRow:1080*4,
+                            space:CGColorSpace(name:CGColorSpace.sRGB)!,bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue)!
+        try scene.renderer.draw(t,into:frame)
+        guard let screen=frame.makeImage() else { throw InputError.invalid("Frame rendering failed") }
         let rect=CGRect(x:k*(width+gap),y:0,width:width,height:height)
         sheet.saveGState()
         sheet.addPath(CGPath(roundedRect:rect,cornerWidth:radius,cornerHeight:radius,transform:nil));sheet.clip()
