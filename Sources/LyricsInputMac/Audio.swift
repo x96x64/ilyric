@@ -26,10 +26,6 @@ public struct LocalAudio: Sendable {
     }
     /// Largest accepted audio file; files are read incrementally, so this bounds work rather than memory.
     public static let maximumBytes=2*1024*1024*1024
-    /// Sources above this rate are decoded directly at 48 kHz; at or below it they keep their source rate until the
-    /// existing resampling step, so their output is unchanged.
-    static let directDecodeAbove=96_000.0
-
     /// The audio checks that need no decoding, for rejecting unsupported input before alignment starts.
     public struct Inspection: @unchecked Sendable {
         let asset: AVURLAsset, track: AVAssetTrack, format: AudioStreamBasicDescription, range: CMTimeRange
@@ -69,14 +65,14 @@ public struct LocalAudio: Sendable {
         let asset=inspection.asset,track=inspection.track,asbd=inspection.format,range=inspection.range
         do {
             let endpoint=CMTimeAdd(range.start,range.duration)
-            // High-resolution sources are converted by the decoder itself to 48 kHz, the export rate.
-            let decodeRate=asbd.mSampleRate>directDecodeAbove ? 48_000 : asbd.mSampleRate
-            let rate=Int32(decodeRate),channels=Int(asbd.mChannelsPerFrame)
+            // Every source is decoded at its own rate and converted by `resample`, which is deterministic; the
+            // asset reader's own rate conversion was found to vary under concurrent load.
+            let rate=Int32(asbd.mSampleRate),channels=Int(asbd.mChannelsPerFrame)
             let declaredEnd=Int(CMTimeConvertScale(endpoint,timescale:rate,method:.roundHalfAwayFromZero).value)
             guard declaredEnd>0 else { throw InputError.invalid("Audio presentation is shorter than one source sample") }
             let reader=try AVAssetReader(asset:asset)
             let output=AVAssetReaderTrackOutput(track:track,outputSettings:[
-                AVFormatIDKey:kAudioFormatLinearPCM,AVSampleRateKey:decodeRate,AVNumberOfChannelsKey:channels,
+                AVFormatIDKey:kAudioFormatLinearPCM,AVSampleRateKey:asbd.mSampleRate,AVNumberOfChannelsKey:channels,
                 AVLinearPCMBitDepthKey:16,AVLinearPCMIsFloatKey:false,
                 AVLinearPCMIsBigEndianKey:false,AVLinearPCMIsNonInterleaved:false])
             output.alwaysCopiesSampleData=false
@@ -106,8 +102,7 @@ public struct LocalAudio: Sendable {
             let frameCount=samples.count/channels
             // The endpoint is quantized to the track's time scale (for example 1/600 s), so decoding may end short
             // of it by up to one tick; that remainder is padded with silence.
-            // A decoder that also resamples may end a few output frames early as well (at most 64, 1.3 ms at 48 kHz).
-            let tick=Int((Double(rate)/Double(endpoint.timescale)).rounded(.up))+1+(decodeRate != asbd.mSampleRate ? 64 : 0)
+            let tick=Int((Double(rate)/Double(endpoint.timescale)).rounded(.up))+1
             guard frameCount>=declaredEnd-tick,frameCount-declaredEnd<=4096 else { throw InputError.invalid("Decoded audio duration disagrees with its track endpoint (decoded \(frameCount) frames, declared \(declaredEnd))") }
             if frameCount>declaredEnd { samples.removeLast((frameCount-declaredEnd)*channels) }
             if frameCount<declaredEnd { samples.append(contentsOf:Array(repeating:0,count:(declaredEnd-frameCount)*channels)) }
