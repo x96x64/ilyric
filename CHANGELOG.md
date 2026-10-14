@@ -4,6 +4,10 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Added
+
+- `render --safe-area reels` keeps the header, lyrics, and lower controls inside the width that Instagram Reels shows, 51 video pixels from each side, while the background still fills the frame. The crop was measured on one iPhone screenshot ([report](docs/reports/instagram-reels-safe-area.md)).
+
 ## [1.1.0] - 2026-10-14
 
 Usability and screen-fidelity improvements found in real use after 1.0. Japanese and other languages are planned for 1.2.0.

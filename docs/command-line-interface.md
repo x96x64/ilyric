@@ -48,6 +48,7 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. All nine observed vo
 | `--credits TEXT` | render | Songwriters shown as "Written By:" after the last line | A `Written by:` line in plain lyrics, else none |
 | `--background artwork\|static` | render | Background style | `artwork` |
 | `--controls auto-hide\|visible` | render | Lower controls | `auto-hide` |
+| `--safe-area none\|reels` | render | `reels` insets the header, lyrics, and lower controls by 51 video pixels on each side, the width that Instagram Reels crops on an iPhone with a 1179 × 2556 display ([measurement](reports/instagram-reels-safe-area.md)); the background still fills the frame | `none` |
 | `--no-marquee`, `--no-gaps` | render | Disable the title marquee or the instrumental-gap indicator | Enabled |
 | `--keep-ad-libs` | render, align | Keep untimed vocable-only lines | Off |
 | `-j, --jobs N` | render | Parallel rendering workers | Active processor count |

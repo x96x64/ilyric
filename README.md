@@ -159,6 +159,7 @@ ilyrics doctor
 | `--artwork FILE` | render | Artwork image | Embedded artwork |
 | `--background artwork\|static` | render | Artwork-derived or static background | `artwork` |
 | `--controls auto-hide\|visible` | render | Lower controls | `auto-hide` |
+| `--safe-area none\|reels` | render | Keep controls and lyrics clear of the sides that Instagram Reels crops | `none` |
 | `--no-marquee` | render | Keep an overflowing title static | Scrolling |
 | `--no-gaps` | render | Omit instrumental-gap indicators | Shown |
 | `--keep-ad-libs` | render, align | Keep vocable-only lines that cannot be timed | Omitted |
@@ -181,6 +182,9 @@ ilyrics render song.wav lyrics.txt -o video.mp4 --title "Paper Skies" --artist "
 
 # Keep the controls on screen and use a static background
 ilyrics render song.m4a lyrics.ttml -o video.mp4 --controls visible --background static
+
+# Keep the layout inside the width that Instagram Reels shows
+ilyrics render song.m4a lyrics.ttml -o video.mp4 --safe-area reels
 
 # Faster alignment on the GPU and Neural Engine, at the cost of reproducibility
 ilyrics render song.m4a lyrics.txt -o video.mp4 --fast

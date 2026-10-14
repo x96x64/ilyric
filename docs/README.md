@@ -42,6 +42,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-11 — [Playback Smoothness, Fill Lead, and Control Transition](reports/playback-smoothness-and-fill-lead.md)
 - 2026-10-11 — [Word Fill Continuity and Emphasis Selection](reports/word-fill-continuity.md)
 - 2026-10-11 — [Word Fill Smoothing](reports/word-fill-smoothing.md)
+- 2026-10-14 — [Instagram Reels Safe Area](reports/instagram-reels-safe-area.md)
 
 ### Typography and Reference Validation
 
