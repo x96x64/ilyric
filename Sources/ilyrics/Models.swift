@@ -18,7 +18,11 @@ enum Models {
     /// prefix or in an enclosing source checkout (for `.build/release/ilyrics`).
     static func templates() throws -> URL {
         if let path = environment("ILYRICS_TEMPLATES") {
-            return URL(fileURLWithPath: path, isDirectory: true)
+            let url = URL(fileURLWithPath: path, isDirectory: true)
+            guard FileManager.default.fileExists(atPath: url.appendingPathComponent("weight-recipe.json").path) else {
+                throw Failure(message: "ILYRICS_TEMPLATES (\(path)) does not contain the model templates")
+            }
+            return url
         }
         // The executable's own path, not argv[0], which is a bare name when the command is found through PATH.
         let executable = Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])
@@ -91,7 +95,7 @@ enum Models {
             _ = try await install(templates, console)
         case "status":
             let templates = try? templates()
-            let installed = try templates.flatMap { try InstalledModels.existing(in: directory, templates: $0) } != nil
+            let installed = templates.flatMap { try? InstalledModels.existing(in: directory, templates: $0) } != nil
             print("Cache:     \(directory.path)")
             print("Templates: \(templates?.path ?? "not found (set ILYRICS_TEMPLATES)")")
             print(

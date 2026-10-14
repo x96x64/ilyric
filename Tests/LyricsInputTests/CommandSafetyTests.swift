@@ -227,3 +227,29 @@ extension CommandSafetyTests {
         #expect(!FileManager.default.fileExists(atPath: f.path("cache")))
     }
 }
+
+extension CommandSafetyTests {
+    @Test func doctorReportsTheVersionAndSurvivesABadTemplateDirectory() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let p = Process()
+        let out = Pipe()
+        p.executableURL = root.appendingPathComponent(".build/debug/ilyrics")
+        p.arguments = ["doctor"]
+        var env = ProcessInfo.processInfo.environment
+        env["ILYRICS_TEMPLATES"] = f.path("missing")
+        env["ILYRICS_MODELS"] = f.path("cache")
+        p.environment = env
+        p.standardOutput = out
+        p.standardError = Pipe()
+        try p.run()
+        let text = String(decoding: out.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+        p.waitUntilExit()
+        #expect(p.terminationStatus == 1)
+        #expect(text.hasPrefix("ok   iLyrics: ") && text.contains("to update: "))
+        #expect(text.contains("FAIL Model templates: ILYRICS_TEMPLATES") && text.contains("Toolchain"))
+        #expect(text.contains("problems found."))
+    }
+}

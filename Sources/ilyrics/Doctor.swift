@@ -27,6 +27,11 @@ enum Doctor {
                 problems += 1
             }
         }
+        let executable = (Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0]))
+            .resolvingSymlinksInPath()
+        let channel = installation(executable)
+        report(true, "iLyrics", "\(CLI.version) at \(executable.path)")
+        print("     installed with \(channel.name); to update: \(channel.update)")
         let version = ProcessInfo.processInfo.operatingSystemVersion
         report(
             version.majorVersion >= 14, "macOS",
@@ -54,12 +59,16 @@ enum Doctor {
             missing.isEmpty
                 ? "all \(names.count) control symbols resolve" : "missing \(missing.joined(separator:", "))",
             fix: "update macOS; control symbols are resolved from the system at render time")
-        let templates = try? Models.templates()
+        let templates: URL?
+        var templateProblem = "not found"
+        do { templates = try Models.templates() } catch let error as Failure {
+            templates = nil
+            templateProblem = error.message
+        }
         report(
-            templates != nil, "Model templates", templates?.path ?? "not found",
-            fix: "set ILYRICS_TEMPLATES to the directory of the weightless model templates")
-        let installed =
-            try templates.flatMap { try InstalledModels.existing(in: Models.directory, templates: $0) } != nil
+            templates != nil, "Model templates", templates?.path ?? templateProblem,
+            fix: "set ILYRICS_TEMPLATES to the directory of the weightless model templates, or unset it")
+        let installed = templates.flatMap { try? InstalledModels.existing(in: Models.directory, templates: $0) } != nil
         report(
             installed, "Alignment models",
             installed ? "installed in \(Models.directory.path) (\(Models.size(Models.directory)))" : "not installed",
@@ -73,8 +82,27 @@ enum Doctor {
         #else
             let swift = "Swift 5"
         #endif
-        report(true, "Toolchain", "built with \(swift); iLyrics \(CLI.version)")
+        report(true, "Toolchain", "built with \(swift)")
         print(problems == 0 ? "\nNo problems found." : "\n\(problems) problem\(problems==1 ? "" : "s") found.")
         if problems > 0 { exit(1) }
+    }
+
+    /// The channel that installed the executable, judged from its resolved path, and its update command.
+    static func installation(_ executable: URL) -> (name: String, update: String) {
+        let path = executable.path
+        if path.contains("/Cellar/") { return ("Homebrew", "brew update && brew upgrade ilyrics") }
+        if path.contains("/node_modules/") { return ("npm", "npm install -g ilyrics@latest") }
+        if path.contains("/pipx/venvs/") { return ("pipx", "pipx upgrade ilyrics") }
+        let lib = executable.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("lib")
+        let pythons = (try? FileManager.default.contentsOfDirectory(atPath: lib.path)) ?? []
+        if pythons.contains(where: { python in
+            ((try? FileManager.default.contentsOfDirectory(
+                atPath: lib.appendingPathComponent(python + "/site-packages").path))
+                ?? []).contains { $0.hasPrefix("ilyrics-") && $0.hasSuffix(".dist-info") }
+        }) {
+            return ("pip", "pip install --upgrade ilyrics")
+        }
+        if path.contains("/.build/") { return ("a source build", "git pull, then rebuild") }
+        return ("an unknown channel", "see Updating in the README")
     }
 }
