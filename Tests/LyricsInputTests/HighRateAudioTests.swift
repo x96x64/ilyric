@@ -6,7 +6,7 @@ import LyricsInputMac
 extension AudioSceneTests {
     /// High-resolution sources decode directly at 48 kHz with the same duration; stereo is kept. Synthetic tones.
     @Test func highSampleRatesDecodeAtFortyEightKilohertz() async throws {
-        for rate in [176_400, 192_000] {
+        for rate in [176_400, 192_000, 352_800, 384_000] {
             let url = try wav(rate: rate)
             defer { try? FileManager.default.removeItem(at: url) }
             let inspection = try await LocalAudio.inspect(url)

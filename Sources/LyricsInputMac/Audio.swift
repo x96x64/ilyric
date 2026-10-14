@@ -102,14 +102,15 @@ public struct LocalAudio: Sendable {
                 throw InputError.invalid("Audio presentation is shorter than one source sample")
             }
             let reader = try AVAssetReader(asset: asset)
-            let output = AVAssetReaderTrackOutput(
-                track: track,
-                outputSettings: [
-                    AVFormatIDKey: kAudioFormatLinearPCM, AVSampleRateKey: asbd.mSampleRate,
-                    AVNumberOfChannelsKey: channels,
-                    AVLinearPCMBitDepthKey: 16, AVLinearPCMIsFloatKey: false,
-                    AVLinearPCMIsBigEndianKey: false, AVLinearPCMIsNonInterleaved: false,
-                ])
+            var settings: [String: Any] = [
+                AVFormatIDKey: kAudioFormatLinearPCM, AVNumberOfChannelsKey: channels,
+                AVLinearPCMBitDepthKey: 16, AVLinearPCMIsFloatKey: false,
+                AVLinearPCMIsBigEndianKey: false, AVLinearPCMIsNonInterleaved: false,
+            ]
+            // The reader rejects an explicit rate above 192 kHz with an exception; without the key it keeps the
+            // source rate, which is what is wanted at every rate.
+            if asbd.mSampleRate <= 192_000 { settings[AVSampleRateKey] = asbd.mSampleRate }
+            let output = AVAssetReaderTrackOutput(track: track, outputSettings: settings)
             output.alwaysCopiesSampleData = false
             guard reader.canAdd(output) else {
                 throw InputError.invalid("Audio decoder cannot produce source-rate PCM")
