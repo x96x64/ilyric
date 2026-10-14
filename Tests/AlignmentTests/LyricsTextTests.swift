@@ -60,4 +60,15 @@ struct LyricsTextTests {
         #expect(targets.tokens.prefix(4).joined() == "CAFE" && !targets.tokens.contains("\u{00C9}"))
         #expect(words(in: source.lines[1].text).count == 1)
     }
+    @Test func openingQuotesStayAndApostrophesAreRecognized() throws {
+        let n = NormalizedLyrics("\u{2018}Lanterns\u{2019} she said\nRockin\u{2018} through the \u{2018}90s")
+        #expect(n.text == "\u{2018}Lanterns\u{2019} she said\nRockin\u{2019} through the \u{2019}90s\n")
+        #expect(try LyricSource(Data(n.text.utf8)).lines.count == 2)
+    }
+    @Test func lineOfNumbersIsKept() throws {
+        let n = NormalizedLyrics("1, 2, 3, 4\nPaper boats\n1999\n...")
+        #expect(n.text == "1, 2, 3, 4\nPaper boats\n1999\n" && n.dropped.count == 1)
+        let source = try LyricSource(Data(n.text.utf8))
+        #expect(source.lines.first?.alignmentText.filter(\.isLetter) == "onetwothreefour")
+    }
 }

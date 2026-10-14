@@ -41,9 +41,13 @@ public struct NormalizedLyrics: Equatable, Sendable {
         // Apostrophe variants become the typographic apostrophe, which alignment supports in contractions.
         // Composed form, so that letters with diacritics are single scalars that alignment can fold.
         var body = (raw.hasPrefix("\u{FEFF}") ? String(raw.dropFirst()) : raw).precomposedStringWithCanonicalMapping
-        for variant in ["\u{02BC}", "\u{2018}", "\u{0060}", "\u{00B4}", "\u{FF07}"] {
+        for variant in ["\u{02BC}", "\u{0060}", "\u{00B4}", "\u{FF07}"] {
             body = body.replacingOccurrences(of: variant, with: "\u{2019}")
         }
+        // A left single quotation mark is an apostrophe only after a letter or digit (don‘t) or before a decade
+        // (‘90s); elsewhere it opens a quotation and is kept.
+        body = body.replacingOccurrences(
+            of: "(?<=[\\p{L}\\p{N}])\u{2018}|\u{2018}(?=[0-9]{2}s\\b)", with: "\u{2019}", options: .regularExpression)
         for (number, raw) in body.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(
             of: "\r", with: "\n"
         ).components(separatedBy: "\n").enumerated() {
@@ -68,7 +72,10 @@ public struct NormalizedLyrics: Equatable, Sendable {
                 .filter { !$0.isEmpty }
             let main = collapse(phrase.stringByReplacingMatches(in: line, range: range, withTemplate: " "))
                 .replacingOccurrences(of: " ([,.;:!?])", with: "$1", options: .regularExpression)
-            let hasLetters = main.unicodeScalars.contains { CharacterSet.letters.contains($0) }
+            // Digits count, so that a line of numbers is sung (1, 2, 3, 4) or reported as unsupported (3.5).
+            let hasLetters = main.unicodeScalars.contains {
+                CharacterSet.letters.contains($0) || CharacterSet.decimalDigits.contains($0)
+            }
             if !hasLetters {
                 if !phrases.isEmpty, count > 0 {
                     background[count - 1] = ((background[count - 1].map { [$0] } ?? []) + phrases).joined(
