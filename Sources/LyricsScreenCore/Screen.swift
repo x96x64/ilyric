@@ -107,6 +107,8 @@ public enum ControlTransition {
 public struct LyricsScreen: Sendable {
     public let composition: LyricsComposition
     public var canvas: LyricsCanvas { composition.canvas }
+    /// Width of the whole frame: the layout and the side insets that the background alone fills.
+    public var frameWidth: Int { composition.canvasWidth + Int(2 * canvas.inset) }
     public let title, artist: String
     public let duration: Time
     public let volume: Double
@@ -185,14 +187,14 @@ public struct LyricsScreen: Sendable {
             _ id: ScreenPart, _ b: ScreenBounds, _ z: Int, _ visible: Bool = true,
             _ evidence: String = "provisional shape at approximate measured position"
         ) {
-            let provenance = canvas == .video ? "synthetic 9:16 adaptation of: " + evidence : evidence
+            let provenance = canvas != .native ? "synthetic 9:16 adaptation of: " + evidence : evidence
             parts.append(
                 .init(
                     part: id, bounds: canvas.bounds(b, for: id), z: z, visible: visible && visibility.permits(id),
                     clips: true, evidence: provenance))
         }
         add(
-            .background, .init(0, 0, Double(composition.canvasWidth), Double(canvas.height)), 0, true,
+            .background, .init(-canvas.inset, 0, Double(frameWidth), Double(canvas.height)), 0, true,
             background == nil
                 ? "original static palette gradient; provisional material"
                 : "fitted artwork-derived layers, blur, and color transfer; statistical reconstruction, unmatched phase"

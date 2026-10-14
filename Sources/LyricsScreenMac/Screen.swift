@@ -78,11 +78,12 @@ public final class ScreenRenderer {
             CGColor(srgbRed: 0.29, green: 0.23, blue: 0.35, alpha: 1),
             CGColor(srgbRed: 0.16, green: 0.12, blue: 0.24, alpha: 1),
         ]
-        let bg = Self.context(screen.composition.canvasWidth, screen.canvas.height)
+        let bg = Self.context(screen.frameWidth, screen.canvas.height)
         let gradient = CGGradient(
             colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: colors as CFArray, locations: [0, 0.45, 1])!
         bg.drawLinearGradient(
-            gradient, start: CGPoint(x: 0, y: canvasHeight), end: CGPoint(x: screen.canvas.width, y: 0),
+            gradient, start: CGPoint(x: 0, y: canvasHeight),
+            end: CGPoint(x: Double(screen.canvas.width) + 2 * screen.canvas.inset, y: 0),
             options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
         backdrop = bg.makeImage()!
         let art = Self.context(216, 216)
@@ -129,7 +130,7 @@ public final class ScreenRenderer {
         }
         if let model = screen.background {
             dynamicBackdrop = ArtworkBackdrop(
-                model, artwork: artwork, canvasWidth: screen.composition.canvasWidth,
+                model, artwork: artwork, canvasWidth: screen.frameWidth,
                 canvasHeight: screen.canvas.height, abstract: placeholderArtwork)
         } else {
             dynamicBackdrop = nil
@@ -471,7 +472,9 @@ public final class ScreenRenderer {
         }
     }
     public func native(_ state: ScreenSnapshot) throws -> CGImage {
-        let c = Self.context(screen.composition.canvasWidth, screen.canvas.height)
+        let c = Self.context(screen.frameWidth, screen.canvas.height)
+        // Components use layout coordinates; the background extends over the side insets.
+        c.translateBy(x: screen.canvas.inset, y: 0)
         let lowerGroup: Set<ScreenPart> = [
             .progress, .elapsed, .remaining, .previous, .playback, .next, .volume, .volumeLow, .volumeHigh,
             .bottomLeft, .bottomCenter, .bottomRight, .translation, .singCompact, .singExpanded,
@@ -613,7 +616,7 @@ public final class ScreenRenderer {
         let w = Double(c.width)
         let h = Double(c.height)
         let fit = LyricsScreen.contain(
-            width: w, height: h, canvasWidth: screen.composition.canvasWidth, canvasHeight: screen.canvas.height)
+            width: w, height: h, canvasWidth: screen.frameWidth, canvasHeight: screen.canvas.height)
         let image = try native(screen.evaluate(time))
         if let gpu, let data = c.data, let space = c.colorSpace, c.bitsPerPixel == 32,
             c.bitmapInfo.contains(.byteOrder32Little)

@@ -129,7 +129,7 @@ public enum ParagraphStyle: String, Codable, Sendable {
 public struct ParagraphInput: Codable, Sendable {
     public let text: String
     public let paragraphStyle: ParagraphStyle?
-    public let canvasWidth: Int  // Native 1179/1180, or the synthetic 1440-pixel video adaptation.
+    public let canvasWidth: Int  // Native 1179/1180, or a synthetic video layout (LyricsCanvas).
     public var canvas: LyricsCanvas { .forWidth(canvasWidth) }
     public let breakEvidence: String
     public let parameters: ParagraphParameters
@@ -174,7 +174,7 @@ public struct ParagraphInput: Codable, Sendable {
                     "Static paragraph integration; timed appearance and vertical treatment are unvalidated")
             }
         }
-        guard [1179, 1180, 1440].contains(canvasWidth), text.utf16.count < 500,
+        guard [1179, 1180, 1304, 1440].contains(canvasWidth), text.utf16.count < 500,
             structureValid, !text.isEmpty, !text.contains("\n\n"),
             !text.hasPrefix("\n"), !text.hasSuffix("\n"),
             ["observed-structure-source-semantics-unknown", "supplied-explicit-structure"].contains(breakEvidence),

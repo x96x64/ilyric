@@ -25,6 +25,8 @@ enum Render {
                                         Background style (default: artwork)
               --controls auto-hide|visible
                                         Lower controls (default: auto-hide)
+              --safe-area none|reels    Keep controls and lyrics clear of the sides that Instagram Reels crops
+                                        (default: none)
               --no-marquee              Keep an overflowing title static
               --no-gaps                 Omit the instrumental-gap indicator
               --credits TEXT            Songwriters shown after the last line (default: a "Written by:" line in plain lyrics)
@@ -52,7 +54,10 @@ enum Render {
     @MainActor static func command(_ arguments: ArraySlice<String>) async throws {
         let options = try Options(
             arguments,
-            valued: ["output", "title", "artist", "artwork", "background", "controls", "jobs", "report", "credits"],
+            valued: [
+                "output", "title", "artist", "artwork", "background", "controls", "safe-area", "jobs", "report",
+                "credits",
+            ],
             flags: ["help", "force", "no-marquee", "no-gaps", "keep-ad-libs", "fast", "quiet", "verbose"],
             short: ["o": "output", "j": "jobs", "h": "help", "q": "quiet", "v": "verbose"])
         if options.has("help") {
@@ -71,6 +76,10 @@ enum Render {
         }
         guard ["auto-hide", "visible"].contains(controls) else {
             throw UsageError(message: "--controls takes auto-hide or visible")
+        }
+        let safeArea = options.values["safe-area"] ?? "none"
+        guard ["none", "reels"].contains(safeArea) else {
+            throw UsageError(message: "--safe-area takes none or reels")
         }
         let jobs = options.values["jobs"].map { Int($0) ?? 0 } ?? max(1, ProcessInfo.processInfo.activeProcessorCount)
         guard (1...64).contains(jobs) else { throw UsageError(message: "--jobs takes a number from 1 to 64") }
@@ -138,7 +147,8 @@ enum Render {
             focusLead: LocalPresentation.measuredMotion.focusLead, stagger: LocalPresentation.measuredMotion.stagger,
             marquee: options.has("no-marquee") ? nil : .measured, wordMotion: .measured,
             fillLead: LocalPresentation.measuredFillLead,
-            hideControls: controls == "auto-hide" ? LocalPresentation.measuredControlHide : nil, canvas: .video)
+            hideControls: controls == "auto-hide" ? LocalPresentation.measuredControlHide : nil,
+            canvas: safeArea == "reels" ? .reels : .video)
         presentation.holdsFinishedLine = true
         presentation.collapsesGaps = true
 

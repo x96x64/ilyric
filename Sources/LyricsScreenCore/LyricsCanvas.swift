@@ -1,14 +1,35 @@
 import Foundation
 
-/// Fixed internal layouts. The video layout is a synthetic 9:16 adaptation, not native device geometry.
+/// Fixed internal layouts. The video layouts are synthetic 9:16 adaptations, not native device geometry.
 public enum LyricsCanvas: Sendable, Equatable {
-    case native, video
+    /// The native iPhone canvas, the full-width 9:16 video, and the 9:16 video whose controls and lyrics keep a
+    /// margin on both sides for players that crop the sides of a full-screen video.
+    case native, video, reels
 
-    public var width: Int { self == .video ? 1440 : 1179 }
-    public var height: Int { self == .video ? 2560 : 2556 }
-    public var widthExtension: Double { self == .video ? 261 : 0 }
-    public var bottomExtension: Double { self == .video ? 4 : 0 }
-    public static func forWidth(_ width: Int) -> Self { width == 1440 ? .video : .native }
+    /// Width of the layout that holds every control and lyric line.
+    public var width: Int {
+        switch self {
+        case .native: 1179
+        case .video: 1440
+        case .reels: 1304
+        }
+    }
+    public var height: Int { self == .native ? 2556 : 2560 }
+    /// Horizontal distance from the frame's left edge to the layout.
+    ///
+    /// Instagram Reels on an iPhone with a 1179 × 2556 display scales a 1080 × 1920 video to the height of the
+    /// player and crops 51 video pixels from each side, measured on one screenshot. That is 68 pixels of this
+    /// 1440-pixel frame; the measurement is provisional, and other devices and players may crop differently.
+    public var inset: Double { self == .reels ? 68 : 0 }
+    public var widthExtension: Double { Double(width - 1179) }
+    public var bottomExtension: Double { self == .native ? 0 : 4 }
+    public static func forWidth(_ width: Int) -> Self {
+        switch width {
+        case 1440: .video
+        case 1304: .reels
+        default: .native
+        }
+    }
 
     /// The same anchors position component rectangles and runtime symbol ink centers.
     public func offset(for part: ScreenPart) -> (x: Double, y: Double) {

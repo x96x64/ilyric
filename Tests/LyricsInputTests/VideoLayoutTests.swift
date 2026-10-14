@@ -198,6 +198,57 @@ struct VideoLayoutTests {
         #expect(r.screen.evaluate(Time(6)).components.first { $0.part == .more }!.visible)
     }
 
+    @Test func reelsSafeAreaKeepsTheLayoutInsideTheCroppedWidth() throws {
+        let canvas = LyricsCanvas.reels
+        #expect(canvas.width == 1304 && canvas.height == 2560 && canvas.inset == 68 && canvas.widthExtension == 125)
+        #expect(LyricsCanvas.forWidth(1304) == .reels && LyricsCanvas.video.inset == 0)
+        let video = try VideoFixture.scene(.video, background: .fitted)
+        let reels = try VideoFixture.scene(.reels, background: .fitted)
+        let screen = reels.renderer.screen
+        #expect(screen.composition.canvasWidth == 1304 && screen.frameWidth == 1440)
+        #expect(video.renderer.screen.frameWidth == 1440)
+        for (x, y) in zip(video.renderer.screen.composition.paragraphs, screen.composition.paragraphs) {
+            #expect(x.input.text == y.input.text && x.input.events == y.input.events && x.begin == y.begin)
+            #expect(y.input.parameters.width == 1112)
+        }
+        #expect(reels.renderer.lyrics.paragraphs.allSatisfy { $0.lines.allSatisfy { $0.width <= 1112 } })
+        // Every component except the background lies within the 978 output pixels that remain after the crop.
+        for time in [Time(0), Time(51, 10), Time(6)] {
+            for part in screen.evaluate(time).components {
+                if part.part == .background {
+                    #expect(part.bounds == ScreenBounds(-68, 0, 1440, 2560))
+                    continue
+                }
+                let left = (part.bounds.x + canvas.inset) * 0.75
+                let right = (part.bounds.x + part.bounds.width + canvas.inset) * 0.75
+                #expect(left >= 51 && right <= 1029)
+                for playing in [false, true] {
+                    if let symbol = ControlSymbols.symbol(for: part.part, playing: playing, canvas: canvas) {
+                        let radius = (symbol.disc ?? 0) / 2
+                        #expect((symbol.centerX - radius + canvas.inset) * 0.75 >= 51)
+                        #expect((symbol.centerX + radius + canvas.inset) * 0.75 <= 1029)
+                    }
+                }
+            }
+        }
+        // The background fills the frame, and the uncropped side margins show the same background as `.video`.
+        let image = try reels.renderer.native(screen.evaluate(Time(6)))
+        #expect(image.width == 1440 && image.height == 2560)
+        let a = [UInt8](try VideoFixture.frame(video.renderer, Time(6)))
+        let b = [UInt8](try VideoFixture.frame(reels.renderer, Time(6)))
+        var covered = true
+        var margins = true
+        for y in 0..<1920 {
+            for x in 0..<1080 {
+                let i = y * 4320 + x * 4
+                covered = covered && b[i + 3] == 255 && Int(b[i]) + Int(b[i + 1]) + Int(b[i + 2]) > 0
+                if x < 40 || x >= 1040 { margins = margins && a[i..<(i + 4)] == b[i..<(i + 4)] }
+            }
+        }
+        #expect(covered && margins)
+        #expect(a != b)
+    }
+
     @Test func projectMoreKeepsCircularInkAndNativeDefaultsRemainAvailable() throws {
         let native = try VideoFixture.scene(.native)
         let video = try VideoFixture.scene(.video)

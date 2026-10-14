@@ -140,7 +140,7 @@ public final class LocalScene {
                 highlighting == .enabled && timedInput != nil
                 ? timedInput! : ParagraphInput.supplied(text: entry.text, japanese: japanese)
             if entry.secondVoice { input.rightAligned = true }
-            if presentation.canvas == .video { input = input.adapted(to: .video) }
+            if presentation.canvas != .native { input = input.adapted(to: presentation.canvas) }
             let layout = try ParagraphLayout(input)
             // Lead never moves focus before the previous focus event or before zero.
             let previous = events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
