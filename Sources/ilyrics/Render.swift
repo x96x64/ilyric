@@ -45,10 +45,27 @@ enum Render {
         func first(_ id: AVMetadataIdentifier) -> AVMetadataItem? {
             AVMetadataItem.metadataItems(from: items, filteredByIdentifier: id).first
         }
-        let title = try? await first(.commonIdentifierTitle)?.load(.stringValue)
-        let artist = try? await first(.commonIdentifierArtist)?.load(.stringValue)
+        func text(_ id: AVMetadataIdentifier) async -> String? {
+            let value = (try? await first(id)?.load(.stringValue)) ?? nil
+            let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return trimmed.isEmpty ? nil : trimmed
+        }
         let artwork = try? await first(.commonIdentifierArtwork)?.load(.dataValue)
-        return (title ?? nil, artist ?? nil, artwork ?? nil)
+        return (await text(.commonIdentifierTitle), await text(.commonIdentifierArtist), artwork ?? nil)
+    }
+
+    /// The header holds at most this many UTF-16 units per label.
+    static let headerLimit = 80
+
+    /// A header label from metadata or a file name, shortened with an ellipsis to the header limit.
+    static func headerLabel(_ text: String) -> String {
+        guard text.utf16.count > headerLimit else { return text }
+        var result = ""
+        for character in text {
+            guard result.utf16.count + String(character).utf16.count < headerLimit else { break }
+            result.append(character)
+        }
+        return result + "…"
     }
 
     @MainActor static func command(_ arguments: ArraySlice<String>) async throws {
@@ -94,7 +111,17 @@ enum Render {
             throw Failure(message: "\(url.path) does not exist")
         }
         let target = try checkOutput(output, force: options.has("force")).standardizedFileURL
+        for name in ["title", "artist"] {
+            if let value = options.values[name], value.isEmpty || value.utf16.count > headerLimit {
+                throw UsageError(message: "--\(name) takes 1 to \(headerLimit) characters")
+            }
+        }
         let started = Date()
+        // Header text: options first, then the audio file's metadata, checked before any lengthy work.
+        let tags = await metadata(audioURL)
+        let title = headerLabel(
+            options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent)
+        let artist = headerLabel(options.values["artist"] ?? tags.artist ?? "Unknown Artist")
 
         // Lyrics: align untimed text, or parse supplied timing.
         var report: [String: Any] = ["format": "ilyrics-render-report-1"]
@@ -127,8 +154,10 @@ enum Render {
         // during alignment, and the export's own decoding belongs to the rendering stage.
         if timed { progress.begin(1) } else { progress.begin(4) }
 
-        // Header and artwork: options first, then the audio file's metadata.
-        let tags = await metadata(audioURL)
+        if options.values["artist"] == nil && tags.artist == nil {
+            console.say("Note: the audio file names no artist; showing \"Unknown Artist\" (pass --artist TEXT)")
+        }
+        // Artwork: the option first, then the audio file's metadata.
         let artwork: LocalArtwork?
         do {
             if let path = options.values["artwork"] {
@@ -165,8 +194,7 @@ enum Render {
             scene = try LocalScene(
                 lyrics: lyrics, audio: audio, artwork: artwork?.image ?? PlaceholderArtwork.image(),
                 highlighting: .enabled, presentation: presentation,
-                title: options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent,
-                artist: options.values["artist"] ?? tags.artist ?? "", credits: credits,
+                title: title, artist: artist, credits: credits,
                 placeholderArtwork: artwork == nil)
         } catch let error as InputError { throw Failure(message: "\(error)") }
 

@@ -78,6 +78,10 @@ jobs:
         if: success() || failure()
         timeout-minutes: 10
         run: swift test --disable-xctest --filter LyricsInputTests.VideoLayoutTests
+      - name: Test Lyrics input CommandSafetyTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.CommandSafetyTests
 
   python:
     name: Python Public Validation Tests
