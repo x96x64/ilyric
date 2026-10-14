@@ -13,16 +13,18 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 ```
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
+  <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three full-width frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
 </p>
 
-> **Note:** iLyrics is a public preview. English synchronization was qualified on 80 unseen recordings; the visual preset is not yet qualified, and options may change. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> **Note:** English synchronization was evaluated on 80 unseen recordings, and the visual preset was measured against unseen screen recordings of the Music app; known limitations are listed in the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Features
 
-- **Automatic synchronization.** Plain text lyrics are aligned line by line and word by word against a separated vocal stem; lines without reliable timing are placed between their neighbours and reported.
-- **A faithful Lyrics screen.** Focus motion, word fill, background vocals, instrumental-gap indicators, a scrolling title, an artwork-derived background, and auto-hiding controls, measured from the Music app on iOS 27.
+- **Automatic synchronization.** Plain text lyrics, including numbers such as 40 or 3:00, are aligned line by line and word by word against a separated vocal stem; lines without reliable timing are placed rather than aligned, and are reported.
+- **A faithful Lyrics screen.** Focus motion, word fill, instrumental-gap indicators, a scrolling title, an artwork-derived background, and auto-hiding controls, measured from the Music app on iOS 27 and adapted to fill a full 9:16 video.
 - **Supplied timing.** TTML, LRC, and Enhanced LRC files are rendered as supplied.
+- **Clear progress and errors.** Each stage is shown on one line with a progress bar, and problems name the file, line, and character to fix.
+- **High-resolution audio.** AAC, MP3, WAV, AIFF, and Apple Lossless up to 384 kHz.
 - **Deterministic and local.** Every frame is a pure function of its timestamp, and recordings, lyrics, and videos never leave your Mac.
 
 ## Requirements
@@ -69,7 +71,7 @@ The title, artist, and artwork are read from the audio file's metadata. Common o
 | `--fast` | GPU and Neural Engine inference; faster but not reproducible |
 | `--force` | Replace an existing output |
 
-Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections. Section labels such as `[Chorus]` are ignored, and parenthesized phrases are shown as background vocals. See the [command reference](https://github.com/x96x64/ilyrics/blob/main/docs/command-line-interface.md) for every option.
+Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections. Section labels such as `[Chorus]` are ignored. Parenthesized backing choruses are experimental and unsupported; leave them out of plain lyrics. See the [command reference](https://github.com/x96x64/ilyrics/blob/main/docs/command-line-interface.md) for every option.
 
 ## Rights
 

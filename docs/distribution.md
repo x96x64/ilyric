@@ -2,7 +2,7 @@
 
 ## Status
 
-October 11, 2026. Design for the public preview (Stage 2 of the [roadmap](roadmap-to-stable.md)); not yet implemented. The maintainer decided that the preview is distributed through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary. On October 12, 2026, after the rename from iLyric, the name `ilyrics` was unregistered on npm, PyPI, and Homebrew.
+October 11, 2026. Design for the public preview (Stage 2 of the [roadmap](roadmap-to-stable.md)), implemented for version 0.2.0 and used for every release since; see [Publication](#publication). The maintainer decided that the preview is distributed through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary. On October 12, 2026, after the rename from iLyric, the name `ilyrics` was unregistered on npm, PyPI, and Homebrew.
 
 ## Release Archive
 
