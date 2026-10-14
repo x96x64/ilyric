@@ -57,6 +57,20 @@ public struct LocalPresentation: Sendable {
 
 /// A lyrics scene: paragraph focus, timing, and presentation for one recording.
 public final class LocalScene {
+    static let wrapLimit = "Paragraph wraps to more than eight lines"
+    /// Whether a paragraph of untimed text fits the screen's eight rows on `canvas`, checked before any alignment.
+    public static func fits(_ text: String, canvas: LyricsCanvas) -> Bool {
+        let japanese = text.unicodeScalars.contains {
+            (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value)
+                || (0xff66...0xff9d).contains($0.value)
+        }
+        var input = ParagraphInput.supplied(text: text, japanese: japanese)
+        if canvas != .native { input = input.adapted(to: canvas) }
+        do { _ = try ParagraphLayout(input) } catch ScreenError.invalid(let reason) {
+            return reason != wrapLimit
+        } catch { return true }
+        return true
+    }
     /// Space between consecutive paragraphs beyond the line advance, in native pixels.
     public static let paragraphSpacing = 75.0
     public let lyrics: LocalLyrics
@@ -141,7 +155,16 @@ public final class LocalScene {
                 ? timedInput! : ParagraphInput.supplied(text: entry.text, japanese: japanese)
             if entry.secondVoice { input.rightAligned = true }
             if presentation.canvas != .native { input = input.adapted(to: presentation.canvas) }
-            let layout = try ParagraphLayout(input)
+            let layout: ParagraphLayout
+            do { layout = try ParagraphLayout(input) } catch ScreenError.invalid(let reason) {
+                guard reason == Self.wrapLimit else { throw ScreenError.invalid(reason) }
+                let seconds = entry.time.seconds
+                throw InputError.invalid(
+                    String(
+                        format:
+                            "the lyric line at %d:%05.2f wraps to more than eight rows on screen; split it into shorter lines",
+                        Int(seconds) / 60, seconds.truncatingRemainder(dividingBy: 60)))
+            }
             // Lead never moves focus before the previous focus event or before zero.
             let previous = events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
             let led = entry.time - presentation.focusLead

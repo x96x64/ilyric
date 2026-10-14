@@ -178,3 +178,31 @@ extension CommandSafetyTests {
         #expect(!left.contains { $0.hasPrefix(".") || $0 == "out.mp4" }, "\(left)")
     }
 }
+
+extension CommandSafetyTests {
+    @Test func errorsNameFilesAsTypedInPlainLanguage() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        _ = try f.wav()
+        _ = try f.lrc()
+        let long = Array(repeating: "window", count: 60).joined(separator: " ")
+        _ = try f.write("Paper boats\n\n" + long + "\n", to: "long.txt")
+        _ = try f.write("[00:00.10]" + long + "\n", to: "long.lrc")
+        let cases: [([String], String)] = [
+            (["render", "nope.wav", "words.lrc", "-o", "a.mp4"], "Error: nope.wav does not exist"),
+            (
+                ["render", "tone.wav", "long.txt", "-o", "b.mp4"],
+                "Error: line 3 of long.txt wraps to more than eight rows"
+            ),
+            (
+                ["render", "tone.wav", "long.lrc", "-o", "c.mp4"],
+                "Error: long.lrc: the lyric line at 0:00.10 wraps to more than eight rows"
+            ),
+        ]
+        for (arguments, message) in cases {
+            let result = try f.run(arguments)
+            #expect(result.status == 1 && result.stderr.contains(message), "\(arguments): \(result.stderr)")
+            #expect(!result.stderr.contains("invalid(") && !result.stderr.contains("Error Domain="))
+        }
+    }
+}

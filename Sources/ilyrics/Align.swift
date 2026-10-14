@@ -20,10 +20,10 @@ enum Align {
 
     static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
         guard let raw = try? String(contentsOf: lyrics, encoding: .utf8) else {
-            throw Failure(message: "\(lyrics.path) is not readable UTF-8 text")
+            throw Failure(message: "\(lyrics.relativePath) is not readable UTF-8 text")
         }
         let normalized = NormalizedLyrics(raw)
-        try checkLyrics(raw, normalized, name: lyrics.lastPathComponent)
+        try checkLyrics(raw, normalized, name: lyrics.relativePath)
         if !normalized.background.isEmpty
             || normalized.dropped.contains(where: { $0.hasSuffix(" (background vocals without a preceding line)") })
         {
@@ -38,7 +38,7 @@ enum Align {
         }
         // Unsupported audio fails here, after the lyrics checks and before model installation or alignment.
         do { _ = try await LocalAudio.inspect(audio) } catch let error as InputError {
-            throw Failure(message: "\(audio.lastPathComponent): \(error)")
+            throw Failure(message: "\(audio.relativePath): \(error)")
         }
         let models = try await Models.ready(console)
         let units: MLComputeUnits = fast ? .all : .cpuOnly
@@ -50,7 +50,7 @@ enum Align {
         progress.begin(1)
         let decoded: (left: [Float], right: [Float], durationMicroseconds: Int)
         do { decoded = try readStereo44k(audio) } catch {
-            throw Failure(message: "\(audio.path) could not be decoded (\(error.localizedDescription))")
+            throw Failure(message: "\(audio.relativePath) could not be decoded (\(error.localizedDescription))")
         }
         let duration = decoded.durationMicroseconds
         let decodedAt = Date()
@@ -215,10 +215,10 @@ enum Align {
         let audio = URL(fileURLWithPath: options.operands[0])
         let lyrics = URL(fileURLWithPath: options.operands[1])
         for url in [audio, lyrics] where !FileManager.default.fileExists(atPath: url.path) {
-            throw Failure(message: "\(url.path) does not exist")
+            throw Failure(message: "\(url.relativePath) does not exist")
         }
         guard !["ttml", "lrc"].contains(lyrics.pathExtension.lowercased()) else {
-            throw Failure(message: "\(lyrics.lastPathComponent) is already timed; 'align' takes untimed text")
+            throw Failure(message: "\(lyrics.relativePath) is already timed; 'align' takes untimed text")
         }
         let target = try checkOutput(output, force: options.has("force"), inputs: options.operands)
         if let path = options.values["report"] {

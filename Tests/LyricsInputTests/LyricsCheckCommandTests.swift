@@ -26,9 +26,9 @@ extension InputTests {
             let p = Process()
             let err = Pipe()
             p.executableURL = executable
-            p.arguments = [
-                "align", audio.path, input.path, "-o", dir.appendingPathComponent("out.ttml").path, "--force",
-            ]
+            // Files are named as typed, here relative to the working directory.
+            p.currentDirectoryURL = dir
+            p.arguments = ["align", "fixture.wav", "input.txt", "-o", "out.ttml", "--force"]
             var env = ProcessInfo.processInfo.environment
             env["ILYRICS_TEMPLATES"] = dir.appendingPathComponent("missing").path
             p.environment = env

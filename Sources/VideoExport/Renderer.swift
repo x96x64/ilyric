@@ -6,7 +6,14 @@ import ImageIO
 import UniformTypeIdentifiers
 import TimelineCore
 
-public enum RenderError: Error { case failure(String) }
+public enum RenderError: Error, CustomStringConvertible {
+    case failure(String)
+    public var description: String {
+        switch self {
+        case .failure(let message): message
+        }
+    }
+}
 let colorSpace = CGColorSpace(name: CGColorSpace.itur_709)!
 let bitmapInfo = CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue
 

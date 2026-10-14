@@ -1,4 +1,5 @@
 import Foundation
+import AlignmentCore
 import ProgressDisplay
 import AVFoundation
 import LyricsInputCore
@@ -108,7 +109,7 @@ enum Render {
         let lyricsURL = URL(fileURLWithPath: options.operands[1])
         for url in [audioURL, lyricsURL] + (options.values["artwork"].map { [URL(fileURLWithPath: $0)] } ?? [])
         where !FileManager.default.fileExists(atPath: url.path) {
-            throw Failure(message: "\(url.path) does not exist")
+            throw Failure(message: "\(url.relativePath) does not exist")
         }
         let inputs = options.operands + (options.values["artwork"].map { [$0] } ?? [])
         let target = try checkOutput(output, force: options.has("force"), inputs: inputs).standardizedFileURL
@@ -126,6 +127,28 @@ enum Render {
         let title = headerLabel(
             options.values["title"] ?? tags.title ?? audioURL.deletingPathExtension().lastPathComponent)
         let artist = headerLabel(options.values["artist"] ?? tags.artist ?? "Unknown Artist")
+
+        let canvas: LyricsCanvas = safeArea == "reels" ? .reels : .video
+        // Untimed paragraphs that cannot fit the screen are reported before minutes of alignment.
+        if !["ttml", "lrc"].contains(lyricsURL.pathExtension.lowercased()),
+            let raw = try? String(contentsOf: lyricsURL, encoding: .utf8)
+        {
+            let normalized = NormalizedLyrics(raw)
+            var first = 0
+            for paragraph in normalized.text.components(separatedBy: "\n\n") where !paragraph.isEmpty {
+                let text = paragraph.trimmingCharacters(in: .newlines)
+                let count = text.components(separatedBy: "\n").count
+                if !LocalScene.fits(text, canvas: canvas), first + count <= normalized.sourceLines.count {
+                    let a = normalized.sourceLines[first]
+                    let b = normalized.sourceLines[first + count - 1]
+                    throw Failure(
+                        message: "\(a == b ? "line \(a)" : "lines \(a)–\(b)") of \(lyricsURL.relativePath) "
+                            + "\(a == b ? "wraps" : "wrap") to more than eight rows on screen; split "
+                            + "\(a == b ? "it into shorter lines" : "them into shorter lines or separate paragraphs")")
+                }
+                first += count
+            }
+        }
 
         // Lyrics: align untimed text, or parse supplied timing.
         var report: [String: Any] = ["format": "ilyrics-render-report-1"]
@@ -152,7 +175,7 @@ enum Render {
                 credits = credits ?? aligned.credits
                 lyrics = try LyricsParser.parse(Data(aligned.ttml.utf8), format: .ttml)
             }
-        } catch let error as InputError { throw Failure(message: "the lyrics could not be read: \(error)") }
+        } catch let error as InputError { throw Failure(message: "\(lyricsURL.relativePath): \(error)") }
         for diagnostic in lyrics.diagnostics { console.detail("Lyrics: \(diagnostic)") }
         // Supplied timing skips separation and alignment; its audio is read here. Untimed lyrics read the audio
         // during alignment, and the export's own decoding belongs to the rendering stage.
@@ -184,14 +207,16 @@ enum Render {
             marquee: options.has("no-marquee") ? nil : .measured, wordMotion: .measured,
             fillLead: LocalPresentation.measuredFillLead,
             hideControls: controls == "auto-hide" ? LocalPresentation.measuredControlHide : nil,
-            canvas: safeArea == "reels" ? .reels : .video)
+            canvas: canvas)
         presentation.holdsFinishedLine = true
         presentation.collapsesGaps = true
 
         let audio: LocalAudio
         let scene: LocalScene
         do {
-            audio = try await LocalAudio.decode(audioURL)
+            do { audio = try await LocalAudio.decode(audioURL) } catch let error as InputError {
+                throw Failure(message: "\(audioURL.relativePath): \(error)")
+            }
             if timed {
                 progress.finish()
                 progress.skip(2)
@@ -203,7 +228,7 @@ enum Render {
                 highlighting: .enabled, presentation: presentation,
                 title: title, artist: artist, credits: credits,
                 placeholderArtwork: artwork == nil)
-        } catch let error as InputError { throw Failure(message: "\(error)") }
+        } catch let error as InputError { throw Failure(message: "\(lyricsURL.relativePath): \(error)") }
 
         // Each worker owns one renderer; frames are pure functions of time, so output does not depend on the count.
         let renderers = try [scene.renderer] + (1..<jobs).map { _ in try scene.makeRenderer() }

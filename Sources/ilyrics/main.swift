@@ -51,5 +51,6 @@ do {
 } catch AlignmentError.invalid(let reason) {
     fail(reason, status: 1)
 } catch {
-    fail("\(error)", status: 1)
+    // Foundation and system errors print their localized description rather than their full debug form.
+    fail(type(of: error) is NSError.Type ? error.localizedDescription : "\(error)", status: 1)
 }

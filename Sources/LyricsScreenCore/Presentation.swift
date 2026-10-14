@@ -15,7 +15,14 @@ public struct ParagraphTime: Codable, Equatable, Sendable {
         return Time(numerator, denominator)
     }
 }
-public enum ScreenError: Error { case invalid(String) }
+public enum ScreenError: Error, CustomStringConvertible {
+    case invalid(String)
+    public var description: String {
+        switch self {
+        case .invalid(let message): message
+        }
+    }
+}
 public struct AppearanceEvent: Codable, Equatable, Sendable {
     public let start, length: Int  // UTF-16 source range; must align with shaped clusters.
     public let begin, end, verticalEvent: ParagraphTime?
