@@ -101,59 +101,72 @@ public struct LocalAudio: Sendable {
             guard declaredEnd > 0 else {
                 throw InputError.invalid("Audio presentation is shorter than one source sample")
             }
-            let reader = try AVAssetReader(asset: asset)
-            var settings: [String: Any] = [
-                AVFormatIDKey: kAudioFormatLinearPCM, AVNumberOfChannelsKey: channels,
-                AVLinearPCMBitDepthKey: 16, AVLinearPCMIsFloatKey: false,
-                AVLinearPCMIsBigEndianKey: false, AVLinearPCMIsNonInterleaved: false,
-            ]
-            // The reader rejects an explicit rate above 192 kHz with an exception; without the key it keeps the
-            // source rate, which is what is wanted at every rate.
-            if asbd.mSampleRate <= 192_000 { settings[AVSampleRateKey] = asbd.mSampleRate }
-            let output = AVAssetReaderTrackOutput(track: track, outputSettings: settings)
-            output.alwaysCopiesSampleData = false
-            guard reader.canAdd(output) else {
-                throw InputError.invalid("Audio decoder cannot produce source-rate PCM")
-            }
-            reader.add(output)
-            guard reader.startReading() else { throw InputError.invalid("Audio decoding could not start") }
-            var samples: [Int16] = []
-            while let buffer = output.copyNextSampleBuffer() {
-                let pts = CMSampleBufferGetPresentationTimeStamp(buffer)
-                guard pts.isNumeric, pts >= .zero, let block = CMSampleBufferGetDataBuffer(buffer) else {
-                    throw InputError.invalid("Invalid decoded audio timestamp or buffer")
+            // Under concurrent load the reader occasionally ends one final partial AAC packet early; a short
+            // decode is repeated, and the longest of three is kept, so that the result does not depend on load.
+            func read() throws -> [Int16] {
+                let reader = try AVAssetReader(asset: asset)
+                var settings: [String: Any] = [
+                    AVFormatIDKey: kAudioFormatLinearPCM, AVNumberOfChannelsKey: channels,
+                    AVLinearPCMBitDepthKey: 16, AVLinearPCMIsFloatKey: false,
+                    AVLinearPCMIsBigEndianKey: false, AVLinearPCMIsNonInterleaved: false,
+                ]
+                // The reader rejects an explicit rate above 192 kHz with an exception; without the key it keeps the
+                // source rate, which is what is wanted at every rate.
+                if asbd.mSampleRate <= 192_000 { settings[AVSampleRateKey] = asbd.mSampleRate }
+                let output = AVAssetReaderTrackOutput(track: track, outputSettings: settings)
+                output.alwaysCopiesSampleData = false
+                guard reader.canAdd(output) else {
+                    throw InputError.invalid("Audio decoder cannot produce source-rate PCM")
                 }
-                let index = Int(CMTimeConvertScale(pts, timescale: rate, method: .roundHalfAwayFromZero).value)
-                if samples.isEmpty, index > 0 {
-                    guard index <= declaredEnd else {
-                        throw InputError.invalid("Audio starts beyond its declared endpoint")
+                reader.add(output)
+                guard reader.startReading() else { throw InputError.invalid("Audio decoding could not start") }
+                var samples: [Int16] = []
+                while let buffer = output.copyNextSampleBuffer() {
+                    let pts = CMSampleBufferGetPresentationTimeStamp(buffer)
+                    guard pts.isNumeric, pts >= .zero, let block = CMSampleBufferGetDataBuffer(buffer) else {
+                        throw InputError.invalid("Invalid decoded audio timestamp or buffer")
                     }
-                    samples = Array(repeating: 0, count: index * channels)
+                    let index = Int(CMTimeConvertScale(pts, timescale: rate, method: .roundHalfAwayFromZero).value)
+                    if samples.isEmpty, index > 0 {
+                        guard index <= declaredEnd else {
+                            throw InputError.invalid("Audio starts beyond its declared endpoint")
+                        }
+                        samples = Array(repeating: 0, count: index * channels)
+                    }
+                    guard abs(index - samples.count / channels) <= 1 else {
+                        throw InputError.invalid("Decoded audio contains an unsupported gap or overlap")
+                    }
+                    let count = CMBlockBufferGetDataLength(block)
+                    guard count % (2 * channels) == 0, count / (2 * channels) == CMSampleBufferGetNumSamples(buffer),
+                        samples.count + count / 2 <= Int(rate) * channels * InputLimits.maximumSeconds + 8192
+                    else { throw InputError.invalid("Decoded audio exceeds its resource or PCM-format bounds") }
+                    var chunk = [Int16](repeating: 0, count: count / 2)
+                    let status = chunk.withUnsafeMutableBytes {
+                        CMBlockBufferCopyDataBytes(block, atOffset: 0, dataLength: count, destination: $0.baseAddress!)
+                    }
+                    guard status == kCMBlockBufferNoErr else {
+                        throw InputError.invalid("Decoded PCM could not be read")
+                    }
+                    samples.append(contentsOf: chunk)
                 }
-                guard abs(index - samples.count / channels) <= 1 else {
-                    throw InputError.invalid("Decoded audio contains an unsupported gap or overlap")
+                guard reader.status == .completed, !samples.isEmpty else {
+                    throw InputError.invalid("Audio is corrupt or unsupported by the installed AVFoundation decoder")
                 }
-                let count = CMBlockBufferGetDataLength(block)
-                guard count % (2 * channels) == 0, count / (2 * channels) == CMSampleBufferGetNumSamples(buffer),
-                    samples.count + count / 2 <= Int(rate) * channels * InputLimits.maximumSeconds + 8192
-                else { throw InputError.invalid("Decoded audio exceeds its resource or PCM-format bounds") }
-                var chunk = [Int16](repeating: 0, count: count / 2)
-                let status = chunk.withUnsafeMutableBytes {
-                    CMBlockBufferCopyDataBytes(block, atOffset: 0, dataLength: count, destination: $0.baseAddress!)
-                }
-                guard status == kCMBlockBufferNoErr else { throw InputError.invalid("Decoded PCM could not be read") }
-                samples.append(contentsOf: chunk)
+                return samples
             }
-            guard reader.status == .completed, !samples.isEmpty else {
-                throw InputError.invalid("Audio is corrupt or unsupported by the installed AVFoundation decoder")
+            let tick = Int((Double(rate) / Double(endpoint.timescale)).rounded(.up)) + 1
+            var samples = try read()
+            for _ in 0..<2 where samples.count / channels < declaredEnd - tick {
+                let again = try read()
+                if again.count > samples.count { samples = again }
             }
             // A codec may return a partial final decode block beyond its track edit endpoint.
             // Honor that explicit endpoint; do not shorten media by a lyric-derived rule.
             let frameCount = samples.count / channels
             // The endpoint is quantized to the track's time scale (for example 1/600 s), so decoding may end short
-            // of it by up to one tick; that remainder is padded with silence.
-            let tick = Int((Double(rate) / Double(endpoint.timescale)).rounded(.up)) + 1
-            guard frameCount >= declaredEnd - tick, frameCount - declaredEnd <= 4096 else {
+            // of it by up to one tick; that remainder, or one final AAC packet that the repeated decodes did not
+            // recover, is padded with silence.
+            guard frameCount >= declaredEnd - max(tick, 2048), frameCount - declaredEnd <= 4096 else {
                 throw InputError.invalid(
                     "Decoded audio duration disagrees with its track endpoint (decoded \(frameCount) frames, declared \(declaredEnd))"
                 )
