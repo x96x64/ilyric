@@ -1,5 +1,6 @@
 import Foundation
 import AlignmentCore
+import VideoExport
 
 /// The user-facing iLyrics command (docs/command-line-interface.md).
 enum CLI {
@@ -17,6 +18,18 @@ enum CLI {
 }
 
 let arguments = Array(CommandLine.arguments.dropFirst())
+// Ctrl-C or termination removes partial outputs and ends the progress line before exiting with the usual status.
+let interruptions = [SIGINT, SIGTERM, SIGHUP].map { number -> DispatchSourceSignal in
+    signal(number, SIG_IGN)
+    let source = DispatchSource.makeSignalSource(signal: number, queue: .global())
+    source.setEventHandler {
+        TemporaryFiles.removeAll()
+        if isatty(STDERR_FILENO) != 0 { FileHandle.standardError.write(Data("\u{1B}[?7h\n".utf8)) }
+        exit(128 + number)
+    }
+    source.resume()
+    return source
+}
 func fail(_ message: String, status: Int32) -> Never {
     FileHandle.standardError.write(Data("Error: \(message)\n".utf8))
     exit(status)

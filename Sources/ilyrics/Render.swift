@@ -208,7 +208,8 @@ enum Render {
         let frames = scene.schedule.frames
         console.detail("Rendering \(frames) frames with \(jobs) workers")
         let temporary = target.deletingLastPathComponent().appendingPathComponent(".ilyrics-\(UUID().uuidString).mp4")
-        defer { try? FileManager.default.removeItem(at: temporary) }
+        TemporaryFiles.register(temporary)
+        defer { TemporaryFiles.remove(temporary) }
         // After the last frame the writer still finishes the file, shown as a spinner.
         let submitted: (Int) -> Void = { count in
             if count < frames {

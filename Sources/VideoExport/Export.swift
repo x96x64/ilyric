@@ -79,8 +79,9 @@ public enum Exporter {
         guard frames > 0, !FileManager.default.fileExists(atPath: url.path) else {
             throw RenderError.failure("Invalid frame count or existing output")
         }
-        let temporary = url.deletingLastPathComponent().appendingPathComponent(".\(UUID().uuidString).mp4")
-        defer { try? FileManager.default.removeItem(at: temporary) }
+        let temporary = url.deletingLastPathComponent().appendingPathComponent(".ilyrics-\(UUID().uuidString).mp4")
+        TemporaryFiles.register(temporary)
+        defer { TemporaryFiles.remove(temporary) }
         let start = Date()
         let writer = try AVAssetWriter(outputURL: temporary, fileType: .mp4)
         let settings: [String: Any] = [
@@ -123,10 +124,13 @@ public enum Exporter {
         writer.startSession(atSourceTime: .zero)
         @MainActor @Sendable func ready(_ isVideo: Bool) async throws {
             let input = isVideo ? video : audio
-            let began = Date()
+            // Count polls rather than wall-clock time, so that a suspended process (Ctrl-Z, sleep) or a main actor
+            // busy rendering frames does not count as a stalled writer; 30,000 polls take at least 30 s.
+            var polls = 0
             while !input.isReadyForMoreMediaData {
                 if writer.status == .failed { throw writer.error ?? RenderError.failure("Writer failed") }
-                if Date().timeIntervalSince(began) > 30 { throw RenderError.failure("Writer backpressure timeout") }
+                polls += 1
+                if polls > 30_000 { throw RenderError.failure("Writer backpressure timeout") }
                 try await Task.sleep(nanoseconds: 1_000_000)
             }
         }
@@ -290,5 +294,24 @@ public enum Exporter {
             let result = sample
         else { throw RenderError.failure("PCM sample buffer failed") }
         return result
+    }
+}
+
+/// Temporary outputs that an interrupted command removes before it exits.
+public enum TemporaryFiles {
+    nonisolated(unsafe) private static var files = Set<URL>()
+    private static let lock = NSLock()
+    public static func register(_ url: URL) { lock.withLock { _ = files.insert(url) } }
+    public static func remove(_ url: URL) {
+        lock.withLock { _ = files.remove(url) }
+        try? FileManager.default.removeItem(at: url)
+    }
+    /// Removes every registered file; safe to call from a signal handler's queue.
+    public static func removeAll() {
+        let all = lock.withLock {
+            defer { files.removeAll() }
+            return files
+        }
+        for url in all { try? FileManager.default.removeItem(at: url) }
     }
 }

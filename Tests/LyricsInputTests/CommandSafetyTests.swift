@@ -147,3 +147,34 @@ extension CommandSafetyTests {
         #expect(text.contains("Cache:") && !text.contains("Cache:     " + f.dir.path + "\n"))
     }
 }
+
+extension CommandSafetyTests {
+    @Test func interruptedRenderLeavesNoPartialFiles() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        let audio = try f.wav(seconds: 20)
+        let lyrics = try f.lrc()
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let p = Process()
+        p.executableURL = root.appendingPathComponent(".build/debug/ilyrics")
+        p.arguments = ["render", audio, lyrics, "-o", f.path("out.mp4"), "--artist", "Synthetic"]
+        p.standardError = Pipe()
+        p.standardOutput = Pipe()
+        try p.run()
+        // Wait until rendering has written its temporary output, then interrupt.
+        let deadline = Date().addingTimeInterval(60)
+        while Date() < deadline, p.isRunning,
+            !((try? FileManager.default.contentsOfDirectory(atPath: f.dir.path)) ?? []).contains(where: {
+                $0.hasPrefix(".ilyrics-")
+            })
+        {
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+        p.interrupt()
+        p.waitUntilExit()
+        #expect(p.terminationStatus == 130)
+        let left = try FileManager.default.contentsOfDirectory(atPath: f.dir.path)
+        #expect(!left.contains { $0.hasPrefix(".") || $0 == "out.mp4" }, "\(left)")
+    }
+}
