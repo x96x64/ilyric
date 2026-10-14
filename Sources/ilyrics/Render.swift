@@ -162,15 +162,18 @@ enum Render {
             console.say("Note: the audio file names no artist; showing \"Unknown Artist\" (pass --artist TEXT)")
         }
         // Artwork: the option first, then the audio file's metadata.
-        let artwork: LocalArtwork?
-        do {
-            if let path = options.values["artwork"] {
-                artwork = try LocalArtwork.decode(URL(fileURLWithPath: path))
-            } else {
-                artwork = try tags.artwork.map { try LocalArtwork.decode(data: $0) }
+        var artwork: LocalArtwork?
+        if let path = options.values["artwork"] {
+            do { artwork = try LocalArtwork.decode(URL(fileURLWithPath: path)) } catch {
+                throw Failure(message: "\(path): \(error)")
             }
-        } catch { throw Failure(message: "the artwork could not be decoded: \(error)") }
-        if artwork == nil {
+        } else if let data = tags.artwork {
+            // Unusable embedded artwork is not worth failing a render for; the placeholder is drawn instead.
+            do { artwork = try LocalArtwork.decode(data: data) } catch {
+                console.warning("the artwork embedded in \(options.operands[0]) cannot be used (\(error))")
+            }
+        }
+        if artwork == nil && tags.artwork == nil {
             console.say("Note: no artwork found; using the placeholder artwork (pass --artwork FILE to supply one)")
         }
 

@@ -180,12 +180,22 @@ struct ProjectTests {
         #expect(artwork.image.width == 32 && artwork.image.height == 48)
         let large = dir.appendingPathComponent("large.png")
         let wide = CGContext(
-            data: nil, width: 4097, height: 1, bitsPerComponent: 8, bytesPerRow: 4097 * 4,
+            data: nil, width: 8193, height: 1, bitsPerComponent: 8, bytesPerRow: 8193 * 4,
             space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
         let output = CGImageDestinationCreateWithURL(large as CFURL, UTType.png.identifier as CFString, 1, nil)!
         CGImageDestinationAddImage(output, wide.makeImage()!, nil)
         #expect(CGImageDestinationFinalize(output))
         #expect(throws: InputError.self) { try LocalArtwork.decode(large) }
+        // Common 3000-pixel covers are accepted; decoding stays bounded to a 1024-pixel thumbnail.
+        let cover = dir.appendingPathComponent("cover.png")
+        let square = CGContext(
+            data: nil, width: 3000, height: 3000, bitsPerComponent: 8, bytesPerRow: 12_000,
+            space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+        let coverOutput = CGImageDestinationCreateWithURL(cover as CFURL, UTType.png.identifier as CFString, 1, nil)!
+        CGImageDestinationAddImage(coverOutput, square.makeImage()!, nil)
+        #expect(CGImageDestinationFinalize(coverOutput))
+        let decodedCover = try LocalArtwork.decode(cover)
+        #expect(decodedCover.info.width == 3000 && decodedCover.image.width == 1024)
         let huge = dir.appendingPathComponent("huge.bin")
         try Data(repeating: 0, count: 16 * 1024 * 1024 + 1).write(to: huge)
         #expect(throws: InputError.self) { try LocalArtwork.decode(huge) }

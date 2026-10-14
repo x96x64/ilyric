@@ -40,9 +40,10 @@ public struct LocalArtwork {
             let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
             let width = properties[kCGImagePropertyPixelWidth] as? Int,
             let height = properties[kCGImagePropertyPixelHeight] as? Int,
-            (1...4096).contains(width), (1...4096).contains(height), width * height <= 8_388_608
+            (1...8192).contains(width), (1...8192).contains(height), width * height <= 67_108_864
         else {
-            throw InputError.invalid("Artwork must be one decodable image within 4096 pixels per side and 8 megapixels")
+            throw InputError.invalid(
+                "Artwork must be one decodable image within 8192 pixels per side and 64 megapixels")
         }
         // ImageIO applies EXIF orientation and bounds decode to 1024 pixels. Embedded
         // color space is honored by drawing into the explicit sRGB destination.
