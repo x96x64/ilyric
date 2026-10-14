@@ -36,6 +36,8 @@ public struct LocalAudio: Sendable {
         let asset: AVURLAsset, track: AVAssetTrack, format: AudioStreamBasicDescription, range: CMTimeRange
         public var sampleRate: Double { format.mSampleRate }
         public var channels: Int { Int(format.mChannelsPerFrame) }
+        /// The presentation end in seconds.
+        public var seconds: Double { CMTimeGetSeconds(CMTimeAdd(range.start, range.duration)) }
     }
 
     public static func inspect(_ url: URL) async throws -> Inspection {

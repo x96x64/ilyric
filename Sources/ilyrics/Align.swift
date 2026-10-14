@@ -37,10 +37,15 @@ enum Align {
             throw Failure(message: "the lyrics cannot be aligned: \(reason)")
         }
         // Unsupported audio fails here, after the lyrics checks and before model installation or alignment.
-        do { _ = try await LocalAudio.inspect(audio) } catch let error as InputError {
+        let inspection: LocalAudio.Inspection
+        do { inspection = try await LocalAudio.inspect(audio) } catch let error as InputError {
             throw Failure(message: "\(audio.relativePath): \(error)")
         }
-        let models = try await Models.ready(console)
+        // The recognizer needs at least one second.
+        guard inspection.seconds >= 1 else {
+            throw Failure(
+                message: "\(audio.relativePath) is shorter than one second; alignment needs at least one second")
+        }
         let units: MLComputeUnits = fast ? .all : .cpuOnly
         console.detail(
             "Aligning \(source.lines.count) lines to \(audio.lastPathComponent)\(fast ? " (fast, not reproducible)" : "")"
@@ -53,9 +58,15 @@ enum Align {
             throw Failure(message: "\(audio.relativePath) could not be decoded (\(error.localizedDescription))")
         }
         let duration = decoded.durationMicroseconds
+        // Separation cannot normalize digital silence. Models are prepared only after the audio has been checked.
+        guard decoded.left.contains(where: { $0 != 0 }) || decoded.right.contains(where: { $0 != 0 }) else {
+            throw Failure(message: "\(audio.relativePath) is silent; alignment needs a recording with audible vocals")
+        }
         let decodedAt = Date()
         progress.finish()
         console.detail("  Decoded in \(elapsed(decodedAt.timeIntervalSince(started)))")
+        let models = try await Models.ready(console)
+        let separating = Date()
         progress.begin(2)
         // Analysis samples follow the reference pipeline: 48-kHz frames of the source, one third at 16 kHz.
         let expected = (Int((Double(duration) * 48000 / 1_000_000).rounded()) + 2) / 3
@@ -71,7 +82,7 @@ enum Align {
         }
         let separatedAt = Date()
         progress.finish()
-        console.detail("  Separated vocals in \(elapsed(separatedAt.timeIntervalSince(decodedAt)))")
+        console.detail("  Separated vocals in \(elapsed(separatedAt.timeIntervalSince(separating)))")
         progress.begin(3)
         let model = try RecognitionModel(
             modelURL: models.recognizer, vocabularyURL: models.vocabulary, computeUnits: units)
@@ -137,7 +148,7 @@ enum Align {
             "format": "ilyrics-alignment-report-1", "audio": audio.lastPathComponent, "duration_us": duration,
             "compute_units": fast ? "all" : "cpu", "ignored_input_lines": normalized.dropped, "lines": lines,
             "seconds": [
-                "decode": decodedAt.timeIntervalSince(started), "separation": separatedAt.timeIntervalSince(decodedAt),
+                "decode": decodedAt.timeIntervalSince(started), "separation": separatedAt.timeIntervalSince(separating),
                 "alignment": alignedAt.timeIntervalSince(separatedAt),
             ],
         ]

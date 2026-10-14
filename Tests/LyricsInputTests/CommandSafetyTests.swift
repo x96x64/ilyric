@@ -206,3 +206,24 @@ extension CommandSafetyTests {
         }
     }
 }
+
+extension CommandSafetyTests {
+    /// Both checks precede model preparation, so they never install models; the cache is a scratch folder.
+    @Test func shortAndSilentRecordingsAreRejectedBeforeAlignment() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        _ = try f.wav("short.wav", seconds: 0.5)
+        let silent = Data(count: 96_000)
+        _ = try f.wav("silent.wav", seconds: 1)
+        var wav = try Data(contentsOf: URL(fileURLWithPath: f.path("silent.wav")))
+        wav.replaceSubrange(44..<wav.count, with: silent)
+        try wav.write(to: URL(fileURLWithPath: f.path("silent.wav")))
+        _ = try f.write("Paper boats\n", to: "words.txt")
+        let cache = ["ILYRICS_MODELS": f.path("cache")]
+        let short = try f.run(["align", "short.wav", "words.txt", "-o", "a.ttml"], environment: cache)
+        #expect(short.status == 1 && short.stderr.contains("short.wav is shorter than one second"), "\(short.stderr)")
+        let quiet = try f.run(["align", "silent.wav", "words.txt", "-o", "b.ttml"], environment: cache)
+        #expect(quiet.status == 1 && quiet.stderr.contains("silent.wav is silent"), "\(quiet.stderr)")
+        #expect(!FileManager.default.fileExists(atPath: f.path("cache")))
+    }
+}
