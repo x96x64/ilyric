@@ -4,6 +4,10 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.2.0] - Unreleased
+
+An option for Instagram Reels, and fixes from a release-wide review of robustness, input handling, rendering, and distribution. Japanese and other languages are now planned for 1.3.0.
+
 ### Added
 
 - `render --safe-area reels` keeps the header, lyrics, and lower controls inside the width that Instagram Reels shows, 51 video pixels from each side, while the background still fills the frame. The crop was measured on one iPhone screenshot ([report](docs/reports/instagram-reels-safe-area.md)).
@@ -119,7 +123,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.2.0
 [1.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.1.0
 [1.0.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.1
 [1.0.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.0

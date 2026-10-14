@@ -28,6 +28,7 @@ October 11, 2026. This roadmap carries the project from the current state to the
 13. (Added October 12, 2026.) The maintainer approved the public preview on the [third qualification](reports/third-preview-qualification-results.md): every pooled criterion was met and only the per-recording criterion was not, by three of 80 recordings, one of them a since-fixed text defect. Publication of each channel still requires the maintainer's confirmation.
 14. (Added October 12, 2026.) All Japanese support, including the display of supplied Japanese timing and automatic Japanese synchronization, is deferred to the release after the stable release. The stable release proceeds on the visual qualification as a documented record of fidelity, with known differences stated, rather than requiring every visual property to pass.
 15. (Added October 13, 2026.) v1.1.0 currently targets usability improvements. Japanese and other languages are planned for a later release, currently targeted as v1.2.0. This schedule supersedes the historical next-release language expectation in Decision 14 and earlier language-roadmap statements, which are preserved verbatim as historical records. These are current intentions, not guarantees of release dates or feature delivery.
+16. (Added October 15, 2026.) v1.2.0 adds the Instagram Reels safe area and the fixes of a release-wide review of robustness, input handling, rendering, and distribution. Japanese and other languages are now targeted as v1.3.0; Decision 15 is preserved as a historical record.
 
 ## Where Work Can Run
 

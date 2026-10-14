@@ -11,7 +11,7 @@ Only the latest release receives fixes. Releases follow [Semantic Versioning](ht
 | Operating system | macOS 14 or later |
 | Processor | Apple silicon; packaged binaries are built for arm64 only |
 | Installation | Homebrew, npm, pip, or a source build with a Swift 6 toolchain |
-| Synchronization | English lyrics; Japanese and other languages are planned for a later release, currently targeted as v1.2.0 |
+| Synchronization | English lyrics; Japanese and other languages are planned for a later release, currently targeted as v1.3.0 |
 | Visual target | The Music app on iPhone 16 running iOS 27, light appearance, default text size |
 
 Release binaries are built by the repository's `release.yml` workflow from the tagged source on GitHub-hosted macOS runners. The alignment models are downloaded from their publishers and verified by SHA-256 on first use.

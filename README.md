@@ -324,7 +324,7 @@ You are likewise responsible for holding the rights to the recordings, lyrics, a
 
 ## Limitations
 
-- Automatic synchronization supports English. Japanese and other languages are planned for a later release, currently targeted as v1.2.0.
+- Automatic synchronization supports English. Japanese and other languages are planned for a later release, currently targeted as v1.3.0.
 - Backing choruses, including parenthesized phrases and standalone chorus-only lines written as ordinary lines, are experimental, unverified, and unsupported. Exclude them from `lyrics.txt`; lead-sung refrains, `[Chorus]` labels, and vocable-only lines remain permitted. See [Plain Text](#plain-text) for observed issues and unchanged compatibility.
 - On 80 unseen recordings with manual word timing, 95.9% of lines were placed correctly, 0.5% were misplaced, and 3.6% were left untimed; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without reliable timing are placed rather than aligned and fill steadily rather than word by word; see [Reviewing an Alignment](#reviewing-an-alignment).
 - Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.
