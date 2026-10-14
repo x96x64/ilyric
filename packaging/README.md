@@ -47,6 +47,8 @@ ilyrics doctor
 ilyrics models install
 ```
 
+To update, run `npm install -g ilyrics@latest`, `pipx upgrade ilyrics` (or `pip install --upgrade ilyrics`), or `brew update && brew upgrade ilyrics`; `ilyrics doctor` shows the installed version and its update command.
+
 ## Usage
 
 ```bash
@@ -67,6 +69,7 @@ The title, artist, and artwork are read from the audio file's metadata. Common o
 | `--title TEXT`, `--artist TEXT`, `--artwork FILE` | Override the header and artwork |
 | `--background artwork\|static` | Artwork-derived or static background |
 | `--controls auto-hide\|visible` | Hide the lower controls after playback starts, or keep them |
+| `--safe-area none\|reels` | Keep the header, lyrics, and controls inside the width that Instagram Reels shows |
 | `-j, --jobs N` | Parallel rendering workers |
 | `--fast` | GPU and Neural Engine inference; faster but not reproducible |
 | `--force` | Replace an existing output |
