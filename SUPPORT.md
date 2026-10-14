@@ -28,9 +28,10 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. The [third English q
 
 ## Getting Help
 
-1. Run `ilyrics doctor` and follow the recovery step it states.
-2. Read [Troubleshooting](README.md#troubleshooting) and [Limitations](README.md#limitations).
-3. If the problem remains, open an issue at <https://github.com/x96x64/ilyrics/issues> with the output of `ilyrics --version` and `ilyrics doctor`, the command you ran, and, for an alignment problem, the report written by `--report`. Do not attach recordings or lyrics you are not allowed to share.
+1. Update to the latest release ([Updating](README.md#updating)); `ilyrics doctor` shows the installed version and the update command.
+2. Run `ilyrics doctor` and follow the recovery step it states.
+3. Read [Troubleshooting](README.md#troubleshooting) and [Limitations](README.md#limitations).
+4. If the problem remains, open an issue at <https://github.com/x96x64/ilyrics/issues> with the output of `ilyrics --version` and `ilyrics doctor`, the command you ran, and, for an alignment problem, the report written by `--report`. Do not attach recordings or lyrics you are not allowed to share.
 
 ## Out of Scope
 

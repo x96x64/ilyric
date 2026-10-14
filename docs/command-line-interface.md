@@ -18,7 +18,8 @@ ilyrics --help | --version
 
 - `render` produces a Lyrics video. Untimed lyrics (`.txt`) are aligned automatically first; timed lyrics (`.ttml`, `.lrc`, Enhanced LRC) are used as supplied.
 - `align` produces word-timed TTML from untimed lyrics without rendering.
-- `models` installs, reports, or removes the alignment models in the user's model cache. `render` and `align` install missing models automatically on first use.
+- `models` installs, reports, or removes the alignment models in the user's model cache. `models install --force` reinstalls them even when they are present. `render` and `align` install missing models automatically on first use, after the inputs have been checked.
+- `doctor` reports the installed version, the executable's location, the channel that installed it with its update command, and each requirement.
 - `doctor` reports the macOS version, available compute units, SF Symbols availability, the model cache, and the toolchain, and states the recovery step for each problem.
 
 Control icons are always SF Symbols, resolved at runtime; there is no icon option. If a symbol cannot be resolved, rendering stops with an error and `doctor` reports the cause. The original icon set remains internal, for tests and public media only.
@@ -54,9 +55,9 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. All nine observed vo
 | `-j, --jobs N` | render | Parallel rendering workers | Active processor count |
 | `--fast` | render, align | GPU and Neural Engine inference; faster but not reproducible | Off: CPU, reproducible |
 | `--report FILE` | render, align | JSON report of estimates, placements, and timings | None |
-| `-q, --quiet` / `-v, --verbose` | all | Only warnings and errors, or additional details | Progress and notes |
+| `-q, --quiet` / `-v, --verbose` | render, align, models | Only warnings and errors, or additional details | Progress and notes |
 
-Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. Error messages begin with `Error:` and name the cause and the recovery step.
+Exit status is 0 on success, 1 on a runtime failure, 2 on a usage error, and 128 plus the signal number when the command is interrupted, after any partial output has been removed. Error messages begin with `Error:`, name files as they were given, and state the cause and the recovery step. Outputs and `--report` files are checked before any work: a folder, a path that names one of the inputs, or a missing or unwritable folder is an error, and an existing file is replaced only with `--force`.
 
 ## Progress Output
 

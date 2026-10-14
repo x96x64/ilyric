@@ -56,13 +56,13 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 
 ## Requirements
 
-- macOS 14 or later
-- A Swift 6 toolchain (Xcode or the Command Line Tools) to build from source
+- macOS 14 or later on Apple silicon
+- For Homebrew and source builds, a Swift 6 toolchain: Xcode 16 or the Command Line Tools 16 or later
 - About 600 MB of disk space for the alignment models, and 8 GB of memory or more for complete songs
 
 ## Installation
 
-The packages install the same native binary for Apple silicon and need no Swift toolchain.
+The npm and pip packages contain a prebuilt binary for Apple silicon and need no Swift toolchain; Homebrew builds the tagged source on your Mac. Install through one channel only, so that updating it updates the `ilyrics` you run.
 
 ### Homebrew
 
@@ -108,6 +108,28 @@ Installation downloads about 460 MB from the publishers: the [HTDemucs](https://
 ```bash
 ilyrics models status   # show the cache location and state
 ilyrics models remove   # delete the installed models
+```
+
+### Updating
+
+Only the latest release receives fixes. `ilyrics doctor` shows the installed version, where it was installed from, and the command that updates it.
+
+| Channel | Update |
+| --- | --- |
+| Homebrew | `brew update && brew upgrade ilyrics` |
+| npm | `npm install -g ilyrics@latest` |
+| pip | `pipx upgrade ilyrics`, or `pip install --upgrade ilyrics` |
+| Source | `git pull`, then repeat the build and installation steps |
+
+The installed models remain valid across updates unless the [changelog](CHANGELOG.md) states otherwise.
+
+### Uninstalling
+
+Remove the models first, because they are stored outside the package, then uninstall through the channel you used:
+
+```bash
+ilyrics models remove
+brew uninstall ilyrics       # or: npm uninstall -g ilyrics, pipx uninstall ilyrics, pip uninstall ilyrics
 ```
 
 ## Quick Start
@@ -166,7 +188,7 @@ ilyrics doctor
 | `-j, --jobs N` | render | Parallel rendering workers | Processor count |
 | `--fast` | render, align | GPU and Neural Engine inference | CPU |
 | `--report FILE` | render, align | JSON report of alignment and export | None |
-| `-q, --quiet`, `-v, --verbose` | all | Only warnings and errors, or additional details | Progress and notes |
+| `-q, --quiet`, `-v, --verbose` | render, align, models | Only warnings and errors, or additional details | Progress and notes |
 
 Exit status is 0 on success, 1 on a runtime failure, and 2 on a usage error. See [Command-Line Interface](docs/command-line-interface.md) for the complete reference and environment variables.
 
@@ -219,7 +241,7 @@ Daylight reaches every stone
 
 The lyrics must match the lead singer's sung sequence, in order. Ordinary lead-sung refrains remain permitted and should be repeated in full when sung again. A `[Chorus]` section label is also permitted and is ignored; neither a lead-sung refrain nor that label is a prohibited backing chorus.
 
-Backing cues have been observed to disappear late or unevenly, and predominantly chorus-only lines can align into subsequent non-singing audio. These issues are not claimed to be fixed or to reproduce verified native iOS 27 behavior. Unsupported chorus inputs remain accepted, interpreted, and exported as before; no output change accompanies this support notice. Plain-text commands emit one nonfatal stderr warning when existing parsing recognizes parenthesized backing phrases, including parentheses-only lines. `--quiet` suppresses it; normal and verbose modes show it. Ordinary chorus-only lines cannot be identified reliably from text alone and do not trigger this warning. Timed formats do not trigger it.
+Backing cues have been observed to disappear late or unevenly, and predominantly chorus-only lines can align into subsequent non-singing audio. These issues are not claimed to be fixed or to reproduce verified native iOS 27 behavior. Unsupported chorus inputs remain accepted, interpreted, and exported as before; no output change accompanies this support notice. Plain-text commands emit one nonfatal stderr warning when existing parsing recognizes parenthesized backing phrases, including parentheses-only lines. It appears in every mode, including `--quiet`. Ordinary chorus-only lines cannot be identified reliably from text alone and do not trigger this warning. Timed formats do not trigger it.
 
 In the [third English qualification](docs/reports/third-preview-qualification-results.md), all nine observed vocable-only lines were aligned correctly. This small sample was excluded from the main scored-line denominator and does not establish backing-chorus accuracy.
 
@@ -275,7 +297,7 @@ Peak memory was 2.3 GB for the complete `render`. Rendering scales with processo
 
 ## Troubleshooting
 
-Run `ilyrics doctor` first; it checks each requirement and states the recovery step for any problem.
+Run `ilyrics doctor` first; it shows the installed version and checks each requirement, with the recovery step for any problem. If a message or behavior differs from this README, update to the latest release first.
 
 | Message | Remedy |
 | --- | --- |
@@ -287,6 +309,10 @@ Run `ilyrics doctor` first; it checks each requirement and states the recovery s
 | `Audio has N channels` | Mix the recording down to stereo. |
 | `Protected audio is unsupported` | Use a file you own without DRM; streamed Apple Music downloads cannot be read. |
 | `... already exists` | Choose another output or pass `--force`. |
+| `... is a folder`, `is also given as` | Name a new output file; iLyrics never writes over a folder or one of its inputs. |
+| `the folder for ... does not exist` | Create the folder or correct the output path. |
+| `wraps to more than eight rows on screen` | Split the long line into shorter lines, or the paragraph into separate paragraphs. |
+| `is shorter than one second`, `is silent` | Use the complete recording with audible vocals. |
 
 ## SF Symbols and Rights
 

@@ -24,9 +24,9 @@ The binary is unsigned until the maintainer provides an Apple Developer ID for s
 | --- | --- | --- |
 | Homebrew | Tap `x96x64/homebrew-tap`, formula `ilyrics` | Builds from the tagged source with `swift build -c release`, as Homebrew does for other Swift command-line tools, and installs `bin/ilyrics` and `share/ilyrics/templates`. `brew install x96x64/tap/ilyrics`. |
 | npm | `ilyrics` | Contains the release archive's files for `darwin`/`arm64` (`os` and `cpu` fields) and exposes `ilyrics` through `bin`; no install script runs. `npm install -g ilyrics`. |
-| pip | `ilyrics` | A platform wheel (`macosx_14_0_arm64`) containing the same files, with a console entry point that executes the binary, as tools such as Ruff distribute native binaries. `pip install ilyrics` or `pipx install ilyrics`. |
+| pip | `ilyrics` | A platform wheel (`macosx_14_0_arm64`) containing the same files, which installs the binary itself into the environment's scripts directory, as tools such as Ruff distribute native binaries. `pip install ilyrics` or `pipx install ilyrics`. |
 
-All three install the same binary and templates. The alignment models are installed by `ilyrics models install` or on first use, as with a source build; no package contains model weights.
+npm and pip install the binary and templates of the release archive; Homebrew builds the same source on the user's Mac and installs the same files. The alignment models are installed by `ilyrics models install` or on first use, as with a source build; no package contains model weights.
 
 ## Publication
 

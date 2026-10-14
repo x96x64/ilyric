@@ -70,6 +70,11 @@ enum Models {
         Installs, reports, or removes the alignment models. Installation downloads the pinned HTDemucs checkpoint from
         Meta and the wav2vec2 weights from Hugging Face, verifies their SHA-256, and rebuilds the Core ML models locally.
 
+        Options:
+              --force                   Reinstall the models even when they are installed (install only)
+          -q, --quiet                   Print only warnings and errors
+          -h, --help                    Show this help
+
         Environment:
           ILYRICS_MODELS     Model cache directory (default: ~/Library/Application Support/iLyrics/Models)
           ILYRICS_TEMPLATES  Directory of the weightless model templates
