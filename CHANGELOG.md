@@ -4,7 +4,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
-## [1.2.0] - Unreleased
+## [1.2.0] - 2026-10-15
 
 An option for Instagram Reels, and fixes from a release-wide review of robustness, input handling, rendering, and distribution. Japanese and other languages are now planned for 1.3.0.
 

@@ -30,7 +30,7 @@ npm and pip install the binary and templates of the release archive; Homebrew bu
 
 ## Publication
 
-Version 0.2.0 was published on October 12, 2026, through all three channels, and version 1.0.0, the stable release, on the same day. Version 1.1.0 was published on October 14, 2026. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
+Version 0.2.0 was published on October 12, 2026, through all three channels, and version 1.0.0, the stable release, on the same day. Version 1.1.0 was published on October 14, 2026, and version 1.2.0 on October 15, 2026. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
 
 ## Maintainer Actions
 
