@@ -6,14 +6,18 @@ import AlignmentMac
 enum Models {
     /// The cache directory: `ILYRICS_MODELS`, else Application Support/iLyrics/Models.
     static var directory: URL {
-        ProcessInfo.processInfo.environment["ILYRICS_MODELS"].map { URL(fileURLWithPath: $0, isDirectory: true) }
-            ?? ModelStore.defaultDirectory
+        environment("ILYRICS_MODELS").map { URL(fileURLWithPath: $0, isDirectory: true) } ?? ModelStore.defaultDirectory
+    }
+
+    /// A nonempty environment value; an empty one counts as unset rather than as the current directory.
+    static func environment(_ name: String) -> String? {
+        ProcessInfo.processInfo.environment[name].flatMap { $0.isEmpty ? nil : $0 }
     }
 
     /// The weightless model templates: `ILYRICS_TEMPLATES`, else share/ilyrics/templates in the executable's installation
     /// prefix or in an enclosing source checkout (for `.build/release/ilyrics`).
     static func templates() throws -> URL {
-        if let path = ProcessInfo.processInfo.environment["ILYRICS_TEMPLATES"] {
+        if let path = environment("ILYRICS_TEMPLATES") {
             return URL(fileURLWithPath: path, isDirectory: true)
         }
         // The executable's own path, not argv[0], which is a bare name when the command is found through PATH.

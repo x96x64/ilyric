@@ -131,9 +131,14 @@ public struct InstalledModels: Equatable, Sendable {
         return models
     }
 
-    /// Removes every installed model and download from `directory`.
+    /// Removes every installed model and download from `directory`. A directory without an installed model or
+    /// manifest is left untouched, so that a mistaken cache path never deletes unrelated folders such as Downloads.
     public static func remove(from directory: URL) throws {
         let fm = FileManager.default
+        let markers = ["installed.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc"]
+        guard markers.contains(where: { fm.fileExists(atPath: directory.appendingPathComponent($0).path) }) else {
+            return
+        }
         for name in ["installed.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "vocab.json", "downloads"] {
             let url = directory.appendingPathComponent(name)
             if fm.fileExists(atPath: url.path) { try fm.removeItem(at: url) }

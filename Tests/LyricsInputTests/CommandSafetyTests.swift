@@ -116,3 +116,34 @@ extension CommandSafetyTests {
         for name in ["v.mp4", "w.mp4", "y.mp4"] { #expect(!FileManager.default.fileExists(atPath: f.path(name))) }
     }
 }
+
+extension CommandSafetyTests {
+    @Test func modelRemovalNeverTouchesFoldersWithoutInstalledModels() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        try FileManager.default.createDirectory(atPath: f.path("downloads"), withIntermediateDirectories: false)
+        let kept = try f.write("keep", to: "downloads/photo.txt")
+        let vocabulary = try f.write("{}", to: "vocab.json")
+        // Only this scratch folder is ever passed to `remove`; an empty value would select the real cache.
+        let result = try f.run(["models", "remove"], environment: ["ILYRICS_MODELS": f.dir.path])
+        #expect(result.status == 0, "\(result.stderr)")
+        #expect(FileManager.default.fileExists(atPath: kept) && FileManager.default.fileExists(atPath: vocabulary))
+        // An empty value counts as unset: the cache is the default, not the current folder.
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let p = Process()
+        let out = Pipe()
+        p.executableURL = root.appendingPathComponent(".build/debug/ilyrics")
+        p.arguments = ["models", "status"]
+        p.currentDirectoryURL = f.dir
+        var env = ProcessInfo.processInfo.environment
+        env["ILYRICS_MODELS"] = ""
+        p.environment = env
+        p.standardOutput = out
+        p.standardError = Pipe()
+        try p.run()
+        let text = String(decoding: out.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+        p.waitUntilExit()
+        #expect(text.contains("Cache:") && !text.contains("Cache:     " + f.dir.path + "\n"))
+    }
+}
