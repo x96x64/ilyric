@@ -110,7 +110,11 @@ enum Render {
         where !FileManager.default.fileExists(atPath: url.path) {
             throw Failure(message: "\(url.path) does not exist")
         }
-        let target = try checkOutput(output, force: options.has("force")).standardizedFileURL
+        let inputs = options.operands + (options.values["artwork"].map { [$0] } ?? [])
+        let target = try checkOutput(output, force: options.has("force"), inputs: inputs).standardizedFileURL
+        if let path = options.values["report"] {
+            _ = try checkOutput(path, force: options.has("force"), inputs: inputs + [output])
+        }
         for name in ["title", "artist"] {
             if let value = options.values[name], value.isEmpty || value.utf16.count > headerLimit {
                 throw UsageError(message: "--\(name) takes 1 to \(headerLimit) characters")
@@ -218,6 +222,10 @@ enum Render {
             workers: renderers.map { r in { time, context in try r.draw(time, into: context) } },
             audioChannels: audio.channels, audioSample: { audio.interleavedSample($0) }, submitted: submitted)
         if FileManager.default.fileExists(atPath: target.path) {
+            // A file that appeared during rendering is replaced only with --force.
+            guard options.has("force") else {
+                throw Failure(message: "\(output) already exists; pass --force to replace it")
+            }
             _ = try FileManager.default.replaceItemAt(target, withItemAt: temporary)
         } else {
             try FileManager.default.moveItem(at: temporary, to: target)

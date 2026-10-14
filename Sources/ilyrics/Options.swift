@@ -77,11 +77,36 @@ func elapsed(_ seconds: Double) -> String {
         ? String(format: "%.1f s", seconds) : String(format: "%d min %02d s", Int(seconds) / 60, Int(seconds) % 60)
 }
 
-/// Refuses to replace an existing output unless `--force` was given.
-func checkOutput(_ path: String, force: Bool) throws -> URL {
+/// Checks an output path before any work: it must not be a directory or one of the inputs, its folder must exist and
+/// be writable, and an existing file is replaced only with `--force`.
+func checkOutput(_ path: String, force: Bool, inputs: [String] = []) throws -> URL {
     let url = URL(fileURLWithPath: path)
-    if FileManager.default.fileExists(atPath: url.path), !force {
-        throw Failure(message: "\(path) already exists; pass --force to replace it")
+    let files = FileManager.default
+    var isDirectory: ObjCBool = false
+    if files.fileExists(atPath: url.path, isDirectory: &isDirectory) {
+        if isDirectory.boolValue { throw Failure(message: "\(path) is a folder; name an output file") }
+        if !force { throw Failure(message: "\(path) already exists; pass --force to replace it") }
+    }
+    if let input = inputs.first(where: { sameFile(path, $0) }) {
+        throw UsageError(message: "\(path) is also given as \(input); choose a different output file")
+    }
+    let folder = url.deletingLastPathComponent()
+    guard files.fileExists(atPath: folder.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+        throw Failure(message: "the folder for \(path) does not exist")
+    }
+    guard files.isWritableFile(atPath: folder.path) else {
+        throw Failure(message: "the folder for \(path) is not writable")
     }
     return url
+}
+
+/// Whether two paths name the same file, through symbolic links, hard links, or a case-insensitive volume.
+func sameFile(_ a: String, _ b: String) -> Bool {
+    let x = URL(fileURLWithPath: a).standardizedFileURL.resolvingSymlinksInPath()
+    let y = URL(fileURLWithPath: b).standardizedFileURL.resolvingSymlinksInPath()
+    if x.path == y.path { return true }
+    guard let i = try? x.resourceValues(forKeys: [.fileResourceIdentifierKey]).fileResourceIdentifier,
+        let j = try? y.resourceValues(forKeys: [.fileResourceIdentifierKey]).fileResourceIdentifier
+    else { return false }
+    return i.isEqual(j)
 }

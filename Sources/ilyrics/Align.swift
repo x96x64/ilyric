@@ -220,7 +220,10 @@ enum Align {
         guard !["ttml", "lrc"].contains(lyrics.pathExtension.lowercased()) else {
             throw Failure(message: "\(lyrics.lastPathComponent) is already timed; 'align' takes untimed text")
         }
-        let target = try checkOutput(output, force: options.has("force"))
+        let target = try checkOutput(output, force: options.has("force"), inputs: options.operands)
+        if let path = options.values["report"] {
+            _ = try checkOutput(path, force: options.has("force"), inputs: options.operands + [output])
+        }
         let started = Date()
         let result = try await run(
             audio: audio, lyrics: lyrics, keepAdLibs: options.has("keep-ad-libs"), fast: options.has("fast"),

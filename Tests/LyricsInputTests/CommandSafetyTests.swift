@@ -81,3 +81,38 @@ struct CommandFixture {
         #expect(!FileManager.default.fileExists(atPath: f.path("b.mp4")))
     }
 }
+
+extension CommandSafetyTests {
+    @Test func outputsNeverReplaceFoldersInputsOrUnrelatedFiles() throws {
+        let f = try CommandFixture()
+        defer { f.remove() }
+        let audio = try f.wav()
+        let lyrics = try f.lrc()
+        let plain = try f.write("Paper boats\n", to: "plain.txt")
+        let folder = f.path("folder.mp4")
+        try FileManager.default.createDirectory(atPath: folder, withIntermediateDirectories: false)
+        try Data("keep".utf8).write(to: URL(fileURLWithPath: folder + "/inside.txt"))
+        let kept = try f.write("keep", to: "kept.json")
+        let cases: [([String], Int32, String)] = [
+            (["render", audio, lyrics, "-o", folder, "--force"], 1, "is a folder"),
+            (["render", audio, lyrics, "-o", audio + ".mp4", "--force", "--report", lyrics], 2, "is also given as"),
+            (["render", audio, lyrics, "-o", f.path("v.mp4"), "--report", f.path("v.mp4")], 2, "is also given as"),
+            (["render", audio, lyrics, "-o", f.path("w.mp4"), "--report", kept], 1, "already exists"),
+            (["render", audio, lyrics, "-o", f.path("missing/x.mp4")], 1, "does not exist"),
+            (
+                ["render", audio, lyrics, "-o", f.path("y.mp4"), "--report", f.path("missing/r.json")], 1,
+                "does not exist"
+            ),
+            (["align", audio, plain, "-o", plain, "--force"], 2, "is also given as"),
+            (["align", audio, plain, "-o", f.path("missing/x.ttml")], 1, "does not exist"),
+        ]
+        for (arguments, status, message) in cases {
+            let result = try f.run(arguments)
+            #expect(result.status == status && result.stderr.contains(message), "\(arguments): \(result.stderr)")
+        }
+        #expect(try String(contentsOfFile: folder + "/inside.txt", encoding: .utf8) == "keep")
+        #expect(try String(contentsOfFile: kept, encoding: .utf8) == "keep")
+        #expect(try String(contentsOfFile: plain, encoding: .utf8) == "Paper boats\n")
+        for name in ["v.mp4", "w.mp4", "y.mp4"] { #expect(!FileManager.default.fileExists(atPath: f.path(name))) }
+    }
+}
