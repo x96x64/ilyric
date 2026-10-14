@@ -55,6 +55,20 @@ struct GapTests {
                 paragraphs: c.paragraphs, events: c.events, gaps: [.init(position: 0, begin: Time(3), end: Time(11))])
         }
     }
+    @Test func markerEndsWhenFocusLeavesTheGapBeforeItsMediaEnd() throws {
+        let c = try LyricsComposition.gapDemonstration()
+        // Focus leads the next line by 0.9 s, as in rendered videos; the gap's media interval still ends at 11 s.
+        let led = try LyricsComposition(
+            paragraphs: c.paragraphs,
+            events: [
+                .init(Time(0), order: 0, paragraph: 0), .init(Time(3), order: 1, gap: 0),
+                .init(Time(101, 10), order: 2, paragraph: 1),
+            ], gaps: c.gaps)
+        #expect(led.evaluate(Time(10)).gaps[0].state != nil)
+        for time in [Time(101, 10), Time(105, 10), Time(1099, 100)] {
+            #expect(led.evaluate(time).focus == 1 && led.evaluate(time).gaps[0].state == nil)
+        }
+    }
     @Test func indicatorRendersDeterministicallyAtTheFocusedSlot() throws {
         let c = try LyricsComposition.gapDemonstration()
         let r = try CompositionRenderer(c)

@@ -221,12 +221,12 @@ public struct LyricsComposition: Sendable {
                 appearance: p.input.evaluate(media))
         }
         let gapStates = gaps.enumerated().map { i, g in
-            // The opening marker belongs to the introduction's focus interval. Its supplied
-            // media interval still determines fill, but cannot extend ownership into the first lyric.
-            let departedOpening = g.begin == Time(0) && events[index].gap != i
-            return GapPresentation(
+            // A marker belongs to its gap's focus interval. Its supplied media interval still determines fill, but
+            // once focus moves on, the next line rises into the closing slot, so the marker ends there instead of
+            // lasting until the media end and overlapping that line; the opening marker has always ended this way.
+            GapPresentation(
                 index: i, translationY: g.position - shift(g.position) - scroll(at: time, below: g.position - target),
-                state: departedOpening
+                state: t >= gapWindows[i].close
                     ? nil
                     : g.indicator.evaluate(elapsed: (media - g.begin).seconds, duration: (g.end - g.begin).seconds))
         }
