@@ -7,6 +7,32 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 ### Added
 
 - `render --safe-area reels` keeps the header, lyrics, and lower controls inside the width that Instagram Reels shows, 51 video pixels from each side, while the background still fills the frame. The crop was measured on one iPhone screenshot ([report](docs/reports/instagram-reels-safe-area.md)).
+- `ilyrics doctor` begins with the installed version, the executable's location, and the command that updates it for the channel that installed it.
+- Updating and Uninstalling sections in the README for Homebrew, npm, pip, and source builds.
+
+### Changed
+
+- Outputs and `--report` files are checked before any work: a folder, a path that names one of the inputs, or a missing or unwritable folder is an error, and `--report` replaces an existing file only with `--force`.
+- Errors name files as they were given and print plain messages instead of internal error descriptions.
+- A recording without an artist tag shows "Unknown Artist"; titles and artists from tags or file names are shortened to fit the header, and empty or overlong `--title` and `--artist` values are rejected before any work.
+- Artwork up to 8192 pixels per side and 64 megapixels is accepted; unusable artwork embedded in the audio file is replaced by the placeholder with a warning.
+- An interrupted command removes its partial output and exits with 128 plus the signal number.
+- The Homebrew formula stops early with a clear message when the Swift toolchain is older than Swift 6.
+
+### Fixed
+
+- `render` no longer aborts on recordings above 192 kHz, up to the documented 384 kHz.
+- `render` no longer fails on recordings without an artist tag, such as most WAV and AIFF files.
+- `--force` no longer replaces a folder whose name ends in `.mp4`, and an output can no longer overwrite one of the inputs.
+- `--report` no longer overwrites existing files, including the video just written.
+- `models remove` no longer deletes anything in a folder without installed models, such as the current folder when `ILYRICS_MODELS` is empty.
+- Some AAC files, such as those encoded by FFmpeg, no longer fail at random with a duration mismatch.
+- A render suspended for more than 30 seconds no longer fails when resumed.
+- Plain-lyrics lines made only of supported numbers, such as "1, 2, 3, 4", are no longer dropped, and an opening single quotation mark is no longer turned into an apostrophe.
+- The instrumental-gap indicator ends when focus moves to the next line instead of overlapping it.
+- Paragraphs too long for eight rows on screen are reported with their line numbers before alignment.
+- Recordings shorter than one second or silent are reported by name before alignment, without preparing the models.
+- `doctor` and `models status` report an invalid `ILYRICS_TEMPLATES` instead of stopping.
 
 ## [1.1.0] - 2026-10-14
 
