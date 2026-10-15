@@ -53,6 +53,10 @@ jobs:
         if: success() || failure()
         timeout-minutes: 10
         run: swift test --disable-xctest --filter LyricsInputTests.InputTests
+      - name: Test Lyrics input InputAuditTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.InputAuditTests
       - name: Test Lyrics input EnhancedTests
         if: success() || failure()
         timeout-minutes: 10
@@ -118,6 +122,18 @@ jobs:
             done
           fi
           exit "$status"
+
+      - name: Report remaining Swift and CLI crashes
+        if: failure()
+        run: |
+          # Include test-helper and CLI failures outside CommandSafetyTests, without retrying failed tests.
+          sleep 10
+          for f in "$HOME"/Library/Logs/DiagnosticReports/ilyrics*.ips "$HOME"/Library/Logs/DiagnosticReports/swiftpm-testing-helper*.ips; do
+            [ -e "$f" ] || continue
+            echo "::group::Crash report $(basename "$f")"
+            cat "$f"
+            echo "::endgroup::"
+          done
 
   python:
     name: Python Public Validation Tests

@@ -57,8 +57,11 @@ struct CommandFixture {
         p.standardError = err
         p.standardOutput = Pipe()
         try p.run()
-        let stderr = String(decoding: err.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+        var stderr = String(decoding: err.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
         p.waitUntilExit()
+        if p.terminationReason == .uncaughtSignal {
+            stderr += "\nTest child terminated by signal \(p.terminationStatus). Arguments: \(arguments)\n"
+        }
         return (p.terminationStatus, stderr)
     }
 }
