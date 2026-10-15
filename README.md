@@ -25,7 +25,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 </p>
 
 > [!IMPORTANT]
-> Automatic synchronization supports English and may require manual correction. Backing choruses remain experimental and unsupported.
+> Automatic synchronization supports English and may require manual correction. Japanese synchronization with `--language ja` is experimental. Backing choruses remain experimental and unsupported.
 >
 > All pooled third-qualification criteria for English synchronization were met on 80 unseen recordings, but three recordings failed the per-recording placement threshold of 80%; the complete locked qualification criteria were not met ([results](docs/reports/third-preview-qualification-results.md)). The visual preset was measured against unseen screen recordings of the Music app; the remaining weaknesses and known differences are listed under [Limitations](#limitations). See [Support](SUPPORT.md) for what is covered. iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
@@ -107,6 +107,8 @@ ilyrics models install
 
 Installation downloads about 460 MB from the publishers: the [HTDemucs](https://github.com/facebookresearch/demucs) checkpoint from Meta and the [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) weights from Hugging Face. iLyrics verifies each file against a pinned SHA-256 digest, rebuilds the Core ML models on your Mac from weightless templates in this repository, runs a self-test, and deletes the downloads. The installed models occupy about 590 MB in `~/Library/Application Support/iLyrics/Models`. iLyrics does not redistribute either set of weights.
 
+The first use of `--language ja` installs a Japanese recognition model in the same way: about 1.3 GB of [ReazonSpeech wav2vec 2.0](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) weights from Hugging Face, which occupy about 1.2 GB once rebuilt.
+
 ```bash
 ilyrics models status   # show the cache location and state
 ilyrics models remove   # delete the installed models
@@ -136,7 +138,7 @@ brew uninstall ilyrics       # or: npm uninstall -g ilyrics, pipx uninstall ilyr
 
 ## Quick Start
 
-Prepare an unprotected recording and a UTF-8 `lyrics.txt` containing the matching English lead lyrics in sung order, one line per line. Replace the example paths below with your files. For a reproducible rendering check without a recording of your own, use the [supplied-timing example](docs/rendering-example.md); its generated tones do not test automatic synchronization.
+Prepare an unprotected recording and a UTF-8 `lyrics.txt` containing the matching lead lyrics in sung order, one line per line, in English or, with `--language ja`, in Japanese. Replace the example paths below with your files. For a reproducible rendering check without a recording of your own, use the [supplied-timing example](docs/rendering-example.md); its generated tones do not test automatic synchronization.
 
 ```bash
 # 1. Check the environment
@@ -189,6 +191,7 @@ ilyrics doctor
 | `--no-marquee` | render | Keep an overflowing title static | Scrolling |
 | `--no-gaps` | render | Omit instrumental-gap indicators | Shown |
 | `--keep-ad-libs` | render, align | Keep vocable-only lines that cannot be timed | Omitted |
+| `--language en\|ja` | render, align | Language of plain lyrics; `ja` is experimental | `en` |
 | `-j, --jobs N` | render | Parallel rendering workers | Processor count |
 | `--fast` | render, align | GPU and Neural Engine inference | CPU |
 | `--report FILE` | render, align | JSON report of alignment and export | None |
@@ -305,7 +308,7 @@ Run `ilyrics doctor` first; it shows the installed version and checks each requi
 | --- | --- |
 | `model templates were not found` | Run iLyrics from the cloned repository or an installed package, or set `ILYRICS_TEMPLATES`. |
 | `model download failed` | Check the network connection and run `ilyrics models install` again; verified downloads are reused. |
-| `line N of FILE contains "…"` | Write the number or symbol as it is sung, or remove it; only English lyrics can be aligned. |
+| `line N of FILE contains "…"` | Write the number or symbol as it is sung, or remove it. For Japanese lyrics, add `--language ja`. |
 | `FILE is empty`, `contains no lines to sing` | Add the lyrics, one sung line per line; section labels and `Written by:` lines are not lyrics. |
 | `the lyrics cannot be aligned` | Read the specific reason after the message and check the [input limits](docs/input-formats.md#limits-and-timing-validation). Shorten an overlong line or reduce an oversized input; adding section breaks does not reduce a whole-song limit. |
 | `Audio has N channels` | Mix the recording down to stereo. |
@@ -326,7 +329,7 @@ You are likewise responsible for holding the rights to the recordings, lyrics, a
 
 ## Limitations
 
-- Automatic synchronization supports English. Japanese support, including the display of supplied Japanese timing, remains deferred. Japanese and other languages are currently targeted as v1.3.0; this is a plan, not a release-date or feature-delivery guarantee. Experimental implementation remains available without establishing formal support.
+- Automatic synchronization supports English. Japanese synchronization with `--language ja` is experimental: lines that begin with English words may start late, line changes may come slightly early or late, and every forced alignment is accepted without the acoustic checks applied to English, so review the result before publishing. It was evaluated on one album only ([report](docs/reports/japanese-alignment.md)). Japanese typography and line wrapping have not been compared with the native screen. Other languages are not supported.
 - Backing choruses, including parenthesized phrases and standalone chorus-only lines written as ordinary lines, are experimental, unverified, and unsupported. Exclude them from `lyrics.txt`; lead-sung refrains, `[Chorus]` labels, and vocable-only lines remain permitted. See [Plain Text](#plain-text) for observed issues and unchanged compatibility.
 - In the historical evaluation of commit `e0ab92a`, 95.9% of 3,005 scored lines across 80 unseen recordings had an accepted interval overlapping the manual reference interval, 0.5% had accepted intervals without overlap, and 3.6% were unresolved; three recordings fell below 80% ([qualification results](docs/reports/third-preview-qualification-results.md)). This is a line-placement measure, not word-timing accuracy or a fresh evaluation of v1.2.0. Unresolved lines may receive fallback timing in the exported video. Accuracy is lower when several singers sing different words at once and for shouted or heavily processed vocals. Lines without reliable timing are placed rather than aligned and fill steadily rather than word by word; see [Reviewing an Alignment](#reviewing-an-alignment).
 - Rendering targets the iPhone portrait screen at 1080 × 1920 and 60 frames per second.

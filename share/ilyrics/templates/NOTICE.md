@@ -1,6 +1,6 @@
 # Model Templates
 
-These files let iLyrics rebuild its two alignment models on the user's Mac. They contain the converted Core ML network structures, zero-filled weight skeletons, and recipes, but no trained weights.
+These files let iLyrics rebuild its alignment models on the user's Mac. They contain the converted Core ML network structures, zero-filled weight skeletons, and recipes, but no trained weights.
 
 ## HTDemucs
 
@@ -10,6 +10,10 @@ These files let iLyrics rebuild its two alignment models on the user's Mac. They
 
 `wav2vec2-template.mlpackage`, `wav2vec2-skeleton.bin.zlib`, and `wav2vec2-recipe.json` describe [facebook/wav2vec2-base-960h](https://huggingface.co/facebook/wav2vec2-base-960h) by Meta AI, released under the Apache License, Version 2.0. Installation downloads `model.safetensors` and `vocab.json` at a pinned revision from Hugging Face, verifies their SHA-256, and requires the rebuilt model to pass a recorded self-test. The self-test expectations in the recipe are outputs of the converted model on a synthetic signal.
 
+## Japanese wav2vec 2.0
+
+`ja-wav2vec2-template.mlpackage`, `ja-wav2vec2-skeleton.bin.zlib`, and `ja-wav2vec2-recipe.json` describe [reazon-research/japanese-wav2vec2-large-rs35kh](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) by Reazon Research, released under the Apache License, Version 2.0, and trained on the ReazonSpeech corpus. The corpus terms permit use solely for the purposes of Article 30-4 of the Japanese Copyright Act; iLyrics uses the model only for recognition and does not distribute the corpus or the weights. They are installed only when Japanese lyrics are aligned, in the same way as the English model. Because the vocabulary has 3,003 labels, the recorded self-test keeps each frame's most probable label and its log-probability instead of every output.
+
 ## Reproduction
 
-The templates are produced from reference conversions by `scripts/build_separation_template.py` and `scripts/build_recognition_template.py`.
+The templates are produced from reference conversions by `scripts/build_separation_template.py`, `scripts/build_recognition_template.py`, and `scripts/build_japanese_recognition_template.py`.

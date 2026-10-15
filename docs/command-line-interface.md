@@ -54,6 +54,7 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. All nine observed vo
 | `--safe-area none\|reels` | render | `reels` insets the header, lyrics, and lower controls by 51 video pixels on each side, the width that Instagram Reels crops on an iPhone with a 1179 × 2556 display ([measurement](reports/instagram-reels-safe-area.md)); the background still fills the frame | `none` |
 | `--no-marquee`, `--no-gaps` | render | Disable the title marquee or the instrumental-gap indicator | Enabled |
 | `--keep-ad-libs` | render, align | Keep untimed vocable-only lines | Off |
+| `--language en\|ja` | render, align | Language of plain lyrics; `ja` is experimental and installs the Japanese model on first use | `en` |
 | `-j, --jobs N` | render | Parallel rendering workers | Active processor count |
 | `--fast` | render, align | GPU and Neural Engine inference; faster but not reproducible | Off: CPU, reproducible |
 | `--report FILE` | render, align | JSON report of estimates, placements, and timings | None |
@@ -78,7 +79,7 @@ Notes begin with `Note:`, such as the number of lines without word timing; `--ve
 | `ILYRICS_MODELS` | Model cache directory | `~/Library/Application Support/iLyrics/Models` |
 | `ILYRICS_TEMPLATES` | Directory of the weightless model templates | `share/ilyrics/templates` beside the executable's installation prefix |
 
-The cache holds the compiled models (about 590 MB). Installation downloads about 460 MB of publisher files, verifies their pinned SHA-256 digests, rebuilds and self-tests both models, and deletes the downloads.
+The cache holds the compiled models (about 590 MB). Installation downloads about 460 MB of publisher files, verifies their pinned SHA-256 digests, rebuilds and self-tests both models, and deletes the downloads. The first use of `--language ja` adds the Japanese recognition model: about 1.3 GB downloaded and 1.2 GB installed.
 
 ## Rights
 

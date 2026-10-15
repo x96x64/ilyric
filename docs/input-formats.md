@@ -6,7 +6,7 @@ This reference describes the input accepted by iLyrics 1.2.0. The experimental s
 
 `render` selects TTML for `.ttml` and LRC for `.lrc`, case-insensitively. An LRC file containing angle-bracket timestamps is parsed as Enhanced LRC. Use `.txt` for plain lyrics, which are aligned automatically. `align` takes plain lyrics and writes TTML; it is not a timed-format converter.
 
-English automatic synchronization is supported. Japanese support, including the display of supplied Japanese timing, remains deferred; Japanese and other languages are currently targeted as v1.3.0. Experimental parsing or rendering capability does not establish support. These plans do not guarantee a release date or feature delivery. See [Support](../SUPPORT.md).
+English automatic synchronization is supported. Japanese plain lyrics are aligned experimentally with `--language ja`; write them as they are printed, with kanji and kana, and without readings in parentheses. Words containing characters that the Japanese model does not know are aligned by readings from the system tokenizer, which the report records. Latin words within Japanese lines are timed by interpolation. Japanese display, whether aligned or supplied, has not been compared with the native screen. Other languages are not supported, and experimental parsing or rendering capability does not establish support. See [Support](../SUPPORT.md).
 
 ## Plain Text
 

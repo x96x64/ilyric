@@ -31,6 +31,7 @@ Choose unused output names, or use `--force` deliberately to replace existing fi
 | `words` | Accepted word estimates, or `null`; each has `start_utf16`, `length_utf16`, and `interval_us` |
 | `proposal_us`, `proposal_words` | Candidate line and word timing before acceptance, or `null`; these are not additional accepted estimates |
 | `support`, `similarity` | Acoustic support and text-similarity diagnostics, or `null`; neither is a calibrated probability of correctness |
+| `language`, `readings` | Present only with `--language ja`: `"ja"`, and the readings used for words aligned by pronunciation, each with `line`, `text`, and `reading` |
 
 Word text ranges are zero-based UTF-16 code-unit offsets into that row's `text`, not byte offsets or character counts. Intervals are half-open: the start is included and the end excluded. Divide microseconds by 1,000,000 to obtain seconds. `null` means that the estimate or diagnostic is unavailable; it does not mean zero. Low-confidence accepted lines may be exported with a steady line-level fill rather than separate word fills, so inspect the TTML as well as the report.
 

@@ -16,13 +16,13 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
   <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three full-width frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
 </p>
 
-> **Note:** Automatic synchronization supports English and may need manual correction. The historical evaluation of commit `e0ab92a` met every pooled criterion on 80 unseen recordings but did not meet the complete locked criteria because three recordings fell below the per-recording threshold. This is not a fresh evaluation of v1.2.0. The visual preset was measured against unseen screen recordings, with known differences; see the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> **Note:** Automatic synchronization supports English and may need manual correction; Japanese synchronization with `--language ja` is experimental. The historical evaluation of commit `e0ab92a` met every pooled criterion on 80 unseen recordings but did not meet the complete locked criteria because three recordings fell below the per-recording threshold. This is not a fresh evaluation of v1.2.0. The visual preset was measured against unseen screen recordings, with known differences; see the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Features
 
 - **Automatic synchronization.** Plain text lyrics, including numbers such as 40 or 3:00, are aligned line by line and word by word against a separated vocal stem; lines without reliable timing are placed rather than aligned, and are reported.
 - **A faithful Lyrics screen.** Focus motion, word fill, instrumental-gap indicators, a scrolling title, an artwork-derived background, and auto-hiding controls, measured from the Music app on iOS 27 and adapted to fill a full 9:16 video.
-- **Supplied timing.** The documented TTML, LRC, and Enhanced-LRC [subsets](https://github.com/x96x64/ilyrics/blob/main/docs/input-formats.md) are rendered without automatic realignment. Japanese display remains deferred, along with automatic Japanese synchronization; Japanese and other languages are currently targeted as v1.3.0, without a delivery guarantee.
+- **Supplied timing.** The documented TTML, LRC, and Enhanced-LRC [subsets](https://github.com/x96x64/ilyrics/blob/main/docs/input-formats.md) are rendered without automatic realignment. Japanese display and synchronization are experimental.
 - **Clear progress and errors.** Each stage is shown on one line with a progress bar, and problems name the file, line, and character to fix.
 - **High-resolution audio.** AAC, MP3, WAV, AIFF, and Apple Lossless up to 384 kHz.
 - **Deterministic and local.** Every frame is a pure function of its timestamp, and recordings, lyrics, and videos never leave your Mac.
@@ -87,6 +87,7 @@ The title, artist, and artwork are read from the audio file's metadata. Common o
 | `--background artwork\|static` | Artwork-derived or static background |
 | `--controls auto-hide\|visible` | Hide the lower controls after playback starts, or keep them |
 | `--safe-area none\|reels` | Keep the header, lyrics, and controls inside the width that Instagram Reels shows |
+| `--language en\|ja` | Language of plain lyrics; Japanese is experimental |
 | `-j, --jobs N` | Parallel rendering workers |
 | `--fast` | GPU and Neural Engine inference; faster but not reproducible |
 | `--force` | Replace an existing output |
@@ -107,4 +108,4 @@ Control icons are SF Symbols, resolved at render time from your Mac and never bu
 
 ## License
 
-Apache License, Version 2.0. The alignment models are downloaded from their publishers under their own licenses: [Demucs](https://github.com/facebookresearch/demucs) (MIT) and [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) (Apache-2.0).
+Apache License, Version 2.0. The alignment models are downloaded from their publishers under their own licenses: [Demucs](https://github.com/facebookresearch/demucs) (MIT) and [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) (Apache-2.0), and for Japanese, [ReazonSpeech wav2vec 2.0](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) (Apache-2.0).

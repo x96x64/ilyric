@@ -11,11 +11,11 @@ Only the latest release receives fixes. Releases follow [Semantic Versioning](ht
 | Operating system | macOS 14 or later |
 | Processor | Apple silicon; packaged binaries are built for arm64 only |
 | Installation | Homebrew or a source build requires Swift 6; npm and pip contain a prebuilt native binary |
-| Automatic synchronization | English lyrics |
-| Supplied timing | The documented TTML, LRC, and Enhanced-LRC [subsets](docs/input-formats.md); Japanese display remains deferred |
+| Automatic synchronization | English lyrics; Japanese lyrics experimentally with `--language ja` |
+| Supplied timing | The documented TTML, LRC, and Enhanced-LRC [subsets](docs/input-formats.md); Japanese display is experimental |
 | Visual target | The Music app on iPhone 16 running iOS 27, light appearance, default text size |
 
-Japanese support, including both automatic synchronization and the display of supplied Japanese timing, remains deferred. Japanese and other languages are currently targeted as v1.3.0, without a guarantee of release dates or feature delivery. Experimental implementation remains available; this clarification does not remove it or broaden the supported scope.
+Japanese support is experimental. Japanese synchronization accepts every forced alignment without the acoustic checks applied to English; lines that begin with English words may start late, and line changes may come slightly early or late. Japanese typography and line wrapping have not been compared with the native screen. Reports of Japanese problems are welcome, but fixes are not guaranteed in the next release. Other languages are not supported.
 
 Release binaries are built by the repository's `release.yml` workflow from the tagged source on GitHub-hosted macOS runners. The alignment models are downloaded from their publishers and verified by SHA-256 on first use.
 
