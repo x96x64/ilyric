@@ -45,6 +45,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 - [Limitations](#limitations)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
+- [Star History](#star-history)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
 
@@ -207,7 +208,7 @@ ilyrics align song.m4a lyrics.txt -o lyrics.ttml --report report.json
 ilyrics render song.m4a lyrics.ttml -o video.mp4
 
 # Supply header text and artwork explicitly
-ilyrics render song.wav lyrics.txt -o video.mp4 --title "Paper Skies" --artist "The Harbour Lights" --artwork cover.jpg
+ilyrics render song.wav lyrics.txt -o video.mp4 --title "Song Title" --artist "Artist Name" --artwork cover.jpg
 
 # Keep the controls on screen and use a static background
 ilyrics render song.m4a lyrics.ttml -o video.mp4 --controls visible --background static
@@ -358,6 +359,15 @@ swift format lint --strict --recursive Sources Tests Package.swift
 ```
 
 The public test suite uses only original synthetic fixtures and needs neither the network nor private recordings. Read [AGENTS.md](AGENTS.md) for the engineering constraints, including determinism, evidence classification, and the rules for private reference material. Code is formatted with the toolchain's `swift format` (`.swift-format`), which CI checks. Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
+
+## Star History
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/stars/dark.svg">
+  <img src="docs/media/stars/light.svg" alt="iLyrics star counts recorded daily, beginning on October 15, 2026 (UTC)" width="720">
+</picture>
+
+Star counts are recorded daily in UTC, beginning on October 15, 2026. Lines connect recorded observations; dates before the first observation and missed observations are not reconstructed. The [recorded counts](docs/media/stars/history.json) include decreases when stars are removed.
 
 ## Acknowledgments
 
