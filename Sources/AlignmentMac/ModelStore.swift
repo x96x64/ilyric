@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 import CryptoKit
 import AlignmentCore
@@ -12,12 +13,14 @@ public enum ModelStore {
 
     /// Returns the local file for `url`, downloading it when absent or corrupted.
     public static func fetch(_ url: URL, sha256: String, into directory: URL, name: String) async throws -> URL {
+        guard !name.isEmpty, name != ".", name != "..", !name.contains("/"), !name.contains("\\"),
+            !name.utf8.contains(0)
+        else { throw AlignmentError.invalid("Model download name must be a filename") }
         let fm = FileManager.default
         try fm.createDirectory(at: directory, withIntermediateDirectories: true)
         let target = directory.appendingPathComponent(name)
         if fm.fileExists(atPath: target.path) {
             if try digest(target) == sha256 { return target }
-            try fm.removeItem(at: target)
         }
         let (temporary, response) = try await URLSession.shared.download(from: url)
         defer { try? fm.removeItem(at: temporary) }
@@ -27,7 +30,12 @@ public enum ModelStore {
         guard try digest(temporary) == sha256 else {
             throw AlignmentError.invalid("Downloaded \(name) does not match its pinned SHA-256")
         }
-        try fm.moveItem(at: temporary, to: target)
+        let staged = directory.appendingPathComponent(".download-\(UUID().uuidString)")
+        try fm.copyItem(at: temporary, to: staged)
+        defer { try? fm.removeItem(at: staged) }
+        guard rename(staged.path, target.path) == 0 else {
+            throw AlignmentError.invalid("Could not commit model download \(name): \(String(cString: strerror(errno)))")
+        }
         return target
     }
 
@@ -102,7 +110,13 @@ public struct InstalledModels: Equatable, Sendable {
         let fm = FileManager.default
         let downloads = directory.appendingPathComponent("downloads", isDirectory: true)
         try fm.createDirectory(at: directory, withIntermediateDirectories: true)
-        try? fm.removeItem(at: directory.appendingPathComponent("installed.json"))
+        let lock = try ModelCacheLock(directory)
+        defer { withExtendedLifetime(lock) {} }
+        try recoverTransactions(in: directory)
+        let staging = directory.appendingPathComponent(".install-\(UUID().uuidString)")
+        try fm.createDirectory(at: staging, withIntermediateDirectories: false)
+        var preserveStaging = false
+        defer { if !preserveStaging { try? fm.removeItem(at: staging) } }
         func fetch(_ url: String, _ sha: String, _ name: String) async throws -> URL {
             guard let remote = URL(string: url) else { throw AlignmentError.invalid("Malformed model URL \(url)") }
             progress("Fetching \(name) from \(remote.host ?? url)")
@@ -111,7 +125,7 @@ public struct InstalledModels: Equatable, Sendable {
         let checkpoint = try await fetch(
             p.separation.checkpoint.url, p.separation.checkpoint.sha256, p.separation.checkpoint.file)
         progress("Rebuilding the vocal separation model")
-        _ = try SeparationInstaller.install(template: templates, checkpoint: checkpoint, destination: directory)
+        _ = try SeparationInstaller.install(template: templates, checkpoint: checkpoint, destination: staging)
         guard let vocabularyURL = p.recognition.checkpoint.vocabulary_url,
             let vocabularySHA = p.recognition.checkpoint.vocabulary_sha256
         else {
@@ -121,13 +135,21 @@ public struct InstalledModels: Equatable, Sendable {
             p.recognition.checkpoint.url, p.recognition.checkpoint.sha256, p.recognition.checkpoint.file)
         let vocabulary = try await fetch(vocabularyURL, vocabularySHA, "vocab.json")
         progress("Rebuilding and testing the speech recognition model")
-        _ = try RecognitionInstaller.install(template: templates, weights: weights, destination: directory)
-        let models = InstalledModels(directory)
-        if fm.fileExists(atPath: models.vocabulary.path) { try fm.removeItem(at: models.vocabulary) }
-        try fm.copyItem(at: vocabulary, to: models.vocabulary)
+        _ = try RecognitionInstaller.install(template: templates, weights: weights, destination: staging)
+        let stagedModels = InstalledModels(staging)
+        try fm.copyItem(at: vocabulary, to: stagedModels.vocabulary)
         try JSONEncoder().encode(try manifest(templates)).write(
-            to: directory.appendingPathComponent("installed.json"), options: .atomic)
-        try? fm.removeItem(at: downloads)
+            to: staging.appendingPathComponent("installed.json"), options: .atomic)
+        do {
+            try commit(
+                staging, into: directory, names: ["htdemucs.mlmodelc", "wav2vec2.mlmodelc", "vocab.json"],
+                marker: "installed.json")
+        } catch {
+            preserveStaging = fm.fileExists(atPath: staging.appendingPathComponent("backup").path)
+            throw error
+        }
+        for file in [checkpoint, weights, vocabulary] { try? fm.removeItem(at: file) }
+        let models = InstalledModels(directory)
         return models
     }
 
@@ -163,7 +185,13 @@ public struct InstalledModels: Equatable, Sendable {
         let fm = FileManager.default
         let downloads = directory.appendingPathComponent("downloads", isDirectory: true)
         try fm.createDirectory(at: directory, withIntermediateDirectories: true)
-        try? fm.removeItem(at: directory.appendingPathComponent("installed-ja.json"))
+        let lock = try ModelCacheLock(directory)
+        defer { withExtendedLifetime(lock) {} }
+        try recoverTransactions(in: directory)
+        let staging = directory.appendingPathComponent(".install-\(UUID().uuidString)")
+        try fm.createDirectory(at: staging, withIntermediateDirectories: false)
+        var preserveStaging = false
+        defer { if !preserveStaging { try? fm.removeItem(at: staging) } }
         guard let remote = URL(string: p.checkpoint.url),
             let vocabularyURL = p.checkpoint.vocabulary_url.flatMap(URL.init),
             let vocabularySHA = p.checkpoint.vocabulary_sha256
@@ -174,33 +202,68 @@ public struct InstalledModels: Equatable, Sendable {
         let vocabulary = try await ModelStore.fetch(
             vocabularyURL, sha256: vocabularySHA, into: downloads, name: "ja-vocab.json")
         progress("Rebuilding and testing the Japanese speech recognition model")
-        let recognizer = try RecognitionInstaller.install(
-            template: templates, weights: weights, destination: directory, name: "ja-wav2vec2")
-        let installedVocabulary = directory.appendingPathComponent("ja-vocab.json")
-        if fm.fileExists(atPath: installedVocabulary.path) { try fm.removeItem(at: installedVocabulary) }
-        try fm.copyItem(at: vocabulary, to: installedVocabulary)
+        _ = try RecognitionInstaller.install(
+            template: templates, weights: weights, destination: staging, name: "ja-wav2vec2")
+        try fm.copyItem(at: vocabulary, to: staging.appendingPathComponent("ja-vocab.json"))
         try Data(p.weights.skeleton_sha256.utf8).write(
-            to: directory.appendingPathComponent("installed-ja.json"), options: .atomic)
+            to: staging.appendingPathComponent("installed-ja.json"), options: .atomic)
+        do {
+            try commit(
+                staging, into: directory, names: ["ja-wav2vec2.mlmodelc", "ja-vocab.json"], marker: "installed-ja.json")
+        } catch {
+            preserveStaging = fm.fileExists(atPath: staging.appendingPathComponent("backup").path)
+            throw error
+        }
         try? fm.removeItem(at: weights)
-        return (recognizer, installedVocabulary)
+        try? fm.removeItem(at: vocabulary)
+        return (
+            directory.appendingPathComponent("ja-wav2vec2.mlmodelc"), directory.appendingPathComponent("ja-vocab.json")
+        )
     }
 
-    /// Removes every installed model and download from `directory`. A directory without an installed model or
-    /// manifest is left untouched, so that a mistaken cache path never deletes unrelated folders such as Downloads.
+    /// Removes installed models and recognized download files from `directory`, preserving other downloads.
+    /// A directory without an installed model or manifest is left untouched.
     public static func remove(from directory: URL) throws {
         let fm = FileManager.default
+        guard fm.fileExists(atPath: directory.path) else { return }
         let markers = [
             "installed.json", "installed-ja.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "ja-wav2vec2.mlmodelc",
         ]
+        let contents = try fm.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+        let hasTransaction = contents.contains {
+            $0.lastPathComponent.hasPrefix(".install-")
+                && fm.fileExists(atPath: $0.appendingPathComponent("transaction.json").path)
+        }
+        guard
+            hasTransaction || fm.fileExists(atPath: directory.appendingPathComponent(".ilyrics-models.lock").path)
+                || markers.contains(where: { fm.fileExists(atPath: directory.appendingPathComponent($0).path) })
+        else { return }
+        let lock = try ModelCacheLock(directory)
+        defer { withExtendedLifetime(lock) {} }
+        try recoverTransactions(in: directory)
         guard markers.contains(where: { fm.fileExists(atPath: directory.appendingPathComponent($0).path) }) else {
             return
         }
         for name in [
             "installed.json", "installed-ja.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "ja-wav2vec2.mlmodelc",
-            "vocab.json", "ja-vocab.json", "downloads",
+            "vocab.json", "ja-vocab.json",
         ] {
             let url = directory.appendingPathComponent(name)
             if fm.fileExists(atPath: url.path) { try fm.removeItem(at: url) }
+        }
+        let downloads = directory.appendingPathComponent("downloads")
+        if (try? downloads.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == false {
+            for name in [
+                "955717e8-8726e21a.th", "model.safetensors", "ja-model.safetensors", "vocab.json", "ja-vocab.json",
+            ] {
+                let file = downloads.appendingPathComponent(name)
+                if (try? file.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true {
+                    try fm.removeItem(at: file)
+                }
+            }
+            if (try? fm.contentsOfDirectory(atPath: downloads.path).isEmpty) == true {
+                try fm.removeItem(at: downloads)
+            }
         }
     }
 }

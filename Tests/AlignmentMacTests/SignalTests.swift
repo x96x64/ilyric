@@ -173,6 +173,6 @@ struct ModelStoreTests {
         try recipe("c").write(to: templates.appendingPathComponent("wav2vec2-recipe.json"))
         #expect(try InstalledModels.existing(in: cache, templates: templates) == nil)
         try InstalledModels.remove(from: cache)
-        #expect(try fm.contentsOfDirectory(atPath: cache.path).isEmpty)
+        #expect(try fm.contentsOfDirectory(atPath: cache.path) == [".ilyrics-models.lock"])
     }
 }
