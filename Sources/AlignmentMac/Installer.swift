@@ -205,14 +205,26 @@ public struct SafeTensors {
 /// Rebuilds the wav2vec2 Core ML weights from the published safetensors file and verifies the model by self-test.
 public enum RecognitionInstaller {
     struct Recipe: Decodable {
-        struct Checkpoint: Decodable { let file, sha256, url, vocabulary_url: String }
+        struct Checkpoint: Decodable {
+            let file, sha256, url, vocabulary_url: String
+            /// nil for safetensors; "pytorch-zip-stored" when tensors are byte ranges of stored ZIP entries.
+            let layout: String?
+        }
+        /// Byte range and shape of each tensor in a PyTorch ZIP checkpoint whose entries are stored uncompressed.
+        struct Located: Decodable {
+            let offset, size: Int
+            let shape: [Int]
+        }
         struct Weights: Decodable {
             let size: Int
             let skeleton_sha256: String
         }
         struct SelfTest: Decodable {
             let samples, frames, labels: Int
-            let log_probs: [Double]
+            /// Every log-probability, or for large vocabularies only each frame's best label and its log-probability.
+            let log_probs: [Double]?
+            let best: [Int]?
+            let best_log_probs: [Double]?
             let tolerance: Double
         }
         struct Entry: Decodable {
@@ -224,15 +236,17 @@ public enum RecognitionInstaller {
         }
         let format: String
         let checkpoint: Checkpoint
+        let tensors: [String: Located]?
         let weights: Weights
         let self_test: SelfTest
         let entries: [Entry]
     }
 
-    /// `template` holds wav2vec2-template.mlpackage, wav2vec2-skeleton.bin.zlib, and wav2vec2-recipe.json.
-    public static func install(template: URL, weights: URL, destination: URL) throws -> URL {
+    /// `template` holds NAME-template.mlpackage, NAME-skeleton.bin.zlib, and NAME-recipe.json; the model is installed
+    /// as NAME.mlmodelc. `name` is "wav2vec2" for English and "ja-wav2vec2" for Japanese.
+    public static func install(template: URL, weights: URL, destination: URL, name: String = "wav2vec2") throws -> URL {
         let recipe = try JSONDecoder().decode(
-            Recipe.self, from: Data(contentsOf: template.appendingPathComponent("wav2vec2-recipe.json")))
+            Recipe.self, from: Data(contentsOf: template.appendingPathComponent("\(name)-recipe.json")))
         guard recipe.format == "ilyrics-weight-recipe-1" else {
             throw AlignmentError.invalid("Unsupported weight recipe")
         }
@@ -241,11 +255,27 @@ public enum RecognitionInstaller {
             throw AlignmentError.invalid("Recognition weights SHA-256 differs from the pinned file")
         }
         var blob = try SeparationInstaller.inflate(
-            Data(contentsOf: template.appendingPathComponent("wav2vec2-skeleton.bin.zlib")), size: recipe.weights.size)
+            Data(contentsOf: template.appendingPathComponent("\(name)-skeleton.bin.zlib")), size: recipe.weights.size)
         guard SeparationInstaller.hex(SHA256.hash(data: blob)) == recipe.weights.skeleton_sha256 else {
             throw AlignmentError.invalid("Weight skeleton is corrupted")
         }
-        let tensors = try SafeTensors(data).tensors
+        let tensors: [String: TorchCheckpoint.Tensor]
+        switch recipe.checkpoint.layout {
+        case nil: tensors = try SafeTensors(data).tensors
+        case "pytorch-zip-stored":
+            // The checkpoint's SHA-256 is verified above, so the recipe's byte ranges address known float32 data.
+            var located = [String: TorchCheckpoint.Tensor]()
+            for (key, l) in recipe.tensors ?? [:] {
+                guard l.offset >= 0, l.offset + l.size <= data.count, l.size == 4 * l.shape.reduce(1, *) else {
+                    throw AlignmentError.invalid("Malformed tensor location for \(key)")
+                }
+                let raw = data.subdata(in: (data.startIndex + l.offset)..<(data.startIndex + l.offset + l.size))
+                located[key] = TorchCheckpoint.Tensor(
+                    shape: l.shape, values: raw.withUnsafeBytes { Array($0.bindMemory(to: Float.self)) })
+            }
+            tensors = located
+        default: throw AlignmentError.invalid("Unsupported checkpoint layout")
+        }
         for e in recipe.entries {
             guard let t = tensors[e.key] else { throw AlignmentError.invalid("Weights lack \(e.key)") }
             let values: [Float]
@@ -286,10 +316,10 @@ public enum RecognitionInstaller {
         }
         let fm = FileManager.default
         try fm.createDirectory(at: destination, withIntermediateDirectories: true)
-        let package = destination.appendingPathComponent("wav2vec2.mlpackage")
-        let compiled = destination.appendingPathComponent("wav2vec2.mlmodelc")
+        let package = destination.appendingPathComponent("\(name).mlpackage")
+        let compiled = destination.appendingPathComponent("\(name).mlmodelc")
         for url in [package, compiled] where fm.fileExists(atPath: url.path) { try fm.removeItem(at: url) }
-        try fm.copyItem(at: template.appendingPathComponent("wav2vec2-template.mlpackage"), to: package)
+        try fm.copyItem(at: template.appendingPathComponent("\(name)-template.mlpackage"), to: package)
         let directory = package.appendingPathComponent("Data/com.apple.CoreML/weights")
         try fm.createDirectory(at: directory, withIntermediateDirectories: true)
         try blob.write(to: directory.appendingPathComponent("weight.bin"))
@@ -322,17 +352,35 @@ public enum RecognitionInstaller {
         else { throw AlignmentError.invalid("Recognition self-test output shape differs") }
         let s1 = out.strides[1].intValue
         let s2 = out.strides[2].intValue
+        if let best = test.best, let bestLogProbs = test.best_log_probs {
+            guard best.count == test.frames, bestLogProbs.count == test.frames else {
+                throw AlignmentError.invalid("Malformed recognition self-test")
+            }
+            for f in 0..<test.frames {
+                var top = 0
+                for k in 1..<test.labels where out[f * s1 + k * s2].doubleValue > out[f * s1 + top * s2].doubleValue {
+                    top = k
+                }
+                guard top == best[f], abs(out[f * s1 + top * s2].doubleValue - bestLogProbs[f]) <= test.tolerance else {
+                    throw AlignmentError.invalid("Recognition self-test differs at frame \(f)")
+                }
+            }
+            return
+        }
+        guard let logProbs = test.log_probs, logProbs.count == test.frames * test.labels else {
+            throw AlignmentError.invalid("Malformed recognition self-test")
+        }
         for f in 0..<test.frames {
             var best = 0
             var expectedBest = 0
             for k in 0..<test.labels {
                 let v = out[f * s1 + k * s2].doubleValue
-                let e = test.log_probs[f * test.labels + k]
+                let e = logProbs[f * test.labels + k]
                 guard abs(v - e) <= test.tolerance else {
                     throw AlignmentError.invalid("Recognition self-test differs at frame \(f)")
                 }
                 if v > out[f * s1 + best * s2].doubleValue { best = k }
-                if e > test.log_probs[f * test.labels + expectedBest] { expectedBest = k }
+                if e > logProbs[f * test.labels + expectedBest] { expectedBest = k }
             }
             guard best == expectedBest else {
                 throw AlignmentError.invalid("Recognition self-test labels differ at frame \(f)")
