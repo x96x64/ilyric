@@ -6,7 +6,7 @@ As of October 15, 2026, v1.3.0 is published through Homebrew, npm, and pip. The 
 
 ## Release Archive
 
-Every release tag builds one archive on GitHub Actions and attaches it to the GitHub Release:
+Every supported stable release tag builds one archive on GitHub Actions and attaches it to the GitHub Release:
 
 ```
 ilyrics-VERSION-macos-arm64.tar.gz
@@ -37,3 +37,9 @@ Version 0.2.0 was published on October 12, 2026, through all three channels, and
 ## Maintainer Actions
 
 Initial publication required setting up the npm and PyPI accounts, the trusted-publisher configuration, and the `homebrew-tap` repository; npm's initial access token was subsequently removed as recorded above. Current npm and PyPI publication uses the trusted-publishing workflow and its approval-protected environments. Releases, tags, and publication continue to require the maintainer's explicit approval under the roadmap; the completed initial setup does not authorize a future publication.
+
+### Stable Release Guard
+
+The release workflow validates an exact `vMAJOR.MINOR.PATCH` tag and an existing, published GitHub Release that is not marked as a prerelease before building, attaching, or publishing packages. Missing releases, draft releases, prerelease tags, build metadata, and mismatched release tags stop the workflow. The guard applies both to tag pushes and to manual runs, including runs that publish previously attached packages without rebuilding them. Each registry job rechecks the release state after environment approval and before downloading its packages. Its policy is loaded from `main`, like the packaging scripts, so historical stable tags remain eligible.
+
+Prerelease packaging and registry publication are not supported by this workflow. A separate policy for version normalization and registry channels is required before release candidates can be distributed. The `npm` and `pypi` environments still require the maintainer's approval; the guard does not replace that approval or authorize publication. Offline guard tests run in CI and do not call publication APIs.

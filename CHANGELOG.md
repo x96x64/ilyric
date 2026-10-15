@@ -6,6 +6,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ### Fixed
 
+- Release distribution rejects prerelease tags, draft releases, and releases marked as prereleases before packaging or registry publication. Registry jobs recheck release state after environment approval.
 - Video, aligned-lyrics, and JSON-report output commits recheck their destinations and preserve files created during processing unless `--force` permits replacement. Directories and input files remain protected, and failed text writes remove their temporary files.
 - Model downloads preserve existing cached bytes until a replacement has passed SHA-256 verification. Installation prepares a complete replacement separately and restores the previous files if publication fails.
 - Model installation and removal serialize changes to the same cache. Interrupted replacements retain a recovery record and are recovered before the next installation or removal. Cleanup preserves unrelated downloads.
