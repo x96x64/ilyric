@@ -4,6 +4,13 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Fixed
+
+- Video, aligned-lyrics, and JSON-report output commits recheck their destinations and preserve files created during processing unless `--force` permits replacement. Directories and input files remain protected, and failed text writes remove their temporary files.
+- Model downloads preserve existing cached bytes until a replacement has passed SHA-256 verification. Installation prepares a complete replacement separately and restores the previous files if publication fails.
+- Model installation and removal serialize changes to the same cache. Interrupted replacements retain a recovery record and are recovered before the next installation or removal. Cleanup preserves unrelated downloads.
+- Checkpoint ZIP parsing rejects invalid header and entry ranges instead of terminating on out-of-bounds access.
+
 ## [1.3.0] - 2026-10-15
 
 Experimental Japanese synchronization and display, together with corrections to focus transitions, progressive fill, and the visibility of tall paragraphs. English remains the default alignment language; Japanese support has not undergone quantitative qualification, and other languages remain unsupported.

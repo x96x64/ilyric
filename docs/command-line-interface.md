@@ -81,6 +81,12 @@ Notes begin with `Note:`, such as the number of lines without word timing; `--ve
 
 The cache holds the compiled models (about 590 MB). Installation downloads about 460 MB of publisher files, verifies their pinned SHA-256 digests, rebuilds and self-tests both models, and deletes the downloads. The first alignment of Japanese plain lyrics with `--language ja` adds the Japanese recognition model: about 1.3 GB downloaded and 1.2 GB installed.
 
+### Unreleased Cache Safeguards
+
+Installation prepares replacement models separately before updating the active cache. Installation and removal reject a competing operation on the same cache; retry after that operation finishes. The `.ilyrics-models.lock` file remains after the operation and does not, by itself, indicate an active lock. Do not delete it to release a lock.
+
+If a process ends during replacement, the next installation or removal recovers the recorded transaction first. Recovery restores an unfinished replacement or retains a completed one. If recovery fails, retain the reported recovery directory for diagnosis. Process-termination recovery does not establish protection against power loss or storage failure. Build-only temporary directories may remain after an abrupt termination.
+
 ## Rights
 
 SF Symbols are resolved at runtime from the user's Mac and never bundled, as recorded in [SF Symbols Rights Assessment](sf-symbols-rights-assessment.md). The README states that Apple's terms do not expressly license SF Symbols in exported videos; the command does not repeat this notice on every run. Model weights are downloaded from their publishers and rebuilt locally ([Native Model Installation and Decoding](reports/native-model-installation.md)).
