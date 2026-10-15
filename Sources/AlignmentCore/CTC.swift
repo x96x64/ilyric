@@ -46,6 +46,16 @@ public func ownedFrames(_ window: AnalysisWindow, frameCount: Int, expected: Int
 public struct TextTargets: Equatable, Sendable {
     public let tokens: [String]
     public let owners: [Int?]
+    /// Japanese only: the line unit of each label, and each line's units; nil for English, whose words are found
+    /// from the text and separated by "|".
+    public let units: [Int?]?
+    public let japaneseUnits: [Int: [JapaneseUnit]]?
+    public init(tokens: [String], owners: [Int?], units: [Int?]? = nil, japaneseUnits: [Int: [JapaneseUnit]]? = nil) {
+        self.tokens = tokens
+        self.owners = owners
+        self.units = units
+        self.japaneseUnits = japaneseUnits
+    }
 }
 
 public func textTargets(_ source: LyricSource) throws -> TextTargets {

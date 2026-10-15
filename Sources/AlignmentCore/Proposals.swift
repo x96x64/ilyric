@@ -63,6 +63,12 @@ public func proposals(
             support: nil, similarity: nil, words: nil, wordEstimates: nil, onsetTrim: nil, offsetExtension: nil)
         let indices = targets.owners.indices.filter { targets.owners[$0] == line.id && targets.tokens[$0] != "|" }
         if counts[line.alignmentText, default: 0] > 1 { row.flags.append("repeated_occurrence_requires_review") }
+        // A Japanese line of only Latin words has nothing the model can align; it is placed like an untimed line.
+        guard !indices.isEmpty else {
+            row.flags.append("no_alignable_characters")
+            rows.append(row)
+            continue
+        }
         guard let spans else {
             row.flags.append("no_complete_path")
             rows.append(row)
@@ -71,7 +77,15 @@ public func proposals(
         let a = spans[indices[0]][0]
         let b = spans[indices[indices.count - 1]][1]
         let proposal = [a * gridMicroseconds, min(duration, b * gridMicroseconds)]
-        row.words = try wordProposals(line, indices: indices, spans: spans, duration: duration)
+        let expected: String
+        if let units = targets.japaneseUnits?[line.id], let unitOf = targets.units {
+            row.words = japaneseWordProposals(
+                units, labelUnits: indices.map { unitOf[$0]! }, indices: indices, spans: spans, duration: duration)
+            expected = indices.map { targets.tokens[$0] }.joined()
+        } else {
+            row.words = try wordProposals(line, indices: indices, spans: spans, duration: duration)
+            expected = line.alignmentText
+        }
         let observed = try canonical(greedy(best[a..<b], alphabet: alphabet, blank: blank))
         var support = 0.0
         for i in indices {
@@ -80,7 +94,7 @@ public func proposals(
             support += sum / Double(spans[i][1] - spans[i][0])
         }
         support /= Double(indices.count)
-        let ratio = sequenceRatio(line.alignmentText, observed)
+        let ratio = sequenceRatio(expected, observed)
         row.proposal = proposal
         row.support = support
         row.similarity = ratio
@@ -118,6 +132,31 @@ func wordProposals(_ line: SourceLine, indices: [Int], spans: [[Int]], duration:
         return WordSpan(
             startUTF16: start, lengthUTF16: end - start,
             interval: [spans[r[0]][0] * gridMicroseconds, min(duration, spans[r[r.count - 1]][1] * gridMicroseconds)])
+    }
+}
+
+/// Japanese unit timing: aligned units take the span of their labels; a Latin unit without labels is interpolated
+/// from the end of the previous aligned unit to the start of the next, or takes the neighbour's edge at a line end.
+func japaneseWordProposals(
+    _ units: [JapaneseUnit], labelUnits: [Int], indices: [Int], spans: [[Int]], duration: Int
+) -> [WordSpan] {
+    var intervals = [Int: [Int]]()
+    for (k, u) in labelUnits.enumerated() {
+        let span = spans[indices[k]]
+        let interval = [span[0] * gridMicroseconds, min(duration, span[1] * gridMicroseconds)]
+        intervals[u] = intervals[u].map { [min($0[0], interval[0]), max($0[1], interval[1])] } ?? interval
+    }
+    return units.indices.map { u in
+        let interval: [Int]
+        if let known = intervals[u] {
+            interval = known
+        } else {
+            let before = (0..<u).reversed().compactMap { intervals[$0] }.first
+            let after = (u + 1..<units.count).compactMap { intervals[$0] }.first
+            let start = before?[1] ?? after?[0] ?? 0
+            interval = [start, max(start, after?[0] ?? before?[1] ?? start)]
+        }
+        return WordSpan(startUTF16: units[u].startUTF16, lengthUTF16: units[u].lengthUTF16, interval: interval)
     }
 }
 

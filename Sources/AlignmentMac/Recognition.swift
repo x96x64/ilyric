@@ -79,10 +79,13 @@ public final class RecognitionModel {
 /// `neighbourAcceptance` selects the version 3 acceptance rules; the default reproduces the Python reference (version 2).
 public func alignLyrics(
     _ lyrics: Data, vocals: [Float], durationMicroseconds: Int, model: RecognitionModel,
-    neighbourAcceptance: Bool = false
+    neighbourAcceptance: Bool = false, language: LyricLanguage = .english
 ) throws -> [LineAlignment] {
     let source = try LyricSource(lyrics)
-    let targets = try textTargets(source)
+    let targets =
+        language == .japanese
+        ? try japaneseTextTargets(source, vocabulary: Set(model.vocabulary.keys), words: JapaneseReadings.words)
+        : try textTargets(source)
     guard targets.tokens.allSatisfy({ model.vocabulary[$0] != nil }) else {
         throw AlignmentError.invalid("Text cannot be represented by the recognition model")
     }

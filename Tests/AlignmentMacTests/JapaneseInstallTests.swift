@@ -18,3 +18,11 @@ struct JapaneseInstallTests {
         #expect(compiled.lastPathComponent == "ja-wav2vec2.mlmodelc")
     }
 }
+
+struct JapaneseReadingTests {
+    @Test func systemTokenizerGivesHiraganaReadings() {
+        let words = JapaneseReadings.words("今日は雨が降る")
+        let readings = Dictionary(words.map { (String("今日は雨が降る"[$0.range]), $0.reading) }) { a, _ in a }
+        #expect(readings["降る"] == "ふる" && readings["雨"] == "あめ")
+    }
+}
