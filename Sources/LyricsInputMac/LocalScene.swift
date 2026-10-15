@@ -136,7 +136,11 @@ public final class LocalScene {
                     || (0xff66...0xff9d).contains($0.value)
             }
             let lead = presentation.fillLead
-            let timed = entry.segments.map { s -> AppearanceEvent in
+            // A line with only line-level timing, as in LRC, fills steadily from its onset to its end as one segment.
+            let segments =
+                entry.segments.isEmpty
+                ? [TimedSegment(start: 0, length: entry.text.utf16.count, begin: entry.time, end: end)] : entry.segments
+            let timed = segments.map { s -> AppearanceEvent in
                 let begin = max(Time(0), s.begin - lead)
                 let end = max(begin + Time(1, 1000), s.end - lead)
                 return AppearanceEvent(

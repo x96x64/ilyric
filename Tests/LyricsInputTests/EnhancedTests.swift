@@ -166,7 +166,8 @@ struct EnhancedTests {
         let plain = try LRCParser.parse(Data("[00:00.125]青い点\n|二つ置く\n[00:02.500]Final".utf8))
         let on = try LocalScene(lyrics: enhanced, audio: audio)
         let off = try LocalScene(lyrics: enhanced, audio: audio, highlighting: .disabled)
-        let old = try LocalScene(lyrics: plain, audio: audio)
+        // Line-level lyrics now fill steadily; with highlighting disabled they keep the original static rendering.
+        let old = try LocalScene(lyrics: plain, audio: audio, highlighting: .disabled)
         #expect(on.lyrics.entries[0].segments == off.lyrics.entries[0].segments)
         #expect(on.renderer.lyrics.paragraphs[0].lines == off.renderer.lyrics.paragraphs[0].lines)
         for time in [Time(0), Time(1), Time(3, 2), Time(12, 5), Time(5, 2)] {

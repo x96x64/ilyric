@@ -51,7 +51,9 @@ extension AudioSceneTests {
         for i in after.entries.indices {
             let old = a.renderer.screen.composition.paragraphs[i]
             let new = b.renderer.screen.composition.paragraphs[i]
-            #expect(try encoder.encode(old.input) == encoder.encode(new.input))
+            // Relocation changes only timing; text, style, and typography are preserved.
+            #expect(old.input.text == new.input.text && old.input.paragraphStyle == new.input.paragraphStyle)
+            #expect(try encoder.encode(old.input.parameters) == encoder.encode(new.input.parameters))
             let x = try ParagraphLayout(old.input)
             let y = try ParagraphLayout(new.input)
             #expect(
