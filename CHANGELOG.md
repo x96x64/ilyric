@@ -1,31 +1,38 @@
 # Changelog
 
-All notable changes to iLyrics are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
+All notable changes to iLyrics are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/). Version targets stated in dated entries record the plans at the time of release; they do not establish the current support policy or a commitment to a later release.
 
 ## [Unreleased]
 
 ## [1.3.0] - Unreleased
 
-Experimental Japanese synchronization and display, and fixes to focus and fill timing.
+Experimental Japanese synchronization and display, together with corrections to focus transitions, progressive fill, and the visibility of tall paragraphs. English remains the default alignment language; Japanese support has not undergone quantitative qualification, and other languages remain unsupported.
 
 ### Added
 
-- Experimental Japanese synchronization: `render` and `align` take `--language ja`. Kanji and kana are aligned character by character with the [ReazonSpeech](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) wav2vec 2.0 model, which is installed on first use (about 1.3 GB downloaded, 1.2 GB installed). Words with characters unknown to the model are aligned by readings from the system tokenizer, and Latin words within Japanese lines are interpolated. Every forced alignment is accepted, a warning states the known limitations, and the alignment report records the language and the readings used ([report](docs/reports/japanese-alignment.md)).
+- Experimental synchronization of Japanese plain lyrics with `--language ja` in `render` and `align`. Kanji and kana known to the [ReazonSpeech](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) wav2vec 2.0 model receive character-level timing. Words containing characters outside its vocabulary use readings from the macOS tokenizer, and Latin words within Japanese lines receive estimated timing from neighbouring aligned units rather than direct recognition. The Japanese alignment report records `language` and the readings used.
+- A Japanese recognition model installed on the first alignment of Japanese plain lyrics: approximately 1.3 GB of additional downloads and 1.2 GB of installed files. Existing English and separation models remain valid. Rendering supplied TTML, LRC, or Enhanced LRC timing does not require this model.
+- Guides to the accepted input formats, alignment review and correction, and a reproducible rendering example using original fixtures and generated tones.
+
+### Changed
+
+- Japanese alignment accepts complete forced proposals even when they do not satisfy the acceptance checks used for English. Acceptance does not establish timing accuracy. A warning identifies the experimental status and known timing limitations; the [evaluation report](docs/reports/japanese-alignment.md) records the limited review evidence. Japanese typography, wrapping, and fill have not been compared with the native iPhone screen. This policy applies to Japanese alignment only.
+- Documentation distinguishes current support from historical plans and clarifies input syntax, model installation, and the experimental status of backing choruses.
 
 ### Fixed
 
-- Focus no longer runs ahead of the singing when lines are less than about 0.9 seconds apart.
-- Lyrics with only line-level timing, such as LRC, now fill steadily instead of turning white at once.
-- The filling row of a paragraph taller than the visible area is lifted out of the bottom fade.
-- A line's fill completes before focus moves to the next line.
+- For closely spaced lyric lines, the advance of focus before a line's onset is limited to half the interval between consecutive onsets, reducing premature focus transitions. This changes presentation timing rather than the underlying alignment.
+- Lyrics with only line-level timing, including LRC and TTML paragraphs without timed word spans, receive progressive fill across the line instead of becoming fully white at once. This supplies a visual progression, not measured word timing.
+- Tall paragraphs move upward as the fill progresses through their lower rows, keeping the filling row above the lower viewport fade, including while the controls are visible.
+- Fill intervals are shortened when their end would extend beyond the next focus transition. Each interval retains a minimum duration of 1 ms; the adjustment changes displayed fill timing rather than the imported or aligned source timestamps.
 
 ## [1.2.0] - 2026-10-15
 
-An option for Instagram Reels, and fixes from a release-wide review of robustness, input handling, rendering, and distribution. Japanese and other languages are now planned for 1.3.0.
+An option for Instagram Reels, together with fixes identified during a review of robustness, input handling, rendering, and distribution across the release. At the time of this release, Japanese and other languages were planned for 1.3.0.
 
 ### Added
 
-- `render --safe-area reels` keeps the header, lyrics, and lower controls inside the width that Instagram Reels shows, 51 video pixels from each side, while the background still fills the frame. The crop was measured on one iPhone screenshot ([report](docs/reports/instagram-reels-safe-area.md)).
+- `render --safe-area reels` places the header, lyrics, and lower controls within an inset of 51 video pixels from each side, while the background fills the frame. The inset addresses the horizontal crop measured in one Instagram Reels screenshot on one iPhone; it does not account for interface overlays or establish the crop on other devices ([report](docs/reports/instagram-reels-safe-area.md)).
 - `ilyrics doctor` begins with the installed version, the executable's location, and the command that updates it for the channel that installed it.
 - Updating and Uninstalling sections in the README for Homebrew, npm, pip, and source builds.
 
@@ -55,7 +62,7 @@ An option for Instagram Reels, and fixes from a release-wide review of robustnes
 
 ## [1.1.0] - 2026-10-14
 
-Usability and screen-fidelity improvements found in real use after 1.0. Japanese and other languages are planned for 1.2.0.
+Usability and screen-fidelity improvements identified through use after 1.0. At the time of this release, Japanese and other languages were planned for 1.2.0.
 
 ### Added
 
@@ -67,7 +74,7 @@ Usability and screen-fidelity improvements found in real use after 1.0. Japanese
 
 ### Changed
 
-- Videos fill the full 9:16 frame with a layout adapted from the iPhone screen, instead of showing the iPhone screen between black side bars. Export takes about 20% longer.
+- Videos fill the full 9:16 frame with a layout adapted from the iPhone screen, instead of showing the iPhone screen between black side bars. In three paired measurements of one 12-second synthetic workload on an Apple M4, mean export time increased by 19.93%; this is not a general estimate for other recordings or hardware ([report](docs/reports/video-layout-adaptation.md)). The earlier native-layout qualification does not establish fidelity for the wider layout.
 - Backing vocals without their own timing appear dim beneath the focused line, without being filled with it.
 - Lines without reliable timing at the start or end of a song move into the nearest stretch of vocal activity when they fit there.
 - Errors begin with `Error:` and name the problem precisely: an empty lyrics file, a lyric line and character that cannot be aligned, or an unsupported sample rate or channel count. Audio is checked before alignment starts.
@@ -108,7 +115,7 @@ The first stable release. The visual preset was measured against six unseen scre
 
 ## [0.2.0] - 2026-10-12
 
-The public preview. English synchronization was qualified on 80 unseen recordings under the revised criteria, with the per-recording criterion narrowly not met; the maintainer approved the preview on that basis.
+The public preview. English synchronization was evaluated on 80 unseen recordings under the revised criteria. Every pooled criterion was met, but three recordings fell below the per-recording placement threshold of 80%, so the complete set of locked criteria was not met. The maintainer approved the preview with that limitation recorded.
 
 ### Added
 
