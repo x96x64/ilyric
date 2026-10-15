@@ -163,7 +163,24 @@ enum Align {
                 } ?? NSNull(),
             ]
         }
-        let report: [String: Any] = [
+        // Readings from the system tokenizer can change between macOS versions, so the ones used are recorded.
+        var readings = [[String: Any]]()
+        if language == .japanese {
+            let source = try LyricSource(Data(normalized.text.utf8))
+            let vocabulary = Set(model.vocabulary.keys)
+            for line in source.lines {
+                let units = try japaneseUnits(
+                    line.text, vocabulary: vocabulary, words: JapaneseReadings.words(line.text))
+                for unit in units where !unit.labels.isEmpty {
+                    let range = NSRange(location: unit.startUTF16, length: unit.lengthUTF16)
+                    let text = (line.text as NSString).substring(with: range)
+                    if unit.labels.joined() != text {
+                        readings.append(["line": line.id, "text": text, "reading": unit.labels.joined()])
+                    }
+                }
+            }
+        }
+        var report: [String: Any] = [
             "format": "ilyrics-alignment-report-1", "audio": audio.lastPathComponent, "duration_us": duration,
             "compute_units": fast ? "all" : "cpu", "ignored_input_lines": normalized.dropped, "lines": lines,
             "seconds": [
@@ -171,6 +188,10 @@ enum Align {
                 "alignment": alignedAt.timeIntervalSince(separatedAt),
             ],
         ]
+        if language == .japanese {
+            report["language"] = "ja"
+            report["readings"] = readings
+        }
         return Result(
             ttml: ttml, report: report, resolved: resolved, placed: rows.count - resolved - omitted.count,
             omitted: omitted.count, credits: normalized.credits)
