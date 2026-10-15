@@ -51,17 +51,27 @@ struct StoredZip {
         var p = u32(eocd + 16)
         var count = u16(eocd + 10)
         while count > 0 {
-            guard u32(p) == 0x0201_4b50 else { throw AlignmentError.invalid("Malformed zip central directory") }
+            guard p <= data.count - 46, u32(p) == 0x0201_4b50 else {
+                throw AlignmentError.invalid("Malformed zip central directory")
+            }
             let method = u16(p + 10)
             let size = u32(p + 20)
             let nameLength = u16(p + 28)
             let extra = u16(p + 30)
             let comment = u16(p + 32)
             let local = u32(p + 42)
+            guard nameLength + extra + comment <= data.count - p - 46,
+                local <= data.count - 30, u32(local) == 0x0403_4b50
+            else {
+                throw AlignmentError.invalid("Truncated checkpoint zip header")
+            }
             let name = String(
                 decoding: data[(data.startIndex + p + 46)..<(data.startIndex + p + 46 + nameLength)], as: UTF8.self)
             guard method == 0 else { throw AlignmentError.invalid("Compressed checkpoint entries are unsupported") }
             let start = local + 30 + u16(local + 26) + u16(local + 28)
+            guard start <= data.count, size <= data.count - start, offsets[name] == nil else {
+                throw AlignmentError.invalid("Invalid or duplicate checkpoint zip entry")
+            }
             offsets[name] = (start, size)
             p += 46 + nameLength + extra + comment
             count -= 1
