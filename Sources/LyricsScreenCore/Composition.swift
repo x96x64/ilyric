@@ -299,3 +299,18 @@ public struct LyricsComposition: Sendable {
     }
 
 }
+
+extension CompositionSnapshot {
+    /// The same state with every paragraph and gap marker moved vertically by `dy` pixels.
+    public func shifted(by dy: Double) -> CompositionSnapshot {
+        guard dy != 0 else { return self }
+        return CompositionSnapshot(
+            output: output, media: media, focus: focus, scroll: scroll, velocity: velocity,
+            paragraphs: paragraphs.map {
+                ParagraphPresentation(
+                    index: $0.index, translationY: $0.translationY + dy, opacity: $0.opacity, active: $0.active,
+                    appearance: $0.appearance)
+            },
+            gaps: gaps.map { GapPresentation(index: $0.index, translationY: $0.translationY + dy, state: $0.state) })
+    }
+}

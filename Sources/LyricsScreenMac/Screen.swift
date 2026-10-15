@@ -378,6 +378,7 @@ public final class ScreenRenderer {
     /// Draws the lyric layer into any native-sized context, clipped and faded; used directly by the screen
     /// composite to avoid a full-canvas intermediate image per frame.
     func drawLyrics(_ state: CompositionSnapshot, viewport v: ScreenBounds, reveal: Double, into c: CGContext) throws {
+        let state = state.shifted(by: -overflow(state, viewport: v))
         let w = screen.composition.canvasWidth
         c.saveGState()
         defer { c.restoreGState() }
@@ -460,6 +461,29 @@ public final class ScreenRenderer {
             }
         }
     }
+    /// How far the lyrics move up so that the filling row of a tall focused paragraph stays above the viewport's
+    /// bottom fade. The fill front's position across the paragraph's rows is continuous, so the motion is smooth and
+    /// a pure function of the state; short paragraphs, static lyrics, and paragraphs that fit never move.
+    public func overflow(_ state: CompositionSnapshot, viewport v: ScreenBounds) -> Double {
+        // Paragraphs at or before focus that have begun to fill; a finished paragraph keeps its last row as the
+        // reference, so after focus moves on, the lift shrinks continuously as the composition scrolls.
+        var lift = 0.0
+        for p in state.paragraphs where p.index <= max(state.focus, 0) {
+            let layout = lyrics.paragraphs[p.index]
+            let rows = layout.lines.count
+            let spans = p.appearance.spans
+            let total = spans.reduce(0) { $0 + $1.length }
+            guard rows > 1, total > 0 else { continue }
+            let front = spans.reduce(0.0) { $0 + Double($1.length) * $1.progress } / Double(total)
+            guard front > 0 else { continue }
+            let q = layout.input.parameters
+            let row = min(front * Double(rows), Double(rows - 1))
+            let bottom = q.originY + p.translationY + row * q.lineAdvance + q.size * 1.5
+            lift = max(lift, bottom - (v.y + v.height - LyricsScreen.fadeLength))
+        }
+        return lift
+    }
+
     /// Three white dots scaled as a group about the middle dot; native coordinates, top-left origin.
     static func drawGap(_ s: GapIndicatorState, centerY: Double, canvasHeight: Double = 2556, into c: CGContext) {
         let middle = GapIndicator.firstCenterX + GapIndicator.spacing
