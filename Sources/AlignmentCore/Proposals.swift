@@ -78,11 +78,21 @@ public func proposals(
         }
         let a = spans[indices[0]][0]
         let b = spans[indices[indices.count - 1]][1]
-        let proposal = [a * gridMicroseconds, min(duration, b * gridMicroseconds)]
+        var proposal = [a * gridMicroseconds, min(duration, b * gridMicroseconds)]
         let expected: String
         if let units = targets.japaneseUnits?[line.id], let unitOf = targets.units {
-            row.words = japaneseWordProposals(
-                units, labelUnits: indices.map { unitOf[$0]! }, indices: indices, spans: spans, duration: duration)
+            // Latin words around the aligned characters may extend the line up to its neighbours' spans.
+            let previous = indices[0] > 0 ? spans[indices[0] - 1][1] * gridMicroseconds : 0
+            let next =
+                indices[indices.count - 1] + 1 < spans.count
+                ? spans[indices[indices.count - 1] + 1][0] * gridMicroseconds : duration
+            let words = japaneseWordProposals(
+                units, labelUnits: indices.map { unitOf[$0]! }, indices: indices, spans: spans, duration: duration,
+                bounds: [previous, next], text: line.text)
+            row.words = words
+            if let lo = words.map({ $0.interval[0] }).min(), let hi = words.map({ $0.interval[1] }).max() {
+                proposal = [min(proposal[0], lo), max(proposal[1], hi)]
+            }
             expected = indices.map { targets.tokens[$0] }.joined()
         } else {
             row.words = try wordProposals(line, indices: indices, spans: spans, duration: duration)
@@ -137,10 +147,13 @@ func wordProposals(_ line: SourceLine, indices: [Int], spans: [[Int]], duration:
     }
 }
 
-/// Japanese unit timing: aligned units take the span of their labels; a Latin unit without labels is interpolated
-/// from the end of the previous aligned unit to the start of the next, or takes the neighbour's edge at a line end.
+/// Japanese unit timing. Aligned units take the span of their labels and extend to the next unit's start, so that the
+/// fill sweeps continuously instead of flashing character by character. A Latin unit, which the Japanese model cannot
+/// hear, lasts its estimated syllables at the line's own pace; leading Latin words therefore start before the first
+/// aligned character, within `bounds`, and trailing ones end after the last.
 func japaneseWordProposals(
-    _ units: [JapaneseUnit], labelUnits: [Int], indices: [Int], spans: [[Int]], duration: Int
+    _ units: [JapaneseUnit], labelUnits: [Int], indices: [Int], spans: [[Int]], duration: Int,
+    bounds: [Int]? = nil, text: String = ""
 ) -> [WordSpan] {
     var intervals = [Int: [Int]]()
     for (k, u) in labelUnits.enumerated() {
@@ -148,17 +161,52 @@ func japaneseWordProposals(
         let interval = [span[0] * gridMicroseconds, min(duration, span[1] * gridMicroseconds)]
         intervals[u] = intervals[u].map { [min($0[0], interval[0]), max($0[1], interval[1])] } ?? interval
     }
-    return units.indices.map { u in
-        let interval: [Int]
-        if let known = intervals[u] {
-            interval = known
-        } else {
-            let before = (0..<u).reversed().compactMap { intervals[$0] }.first
-            let after = (u + 1..<units.count).compactMap { intervals[$0] }.first
-            let start = before?[1] ?? after?[0] ?? 0
-            interval = [start, max(start, after?[0] ?? before?[1] ?? start)]
+    let aligned = intervals.keys.sorted()
+    // The line's pace: median duration of an aligned unit, bounded to plausible sung syllables.
+    let lengths = aligned.map { intervals[$0]![1] - intervals[$0]![0] }.sorted()
+    let pace = min(400_000, max(120_000, lengths.isEmpty ? 200_000 : lengths[lengths.count / 2]))
+    func syllables(_ u: Int) -> Int {
+        let utf16 = Array(text.utf16)
+        guard units[u].startUTF16 + units[u].lengthUTF16 <= utf16.count else { return 1 }
+        let word = String(
+            decoding: utf16[units[u].startUTF16..<(units[u].startUTF16 + units[u].lengthUTF16)], as: UTF16.self)
+        var count = 0
+        var vowel = false
+        for c in word.lowercased() {
+            let v = "aeiouy".contains(c)
+            if v && !vowel { count += 1 }
+            vowel = v
         }
-        return WordSpan(startUTF16: units[u].startUTF16, lengthUTF16: units[u].lengthUTF16, interval: interval)
+        return max(1, count)
+    }
+    var result = [[Int]](repeating: [0, 0], count: units.count)
+    for u in units.indices {
+        if let known = intervals[u] {
+            // Bridge only to an adjacent aligned unit; a following Latin unit keeps the gap for itself.
+            let next = intervals[u + 1].map { $0[0] }
+            result[u] = [known[0], max(known[1], min(next ?? known[1], known[1] + 1_000_000))]
+        }
+    }
+    // Leading Latin units, right to left from the first aligned unit.
+    let first = aligned.first ?? units.count
+    var cursor = first < units.count ? result[first][0] : (bounds?[0] ?? 0)
+    for u in stride(from: first - 1, through: 0, by: -1) where units[u].labels.isEmpty {
+        let start = max(bounds?[0] ?? 0, cursor - syllables(u) * pace)
+        result[u] = [start, cursor]
+        cursor = start
+    }
+    // Inner and trailing Latin units, left to right.
+    for u in units.indices where u > first && intervals[u] == nil {
+        let before = result[u - 1][1]
+        if let next = aligned.first(where: { $0 > u }) {
+            result[u] = [before, max(before, intervals[next]![0])]
+        } else {
+            let end = min(bounds?[1] ?? duration, before + syllables(u) * pace)
+            result[u] = [before, max(before, end)]
+        }
+    }
+    return units.indices.map {
+        WordSpan(startUTF16: units[$0].startUTF16, lengthUTF16: units[$0].lengthUTF16, interval: result[$0])
     }
 }
 

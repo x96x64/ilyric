@@ -40,4 +40,20 @@ struct JapaneseUnitTests {
         #expect(targets.tokens == ["今", "日"] && targets.owners == [1, 1])
         #expect(targets.japaneseUnits?[0]?.map(\.labels) == [[]])
     }
+    @Test func leadingLatinWordsStartBeforeTheFirstAlignedCharacter() {
+        let text = "I love 今日"
+        let units = [
+            JapaneseUnit(startUTF16: 0, lengthUTF16: 1, labels: []),
+            JapaneseUnit(startUTF16: 2, lengthUTF16: 4, labels: []),
+            JapaneseUnit(startUTF16: 7, lengthUTF16: 1, labels: ["今"]),
+            JapaneseUnit(startUTF16: 8, lengthUTF16: 1, labels: ["日"]),
+        ]
+        let words = japaneseWordProposals(
+            units, labelUnits: [2, 3], indices: [0, 1], spans: [[100, 110], [115, 125]], duration: 10_000_000,
+            bounds: [1_000_000, 9_000_000], text: text)
+        // Each aligned character lasts 200 ms, so "I" (one vowel group) and "love" (two) take 200 and 400 ms before 2 s.
+        #expect(words[0].interval == [1_400_000, 1_600_000] && words[1].interval == [1_600_000, 2_000_000])
+        // The first character's fill continues until the next character begins.
+        #expect(words[2].interval == [2_000_000, 2_300_000] && words[3].interval == [2_300_000, 2_500_000])
+    }
 }
