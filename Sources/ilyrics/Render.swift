@@ -32,6 +32,7 @@ enum Render {
               --no-gaps                 Omit the instrumental-gap indicator
               --credits TEXT            Songwriters shown after the last line (default: a "Written by:" line in plain lyrics)
               --keep-ad-libs            Keep vocable-only lines that cannot be timed
+              --language en|ja          Language of untimed lyrics; ja is experimental (default: en)
           -j, --jobs N                  Parallel rendering workers (default: processor count)
               --fast                    GPU and Neural Engine alignment; faster but not reproducible
               --report FILE             Write a JSON report of alignment and export
@@ -74,7 +75,7 @@ enum Render {
             arguments,
             valued: [
                 "output", "title", "artist", "artwork", "background", "controls", "safe-area", "jobs", "report",
-                "credits",
+                "credits", "language",
             ],
             flags: ["help", "force", "no-marquee", "no-gaps", "keep-ad-libs", "fast", "quiet", "verbose"],
             short: ["o": "output", "j": "jobs", "h": "help", "q": "quiet", "v": "verbose"])
@@ -99,6 +100,7 @@ enum Render {
         guard ["none", "reels"].contains(safeArea) else {
             throw UsageError(message: "--safe-area takes none or reels")
         }
+        let language = try Align.language(options)
         let jobs = options.values["jobs"].map { Int($0) ?? 0 } ?? max(1, ProcessInfo.processInfo.activeProcessorCount)
         guard (1...64).contains(jobs) else { throw UsageError(message: "--jobs takes a number from 1 to 64") }
         let console = Console(
@@ -170,7 +172,7 @@ enum Render {
                 timed = false
                 let aligned = try await Align.run(
                     audio: audioURL, lyrics: lyricsURL, keepAdLibs: options.has("keep-ad-libs"),
-                    fast: options.has("fast"), language: try Align.language(options), console: console)
+                    fast: options.has("fast"), language: language, console: console)
                 report["alignment"] = aligned.report
                 credits = credits ?? aligned.credits
                 lyrics = try LyricsParser.parse(Data(aligned.ttml.utf8), format: .ttml)

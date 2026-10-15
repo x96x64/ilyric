@@ -227,7 +227,7 @@ enum Align {
                 advice =
                     "this way of writing a number is not supported; write it as it is sung, for example 3.5 as three point five"
             } else if c.isLetter || c.isNumber {
-                advice = "only English lyrics can be aligned; other languages are planned for a later release"
+                advice = "only English lyrics can be aligned by default; add --language ja for Japanese lyrics"
             } else {
                 advice = "remove it or write it as it is sung"
             }
@@ -260,6 +260,8 @@ enum Align {
           -o, --output FILE   Output TTML file (required)
               --force         Replace an existing output
               --keep-ad-libs  Keep vocable-only lines that cannot be timed
+              --language en|ja
+                              Language of the lyrics; ja is experimental (default: en)
               --fast          GPU and Neural Engine inference; faster but not reproducible
               --report FILE   Write a JSON report of estimates, placements, and timings
           -q, --quiet         Print only warnings and errors
@@ -278,6 +280,7 @@ enum Align {
         }
         guard options.operands.count == 2 else { throw UsageError(message: "expected AUDIO and LYRICS") }
         guard let output = options.values["output"] else { throw UsageError(message: "missing -o, --output") }
+        let language = try language(options)
         let console = Console(quiet: options.has("quiet"), verbose: options.has("verbose"), stages: stages)
         defer { console.progress.close() }
         let audio = URL(fileURLWithPath: options.operands[0])
@@ -295,7 +298,7 @@ enum Align {
         let started = Date()
         let result = try await run(
             audio: audio, lyrics: lyrics, keepAdLibs: options.has("keep-ad-libs"), fast: options.has("fast"),
-            language: try language(options),
+            language: language,
             console: console)
         try result.ttml.write(to: target, atomically: true, encoding: .utf8)
         try writeReport(result.report, to: options.values["report"])
