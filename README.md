@@ -107,7 +107,7 @@ ilyrics models install
 
 Installation downloads about 460 MB from the publishers: the [HTDemucs](https://github.com/facebookresearch/demucs) checkpoint from Meta and the [wav2vec 2.0](https://huggingface.co/facebook/wav2vec2-base-960h) weights from Hugging Face. iLyrics verifies each file against a pinned SHA-256 digest, rebuilds the Core ML models on your Mac from weightless templates in this repository, runs a self-test, and deletes the downloads. The installed models occupy about 590 MB in `~/Library/Application Support/iLyrics/Models`. iLyrics does not redistribute either set of weights.
 
-The first use of `--language ja` installs a Japanese recognition model in the same way: about 1.3 GB of [ReazonSpeech wav2vec 2.0](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) weights from Hugging Face, which occupy about 1.2 GB once rebuilt.
+The first alignment of Japanese plain lyrics with `--language ja` installs a Japanese recognition model in the same way: about 1.3 GB of [ReazonSpeech wav2vec 2.0](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) weights from Hugging Face, which occupy about 1.2 GB once rebuilt.
 
 ```bash
 ilyrics models status   # show the cache location and state
