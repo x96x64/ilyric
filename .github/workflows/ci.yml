@@ -104,7 +104,20 @@ jobs:
       - name: Test Lyrics input CommandSafetyTests
         if: success() || failure()
         timeout-minutes: 10
-        run: swift test --disable-xctest --filter LyricsInputTests.CommandSafetyTests
+        run: |
+          status=0
+          swift test --disable-xctest --filter LyricsInputTests.CommandSafetyTests || status=$?
+          if [ "$status" -ne 0 ]; then
+            # ReportCrash writes the report of a crashed ilyrics child shortly after it dies.
+            sleep 10
+            for f in "$HOME"/Library/Logs/DiagnosticReports/ilyrics*.ips; do
+              [ -e "$f" ] || continue
+              echo "::group::Crash report $(basename "$f")"
+              cat "$f"
+              echo "::endgroup::"
+            done
+          fi
+          exit "$status"
 
   python:
     name: Python Public Validation Tests
