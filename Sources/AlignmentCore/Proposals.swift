@@ -82,7 +82,9 @@ public func proposals(
         let expected: String
         if let units = targets.japaneseUnits?[line.id], let unitOf = targets.units {
             // Latin words around the aligned characters may extend the line up to its neighbours' spans.
-            let previous = indices[0] > 0 ? spans[indices[0] - 1][1] * gridMicroseconds : 0
+            // The previous line's last character tends to absorb the unheard English words at the start of this line,
+            // so leading words may reach back to 100 ms after that character starts; the previous line is shortened.
+            let previous = indices[0] > 0 ? spans[indices[0] - 1][0] * gridMicroseconds + 100_000 : 0
             let next =
                 indices[indices.count - 1] + 1 < spans.count
                 ? spans[indices[indices.count - 1] + 1][0] * gridMicroseconds : duration
@@ -118,6 +120,21 @@ public func proposals(
         if proposal[1] - proposal[0] > 20_000_000 { row.flags.append("extended_line_support") }
         if row.flags.allSatisfy({ $0 == "repeated_occurrence_requires_review" }) { row.estimate = proposal }
         rows.append(row)
+    }
+    // A Japanese line whose English words reach back into the previous line ends that line where they begin.
+    if targets.japaneseUnits != nil {
+        for i in rows.indices.dropFirst() {
+            guard let start = rows[i].proposal?[0], let end = rows[i - 1].proposal?[1], start < end,
+                let begin = rows[i - 1].proposal?[0], start > begin
+            else { continue }
+            rows[i - 1].proposal![1] = start
+            if rows[i - 1].estimate != nil { rows[i - 1].estimate![1] = start }
+            rows[i - 1].words = rows[i - 1].words?.map {
+                WordSpan(
+                    startUTF16: $0.startUTF16, lengthUTF16: $0.lengthUTF16,
+                    interval: [min($0.interval[0], start), min($0.interval[1], start)])
+            }
+        }
     }
     return rows
 }

@@ -140,9 +140,20 @@ public final class LocalScene {
             let segments =
                 entry.segments.isEmpty
                 ? [TimedSegment(start: 0, length: entry.text.utf16.count, begin: entry.time, end: end)] : entry.segments
+            // Fill completes before focus moves to the next line, so that a line is never seen filling while it
+            // scrolls away; the next focus time uses the same lead limit as the focus events below.
+            var deadline: Time? = nil
+            if i + 1 < lyrics.entries.count, entry.time < lyrics.entries[i + 1].time {
+                let next = lyrics.entries[i + 1].time
+                let interval = next - entry.time
+                let half = Time(interval.numerator, interval.denominator * 2)
+                deadline = next - (half < presentation.focusLead ? half : presentation.focusLead)
+            }
             let timed = segments.map { s -> AppearanceEvent in
                 let begin = max(Time(0), s.begin - lead)
-                let end = max(begin + Time(1, 1000), s.end - lead)
+                var stop = s.end - lead
+                if let deadline, deadline < stop { stop = deadline }
+                let end = max(begin + Time(1, 1000), stop)
                 return AppearanceEvent(
                     start: s.start, length: s.length, begin: ParagraphTime(begin.numerator, begin.denominator),
                     end: ParagraphTime(end.numerator, end.denominator), verticalEvent: nil)
