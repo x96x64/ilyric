@@ -165,9 +165,16 @@ public final class LocalScene {
                             "the lyric line at %d:%05.2f wraps to more than eight rows on screen; split it into shorter lines",
                         Int(seconds) / 60, seconds.truncatingRemainder(dividingBy: 60)))
             }
-            // Lead never moves focus before the previous focus event or before zero.
+            // Lead never moves focus before the previous focus event or before zero. Between closely spaced lines it
+            // shrinks to half the interval between onsets, so that the line being sung keeps focus for most of it.
             let previous = events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
-            let led = entry.time - presentation.focusLead
+            var focusLead = presentation.focusLead
+            if let prior = paragraphs.last?.begin, prior < entry.time {
+                let half = entry.time - prior
+                let limit = Time(half.numerator, half.denominator * 2)
+                if limit < focusLead { focusLead = limit }
+            }
+            let led = entry.time - focusLead
             events.append(
                 .init(led > previous ? led : max(previous, Time(0)), order: i + 1, paragraph: paragraphs.count))
             if let bg = entry.background {
