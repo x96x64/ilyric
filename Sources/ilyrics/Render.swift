@@ -252,19 +252,12 @@ enum Render {
             width: 1080, height: 1920, to: temporary, frames: frames,
             workers: renderers.map { r in { time, context in try r.draw(time, into: context) } },
             audioChannels: audio.channels, audioSample: { audio.interleavedSample($0) }, submitted: submitted)
-        if FileManager.default.fileExists(atPath: target.path) {
-            // A file that appeared during rendering is replaced only with --force.
-            guard options.has("force") else {
-                throw Failure(message: "\(output) already exists; pass --force to replace it")
-            }
-            _ = try FileManager.default.replaceItemAt(target, withItemAt: temporary)
-        } else {
-            try FileManager.default.moveItem(at: temporary, to: target)
-        }
+        try finishOutput(temporary, to: output, force: options.has("force"), inputs: inputs)
         report["export"] = try JSONSerialization.jsonObject(with: JSONEncoder().encode(metrics))
         report["frames"] = frames
         report["jobs"] = jobs
-        try Align.writeReport(report, to: options.values["report"])
+        try Align.writeReport(
+            report, to: options.values["report"], force: options.has("force"), inputs: inputs + [output])
         progress.finish()
         progress.summary(
             "Generated \(target.lastPathComponent) in \(durationInWords(Date().timeIntervalSince(started)))")

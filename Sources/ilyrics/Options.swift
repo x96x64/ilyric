@@ -1,4 +1,6 @@
+import Darwin
 import Foundation
+import VideoExport
 import ProgressDisplay
 
 /// A usage error: reported with the command's usage and exit status 2.
@@ -109,4 +111,42 @@ func sameFile(_ a: String, _ b: String) -> Bool {
         let j = try? y.resourceValues(forKeys: [.fileResourceIdentifierKey]).fileResourceIdentifier
     else { return false }
     return i.isEqual(j)
+}
+
+/// Commits a sibling temporary file, enforcing the output policy again after processing.
+func finishOutput(_ temporary: URL, to path: String, force: Bool, inputs: [String]) throws {
+    let target = try checkOutput(path, force: force, inputs: inputs)
+    // Exclusive rename closes the race between the existence check and the commit. A regular-file
+    // rename cannot replace a directory, even with --force; do not use replaceItemAt here.
+    let status = temporary.withUnsafeFileSystemRepresentation { source in
+        target.withUnsafeFileSystemRepresentation { destination in
+            renamex_np(source, destination, force ? 0 : UInt32(RENAME_EXCL))
+        }
+    }
+    guard status == 0 else {
+        let code = errno
+        if code == EEXIST && !force {
+            throw Failure(message: "\(path) already exists; pass --force to replace it")
+        }
+        throw Failure(message: "could not save \(path): \(String(cString: strerror(code)))")
+    }
+}
+
+/// Stages text and JSON beside their destination so a failed commit preserves existing content.
+func writeOutput(_ data: Data, to path: String, force: Bool, inputs: [String]) throws {
+    let target = try checkOutput(path, force: force, inputs: inputs)
+    let temporary = target.deletingLastPathComponent().appendingPathComponent(".ilyrics-\(UUID().uuidString).tmp")
+    let descriptor = open(temporary.path, O_WRONLY | O_CREAT | O_EXCL, 0o666)
+    guard descriptor >= 0 else {
+        throw Failure(message: "could not stage \(path): \(String(cString: strerror(errno)))")
+    }
+    let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+    TemporaryFiles.register(temporary)
+    defer {
+        try? handle.close()
+        TemporaryFiles.remove(temporary)
+    }
+    try handle.write(contentsOf: data)
+    try handle.close()
+    try finishOutput(temporary, to: path, force: force, inputs: inputs)
 }

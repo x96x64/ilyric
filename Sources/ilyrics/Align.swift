@@ -236,10 +236,11 @@ enum Align {
         }
     }
 
-    static func writeReport(_ report: [String: Any], to path: String?) throws {
+    static func writeReport(_ report: [String: Any], to path: String?, force: Bool, inputs: [String]) throws {
         guard let path else { return }
-        try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]).write(
-            to: URL(fileURLWithPath: path), options: .atomic)
+        try writeOutput(
+            JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]),
+            to: path, force: force, inputs: inputs)
     }
 
     /// The lyrics language from `--language`, English by default.
@@ -300,8 +301,10 @@ enum Align {
             audio: audio, lyrics: lyrics, keepAdLibs: options.has("keep-ad-libs"), fast: options.has("fast"),
             language: language,
             console: console)
-        try result.ttml.write(to: target, atomically: true, encoding: .utf8)
-        try writeReport(result.report, to: options.values["report"])
+        try writeOutput(Data(result.ttml.utf8), to: output, force: options.has("force"), inputs: options.operands)
+        try writeReport(
+            result.report, to: options.values["report"], force: options.has("force"),
+            inputs: options.operands + [output])
         console.progress.summary(
             "Generated \(target.lastPathComponent) in \(durationInWords(Date().timeIntervalSince(started)))")
     }
