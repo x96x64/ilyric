@@ -18,8 +18,15 @@ public final class RecognitionModel {
         configuration.computeUnits = computeUnits
         model = try MLModel(contentsOf: compiled, configuration: configuration)
         vocabulary = try JSONDecoder().decode([String: Int].self, from: Data(contentsOf: vocabularyURL))
-        guard let pad = vocabulary["<pad>"] else { throw AlignmentError.invalid("Vocabulary lacks the blank label") }
-        blank = pad
+        // The CTC blank is the configured pad token: "<pad>" in English, and id 0 in ReazonSpeech, whose vocab.json
+        // names that id "<unk>" and lists "<pad>" only among added tokens.
+        if let pad = vocabulary["<pad>"] {
+            blank = pad
+        } else if vocabulary["<unk>"] == 0 {
+            blank = 0
+        } else {
+            throw AlignmentError.invalid("Vocabulary lacks the blank label")
+        }
     }
 
     /// Emissions for a complete 16-kHz signal, window by window with central frame ownership.
@@ -96,6 +103,20 @@ public func alignLyrics(
         vocabulary: model.vocabulary, blank: model.blank)
     let activity = try VocalRules.activity(vocals)
     VocalRules.apply(&rows, level: activity.level, reference: activity.reference, neighbours: neighbourAcceptance)
+    // Japanese acoustic scores on sung vocals are far below the English acceptance thresholds, yet the forced path is
+    // usually well placed (maintainer review of the POPS evaluation, 2026-10-15), so every complete forced proposal
+    // is accepted; word timing is kept only when it lies inside the line.
+    if language == .japanese {
+        for i in rows.indices where rows[i].estimate == nil && rows[i].proposal != nil {
+            rows[i].estimate = rows[i].proposal
+            let line = rows[i].proposal!
+            let words = rows[i].words ?? []
+            let valid = words.allSatisfy {
+                $0.interval[0] < $0.interval[1] && $0.interval[0] >= line[0] && $0.interval[1] <= line[1]
+            }
+            rows[i].wordEstimates = valid ? words : nil
+        }
+    }
     return rows
 }
 

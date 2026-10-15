@@ -68,6 +68,11 @@ enum Align {
         progress.finish()
         console.detail("  Decoded in \(elapsed(decodedAt.timeIntervalSince(started)))")
         let models = try await Models.ready(console)
+        if language == .japanese {
+            console.warning(
+                "Japanese synchronization is experimental: lines that begin with English words may start late, and line changes may come slightly early or late."
+            )
+        }
         // Japanese shares the separation model and adds its own recognition model, installed on first use.
         var recognizer = (model: models.recognizer, vocabulary: models.vocabulary)
         if language == .japanese {

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Build a weightless Japanese wav2vec2 Core ML template, its weight recipe, and a functional self-test.
 
-Inputs (maintainer only): the pinned pytorch_model.bin and the files beside it from
-jonatasgrosman/wav2vec2-large-xlsr-53-japanese. The publisher provides weights only as a PyTorch ZIP archive, so the
-recipe locates every tensor as a byte range of a stored (uncompressed) archive entry; the installer on the user's Mac
-then needs a ZIP reader, not a pickle parser. Output: the converted network without weights, a zero-filled skeleton,
-and a recipe whose entries are verified by SHA-256, with a self-test from the reference conversion.
+Inputs (maintainer only): a downloaded checkpoint folder of reazon-research/japanese-wav2vec2-large-rs35kh (the
+default, published as model.safetensors) or of a model published only as a PyTorch ZIP archive (pytorch_model.bin), for
+which the recipe locates every tensor as a byte range of a stored archive entry. Output: the converted network
+without weights, a zero-filled skeleton, and a recipe whose entries are verified by SHA-256, with a self-test from the
+reference conversion.
 """
 import hashlib
 import json
@@ -42,8 +42,12 @@ def self_test_input():
     x = 0.3 * np.sin(2 * np.pi * 220 * t) * np.sin(2 * np.pi * 3 * t) + 0.1 * np.sin(2 * np.pi * 1330 * t)
     return ((x - x.mean()) / np.sqrt(x.var() + 1e-7)).astype(np.float32)
 
-REVISION = 'cf031e020336460d15a417eba710bbc5bb43be9a'
-BASE = f'https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese/resolve/{REVISION}/'
+MODELS = {
+    'japanese-wav2vec2-large-rs35kh': ('reazon-research/japanese-wav2vec2-large-rs35kh',
+                                       '2162c9edb97f362f7623d6b3a2e417458e879bca'),
+    'wav2vec2-large-xlsr-53-japanese': ('jonatasgrosman/wav2vec2-large-xlsr-53-japanese',
+                                        'cf031e020336460d15a417eba710bbc5bb43be9a'),
+}
 
 
 def archive_tensors(path):
@@ -101,10 +105,18 @@ def archive_tensors(path):
 
 def main(checkpoint_dir, out):
     checkpoint_dir, out = Path(checkpoint_dir), Path(out)
-    archive = checkpoint_dir / 'pytorch_model.bin'
-    raw = archive.read_bytes()
-    located = archive_tensors(archive)
-    tensors = {name: np.frombuffer(raw[o:o + n], '<f4').reshape(shape) for name, (o, n, shape) in located.items()}
+    repository, revision = MODELS[checkpoint_dir.name]
+    base = f'https://huggingface.co/{repository}/resolve/{revision}/'
+    safetensors = checkpoint_dir / 'model.safetensors'
+    if safetensors.exists():
+        from safetensors.numpy import load_file
+        archive, raw, located = safetensors, safetensors.read_bytes(), None
+        tensors = {k: v.astype(np.float32) for k, v in load_file(safetensors).items()}
+    else:
+        archive = checkpoint_dir / 'pytorch_model.bin'
+        raw = archive.read_bytes()
+        located = archive_tensors(archive)
+        tensors = {name: np.frombuffer(raw[o:o + n], '<f4').reshape(shape) for name, (o, n, shape) in located.items()}
 
     model = Wav2Vec2ForCTC.from_pretrained(checkpoint_dir, attn_implementation='eager').eval()
 
@@ -135,7 +147,10 @@ def main(checkpoint_dir, out):
             candidates.setdefault(hashlib.sha256(np.ascontiguousarray(v.T).tobytes()).hexdigest(),
                                   dict(kind='permute', key=name, axes=[1, 0]))
     prefix = 'wav2vec2.encoder.pos_conv_embed.conv.'
-    g, v = tensors[prefix + 'weight_g'], tensors[prefix + 'weight_v']
+    # Older checkpoints name the weight-norm parts weight_g/weight_v, newer ones parametrizations original0/original1.
+    g_key, v_key = ((prefix + 'weight_g', prefix + 'weight_v') if prefix + 'weight_g' in tensors else
+                    (prefix + 'parametrizations.weight.original0', prefix + 'parametrizations.weight.original1'))
+    g, v = tensors[g_key], tensors[v_key]
     normalized = v * (g / np.sqrt((v.astype(np.float64) ** 2).sum(axis=(0, 1), keepdims=True)).astype(np.float32))
     blob = (staging / WEIGHTS).read_bytes()
     skeleton = bytearray(blob)
@@ -147,8 +162,7 @@ def main(checkpoint_dir, out):
             recipe.append(dict(offset=offset, size=size, sha256=digest, **candidates[digest]))
         elif dtype == 2 and size == normalized.nbytes and np.allclose(
                 np.frombuffer(data, '<f4'), normalized.ravel(), rtol=1e-4, atol=1e-4):
-            recipe.append(dict(offset=offset, size=size, kind='weight_norm', key=prefix + 'weight_v',
-                               g=prefix + 'weight_g', dim=2))
+            recipe.append(dict(offset=offset, size=size, kind='weight_norm', key=v_key, g=g_key, dim=2))
         else:
             raise SystemExit(f'Unexplained weight entry at {offset} ({size} bytes); refusing to build a template')
         skeleton[offset:offset + size] = bytes(size)
@@ -162,12 +176,13 @@ def main(checkpoint_dir, out):
         {'input_values': x[None]})['log_probs'][0]
     vocabulary = (checkpoint_dir / 'vocab.json').read_bytes()
     manifest = dict(
-        format='ilyrics-weight-recipe-1', model='wav2vec2-large-xlsr-53-japanese',
-        checkpoint=dict(file='pytorch_model.bin', layout='pytorch-zip-stored',
-                        sha256=hashlib.sha256(raw).hexdigest(), size=len(raw), url=BASE + 'pytorch_model.bin',
-                        vocabulary_url=BASE + 'vocab.json', vocabulary_sha256=hashlib.sha256(vocabulary).hexdigest()),
-        tensors={name: dict(offset=located[name][0], size=located[name][1], shape=list(located[name][2]))
-                 for name in sorted(used)},
+        format='ilyrics-weight-recipe-1', model=checkpoint_dir.name,
+        checkpoint=dict(file=archive.name, sha256=hashlib.sha256(raw).hexdigest(), size=len(raw), url=base + archive.name,
+                        vocabulary_url=base + 'vocab.json', vocabulary_sha256=hashlib.sha256(vocabulary).hexdigest(),
+                        **({} if located is None else dict(layout='pytorch-zip-stored'))),
+        **({} if located is None else dict(tensors={
+            name: dict(offset=located[name][0], size=located[name][1], shape=list(located[name][2]))
+            for name in sorted(used)})),
         weights=dict(size=len(blob), skeleton_sha256=hashlib.sha256(bytes(skeleton)).hexdigest()),
         # With 2,341 labels, every log-probability would make the recipe several megabytes; each frame's best label
         # and its log-probability verify the installed model as well.
