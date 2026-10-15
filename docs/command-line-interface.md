@@ -2,9 +2,9 @@
 
 ## Status
 
-October 11, 2026. Design approved by the maintainer. `render`, `align`, `models`, and `doctor` are implemented; distribution of the model templates is pending. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
+Current reference for iLyrics 1.2.0. `render`, `align`, `models`, and `doctor` are implemented, and the weightless model templates are distributed under `share/ilyrics/templates`. The command design was approved on October 11, 2026. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
 
-**Current Completion (October 13, 2026).** Repository distribution of the weightless model templates is complete. The templates are present under `share/ilyrics/templates`, as recorded in [Model Template Distribution](reports/model-template-distribution.md) and the [roadmap's Stage 1 completion record](roadmap-to-stable.md#stage-1-experimental-source-release). The pending-distribution statement above is retained as the dated design status.
+The October 11 design initially recorded template distribution as pending; completion was documented on October 13. See [Model Template Distribution](reports/model-template-distribution.md) and the [roadmap's Stage 1 completion record](roadmap-to-stable.md#stage-1-experimental-source-release) for that history.
 
 ## Synopsis
 
@@ -22,9 +22,11 @@ ilyrics --help | --version
 - `doctor` reports the installed version, the executable's location, the channel that installed it with its update command, and each requirement.
 - `doctor` reports the macOS version, available compute units, SF Symbols availability, the model cache, and the toolchain, and states the recovery step for each problem.
 
-Control icons are always SF Symbols, resolved at runtime; there is no icon option. If a symbol cannot be resolved, rendering stops with an error and `doctor` reports the cause. The original icon set remains internal, for tests and public media only.
+Control icons are always SF Symbols, resolved at runtime; there is no icon option. If a symbol cannot be resolved, rendering stops with an error and `doctor` reports the cause. The original icon set remains internal for tests and public media, except for the single README demonstration image authorized by the [documentation-image amendment](sf-symbols-rights-assessment.md#amendment-of-october-11-2026-documentation-image).
 
 ## Lyrics Input
+
+See [Lyrics Input Formats](input-formats.md) for current format selection, language support, valid examples, and limits. For JSON field definitions and manual TTML correction, see [Reviewing and Correcting an Alignment](reviewing-alignment.md).
 
 Untimed lyrics are plain UTF-8 text. Blank lines separate paragraphs. Lines consisting only of a bracketed section label, such as `[Chorus]`, are ignored. Parenthesized phrases become background vocals of their line; a line containing only parenthesized phrases attaches them to the preceding line. Paragraphs longer than four lines are split. Lines consisting only of vocables that the alignment cannot time are omitted unless `--keep-ad-libs` is given. Numbers are aligned by their usual sung form and displayed as written: cardinals such as 40 and 1,000, four-digit years such as 1999 and 2005, clock times such as 3:00 and 3:15, ordinals such as 21st, and decades such as '90s; other forms, such as 3.5, are rejected with their line number and character. A line beginning with `Written by:` names the songwriters; it is not aligned and is shown after the last line. A line beginning with `>` belongs to a duet's second singer and is right-aligned; in TTML, `ttm:agent="v2"` on a paragraph has the same effect.
 

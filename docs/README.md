@@ -2,11 +2,19 @@
 
 ## Current Documents
 
+Start with the [README](../README.md) for installation and [Support](../SUPPORT.md) for supported versions and scope. The current references below describe the released command; the engineering reports preserve the evidence and decisions behind it.
+
+- [Lyrics Input Formats](input-formats.md): current format subsets, language scope, examples, and limits
+- [Reviewing and Correcting an Alignment](reviewing-alignment.md): JSON fields, units, and manual TTML correction
+- [Rendering a Supplied-Timing Example](rendering-example.md): a local check using generated audio
 - [Command-Line Interface](command-line-interface.md): commands, options, and environment variables
-- [Roadmap to the Stable Release](roadmap-to-stable.md): decisions in force, remaining work, and confirmation points
-- [Distribution](distribution.md): release archive and the Homebrew, npm, and pip channels for the preview
+- [Roadmap to the Stable Release](roadmap-to-stable.md): current release status, effective decisions, and preserved confirmation points
+- [Distribution](distribution.md): release archive and the Homebrew, npm, and pip channels for released versions
 - [SF Symbols and System Font Rights Assessment](sf-symbols-rights-assessment.md): the runtime-only symbol policy
-- [Technical Planning Study](planning-study.md): the original architectural baseline, preserved verbatim
+
+## Historical Baseline
+
+- [Technical Planning Study](planning-study.md): the original architectural baseline, preserved verbatim; it is not the current user reference
 
 ## Engineering Reports
 

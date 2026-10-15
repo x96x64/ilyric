@@ -1,5 +1,11 @@
 # SF Symbols and System Font Rights Assessment
 
+## Current Implementation Context
+
+Documentation clarification, October 15, 2026. The assessment and dated amendment below remain preserved. Subsequent approved implementation decisions are recorded in the [roadmap](roadmap-to-stable.md) and [CLI reference](command-line-interface.md#rights): the command always resolves SF Symbols at runtime, provides no icon-set option, and does not repeat the rights notice on every invocation. These decisions supersede the original Engineering Policy items 3 and 4 only as to the icon selector and per-invocation diagnostic; the user-facing rights notice remains.
+
+The October 11 amendment permits the single README demonstration image to show the command's runtime-resolved symbols. The original icon set remains required for public fixtures, golden images, and test outputs. This clarification authorizes no additional public media and makes no new legal assessment or claim of permission. The unresolved rights status below is unchanged.
+
 ## Conclusion
 
 October 9, 2026. **No published Apple term explicitly grants the use of SF Symbols in standalone exported videos, and none was found that addresses that use specifically.** The applicable developer agreement licenses system-provided symbols solely for developing Applications for Apple platforms and prohibits trademark use. iLyric can lawfully reference symbols through public APIs without redistributing them, but the rights status of symbols rasterized into user-generated videos remains **unresolved**. This assessment records engineering obligations and uncertainty; it is not legal advice.

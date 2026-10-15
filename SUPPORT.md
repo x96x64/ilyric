@@ -10,9 +10,12 @@ Only the latest release receives fixes. Releases follow [Semantic Versioning](ht
 | --- | --- |
 | Operating system | macOS 14 or later |
 | Processor | Apple silicon; packaged binaries are built for arm64 only |
-| Installation | Homebrew, npm, pip, or a source build with a Swift 6 toolchain |
-| Synchronization | English lyrics; Japanese and other languages are planned for a later release, currently targeted as v1.3.0 |
+| Installation | Homebrew or a source build requires Swift 6; npm and pip contain a prebuilt native binary |
+| Automatic synchronization | English lyrics |
+| Supplied timing | The documented TTML, LRC, and Enhanced-LRC [subsets](docs/input-formats.md); Japanese display remains deferred |
 | Visual target | The Music app on iPhone 16 running iOS 27, light appearance, default text size |
+
+Japanese support, including both automatic synchronization and the display of supplied Japanese timing, remains deferred. Japanese and other languages are currently targeted as v1.3.0, without a guarantee of release dates or feature delivery. Experimental implementation remains available; this clarification does not remove it or broaden the supported scope.
 
 Release binaries are built by the repository's `release.yml` workflow from the tagged source on GitHub-hosted macOS runners. The alignment models are downloaded from their publishers and verified by SHA-256 on first use.
 
@@ -31,7 +34,7 @@ Vocable-only lines such as "ooh" and "na-na" remain usable. The [third English q
 1. Update to the latest release ([Updating](README.md#updating)); `ilyrics doctor` shows the installed version and the update command.
 2. Run `ilyrics doctor` and follow the recovery step it states.
 3. Read [Troubleshooting](README.md#troubleshooting) and [Limitations](README.md#limitations).
-4. If the problem remains, open an issue at <https://github.com/x96x64/ilyrics/issues> with the output of `ilyrics --version` and `ilyrics doctor`, the command you ran, and, for an alignment problem, the report written by `--report`. Do not attach recordings or lyrics you are not allowed to share.
+4. If the problem remains, open an issue at <https://github.com/x96x64/ilyrics/issues> with the output of `ilyrics --version` and `ilyrics doctor`, the command you ran, and, for an alignment problem, the report written by `--report`. Reports themselves can contain lyric text, backing text, discarded input lines, and the audio basename. Remove content you cannot share before attaching a report; do not attach recordings or lyrics you are not allowed to share. See [Reviewing an Alignment](docs/reviewing-alignment.md#render-reports-and-sharing).
 
 ## Out of Scope
 

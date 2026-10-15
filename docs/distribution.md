@@ -2,7 +2,7 @@
 
 ## Status
 
-October 11, 2026. Design for the public preview (Stage 2 of the [roadmap](roadmap-to-stable.md)), implemented for version 0.2.0 and used for every release since; see [Publication](#publication). The maintainer decided that the preview is distributed through Homebrew, npm, and pip, the latter two as thin installers of the native macOS binary. On October 12, 2026, after the rename from iLyric, the name `ilyrics` was unregistered on npm, PyPI, and Homebrew.
+As of October 15, 2026, v1.2.0 is published through Homebrew, npm, and pip. The distribution design was established for the public preview on October 11, implemented for v0.2.0, and retained for subsequent releases; see [Publication](#publication). npm and pip contain the native macOS binary and model templates; Homebrew builds the tagged source locally.
 
 ## Release Archive
 
@@ -14,9 +14,9 @@ ilyrics-VERSION-macos-arm64.tar.gz
 └── share/ilyrics/templates/…
 ```
 
-The layout matches the command's template lookup, which searches `share/ilyrics/templates` in the executable's installation prefix. The archive's SHA-256 is published with the release. The preview supports Apple silicon and macOS 14 or later; Intel support requires a universal build and is deferred.
+The layout matches the command's template lookup, which searches `share/ilyrics/templates` in the executable's installation prefix. The archive's SHA-256 is published with the release. The released packages support Apple silicon and macOS 14 or later; Intel support requires a universal build and is deferred.
 
-The binary is unsigned until the maintainer provides an Apple Developer ID for signing and notarization. Unsigned binaries installed by Homebrew, npm, or pip are not quarantined by Gatekeeper because they are not downloaded by a browser; a binary downloaded manually from the release page must be cleared with `xattr -d com.apple.quarantine`.
+Packaged binaries are ad hoc-signed by `packaging/package.sh`. Apple Developer ID signing and notarization remain pending until the maintainer provides the required signing identity. Binaries installed by Homebrew, npm, or pip are not quarantined by Gatekeeper because they are not downloaded by a browser; a binary downloaded manually from the release page must be cleared with `xattr -d com.apple.quarantine`.
 
 ## Channels
 
@@ -30,8 +30,10 @@ npm and pip install the binary and templates of the release archive; Homebrew bu
 
 ## Publication
 
+On October 12, 2026, after the rename from iLyric and before first publication, the name `ilyrics` was unregistered on npm, PyPI, and Homebrew.
+
 Version 0.2.0 was published on October 12, 2026, through all three channels, and version 1.0.0, the stable release, on the same day. Version 1.1.0 was published on October 14, 2026, and version 1.2.0 on October 15, 2026. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
 
 ## Maintainer Actions
 
-Publishing requires credentials that only the maintainer holds: an npm account with an access token, a PyPI account with a trusted-publisher configuration for this repository, and creation of the `homebrew-tap` repository. Each first publication is a confirmation point under the roadmap.
+Initial publication required setting up the npm and PyPI accounts, the trusted-publisher configuration, and the `homebrew-tap` repository; npm's initial access token was subsequently removed as recorded above. Current npm and PyPI publication uses the trusted-publishing workflow and its approval-protected environments. Releases, tags, and publication continue to require the maintainer's explicit approval under the roadmap; the completed initial setup does not authorize a future publication.

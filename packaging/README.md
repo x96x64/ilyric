@@ -16,13 +16,13 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
   <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three full-width frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
 </p>
 
-> **Note:** English synchronization was evaluated on 80 unseen recordings, and the visual preset was measured against unseen screen recordings of the Music app; known limitations are listed in the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> **Note:** Automatic synchronization supports English and may need manual correction. The historical evaluation of commit `e0ab92a` met every pooled criterion on 80 unseen recordings but did not meet the complete locked criteria because three recordings fell below the per-recording threshold. This is not a fresh evaluation of v1.2.0. The visual preset was measured against unseen screen recordings, with known differences; see the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Features
 
 - **Automatic synchronization.** Plain text lyrics, including numbers such as 40 or 3:00, are aligned line by line and word by word against a separated vocal stem; lines without reliable timing are placed rather than aligned, and are reported.
 - **A faithful Lyrics screen.** Focus motion, word fill, instrumental-gap indicators, a scrolling title, an artwork-derived background, and auto-hiding controls, measured from the Music app on iOS 27 and adapted to fill a full 9:16 video.
-- **Supplied timing.** TTML, LRC, and Enhanced LRC files are rendered as supplied.
+- **Supplied timing.** The documented TTML, LRC, and Enhanced-LRC [subsets](https://github.com/x96x64/ilyrics/blob/main/docs/input-formats.md) are rendered without automatic realignment. Japanese display remains deferred, along with automatic Japanese synchronization; Japanese and other languages are currently targeted as v1.3.0, without a delivery guarantee.
 - **Clear progress and errors.** Each stage is shown on one line with a progress bar, and problems name the file, line, and character to fix.
 - **High-resolution audio.** AAC, MP3, WAV, AIFF, and Apple Lossless up to 384 kHz.
 - **Deterministic and local.** Every frame is a pure function of its timestamp, and recordings, lyrics, and videos never leave your Mac.
@@ -30,15 +30,32 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
 ## Requirements
 
 - macOS 14 or later on Apple silicon
-- About 600 MB of disk space for the alignment models
+- About 600 MB of disk space for the alignment models and 8 GB of memory or more for complete songs
+- Homebrew and source builds require Swift 6; npm and pip install a prebuilt binary without a Swift toolchain
 
 ## Installation
 
+Choose one installation channel so that updates affect the command you run.
+
+### npm
+
 ```bash
-npm install -g ilyrics        # npm
-pipx install ilyrics          # pip (or: pip install ilyrics)
+npm install -g ilyrics
+```
+
+### pip
+
+```bash
+pipx install ilyrics    # or: pip install ilyrics
+```
+
+### Homebrew
+
+```bash
 brew install x96x64/tap/ilyrics
 ```
+
+### Alignment Models
 
 Then check the environment and install the alignment models, about 460 MB downloaded once from their publishers and rebuilt on your Mac:
 
@@ -74,7 +91,9 @@ The title, artist, and artwork are read from the audio file's metadata. Common o
 | `--fast` | GPU and Neural Engine inference; faster but not reproducible |
 | `--force` | Replace an existing output |
 
-Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections. Section labels such as `[Chorus]` are ignored. Parenthesized backing choruses are experimental and unsupported; leave them out of plain lyrics. See the [command reference](https://github.com/x96x64/ilyrics/blob/main/docs/command-line-interface.md) for every option.
+Plain lyrics are UTF-8 text with one sung line per line and blank lines between sections. Section labels such as `[Chorus]` are ignored. Backing choruses, including parenthesized phrases and standalone backing-only lines, are experimental, unverified, and unsupported; leave them out of plain lyrics. Ordinary lead-sung refrains and vocables remain permitted. See the [command reference](https://github.com/x96x64/ilyrics/blob/main/docs/command-line-interface.md) for every option.
+
+For a check without a recording of your own, use the [supplied-timing example](https://github.com/x96x64/ilyrics/blob/main/docs/rendering-example.md). To inspect or correct automatic timing, follow [Reviewing and Correcting an Alignment](https://github.com/x96x64/ilyrics/blob/main/docs/reviewing-alignment.md).
 
 ## Rights
 

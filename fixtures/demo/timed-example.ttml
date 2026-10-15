@@ -1,0 +1,6 @@
+<tt xmlns="http://www.w3.org/ns/ttml" xml:space="preserve">
+  <body><div>
+    <p begin="0.5s" end="2.5s"><span begin="0s" end="1s">Paper </span><span begin="1s" end="2s">skies</span></p>
+    <p begin="3s" end="5.5s"><span begin="0s" end="1.5s">Morning </span><span begin="1.5s" end="2.5s">light</span></p>
+  </div></body>
+</tt>

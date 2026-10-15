@@ -1,5 +1,20 @@
 # Roadmap to the Stable Release
 
+## Current Status as of October 15, 2026
+
+The experimental source release, public preview, and stable release have been published. The current release is v1.2.0; see the [changelog](../CHANGELOG.md) and [distribution record](distribution.md#publication). The dated plan below preserves the sequence of decisions and confirmation points. Earlier statements about pending work and version targets are retained as dated records; they do not by themselves establish the current completion status of each task. Apple Developer ID signing and notarization remain pending as described in the distribution record.
+
+The following summarizes the existing decisions without changing their objectives or approval requirements:
+
+- Automatic synchronization and faithful reproduction of the native iOS 27 Music Lyrics screen remain equally important goals. The native macOS implementation, local processing, deterministic timestamp evaluation, and evidence-based verification remain in force.
+- English automatic synchronization is supported. Japanese support, including supplied-timing display, remains deferred; Japanese and other languages are currently targeted as v1.3.0. This intention does not guarantee dates or delivery. Experimental implementation remains available.
+- The public preview was approved despite the third qualification's unmet per-recording criterion. The stable release was approved with documented visual differences. Neither release decision retroactively changes the locked thresholds or reported results.
+- Control icons are runtime-resolved SF Symbols, with no user-facing icon switch or repeated rights diagnostic. The README demonstration image is the single documented public-media exception; see the [current policy context](sf-symbols-rights-assessment.md#current-implementation-context).
+- Apache-2.0 remains the software license. Model weights are obtained from their publishers, verified, and rebuilt locally; the repository and packages contain weightless templates.
+- Releases, tags, and publication still require the maintainer's explicit approval. Follow the current conversation's authorization boundaries, including any requirement for review before a push. Historical confirmation points below are not standing authorization to publish.
+
+Use the [README](../README.md), [Support](../SUPPORT.md), [CLI reference](command-line-interface.md), and [input formats](input-formats.md) for the released command. Historical stage descriptions remain below as records; later dated decisions supersede earlier ones where stated.
+
 ## Purpose and Status
 
 October 11, 2026. This roadmap carries the project from the current state to the stable release. It records the maintainer's decisions, the remaining work in order, where each task can run, and the points at which the maintainer must confirm before work proceeds. Agents working in cloud sessions must follow it together with `AGENTS.md`; they must not act beyond a confirmation point without the maintainer's explicit approval in the conversation.
