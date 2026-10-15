@@ -116,6 +116,7 @@ The reports below record measurements, decisions, and their limitations in the o
 - 2026-10-12 — [Visual Qualification Results](reports/visual-qualification-results.md)
 - 2026-10-12 — [Background Spread Adaptation](reports/background-spread-adaptation.md)
 - 2026-10-12 — [Paragraph Spacing](reports/paragraph-spacing.md)
+- 2026-10-15 — [Japanese Alignment](reports/japanese-alignment.md)
 
 ### Native Pipeline
 
