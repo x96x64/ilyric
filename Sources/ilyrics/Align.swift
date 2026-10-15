@@ -18,12 +18,14 @@ enum Align {
         let credits: String?
     }
 
-    static func run(audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, console: Console) async throws -> Result {
+    static func run(
+        audio: URL, lyrics: URL, keepAdLibs: Bool, fast: Bool, language: LyricLanguage = .english, console: Console
+    ) async throws -> Result {
         guard let raw = try? String(contentsOf: lyrics, encoding: .utf8) else {
             throw Failure(message: "\(lyrics.relativePath) is not readable UTF-8 text")
         }
         let normalized = NormalizedLyrics(raw)
-        try checkLyrics(raw, normalized, name: lyrics.relativePath)
+        try checkLyrics(raw, normalized, name: lyrics.relativePath, language: language)
         if !normalized.background.isEmpty
             || normalized.dropped.contains(where: { $0.hasSuffix(" (background vocals without a preceding line)") })
         {
@@ -66,6 +68,23 @@ enum Align {
         progress.finish()
         console.detail("  Decoded in \(elapsed(decodedAt.timeIntervalSince(started)))")
         let models = try await Models.ready(console)
+        // Japanese shares the separation model and adds its own recognition model, installed on first use.
+        var recognizer = (model: models.recognizer, vocabulary: models.vocabulary)
+        if language == .japanese {
+            let templates = try Models.templates()
+            if let found = try InstalledModels.existingJapanese(in: Models.directory, templates: templates) {
+                recognizer = (found.recognizer, found.vocabulary)
+            } else {
+                console.say(
+                    "Installing the Japanese alignment model into \(Models.directory.path) (first use; about 1.3 GB is downloaded)"
+                )
+                let installed = try await InstalledModels.installJapanese(into: Models.directory, templates: templates)
+                {
+                    console.say("  \($0)")
+                }
+                recognizer = (installed.recognizer, installed.vocabulary)
+            }
+        }
         let separating = Date()
         progress.begin(2)
         // Analysis samples follow the reference pipeline: 48-kHz frames of the source, one third at 16 kHz.
@@ -85,12 +104,12 @@ enum Align {
         console.detail("  Separated vocals in \(elapsed(separatedAt.timeIntervalSince(separating)))")
         progress.begin(3)
         let model = try RecognitionModel(
-            modelURL: models.recognizer, vocabularyURL: models.vocabulary, computeUnits: units)
+            modelURL: recognizer.model, vocabularyURL: recognizer.vocabulary, computeUnits: units)
         let rows: [LineAlignment]
         do {
             rows = try alignLyrics(
                 Data(normalized.text.utf8), vocals: vocals, durationMicroseconds: duration, model: model,
-                neighbourAcceptance: true)
+                neighbourAcceptance: true, language: language)
         } catch AlignmentError.invalid(let reason) { throw Failure(message: "alignment failed: \(reason)") }
         let alignedAt = Date()
         console.detail("  Aligned in \(elapsed(alignedAt.timeIntervalSince(separatedAt)))")
@@ -158,7 +177,9 @@ enum Align {
     }
 
     /// Rejects lyrics that cannot be aligned before any model work, naming the file, the line, and the character.
-    static func checkLyrics(_ raw: String, _ normalized: NormalizedLyrics, name: String) throws {
+    static func checkLyrics(
+        _ raw: String, _ normalized: NormalizedLyrics, name: String, language: LyricLanguage = .english
+    ) throws {
         guard !normalized.sourceLines.isEmpty else {
             if raw.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: "\u{FEFF}"))).isEmpty
             {
@@ -170,7 +191,8 @@ enum Align {
             )
         }
         let lines = normalized.text.components(separatedBy: "\n").filter { !$0.isEmpty }
-        for (k, line) in lines.enumerated() {
+        // Japanese lines are checked while their alignment units are formed.
+        for (k, line) in lines.enumerated() where language == .english {
             guard let c = unsupportedCharacter(in: line) else { continue }
             let number = k < normalized.sourceLines.count ? normalized.sourceLines[k] : k + 1
             let code = c.unicodeScalars.map { String(format: "U+%04X", $0.value) }.joined(separator: " ")
@@ -194,6 +216,15 @@ enum Align {
             to: URL(fileURLWithPath: path), options: .atomic)
     }
 
+    /// The lyrics language from `--language`, English by default.
+    static func language(_ options: Options) throws -> LyricLanguage {
+        guard let value = options.values["language"] else { return .english }
+        guard let language = LyricLanguage(rawValue: value) else {
+            throw UsageError(message: "--language takes en or ja")
+        }
+        return language
+    }
+
     static let help = """
         Usage: ilyrics align AUDIO LYRICS -o LYRICS.ttml [options]
 
@@ -212,7 +243,7 @@ enum Align {
 
     static func command(_ arguments: ArraySlice<String>) async throws {
         let options = try Options(
-            arguments, valued: ["output", "report"],
+            arguments, valued: ["output", "report", "language"],
             flags: ["help", "force", "keep-ad-libs", "fast", "quiet", "verbose"],
             short: ["o": "output", "h": "help", "q": "quiet", "v": "verbose"])
         if options.has("help") {
@@ -238,6 +269,7 @@ enum Align {
         let started = Date()
         let result = try await run(
             audio: audio, lyrics: lyrics, keepAdLibs: options.has("keep-ad-libs"), fast: options.has("fast"),
+            language: try language(options),
             console: console)
         try result.ttml.write(to: target, atomically: true, encoding: .utf8)
         try writeReport(result.report, to: options.values["report"])

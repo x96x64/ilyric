@@ -170,7 +170,7 @@ enum Render {
                 timed = false
                 let aligned = try await Align.run(
                     audio: audioURL, lyrics: lyricsURL, keepAdLibs: options.has("keep-ad-libs"),
-                    fast: options.has("fast"), console: console)
+                    fast: options.has("fast"), language: try Align.language(options), console: console)
                 report["alignment"] = aligned.report
                 credits = credits ?? aligned.credits
                 lyrics = try LyricsParser.parse(Data(aligned.ttml.utf8), format: .ttml)

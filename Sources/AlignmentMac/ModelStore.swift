@@ -131,15 +131,74 @@ public struct InstalledModels: Equatable, Sendable {
         return models
     }
 
+    /// The Japanese recognition model and vocabulary in `directory` when installed from `templates`, otherwise nil.
+    /// Japanese uses the shared separation model and is installed separately, only when Japanese is aligned.
+    public static func existingJapanese(in directory: URL, templates: URL) throws -> (recognizer: URL, vocabulary: URL)?
+    {
+        let fm = FileManager.default
+        let recognizer = directory.appendingPathComponent("ja-wav2vec2.mlmodelc", isDirectory: true)
+        let vocabulary = directory.appendingPathComponent("ja-vocab.json")
+        let pins = try japanesePins(templates)
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent("installed-ja.json")),
+            String(decoding: data, as: UTF8.self) == pins.weights.skeleton_sha256,
+            fm.fileExists(atPath: recognizer.path), fm.fileExists(atPath: vocabulary.path)
+        else { return nil }
+        return (recognizer, vocabulary)
+    }
+
+    static func japanesePins(_ templates: URL) throws -> Pins {
+        let url = templates.appendingPathComponent("ja-wav2vec2-recipe.json")
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            throw AlignmentError.invalid(
+                "Model template file ja-wav2vec2-recipe.json is missing from \(templates.path)")
+        }
+        return try JSONDecoder().decode(Pins.self, from: Data(contentsOf: url))
+    }
+
+    /// Downloads the pinned Japanese checkpoint, rebuilds and self-tests the Japanese recognition model.
+    public static func installJapanese(into directory: URL, templates: URL, progress: (String) -> Void = { _ in })
+        async throws -> (recognizer: URL, vocabulary: URL)
+    {
+        let p = try japanesePins(templates)
+        let fm = FileManager.default
+        let downloads = directory.appendingPathComponent("downloads", isDirectory: true)
+        try fm.createDirectory(at: directory, withIntermediateDirectories: true)
+        try? fm.removeItem(at: directory.appendingPathComponent("installed-ja.json"))
+        guard let remote = URL(string: p.checkpoint.url),
+            let vocabularyURL = p.checkpoint.vocabulary_url.flatMap(URL.init),
+            let vocabularySHA = p.checkpoint.vocabulary_sha256
+        else { throw AlignmentError.invalid("Japanese recognition recipe lacks pinned URLs") }
+        progress("Fetching \(p.checkpoint.file) from \(remote.host ?? p.checkpoint.url)")
+        let weights = try await ModelStore.fetch(
+            remote, sha256: p.checkpoint.sha256, into: downloads, name: "ja-" + p.checkpoint.file)
+        let vocabulary = try await ModelStore.fetch(
+            vocabularyURL, sha256: vocabularySHA, into: downloads, name: "ja-vocab.json")
+        progress("Rebuilding and testing the Japanese speech recognition model")
+        let recognizer = try RecognitionInstaller.install(
+            template: templates, weights: weights, destination: directory, name: "ja-wav2vec2")
+        let installedVocabulary = directory.appendingPathComponent("ja-vocab.json")
+        if fm.fileExists(atPath: installedVocabulary.path) { try fm.removeItem(at: installedVocabulary) }
+        try fm.copyItem(at: vocabulary, to: installedVocabulary)
+        try Data(p.weights.skeleton_sha256.utf8).write(
+            to: directory.appendingPathComponent("installed-ja.json"), options: .atomic)
+        try? fm.removeItem(at: weights)
+        return (recognizer, installedVocabulary)
+    }
+
     /// Removes every installed model and download from `directory`. A directory without an installed model or
     /// manifest is left untouched, so that a mistaken cache path never deletes unrelated folders such as Downloads.
     public static func remove(from directory: URL) throws {
         let fm = FileManager.default
-        let markers = ["installed.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc"]
+        let markers = [
+            "installed.json", "installed-ja.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "ja-wav2vec2.mlmodelc",
+        ]
         guard markers.contains(where: { fm.fileExists(atPath: directory.appendingPathComponent($0).path) }) else {
             return
         }
-        for name in ["installed.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "vocab.json", "downloads"] {
+        for name in [
+            "installed.json", "installed-ja.json", "htdemucs.mlmodelc", "wav2vec2.mlmodelc", "ja-wav2vec2.mlmodelc",
+            "vocab.json", "ja-vocab.json", "downloads",
+        ] {
             let url = directory.appendingPathComponent(name)
             if fm.fileExists(atPath: url.path) { try fm.removeItem(at: url) }
         }
