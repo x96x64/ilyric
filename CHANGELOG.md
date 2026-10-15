@@ -4,6 +4,10 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.3.0] - Unreleased
+
+Experimental Japanese synchronization and display, and fixes to focus and fill timing.
+
 ### Added
 
 - Experimental Japanese synchronization: `render` and `align` take `--language ja`. Kanji and kana are aligned character by character with the [ReazonSpeech](https://huggingface.co/reazon-research/japanese-wav2vec2-large-rs35kh) wav2vec 2.0 model, which is installed on first use (about 1.3 GB downloaded, 1.2 GB installed). Words with characters unknown to the model are aligned by readings from the system tokenizer, and Latin words within Japanese lines are interpolated. Every forced alignment is accepted, a warning states the known limitations, and the alignment report records the language and the readings used ([report](docs/reports/japanese-alignment.md)).
@@ -134,7 +138,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.0
 [1.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.2.0
 [1.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.1.0
 [1.0.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.0.1

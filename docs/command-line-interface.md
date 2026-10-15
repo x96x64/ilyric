@@ -2,7 +2,7 @@
 
 ## Status
 
-Current reference for iLyrics 1.2.0. `render`, `align`, `models`, and `doctor` are implemented, and the weightless model templates are distributed under `share/ilyrics/templates`. The command design was approved on October 11, 2026. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
+Current reference for iLyrics 1.3.0. `render`, `align`, `models`, and `doctor` are implemented, and the weightless model templates are distributed under `share/ilyrics/templates`. The command design was approved on October 11, 2026. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
 
 The October 11 design initially recorded template distribution as pending; completion was documented on October 13. See [Model Template Distribution](reports/model-template-distribution.md) and the [roadmap's Stage 1 completion record](roadmap-to-stable.md#stage-1-experimental-source-release) for that history.
 

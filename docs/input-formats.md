@@ -1,6 +1,6 @@
 # Lyrics Input Formats
 
-This reference describes the input accepted by iLyrics 1.2.0. The experimental specifications under `reports/` preserve earlier parser contracts and probe commands; use this document with the current `ilyrics` command.
+This reference describes the input accepted by iLyrics 1.3.0. The experimental specifications under `reports/` preserve earlier parser contracts and probe commands; use this document with the current `ilyrics` command.
 
 ## Format Selection and Language Support
 
