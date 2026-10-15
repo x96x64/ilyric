@@ -49,7 +49,9 @@ public func proposals(
     _ source: LyricSource, duration: Int, emissions: [[Double]], targets: TextTargets,
     spans: [[Int]]?, vocabulary: [String: Int], blank: Int = 0
 ) throws -> [LineAlignment] {
-    let alphabet = Dictionary(uniqueKeysWithValues: vocabulary.map { ($0.value, $0.key) })
+    // Special tokens such as <unk> are not text; greedy decoding skips them before the lexical comparison.
+    let alphabet = Dictionary(
+        uniqueKeysWithValues: vocabulary.compactMap { $0.key.count == 1 ? ($0.value, $0.key) : nil })
     let counts = Dictionary(source.lines.map { ($0.alignmentText, 1) }, uniquingKeysWith: +)
     let best = emissions.map { e -> Int in
         var index = 0
