@@ -4,7 +4,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
-## [1.3.0] - Unreleased
+## [1.3.0] - 2026-10-15
 
 Experimental Japanese synchronization and display, together with corrections to focus transitions, progressive fill, and the visibility of tall paragraphs. English remains the default alignment language; Japanese support has not undergone quantitative qualification, and other languages remain unsupported.
 
