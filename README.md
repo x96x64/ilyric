@@ -139,7 +139,7 @@ brew uninstall ilyrics       # or: npm uninstall -g ilyrics, pipx uninstall ilyr
 ilyrics doctor
 
 # 2. Render a video from a recording and plain lyrics
-ilyrics render "Paper Skies.m4a" paper-skies.txt -o paper-skies.mp4
+ilyrics render song.m4a lyrics.txt -o video.mp4
 ```
 
 iLyrics reports its progress on standard error, one line per stage. In a terminal, the active stage is redrawn in place, with a bar and a percentage where the amount of work is known:
@@ -156,7 +156,7 @@ When the command finishes:
 ==> [2/4] Separating vocals                                          done
 ==> [3/4] Aligning lyrics                                            done
 ==> [4/4] Rendering video                                            done
-==> Generated paper-skies.mp4 in 5 minutes 9 seconds
+==> Generated video.mp4 in 5 minutes 9 seconds
 ```
 
 In files, pipes, and CI logs, each finished stage is one plain line without a bar. Lyrics with supplied timing show the separation and alignment stages as `skip`. The finished video is a 1080 × 1920 H.264 file at 60 frames per second with AAC audio, ready for phones and social platforms.
