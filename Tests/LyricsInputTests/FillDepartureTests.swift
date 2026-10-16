@@ -152,16 +152,33 @@ struct FillDepartureTests {
                 + "<span begin=\"0.9995s\" end=\"1s\">B</span></p><p begin=\"1s\" end=\"2s\">C</p>")
         let deadline = Time(denominator - 1, denominator)
         let events = try LocalScene.fillEvents(lyrics.entries[0].segments, lead: Time(0), deadline: deadline)
-        let times = try events.map(interval)
-        #expect(times.allSatisfy { Time(0) <= $0.0 && $0.0 < $0.1 && $0.1 <= deadline })
-        #expect(times[0].1 == times[1].0)
-        // The larger denominator exceeds pre-existing Time subtraction in renderer initialization.
-        // Allocation is verified independently; that separate native reproducer remains recorded.
-        if denominator == 72_057_594_037_927_936 {
-            let c = try scene(lyrics, seconds: 2, presentation: .init(focusLead: Time(1, denominator)))
-                .renderer.screen.composition
-            #expect(c.evaluate(deadline).focus == 1)
+        let allocated = try events.map(interval)
+        #expect(allocated.allSatisfy { Time(0) <= $0.0 && $0.0 < $0.1 && $0.1 <= deadline })
+        #expect(allocated[0].1 == allocated[1].0)
+        let presentation = LocalPresentation(focusLead: Time(1, denominator), wordMotion: .measured)
+        let actual = try scene(lyrics, seconds: 2, presentation: presentation)
+        let fresh = try scene(lyrics, seconds: 2, presentation: presentation)
+        let times = [Time(0), Time(999, 1000), Time(1999, 2000), deadline, Time(1001, 1000), Time(2)]
+        let states = times.map(actual.renderer.screen.evaluate)
+        #expect(states[3].lyrics.focus == 1)
+        let pixels = try times.map { try actual.renderer.frame($0).dataProvider!.data! as Data }
+        for i in [5, 3, 0, 4, 1, 2, 3] {
+            #expect(fresh.renderer.screen.evaluate(times[i]) == states[i])
+            #expect(try fresh.renderer.frame(times[i]).dataProvider!.data! as Data == pixels[i])
         }
+        let input = actual.renderer.screen.composition.paragraphs[0].input
+        #expect(input.evaluate(deadline).spans.allSatisfy { $0.progress == 1 && $0.phase?.isFinite == true })
+        // Isolate completed fill from the measured lift, scale, and glow still settling at departure.
+        var motion = WordMotion.measured
+        motion.lift = 0
+        motion.emphasisScale = 1
+        motion.emphasisLift = 0
+        motion.emphasisGlow = 0
+        var isolated = ParagraphInput.suppliedTimed(
+            text: input.text, japanese: false, events: input.events, motion: motion)
+        isolated.fillDeadline = deadline
+        let layout = try ParagraphLayout(isolated)
+        #expect(try layout.raw(deadline) == layout.raw(Time(2)))
     }
     @Test func exactDeadlineCompletesInkWhenDoubleKnotsCoincide() throws {
         let lyrics = try ttml(

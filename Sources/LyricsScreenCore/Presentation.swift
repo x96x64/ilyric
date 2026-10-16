@@ -244,13 +244,13 @@ public struct ParagraphInput: Codable, Sendable {
             if let begin = e.begin, let end = e.end {
                 let a = Time(begin.numerator, begin.denominator)
                 let b = Time(end.numerator, end.denominator)
-                phase = (time - a).seconds / (b - a).seconds - 0.5
-                progress = time <= a ? 0 : time >= b ? 1 : (time - a).seconds / (b - a).seconds
+                phase = time.seconds(since: a) / b.seconds(since: a) - 0.5
+                progress = time <= a ? 0 : time >= b ? 1 : time.seconds(since: a) / b.seconds(since: a)
             } else {
                 progress = 0
                 phase = nil
             }
-            let age = e.verticalEvent.map { (time - Time($0.numerator, $0.denominator)).seconds }
+            let age = e.verticalEvent.map { time.seconds(since: Time($0.numerator, $0.denominator)) }
             let u = max(0, age ?? 0) / p.tau
             var displacement = p.amplitude * (1 + u) * exp(-u)
             var scale = 1.0
