@@ -59,6 +59,8 @@ def verify(packages):
         f.setparams((1, 2, rate, 0, 'NONE', 'not compressed'))
         f.writeframes(tone * 2)
     (root / 'lyrics.lrc').write_text('[00:00.100]Paper boats\n[00:01.000]Quiet water\n')
+    video_verifier = root / 'verify-video'
+    run(['swiftc', '-parse-as-library', Path(__file__).with_name('verify_video.swift'), '-o', video_verifier])
     baseline = None
     rows = []
     for channel, binpath in [('archive', prefix / 'bin'), ('npm', root / 'npm/bin'),
@@ -82,12 +84,17 @@ def verify(packages):
              '--jobs', '2', '--title', 'Paper Boats', '--artist', 'Original Fixture', '--report', report], env)
         details = json.loads(report.read_text())
         assert out.stat().st_size > 0
+        assert details['frames'] == 120
+        assert (details['export']['width'], details['export']['height']) == (1080, 1920)
+        decoded = json.loads(run([video_verifier, out]))
+        assert decoded['decodedFrames'] == 120
         digest = hashlib.sha256(binary.read_bytes()).hexdigest()
         if baseline is None:
             baseline = digest
         assert digest == baseline
         row = {'channel': channel, 'version': version, 'binarySHA256': digest,
-               'templatesResolved': True, 'renderPassed': True, 'report': details}
+               'templatesResolved': True, 'renderPassed': True, 'report': details,
+               'nativeDecodedVideo': decoded}
         if shutil.which('ffprobe'):
             probe = json.loads(run(['ffprobe', '-v', 'error', '-count_frames', '-show_streams',
                                     '-of', 'json', out]))
