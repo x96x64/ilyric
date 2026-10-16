@@ -6,6 +6,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ### Fixed
 
+- Inactive-tile and artwork-background raster evaluation uses a retained, serialized Core Image context with eager image creation to mitigate the captured overlapping blur path on hosted virtual GPUs. Blur parameters, image graphs, source timing, and output colour policy remain unchanged.
 - Scalar presentation durations avoid rational intermediate overflow during paragraph, focus, and inactive-line evaluation. The reported extreme package-API focus lead now supports scene initialization and sampled rendering without changing source timestamps, exact boundaries, external validation, or ordinary representable calculations.
 - Presentation fills finish by actual focus departure or the audio endpoint, including empty entries, instrumental gaps, explicit releases, and late or sub-millisecond spans. Ordered boundary compression and a tapered smoothing window prevent reversed span starts and visible fill after departure. Exact internal fractions retain their precision; source timing, focus events, unaffected intervals, and external timestamp validation are preserved.
 - Release distribution rejects prerelease tags, draft releases, and releases marked as prereleases before packaging or registry publication. Registry jobs recheck release state after environment approval.
