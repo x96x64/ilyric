@@ -175,78 +175,7 @@ public final class LocalScene {
                 ? [TimedSegment(start: 0, length: entry.text.utf16.count, begin: entry.time, end: end)] : entry.segments
             // Use actual departure, including release/gap events, and never extend fill past the audio.
             let deadline = departures[paragraphs.count]
-            var intervals = segments.map { segment -> (begin: Time, end: Time) in
-                let begin = max(Time(0), segment.begin - lead)
-                return (begin, max(begin + Time(1, 1000), segment.end - lead))
-            }
-            let originalIntervals = intervals
-            if let deadline, deadline > Time(0),
-                var first = intervals.firstIndex(where: { $0.end > deadline })
-            {
-                // Only a suffix that cannot fit is compressed. Include a preceding interval only when
-                // the fallback start would overlap it; all earlier intervals remain exactly unchanged.
-                var begin =
-                    intervals[first].begin < deadline
-                    ? intervals[first].begin : max(Time(0), deadline - Time(1, 1000))
-                while first > 0, intervals[first - 1].end > begin {
-                    first -= 1
-                    begin =
-                        intervals[first].begin < deadline
-                        ? intervals[first].begin : max(Time(0), deadline - Time(1, 1000))
-                }
-                let count = Int64(intervals.count - first)
-                let available = deadline - begin
-                func gcd(_ a: Int64, _ b: Int64) -> Int64 { b == 0 ? a : gcd(b, a % b) }
-                let divisor = gcd(available.numerator, count)
-                let denominator = available.denominator.multipliedReportingOverflow(by: count / divisor)
-                var boundaries: [Time]? = nil
-                if !denominator.overflow {
-                    let step = Time(available.numerator / divisor, denominator.partialValue)
-                    let common = gcd(begin.denominator, step.denominator)
-                    let scale = step.denominator / common
-                    let d = begin.denominator.multipliedReportingOverflow(by: scale)
-                    let base = begin.numerator.multipliedReportingOverflow(by: scale)
-                    let stride = step.numerator.multipliedReportingOverflow(by: begin.denominator / common)
-                    if !d.overflow && !base.overflow && !stride.overflow {
-                        var candidate = [begin]
-                        for offset in 1..<count {
-                            let advance = stride.partialValue.multipliedReportingOverflow(by: offset)
-                            let value = base.partialValue.addingReportingOverflow(advance.partialValue)
-                            if advance.overflow || value.overflow { break }
-                            candidate.append(Time(value.partialValue, d.partialValue))
-                        }
-                        if candidate.count == Int(count) { boundaries = candidate + [deadline] }
-                    }
-                }
-                if boundaries == nil {
-                    // Extreme package-API leads can make an equal split unrepresentable in Int64.
-                    // Retain existing interior starts when they provide an exact ordered allocation.
-                    let existing = [begin] + originalIntervals.dropFirst(first + 1).map(\.begin) + [deadline]
-                    guard zip(existing, existing.dropFirst()).allSatisfy({ $0 < $1 }) else {
-                        throw InputError.invalid(
-                            "Presentation boundary precision cannot represent ordered fill intervals")
-                    }
-                    boundaries = existing
-                }
-                let allocated = boundaries!
-                for index in first..<intervals.count {
-                    let offset = index - first
-                    intervals[index] = (allocated[offset], allocated[offset + 1])
-                }
-            }
-            let timed = segments.enumerated().map { index, segment -> AppearanceEvent in
-                let interval = intervals[index]
-                // Generated fractions retain their exact precision; external validation remains unchanged.
-                return AppearanceEvent(
-                    start: segment.start, length: segment.length,
-                    begin: interval.begin != originalIntervals[index].begin
-                        ? ParagraphTime(derived: interval.begin)
-                        : ParagraphTime(interval.begin.numerator, interval.begin.denominator),
-                    end: interval.end != originalIntervals[index].end
-                        ? ParagraphTime(derived: interval.end)
-                        : ParagraphTime(interval.end.numerator, interval.end.denominator),
-                    verticalEvent: nil)
-            }
+            let timed = try Self.fillEvents(segments, lead: lead, deadline: deadline)
             let timedInput =
                 timed.isEmpty
                 ? nil
@@ -326,4 +255,101 @@ public final class LocalScene {
         renderer.secondary = secondary
         renderer.credits = credits.map { "Written By: " + $0 }
     }
+    /// Ordered presentation intervals, isolated from raster initialization and its floating-point state.
+    package static func fillEvents(_ segments: [TimedSegment], lead: Time, deadline: Time?) throws -> [AppearanceEvent]
+    {
+        var intervals = segments.map { segment -> (begin: Time, end: Time) in
+            let begin = max(Time(0), segment.begin - lead)
+            return (begin, max(begin + Time(1, 1000), segment.end - lead))
+        }
+        // A replacement must not bypass validation of the supplied interval's original start.
+        for interval in intervals {
+            _ = try ParagraphTime(interval.begin.numerator, interval.begin.denominator).validated()
+        }
+        let originalIntervals = intervals
+        if let deadline, deadline > Time(0),
+            var first = intervals.firstIndex(where: { $0.end > deadline })
+        {
+            // Only a suffix that cannot fit is compressed. Include a preceding interval only when
+            // the fallback start would overlap it; all earlier intervals remain exactly unchanged.
+            func gcd(_ a: Int64, _ b: Int64) -> Int64 { b == 0 ? a : gcd(b, a % b) }
+            func difference(_ a: Time, _ b: Time) -> Time? {
+                let common = gcd(a.denominator, b.denominator)
+                let leftScale = b.denominator / common
+                let d = a.denominator.multipliedReportingOverflow(by: leftScale)
+                let left = a.numerator.multipliedReportingOverflow(by: leftScale)
+                let right = b.numerator.multipliedReportingOverflow(by: a.denominator / common)
+                guard !d.overflow && !left.overflow && !right.overflow else { return nil }
+                let n = left.partialValue.subtractingReportingOverflow(right.partialValue)
+                guard !n.overflow else { return nil }
+                return Time(n.partialValue, d.partialValue)
+            }
+            func fallbackStart() throws -> Time {
+                if deadline <= Time(1, 1000) { return Time(0) }
+                guard let value = difference(deadline, Time(1, 1000)) else {
+                    throw InputError.invalid("Presentation boundary precision cannot represent a fill start")
+                }
+                return value
+            }
+            var begin = intervals[first].begin < deadline ? intervals[first].begin : try fallbackStart()
+            while first > 0, intervals[first - 1].end > begin {
+                first -= 1
+                begin = intervals[first].begin < deadline ? intervals[first].begin : try fallbackStart()
+            }
+            let count = Int64(intervals.count - first)
+            let available = difference(deadline, begin)
+            var boundaries: [Time]? = nil
+            if let available {
+                let divisor = gcd(available.numerator, count)
+                let denominator = available.denominator.multipliedReportingOverflow(by: count / divisor)
+                if !denominator.overflow {
+                    let step = Time(available.numerator / divisor, denominator.partialValue)
+                    let common = gcd(begin.denominator, step.denominator)
+                    let scale = step.denominator / common
+                    let d = begin.denominator.multipliedReportingOverflow(by: scale)
+                    let base = begin.numerator.multipliedReportingOverflow(by: scale)
+                    let stride = step.numerator.multipliedReportingOverflow(by: begin.denominator / common)
+                    if !d.overflow && !base.overflow && !stride.overflow {
+                        var candidate = [begin]
+                        for offset in 1..<count {
+                            let advance = stride.partialValue.multipliedReportingOverflow(by: offset)
+                            let value = base.partialValue.addingReportingOverflow(advance.partialValue)
+                            if advance.overflow || value.overflow { break }
+                            candidate.append(Time(value.partialValue, d.partialValue))
+                        }
+                        if candidate.count == Int(count) { boundaries = candidate + [deadline] }
+                    }
+                }
+            }
+            if boundaries == nil {
+                // Extreme package-API leads can make an equal split unrepresentable in Int64.
+                // Retain existing interior starts when they provide an exact ordered allocation.
+                let existing = [begin] + originalIntervals.dropFirst(first + 1).map(\.begin) + [deadline]
+                guard zip(existing, existing.dropFirst()).allSatisfy({ $0 < $1 }) else {
+                    throw InputError.invalid(
+                        "Presentation boundary precision cannot represent ordered fill intervals")
+                }
+                boundaries = existing
+            }
+            let allocated = boundaries!
+            for index in first..<intervals.count {
+                let offset = index - first
+                intervals[index] = (allocated[offset], allocated[offset + 1])
+            }
+        }
+        return segments.enumerated().map { index, segment -> AppearanceEvent in
+            let interval = intervals[index]
+            // Generated fractions retain their exact precision; external validation remains unchanged.
+            return AppearanceEvent(
+                start: segment.start, length: segment.length,
+                begin: interval.begin != originalIntervals[index].begin
+                    ? ParagraphTime(derived: interval.begin)
+                    : ParagraphTime(interval.begin.numerator, interval.begin.denominator),
+                end: interval.end != originalIntervals[index].end
+                    ? ParagraphTime(derived: interval.end)
+                    : ParagraphTime(interval.end.numerator, interval.end.denominator),
+                verticalEvent: nil)
+        }
+    }
+
 }

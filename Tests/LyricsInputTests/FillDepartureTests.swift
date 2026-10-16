@@ -73,17 +73,17 @@ struct FillDepartureTests {
         let (a, b) = try interval(c.paragraphs[0].input.events[0])
         #expect(a == Time(1999, 2000) && b == Time(1))
     }
-    @Test(arguments: ["5.1s", "0.000001s"]) func lateSegmentsKeepSourceOrderAndNormalPrefix(next: String) throws {
-        let small = next == "0.000001s"
+    @Test(arguments: ["5.1s", "0.000002s"]) func lateSegmentsKeepSourceOrderAndNormalPrefix(next: String) throws {
+        let small = next == "0.000002s"
         let body =
             small
-            ? "<span begin=\"0s\" end=\"0.0004ms\">A</span><span begin=\"0.0004ms\" end=\"0.000001s\">B</span>"
+            ? "<span begin=\"0s\" end=\"0.000001s\">A</span><span begin=\"0.000001s\" end=\"0.000002s\">B</span>"
             : "<span begin=\"1s\" end=\"2s\">X</span><span begin=\"4.1995s\" end=\"4.2002s\">A</span><span begin=\"4.2002s\" end=\"4.3s\">B</span>"
         let lyrics = try ttml("<p begin=\"0s\" end=\"\(next)\">\(body)</p><p begin=\"\(next)\" end=\"6s\">C</p>")
         let c = try scene(lyrics, seconds: 6, presentation: .init(focusLead: Time(9, 10)))
             .renderer.screen.composition
         let events = c.paragraphs[0].input.events
-        let deadline = small ? Time(1, 2_000_000) : Time(21, 5)
+        let deadline = small ? Time(1, 1_000_000) : Time(21, 5)
         let times = try events.map(interval)
         #expect(times.allSatisfy { Time(0) <= $0.0 && $0.0 < $0.1 && $0.1 <= deadline })
         #expect(zip(times, times.dropFirst()).allSatisfy { $0.1 <= $1.0 })
@@ -134,26 +134,50 @@ struct FillDepartureTests {
             text: "A", japanese: false, events: input.events, motion: .measured)
         #expect(try ParagraphLayout(input).raw(Time(11, 100)) == ParagraphLayout(reference).raw(Time(11, 100)))
     }
-    @Test func unchangedSourceBeginRetainsExternalBounds() throws {
+    @Test(arguments: [false, true]) func sourceBeginsRetainExternalBoundsWhenMoved(moved: Bool) throws {
+        let spans =
+            moved
+            ? "<span begin=\"0s\" end=\"0.000001ms\">A</span><span begin=\"0.000001ms\" end=\"0.000001s\">B</span>"
+            : "<span begin=\"0.000001ms\" end=\"0.000001s\">A</span>"
         let lyrics = try ttml(
-            "<p begin=\"0s\" end=\"0.000001s\"><span begin=\"0.000001ms\" end=\"0.000001s\">A</span></p>"
-                + "<p begin=\"0.000001s\" end=\"1s\">B</p>")
+            "<p begin=\"0s\" end=\"0.000001s\">\(spans)</p><p begin=\"0.000001s\" end=\"1s\">C</p>")
         #expect(throws: ScreenError.self) {
             try scene(lyrics, seconds: 1, presentation: .init(focusLead: Time(9, 10)))
         }
     }
-    @Test func extremeLeadDoesNotOverflowBoundaryAllocation() throws {
+    @Test(arguments: [Int64(72_057_594_037_927_936), 144_115_188_075_855_872])
+    func extremeLeadDoesNotOverflowBoundaryAllocation(denominator: Int64) throws {
         let lyrics = try ttml(
             "<p begin=\"0s\" end=\"1s\"><span begin=\"0.999s\" end=\"0.9995s\">A</span>"
                 + "<span begin=\"0.9995s\" end=\"1s\">B</span></p><p begin=\"1s\" end=\"2s\">C</p>")
-        let denominator: Int64 = 72_057_594_037_927_936
-        let c = try scene(lyrics, seconds: 2, presentation: .init(focusLead: Time(1, denominator)))
-            .renderer.screen.composition
-        let times = try c.paragraphs[0].input.events.map(interval)
         let deadline = Time(denominator - 1, denominator)
+        let events = try LocalScene.fillEvents(lyrics.entries[0].segments, lead: Time(0), deadline: deadline)
+        let times = try events.map(interval)
         #expect(times.allSatisfy { Time(0) <= $0.0 && $0.0 < $0.1 && $0.1 <= deadline })
         #expect(times[0].1 == times[1].0)
-        #expect(c.evaluate(deadline).focus == 1)
+        // The larger denominator exceeds pre-existing Time subtraction in renderer initialization.
+        // Allocation is verified independently; that separate native reproducer remains recorded.
+        if denominator == 72_057_594_037_927_936 {
+            let c = try scene(lyrics, seconds: 2, presentation: .init(focusLead: Time(1, denominator)))
+                .renderer.screen.composition
+            #expect(c.evaluate(deadline).focus == 1)
+        }
+    }
+    @Test func exactDeadlineCompletesInkWhenDoubleKnotsCoincide() throws {
+        let lyrics = try ttml(
+            "<p begin=\"0s\" end=\"1s\"><span begin=\"0.5s\" end=\"0.5005s\">A</span>"
+                + "<span begin=\"0.5005s\" end=\"1s\">B</span></p><p begin=\"1s\" end=\"2s\">C</p>")
+        var motion = WordMotion.measured
+        motion.lift = 0
+        let denominator: Int64 = 72_057_594_037_927_936
+        let lead = Time(1, 2) - Time(1, denominator)
+        let c = try scene(lyrics, seconds: 2, presentation: .init(focusLead: lead, wordMotion: motion))
+            .renderer.screen.composition
+        let deadline = Time(1, 2) + Time(1, denominator)
+        let input = c.paragraphs[0].input
+        #expect(input.evaluate(deadline).spans.allSatisfy { $0.progress == 1 })
+        let layout = try ParagraphLayout(input)
+        #expect(try layout.raw(deadline) == layout.raw(deadline + Time(1, 8)))
     }
     @Test func ordinaryMotionPixelsRemainUnchanged() throws {
         let lyrics = try ttml(

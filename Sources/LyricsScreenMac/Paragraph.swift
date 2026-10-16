@@ -34,8 +34,11 @@ public final class ParagraphLayout {
     private var frontKnots: [(time: Double, position: Double)] = []
     private var eventStart: [Double] = [], eventAdvance: [Double] = []
     /// Average of the piecewise-linear front over [t - w/2, t + w/2], evaluated exactly from the knots.
-    private func smoothedFront(_ t: Double, window requestedWindow: Double) -> Double {
+    private func smoothedFront(_ time: Time, window requestedWindow: Double) -> Double {
         let k = frontKnots
+        // Exact timeline endpoints must win even when distinct rational knots round to one Double.
+        if let deadline = input.fillDeadline, time >= deadline { return k.last!.position }
+        let t = time.seconds
         // Taper only the portion of the centered window that would outlive actual focus departure.
         // A completed ordinary span has the same constant front throughout this smaller window.
         let w =
@@ -308,7 +311,7 @@ public final class ParagraphLayout {
                     eventAdvance[e] > 0
                 {
                     // A smoothed paragraph front replaces abrupt per-word fills; endpoints remain exact.
-                    let front = smoothedFront(state.time.seconds, window: motion.smoothing)
+                    let front = smoothedFront(state.time, window: motion.smoothing)
                     moving = SpanPresentation(
                         start: span.start, length: span.length,
                         progress: min(1, max(0, (front - eventStart[e]) / eventAdvance[e])),
