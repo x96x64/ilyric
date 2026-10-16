@@ -1,10 +1,12 @@
 # Lyrics Input Formats
 
-This reference describes the input accepted by iLyrics 1.3.0. The experimental specifications under `reports/` preserve earlier parser contracts and probe commands; use this document with the current `ilyrics` command.
+This reference describes the input accepted by released iLyrics 1.3.1 and the Unreleased alignment-filename warning described below. The experimental specifications under `reports/` preserve earlier parser contracts and probe commands; use this document with the current `ilyrics` command.
 
 ## Format Selection and Language Support
 
 `render` selects TTML for `.ttml` and LRC for `.lrc`, case-insensitively. An LRC file containing angle-bracket timestamps is parsed as Enhanced LRC. Use `.txt` for plain lyrics, which are aligned automatically. `align` takes plain lyrics and writes TTML; it is not a timed-format converter.
+
+The Unreleased filename guidance adds one nonfatal warning when `align` is given an output name without a `.ttml` extension, including an extensionless name. `.TTML` is accepted without this warning. The content remains TTML and the filename is preserved; other names are not rejected. Use `.ttml` so that `render` selects TTML. See [Alignment Output Filenames](command-line-interface.md#alignment-output-filenames-unreleased) for warning order and console modes.
 
 English automatic synchronization is supported. Japanese plain lyrics are aligned experimentally with `--language ja`; write them as they are printed, with kanji and kana, and without readings in parentheses. Words containing characters that the Japanese model does not know are aligned by readings from the system tokenizer, which the report records. Latin words within Japanese lines are timed by interpolation. Japanese display, whether aligned or supplied, has not been compared with the native screen. Other languages are not supported, and experimental parsing or rendering capability does not establish support. See [Support](../SUPPORT.md).
 
@@ -26,7 +28,7 @@ Normalization splits sections into balanced groups of at most four lines and few
 
 Each timestamp starts a paragraph; an empty timestamped entry starts a gap. A paragraph lasts until the next event, or the audio endpoint for the last entry. Timestamps use two or more minute digits, two second digits below 60, and optionally one to three decimal places. Repeated timestamps on one entry repeat that text. Out-of-order events are sorted; conflicting text at the same effective time is rejected.
 
-One `[offset:N]` tag shifts all events by the signed integer number of milliseconds, within ±600,000 ms. Effective times must remain within the audio. The metadata tags `ar`, `ti`, `al`, `by`, `re`, and `ve` are accepted and ignored; the header comes from audio metadata or CLI options. Other metadata tags are rejected. A line beginning with `|` continues the preceding paragraph on a new displayed line; this is an iLyrics extension.
+One `[offset:N]` tag shifts all events by the signed integer number of milliseconds, within ±600,000 ms: effective time = raw time + signed offset. For example, `[offset:500]` moves `[00:03.000]` to 3.500 seconds (later), while `[offset:-500]` moves it to 2.500 seconds (earlier). Effective times must remain within the audio. The metadata tags `ar`, `ti`, `al`, `by`, `re`, and `ve` are accepted and ignored; the header comes from audio metadata or CLI options. Other metadata tags are rejected. A line beginning with `|` continues the preceding paragraph on a new displayed line; this is an iLyrics extension.
 
 ## Enhanced LRC
 

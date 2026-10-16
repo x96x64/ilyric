@@ -11,13 +11,14 @@ enum CLI {
           ilyrics align  AUDIO LYRICS -o LYRICS.ttml [options]
           ilyrics models install | status | remove
           ilyrics doctor
+          ilyrics help [COMMAND]
           ilyrics --help | --version
 
         Run 'ilyrics COMMAND --help' for the options of a command.
         """
 }
 
-let arguments = Array(CommandLine.arguments.dropFirst())
+var arguments = Array(CommandLine.arguments.dropFirst())
 // Ctrl-C or termination removes partial outputs and ends the progress line before exiting with the usual status.
 let interruptions = [SIGINT, SIGTERM, SIGHUP].map { number -> DispatchSourceSignal in
     signal(number, SIG_IGN)
@@ -35,6 +36,16 @@ func fail(_ message: String, status: Int32) -> Never {
     exit(status)
 }
 do {
+    if arguments.first == "help", arguments.count > 1 {
+        guard arguments.count == 2 else {
+            throw UsageError(message: "help takes one command; use 'ilyrics help COMMAND'")
+        }
+        guard ["render", "align", "models", "doctor"].contains(arguments[1]) else {
+            throw UsageError(
+                message: "unknown help target '\(arguments[1])'; use render, align, models, or doctor")
+        }
+        arguments = [arguments[1], "--help"]
+    }
     switch arguments.first {
     case nil, "-h", "--help", "help": print(CLI.usage)
     case "-V", "--version": print("ilyrics \(CLI.version)")
