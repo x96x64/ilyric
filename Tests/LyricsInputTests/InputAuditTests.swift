@@ -88,4 +88,28 @@ struct InputAuditTests {
             }
         }
     }
+    @Test func artworkRejectsTruncatedPNGChunks() throws {
+        let context = try #require(
+            CGContext(
+                data: nil, width: 32, height: 32, bitsPerComponent: 8, bytesPerRow: 128,
+                space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.setFillColor(CGColor(red: 0.2, green: 0.4, blue: 0.7, alpha: 0.5))
+        context.fill(CGRect(x: 0, y: 0, width: 32, height: 32))
+        let image = try #require(context.makeImage())
+        let encoded = NSMutableData()
+        let destination = try #require(
+            CGImageDestinationCreateWithData(encoded, UTType.png.identifier as CFString, 1, nil))
+        CGImageDestinationAddImage(destination, image, nil)
+        try #require(CGImageDestinationFinalize(destination))
+        let valid = encoded as Data
+        #expect(try LocalArtwork.decode(data: valid).info.width == 32)
+        // Preserve the valid signature and IHDR; truncate both chunk data and the final IEND.
+        for length in [33, valid.count / 2, valid.count - 12, valid.count - 1] {
+            #expect(throws: (any Error).self) { _ = try LocalArtwork.decode(data: Data(valid.prefix(length))) }
+        }
+        var invalidLength = valid
+        invalidLength.replaceSubrange(8..<12, with: [0xff, 0xff, 0xff, 0xff])
+        #expect(throws: (any Error).self) { _ = try LocalArtwork.decode(data: invalidLength) }
+    }
+
 }
