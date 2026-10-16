@@ -48,7 +48,16 @@ jobs:
         run: swift test --disable-xctest --filter AlignmentMacTests
       - name: Test Lyrics slice
         timeout-minutes: 40
-        run: swift test --disable-xctest --filter LyricsScreenTests
+        run: swift test --disable-xctest --filter LyricsScreenTests --skip CoreImageRasterTests
+      - name: Test Core Image raster isolation
+        if: success() || failure()
+        timeout-minutes: 10
+        # The legacy-context control runs alone; the stress test itself launches 32 concurrent requests.
+        # Repeat successful runs for the intermittent hosted failure; the first failure stops the step.
+        run: |
+          for repetition in 1 2 3; do
+            swift test --disable-xctest --no-parallel --filter LyricsScreenTests.CoreImageRasterTests
+          done
       - name: Test Lyrics input InputTests
         if: success() || failure()
         timeout-minutes: 10
@@ -126,6 +135,15 @@ jobs:
             done
           fi
           exit "$status"
+
+      - name: Stress interrupted render cleanup
+        if: success() || failure()
+        timeout-minutes: 10
+        # Exercise the crashing CLI path repeatedly; do not retry or ignore a failed run.
+        run: |
+          for repetition in 1 2 3; do
+            swift test --disable-xctest --no-parallel --filter LyricsInputTests.CommandSafetyTests/interruptedRenderLeavesNoPartialFiles
+          done
 
       - name: Report remaining Swift and CLI crashes
         if: failure()

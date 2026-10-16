@@ -4,7 +4,7 @@ import CoreImage
 import LyricsScreenCore
 import TimelineCore
 
-/// Renders `ArtworkBackground` at reduced resolution with software Core Image.
+/// Renders `ArtworkBackground` at reduced resolution with a shared Core Image raster context.
 /// Each frame depends only on output time; no frame history or wall clock is used.
 public final class ArtworkBackdrop {
     /// The model is low-frequency after blur, so evaluation at one-eighth scale loses no visible detail.
@@ -19,10 +19,6 @@ public final class ArtworkBackdrop {
     let saturation: Double
     /// Spread adaptation factor and the artwork's mean colour it scales about, in encoded sRGB units.
     let spread: Double, meanColour: [Double]
-    private let context = CIContext(options: [
-        .useSoftwareRenderer: true, .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
-        .outputColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
-    ])
 
     /// With `abstract`, the layers draw a colour field derived from the artwork instead of the artwork itself. The
     /// calibration against the reference captures preferred the artwork itself (docs/reports/background-colour-field.md),
@@ -215,7 +211,6 @@ public final class ArtworkBackdrop {
             ])!.outputImage!.cropped(to: extent)
         let shaded = saturated.applyingFilter("CIMultiplyCompositing", parameters: [kCIInputBackgroundImageKey: ramp])
             .applyingFilter("CIColorClamp").cropped(to: extent)
-        return context.createCGImage(
-            shaded, from: extent, format: .RGBA8, colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!)!
+        return CoreImageRaster.image(shaded, from: extent)
     }
 }

@@ -29,15 +29,10 @@ final class InactiveTiles {
         y1 = min(h, max(y0 + 1, y1 + 40))
         let cropped = source.cropping(to: CGRect(x: x0, y: y0, width: x1 - x0, height: y1 - y0))!
         bounds = CGRect(x: x0, y: h - y1, width: x1 - x0, height: y1 - y0)
-        let context = CIContext(options: [
-            .useSoftwareRenderer: true, .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
-        ])
         let image = CIImage(cgImage: cropped)
         images = (0...8).map { radius in
             if radius == 0 { return cropped }
-            return context.createCGImage(
-                image.applyingGaussianBlur(sigma: Double(radius)), from: image.extent, format: .RGBA8,
-                colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!)!
+            return CoreImageRaster.image(image.applyingGaussianBlur(sigma: Double(radius)), from: image.extent)
         }
     }
     func draw(_ blur: Double, opacity: Double, translation: Double, into c: CGContext) {
