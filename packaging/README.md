@@ -16,7 +16,7 @@ ilyrics render song.m4a lyrics.txt -o video.mp4
   <img src="https://raw.githubusercontent.com/x96x64/ilyrics/main/docs/media/demo.png" alt="Three full-width frames of a rendered Lyrics video: the first line filling while the playback controls are visible, the next line filling word by word, and the instrumental-gap indicator" width="720">
 </p>
 
-> **Note:** Automatic synchronization supports English and may need manual correction; Japanese synchronization with `--language ja` is experimental. The historical evaluation of commit `e0ab92a` met every pooled criterion on 80 unseen recordings but did not meet the complete locked criteria because three recordings fell below the per-recording threshold. This is not a fresh evaluation of v1.3.0. The visual preset was measured against unseen screen recordings, with known differences; see the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
+> **Note:** Automatic synchronization supports English and may need manual correction; Japanese synchronization with `--language ja` is experimental. The historical evaluation of commit `e0ab92a` met every pooled criterion on 80 unseen recordings but did not meet the complete locked criteria because three recordings fell below the per-recording threshold. This is not a fresh evaluation of subsequent releases. The visual preset was measured against unseen screen recordings, with known differences; see the [full README](https://github.com/x96x64/ilyrics#limitations). iLyrics is not affiliated with, endorsed by, or sponsored by Apple.
 
 ## Features
 
