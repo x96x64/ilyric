@@ -6,6 +6,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ### Fixed
 
+- Presentation fills finish by actual focus departure or the audio endpoint, including empty entries, instrumental gaps, explicit releases, and late or sub-millisecond spans. Ordered boundary compression and a tapered smoothing window prevent reversed span starts and visible fill after departure. Exact internal fractions retain their precision; source timing, focus events, unaffected intervals, and external timestamp validation are preserved.
 - Release distribution rejects prerelease tags, draft releases, and releases marked as prereleases before packaging or registry publication. Registry jobs recheck release state after environment approval.
 - Video, aligned-lyrics, and JSON-report output commits recheck their destinations and preserve files created during processing unless `--force` permits replacement. Directories and input files remain protected, and failed text writes remove their temporary files.
 - Model downloads preserve existing cached bytes until a replacement has passed SHA-256 verification. Installation prepares a complete replacement separately and restores the previous files if publication fails.

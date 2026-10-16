@@ -34,8 +34,13 @@ public final class ParagraphLayout {
     private var frontKnots: [(time: Double, position: Double)] = []
     private var eventStart: [Double] = [], eventAdvance: [Double] = []
     /// Average of the piecewise-linear front over [t - w/2, t + w/2], evaluated exactly from the knots.
-    private func smoothedFront(_ t: Double, window w: Double) -> Double {
+    private func smoothedFront(_ t: Double, window requestedWindow: Double) -> Double {
         let k = frontKnots
+        // Taper only the portion of the centered window that would outlive actual focus departure.
+        // A completed ordinary span has the same constant front throughout this smaller window.
+        let w =
+            input.fillDeadline.map { min(requestedWindow, max(0, 2 * ($0.seconds - t))) }
+            ?? requestedWindow
         func value(_ x: Double) -> Double {
             if x <= k[0].time { return k[0].position }
             if x >= k[k.count - 1].time { return k[k.count - 1].position }

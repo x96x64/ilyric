@@ -106,22 +106,24 @@ public final class LocalScene {
         self.artwork = artwork
         self.presentation = presentation
         schedule = try lyrics.validate(audioSamples: audio.sampleCount)
-        var paragraphs: [CompositionParagraph] = []
+        // Compile the existing focus schedule before deriving any presentation-only fill boundaries.
+        // Empty entries, explicit releases, gaps, and simultaneous event order retain their original rules.
         var events = [FocusEvent(Time(0), order: 0, paragraph: -1)]
-        var position = 0.0
-        var gaps: [CompositionGap] = []
+        var gapStarts: [Int: Time] = [:]
+        var entryEnds: [Time] = []
+        var previousFocus = Time(0)
+        var priorOnset: Time?
         var lastEnd = Time(0)
-        var secondary: [Int: SecondaryLine] = [:]
+        var paragraphIndex = 0
         let gapOrder = 3 * lyrics.entries.count + 2
         for (i, entry) in lyrics.entries.enumerated() {
-            // A gap occupies its own layout slot; its focus event follows any simultaneous hold event.
             if let minimum = presentation.minimumGap, !entry.text.isEmpty, entry.time - lastEnd >= minimum {
-                events.append(.init(lastEnd, order: gapOrder + gaps.count, gap: gaps.count))
-                gaps.append(.init(position: position, begin: lastEnd, end: entry.time))
-                position += GapIndicator.slotHeight
+                events.append(.init(lastEnd, order: gapOrder + gapStarts.count, gap: gapStarts.count))
+                gapStarts[i] = lastEnd
             }
             let end =
                 entry.intervalEnd ?? (i + 1 < lyrics.entries.count ? lyrics.entries[i + 1].time : schedule.audioEnd)
+            entryEnds.append(end)
             if !presentation.holdsFinishedLine && entry.intervalEnd != nil
                 && (i + 1 == lyrics.entries.count || end < lyrics.entries[i + 1].time - presentation.focusLead)
             {
@@ -131,6 +133,37 @@ public final class LocalScene {
                 events.append(.init(entry.time, order: i + 1, paragraph: -1))
                 continue
             }
+            var lead = presentation.focusLead
+            if let priorOnset, priorOnset < entry.time {
+                let interval = entry.time - priorOnset
+                let half = Time(interval.numerator, interval.denominator * 2)
+                if half < lead { lead = half }
+            }
+            let led = entry.time - lead
+            let focus = led > previousFocus ? led : max(previousFocus, Time(0))
+            events.append(.init(focus, order: i + 1, paragraph: paragraphIndex))
+            previousFocus = focus
+            priorOnset = entry.time
+            paragraphIndex += 1
+            lastEnd = end
+        }
+        let ordered = events.sorted { $0.time == $1.time ? $0.order < $1.order : $0.time < $1.time }
+        var departures: [Int: Time] = [:]
+        for (i, event) in ordered.enumerated() where event.paragraph >= 0 {
+            let next = i + 1 < ordered.count ? ordered[i + 1].time : schedule.audioEnd
+            departures[event.paragraph] = min(next, schedule.audioEnd)
+        }
+        var paragraphs: [CompositionParagraph] = []
+        var position = 0.0
+        var gaps: [CompositionGap] = []
+        var secondary: [Int: SecondaryLine] = [:]
+        for (i, entry) in lyrics.entries.enumerated() {
+            if let begin = gapStarts[i] {
+                gaps.append(.init(position: position, begin: begin, end: entry.time))
+                position += GapIndicator.slotHeight
+            }
+            let end = entryEnds[i]
+            if entry.text.isEmpty { continue }
             let japanese = entry.text.unicodeScalars.contains {
                 (0x3040...0x30ff).contains($0.value) || (0x3400...0x9fff).contains($0.value)
                     || (0xff66...0xff9d).contains($0.value)
@@ -140,23 +173,79 @@ public final class LocalScene {
             let segments =
                 entry.segments.isEmpty
                 ? [TimedSegment(start: 0, length: entry.text.utf16.count, begin: entry.time, end: end)] : entry.segments
-            // Fill completes before focus moves to the next line, so that a line is never seen filling while it
-            // scrolls away; the next focus time uses the same lead limit as the focus events below.
-            var deadline: Time? = nil
-            if i + 1 < lyrics.entries.count, entry.time < lyrics.entries[i + 1].time {
-                let next = lyrics.entries[i + 1].time
-                let interval = next - entry.time
-                let half = Time(interval.numerator, interval.denominator * 2)
-                deadline = next - (half < presentation.focusLead ? half : presentation.focusLead)
+            // Use actual departure, including release/gap events, and never extend fill past the audio.
+            let deadline = departures[paragraphs.count]
+            var intervals = segments.map { segment -> (begin: Time, end: Time) in
+                let begin = max(Time(0), segment.begin - lead)
+                return (begin, max(begin + Time(1, 1000), segment.end - lead))
             }
-            let timed = segments.map { s -> AppearanceEvent in
-                let begin = max(Time(0), s.begin - lead)
-                var stop = s.end - lead
-                if let deadline, deadline < stop { stop = deadline }
-                let end = max(begin + Time(1, 1000), stop)
+            let originalIntervals = intervals
+            if let deadline, deadline > Time(0),
+                var first = intervals.firstIndex(where: { $0.end > deadline })
+            {
+                // Only a suffix that cannot fit is compressed. Include a preceding interval only when
+                // the fallback start would overlap it; all earlier intervals remain exactly unchanged.
+                var begin =
+                    intervals[first].begin < deadline
+                    ? intervals[first].begin : max(Time(0), deadline - Time(1, 1000))
+                while first > 0, intervals[first - 1].end > begin {
+                    first -= 1
+                    begin =
+                        intervals[first].begin < deadline
+                        ? intervals[first].begin : max(Time(0), deadline - Time(1, 1000))
+                }
+                let count = Int64(intervals.count - first)
+                let available = deadline - begin
+                func gcd(_ a: Int64, _ b: Int64) -> Int64 { b == 0 ? a : gcd(b, a % b) }
+                let divisor = gcd(available.numerator, count)
+                let denominator = available.denominator.multipliedReportingOverflow(by: count / divisor)
+                var boundaries: [Time]? = nil
+                if !denominator.overflow {
+                    let step = Time(available.numerator / divisor, denominator.partialValue)
+                    let common = gcd(begin.denominator, step.denominator)
+                    let scale = step.denominator / common
+                    let d = begin.denominator.multipliedReportingOverflow(by: scale)
+                    let base = begin.numerator.multipliedReportingOverflow(by: scale)
+                    let stride = step.numerator.multipliedReportingOverflow(by: begin.denominator / common)
+                    if !d.overflow && !base.overflow && !stride.overflow {
+                        var candidate = [begin]
+                        for offset in 1..<count {
+                            let advance = stride.partialValue.multipliedReportingOverflow(by: offset)
+                            let value = base.partialValue.addingReportingOverflow(advance.partialValue)
+                            if advance.overflow || value.overflow { break }
+                            candidate.append(Time(value.partialValue, d.partialValue))
+                        }
+                        if candidate.count == Int(count) { boundaries = candidate + [deadline] }
+                    }
+                }
+                if boundaries == nil {
+                    // Extreme package-API leads can make an equal split unrepresentable in Int64.
+                    // Retain existing interior starts when they provide an exact ordered allocation.
+                    let existing = [begin] + originalIntervals.dropFirst(first + 1).map(\.begin) + [deadline]
+                    guard zip(existing, existing.dropFirst()).allSatisfy({ $0 < $1 }) else {
+                        throw InputError.invalid(
+                            "Presentation boundary precision cannot represent ordered fill intervals")
+                    }
+                    boundaries = existing
+                }
+                let allocated = boundaries!
+                for index in first..<intervals.count {
+                    let offset = index - first
+                    intervals[index] = (allocated[offset], allocated[offset + 1])
+                }
+            }
+            let timed = segments.enumerated().map { index, segment -> AppearanceEvent in
+                let interval = intervals[index]
+                // Generated fractions retain their exact precision; external validation remains unchanged.
                 return AppearanceEvent(
-                    start: s.start, length: s.length, begin: ParagraphTime(begin.numerator, begin.denominator),
-                    end: ParagraphTime(end.numerator, end.denominator), verticalEvent: nil)
+                    start: segment.start, length: segment.length,
+                    begin: interval.begin != originalIntervals[index].begin
+                        ? ParagraphTime(derived: interval.begin)
+                        : ParagraphTime(interval.begin.numerator, interval.begin.denominator),
+                    end: interval.end != originalIntervals[index].end
+                        ? ParagraphTime(derived: interval.end)
+                        : ParagraphTime(interval.end.numerator, interval.end.denominator),
+                    verticalEvent: nil)
             }
             let timedInput =
                 timed.isEmpty
@@ -170,6 +259,9 @@ public final class LocalScene {
                 ? timedInput! : ParagraphInput.supplied(text: entry.text, japanese: japanese)
             if entry.secondVoice { input.rightAligned = true }
             if presentation.canvas != .native { input = input.adapted(to: presentation.canvas) }
+            if highlighting == .enabled, timedInput != nil, let deadline, deadline > Time(0) {
+                input.fillDeadline = deadline
+            }
             let layout: ParagraphLayout
             do { layout = try ParagraphLayout(input) } catch ScreenError.invalid(let reason) {
                 guard reason == Self.wrapLimit else { throw ScreenError.invalid(reason) }
@@ -180,18 +272,6 @@ public final class LocalScene {
                             "the lyric line at %d:%05.2f wraps to more than eight rows on screen; split it into shorter lines",
                         Int(seconds) / 60, seconds.truncatingRemainder(dividingBy: 60)))
             }
-            // Lead never moves focus before the previous focus event or before zero. Between closely spaced lines it
-            // shrinks to half the interval between onsets, so that the line being sung keeps focus for most of it.
-            let previous = events.filter { $0.paragraph >= 0 }.map(\.time).max() ?? Time(0)
-            var focusLead = presentation.focusLead
-            if let prior = paragraphs.last?.begin, prior < entry.time {
-                let half = entry.time - prior
-                let limit = Time(half.numerator, half.denominator * 2)
-                if limit < focusLead { focusLead = limit }
-            }
-            let led = entry.time - focusLead
-            events.append(
-                .init(led > previous ? led : max(previous, Time(0)), order: i + 1, paragraph: paragraphs.count))
             if let bg = entry.background {
                 let lead = presentation.fillLead
                 let begin = max(Time(0), bg.begin - lead)
@@ -200,7 +280,6 @@ public final class LocalScene {
                     hasExplicitTiming: bg.hasExplicitTiming)
             }
             paragraphs.append(.init(input: input, position: position, begin: entry.time, end: end))
-            lastEnd = end
             // Inter-paragraph spacing: settled development capture V17 places consecutive paragraphs a median 200.5 px
             // apart against a 125-px line advance (docs/reports/paragraph-spacing.md).
             position += Double(layout.lines.count) * input.parameters.lineAdvance + Self.paragraphSpacing
