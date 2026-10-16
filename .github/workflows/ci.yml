@@ -53,6 +53,10 @@ jobs:
         if: success() || failure()
         timeout-minutes: 10
         run: swift test --disable-xctest --filter LyricsInputTests.InputTests
+      - name: Test Lyrics input FillDepartureTests
+        if: success() || failure()
+        timeout-minutes: 10
+        run: swift test --disable-xctest --filter LyricsInputTests.FillDepartureTests
       - name: Test Lyrics input InputAuditTests
         if: success() || failure()
         timeout-minutes: 10

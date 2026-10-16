@@ -5,6 +5,37 @@ import LyricsScreenCore
 import LyricsScreenMac
 
 struct ParagraphTests {
+    @Test func derivedTimeBoundsDoNotAuthorizeExternalInput() throws {
+        let derived = ParagraphTime(derived: Time(1, 2_000_000))
+        #expect(try derived.validated() == Time(1, 2_000_000))
+        #expect(ParagraphTime(derived: Time(1, 1000)) == ParagraphTime(1, 1000))
+        let encoded = try JSONEncoder().encode(derived)
+        let object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(Set(object.keys) == Set(["numerator", "denominator"]))
+        let decoded = try JSONDecoder().decode(ParagraphTime.self, from: encoded)
+        #expect(throws: ScreenError.self) { try decoded.validated() }
+        for value in [
+            ParagraphTime(1, 2_000_000), ParagraphTime(1_000_000_001), ParagraphTime(1, 0),
+            ParagraphTime(1, -1), ParagraphTime(Int64.min),
+        ] {
+            #expect(throws: ScreenError.self) { try value.validated() }
+        }
+        let spoofed = Data("{\"numerator\":1,\"denominator\":2000000,\"isDerived\":true}".utf8)
+        let external = try JSONDecoder().decode(ParagraphTime.self, from: spoofed)
+        #expect(throws: ScreenError.self) { try external.validated() }
+    }
+    @Test func generatedFillDeadlineDoesNotEnterExternalInput() throws {
+        var input = ParagraphInput.synthetic()
+        input.fillDeadline = Time(1, 2_000_000)
+        #expect(input.adapted(to: .video).fillDeadline == input.fillDeadline)
+        let encoded = try JSONEncoder().encode(input)
+        var object = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(object["fillDeadline"] == nil)
+        #expect(try JSONDecoder().decode(ParagraphInput.self, from: encoded).fillDeadline == nil)
+        object["fillDeadline"] = ["numerator": 1, "denominator": 2_000_000]
+        let spoofed = try JSONSerialization.data(withJSONObject: object)
+        #expect(try JSONDecoder().decode(ParagraphInput.self, from: spoofed).fillDeadline == nil)
+    }
     @Test func boundariesAndBounds() throws {
         let input = ParagraphInput.synthetic()
         try input.validate()

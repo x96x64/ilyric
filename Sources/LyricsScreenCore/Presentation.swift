@@ -4,11 +4,22 @@ import TimelineCore
 /// Internal experiment inputs, not a public project schema or native font specification.
 public struct ParagraphTime: Codable, Equatable, Sendable {
     public let numerator, denominator: Int64
+    // Runtime provenance is never accepted from, or written to, external Codable input.
+    private var isDerived = false
+    private enum CodingKeys: String, CodingKey { case numerator, denominator }
     public init(_ n: Int64, _ d: Int64 = 1) {
         numerator = n
         denominator = d
     }
+    /// Retains the exact precision of a package-generated focus boundary. Time has already established
+    /// structural rational invariants; ordinary and decoded input retain the original external bounds.
+    package init(derived time: Time) {
+        numerator = time.numerator
+        denominator = time.denominator
+        isDerived = abs(numerator) > 1_000_000_000 || denominator > 1_000_000
+    }
     public func validated() throws -> Time {
+        if isDerived { return Time(numerator, denominator) }
         guard abs(numerator == Int64.min ? Int64.max : numerator) <= 1_000_000_000,
             denominator > 0, denominator <= 1_000_000
         else { throw ScreenError.invalid("Timestamp bounds") }
@@ -146,6 +157,11 @@ public struct ParagraphInput: Codable, Sendable {
     public let motion: WordMotion?
     /// Right-aligns every line within the paragraph width, as for a duet's second singer; nil is left-aligned.
     public var rightAligned: Bool?
+    /// Package-generated focus departure; excluded from external input and serialization.
+    package var fillDeadline: Time? = nil
+    private enum CodingKeys: String, CodingKey {
+        case text, paragraphStyle, canvasWidth, breakEvidence, parameters, appearance, events, motion, rightAligned
+    }
     public init(
         text: String, canvasWidth: Int = 1179, parameters: ParagraphParameters = .init(), events: [AppearanceEvent],
         appearance: SoftAppearance? = nil, paragraphStyle: ParagraphStyle? = nil,
@@ -268,6 +284,7 @@ public struct ParagraphInput: Codable, Sendable {
             text: text, canvasWidth: canvas.width, parameters: parameters, events: events,
             appearance: appearance, paragraphStyle: paragraphStyle, breakEvidence: breakEvidence, motion: motion)
         result.rightAligned = rightAligned
+        result.fillDeadline = fillDeadline
         return result
     }
     /// Fitted static reconstruction, conditional on observed line structure.
