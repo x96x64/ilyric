@@ -73,6 +73,7 @@ enum Models {
         Options:
               --force                   Reinstall the models even when they are installed (install only)
           -q, --quiet                   Print only warnings and errors
+          -v, --verbose                 Enable verbose console mode
           -h, --help                    Show this help
 
         Environment:

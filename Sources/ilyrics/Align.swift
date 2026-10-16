@@ -266,6 +266,9 @@ enum Align {
 
         Aligns untimed lyrics (UTF-8 text) to a recording and writes word-timed TTML.
 
+        Output is always TTML. Other filename extensions are accepted with a warning;
+        use .ttml so render selects TTML.
+
         Options:
           -o, --output FILE   Output TTML file (required)
               --force         Replace an existing output
@@ -304,6 +307,11 @@ enum Align {
         let target = try checkOutput(output, force: options.has("force"), inputs: options.operands)
         if let path = options.values["report"] {
             _ = try checkOutput(path, force: options.has("force"), inputs: options.operands + [output])
+        }
+        if target.pathExtension.lowercased() != "ttml" {
+            console.warning(
+                "align writes TTML regardless of the output filename; use a .ttml extension so 'render' selects TTML."
+            )
         }
         let started = Date()
         let result = try await run(

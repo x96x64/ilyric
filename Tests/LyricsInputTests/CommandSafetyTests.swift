@@ -43,11 +43,21 @@ struct CommandFixture {
     }
 
     @discardableResult
-    func run(_ arguments: [String], environment: [String: String] = [:]) throws -> (status: Int32, stderr: String) {
+    func run(_ arguments: [String], environment: [String: String] = [:]) throws -> (
+        status: Int32, stdout: String, stderr: String
+    ) {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
             .deletingLastPathComponent()
         let p = Process()
         let err = Pipe()
+        // A file avoids blocking the child when both output streams contain text.
+        let output = dir.appendingPathComponent(".stdout-\(UUID().uuidString)")
+        try Data().write(to: output)
+        let out = try FileHandle(forWritingTo: output)
+        defer {
+            try? out.close()
+            try? FileManager.default.removeItem(at: output)
+        }
         p.executableURL = root.appendingPathComponent(".build/debug/ilyrics")
         p.arguments = arguments
         p.currentDirectoryURL = dir
@@ -55,14 +65,15 @@ struct CommandFixture {
         env.merge(environment) { $1 }
         p.environment = env
         p.standardError = err
-        p.standardOutput = Pipe()
+        p.standardOutput = out
         try p.run()
         var stderr = String(decoding: err.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
         p.waitUntilExit()
         if p.terminationReason == .uncaughtSignal {
             stderr += "\nTest child terminated by signal \(p.terminationStatus). Arguments: \(arguments)\n"
         }
-        return (p.terminationStatus, stderr)
+        let stdout = String(decoding: try Data(contentsOf: output), as: UTF8.self)
+        return (p.terminationStatus, stdout, stderr)
     }
 }
 
