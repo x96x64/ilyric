@@ -30,9 +30,30 @@ public struct LocalArtwork {
     public static func decode(_ url: URL) throws -> LocalArtwork {
         try decode(data: LocalFile.boundedData(url, limit: 16 * 1024 * 1024, label: "Artwork"))
     }
+    /// ImageIO may return pixels from truncated PNG streams without reporting an incomplete source.
+    /// Check chunk extents and the terminal chunk before accepting those pixels.
+    private static func requireCompletePNG(_ data: Data) throws {
+        guard data.starts(with: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]) else { return }
+        let complete = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> Bool in
+            var offset = 8
+            while bytes.count - offset >= 12 {
+                let count = (0..<4).reduce(0) { ($0 << 8) | Int(bytes[offset + $1]) }
+                guard count <= bytes.count - offset - 12 else { return false }
+                if bytes[offset + 4] == 0x49, bytes[offset + 5] == 0x45,
+                    bytes[offset + 6] == 0x4e, bytes[offset + 7] == 0x44
+                {
+                    return count == 0
+                }
+                offset += count + 12
+            }
+            return false
+        }
+        guard complete else { throw InputError.invalid("Artwork PNG is incomplete or has an invalid chunk length") }
+    }
     /// Decodes artwork bytes, such as the cover embedded in an audio file.
     public static func decode(data: Data) throws -> LocalArtwork {
         guard data.count <= 16 * 1024 * 1024 else { throw InputError.invalid("Artwork exceeds its byte limit") }
+        try requireCompletePNG(data)
         guard
             let source = CGImageSourceCreateWithData(
                 data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),

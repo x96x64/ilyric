@@ -109,4 +109,29 @@ struct ModelTransactionTests {
         #expect(try fm.contentsOfDirectory(atPath: root.path) == ["notes.txt"])
     }
 
+    @Test func consumptionLocksPermitReadersAndExcludeMutations() throws {
+        let fm = FileManager.default
+        let root = fm.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try fm.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? fm.removeItem(at: root) }
+        try Data("installed".utf8).write(to: root.appendingPathComponent("installed.json"))
+        @inline(never) func consume() throws {
+            let first = try ModelCacheLock(root, shared: true)
+            let second = try ModelCacheLock(root, shared: true)
+            defer { withExtendedLifetime((first, second)) {} }
+            #expect(throws: (any Error).self) { _ = try ModelCacheLock(root) }
+            #expect(throws: (any Error).self) { try InstalledModels.remove(from: root) }
+            #expect(try Data(contentsOf: root.appendingPathComponent("installed.json")) == Data("installed".utf8))
+        }
+        try consume()
+        @inline(never) func mutate() throws {
+            let mutation = try ModelCacheLock(root)
+            defer { withExtendedLifetime(mutation) {} }
+            #expect(throws: (any Error).self) { _ = try ModelCacheLock(root, shared: true) }
+        }
+        try mutate()
+        try InstalledModels.remove(from: root)
+        #expect(!fm.fileExists(atPath: root.appendingPathComponent("installed.json").path))
+    }
+
 }

@@ -90,6 +90,15 @@ enum Align {
                 recognizer = (installed.recognizer, installed.vocabulary)
             }
         }
+        // Inference can load weights lazily. Keep installation and removal outside the complete consumption window.
+        let cacheLock = try ModelCacheLock(Models.directory, shared: true)
+        defer { withExtendedLifetime(cacheLock) {} }
+        guard try InstalledModels.existing(in: Models.directory, templates: Models.templates()) != nil,
+            try language != .japanese
+                || InstalledModels.existingJapanese(in: Models.directory, templates: Models.templates()) != nil
+        else {
+            throw Failure(message: "alignment models changed before use; run the command again")
+        }
         let separating = Date()
         progress.begin(2)
         // Analysis samples follow the reference pipeline: 48-kHz frames of the source, one third at 16 kHz.

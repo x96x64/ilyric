@@ -6,6 +6,9 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ### Fixed
 
+- On older macOS versions, AirPlay audio controls resolve the preceding SF Symbol name when the current name is unavailable. Rendering and `doctor` use the same lookup; systems with the current name retain it.
+- Alignment holds a shared cache lock while using model weights. Installation and removal report that the cache is busy without changing its files; concurrent alignment readers remain permitted.
+- PNG artwork with truncated chunks or a missing terminal chunk is rejected before rendering. Unusable embedded artwork continues to produce a warning and use the placeholder.
 - Inactive-tile and artwork-background raster evaluation uses a retained, serialized Core Image context with eager image creation to mitigate the captured overlapping blur path on hosted virtual GPUs. Blur parameters, image graphs, source timing, and output colour policy remain unchanged.
 - Scalar presentation durations avoid rational intermediate overflow during paragraph, focus, and inactive-line evaluation. The reported extreme package-API focus lead now supports scene initialization and sampled rendering without changing source timestamps, exact boundaries, external validation, or ordinary representable calculations.
 - Presentation fills finish by actual focus departure or the audio endpoint, including empty entries, instrumental gaps, explicit releases, and late or sub-millisecond spans. Ordered boundary compression and a tapered smoothing window prevent reversed span starts and visible fill after departure. Exact internal fractions retain their precision; source timing, focus events, unaffected intervals, and external timestamp validation are preserved.

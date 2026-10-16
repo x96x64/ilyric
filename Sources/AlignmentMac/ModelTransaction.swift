@@ -3,17 +3,18 @@ import Darwin
 import AlignmentCore
 
 /// Serializes cache mutations across processes. The lock file remains so waiters share one inode.
-final class ModelCacheLock {
+package final class ModelCacheLock {
     private let descriptor: Int32
-    init(_ directory: URL) throws {
-        descriptor = open(
+    package init(_ directory: URL, shared: Bool = false) throws {
+        let opened = open(
             directory.appendingPathComponent(".ilyrics-models.lock").path, O_RDWR | O_CREAT | O_NOFOLLOW | O_CLOEXEC,
             0o600)
-        guard descriptor >= 0 else { throw AlignmentError.invalid("Could not open the model cache lock") }
-        guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else {
-            close(descriptor)
+        guard opened >= 0 else { throw AlignmentError.invalid("Could not open the model cache lock") }
+        guard flock(opened, (shared ? LOCK_SH : LOCK_EX) | LOCK_NB) == 0 else {
+            close(opened)
             throw AlignmentError.invalid("The model cache is in use by another operation; try again after it finishes")
         }
+        descriptor = opened
     }
     deinit { close(descriptor) }
 }

@@ -5,7 +5,14 @@ import LyricsScreenCore
 
 /// Resolves SF Symbols through public AppKit APIs at runtime and caches alpha masks.
 /// No symbol data is stored in the repository or written except as pixels of the requested output.
-final class SystemSymbols {
+package final class SystemSymbols {
+    /// Prefer the fitted current name; older systems retain the preceding AirPlay audio name.
+    package static func image(named name: String) -> NSImage? {
+        if let image = NSImage(systemSymbolName: name, accessibilityDescription: nil) { return image }
+        guard name == "airplay.audio" else { return nil }
+        return NSImage(systemSymbolName: "airplayaudio", accessibilityDescription: nil)
+    }
+
     private struct Mask {
         let image: CGImage
         let inkCenter: CGPoint
@@ -23,7 +30,7 @@ final class SystemSymbols {
             }
         // Render at native pixels: point size × 3, matching the reference display scale.
         guard
-            let symbol = NSImage(systemSymbolName: s.name, accessibilityDescription: nil)?
+            let symbol = Self.image(named: s.name)?
                 .withSymbolConfiguration(.init(pointSize: s.pointSize * ControlSymbols.nativeScale, weight: weight))
         else {
             throw ScreenError.invalid("System symbol \(s.name) is unavailable on this Mac")
