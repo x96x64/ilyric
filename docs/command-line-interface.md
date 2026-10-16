@@ -2,7 +2,7 @@
 
 ## Status
 
-Current reference for iLyrics 1.3.0. `render`, `align`, `models`, and `doctor` are implemented, and the weightless model templates are distributed under `share/ilyrics/templates`. The command design was approved on October 11, 2026. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
+Current reference based on released iLyrics 1.3.1, with Unreleased help-routing and alignment-filename guidance described below. `render`, `align`, `models`, and `doctor` are implemented, and the weightless model templates are distributed under `share/ilyrics/templates`. The command design was approved on October 11, 2026. The interface follows established tools such as ripgrep, fd, bat, GitHub CLI, Git, FFmpeg, and yt-dlp: one executable, verb subcommands, positional inputs, `-o` for the output, progress on standard error, and quiet machine-readable results on request.
 
 The October 11 design initially recorded template distribution as pending; completion was documented on October 13. See [Model Template Distribution](reports/model-template-distribution.md) and the [roadmap's Stage 1 completion record](roadmap-to-stable.md#stage-1-experimental-source-release) for that history.
 
@@ -13,6 +13,7 @@ ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]
 ilyrics align  AUDIO LYRICS -o LYRICS.ttml [options]
 ilyrics models install | status | remove
 ilyrics doctor
+ilyrics help [COMMAND]
 ilyrics --help | --version
 ```
 
@@ -23,6 +24,14 @@ ilyrics --help | --version
 - `doctor` reports the macOS version, available compute units, SF Symbols availability, the model cache, and the toolchain, and states the recovery step for each problem.
 
 Control icons are always SF Symbols, resolved at runtime; there is no icon option. If a symbol cannot be resolved, rendering stops with an error and `doctor` reports the cause. The original icon set remains internal for tests and public media, except for the single README demonstration image authorized by the [documentation-image amendment](sf-symbols-rights-assessment.md#amendment-of-october-11-2026-documentation-image).
+
+### Help Routing (Unreleased)
+
+Bare `ilyrics`, `ilyrics help`, `ilyrics -h`, and `ilyrics --help` show the overall usage. `ilyrics help COMMAND` accepts exactly one of `render`, `align`, `models`, or `doctor`; it produces exactly the corresponding `ilyrics COMMAND --help` output on standard output and exits with status 0. These help requests do not access or download models, run inference, or create outputs. Unknown help targets and extra arguments, including `ilyrics help models install`, produce a usage error on standard error and exit with status 2. There is no nested help syntax. Existing command `-h` and `--help` behavior and `--version` remain unchanged.
+
+### Alignment Output Filenames (Unreleased)
+
+`align` always writes TTML, regardless of the output filename. A filename without a `.ttml` extension produces one nonfatal warning on standard error after the existing argument, input-path, output-path, and report-path checks succeed, before alignment work, model acquisition, and output writing. The warning remains visible with `--quiet` and is not suppressed by `--force`. `.ttml` is accepted case-insensitively, including `.TTML`, without this warning. Other filenames remain accepted: no extension is added or replaced, no file is renamed, and exit behavior, generated TTML, reports, source timestamps, and overwrite rules are unchanged. Use `.ttml` when passing the file to `render`, which selects the input format by extension.
 
 ## Lyrics Input
 

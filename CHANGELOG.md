@@ -4,6 +4,15 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+### Added
+
+- `align` emits a nonfatal warning for output names without a case-insensitive `.ttml` extension. Other names remain accepted and still contain TTML; `.ttml` is needed for `render` to select TTML by extension. The warning remains visible with `--quiet` and `--force` after path-safety checks succeed.
+
+### Fixed
+
+- `ilyrics help render`, `help align`, `help models`, and `help doctor` show the corresponding command's existing help. Unknown help targets and extra arguments report a usage error with status 2.
+- The `models` help lists the existing `--verbose` option. Current CLI and input-format references identify released version 1.3.1, distinguish Unreleased guidance, and clarify the existing signed LRC offset rule with positive and negative examples.
+
 ## [1.3.1] - 2026-10-16
 
 ### Changed
