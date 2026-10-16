@@ -4,6 +4,12 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-10-16
+
+### Changed
+
+- The README includes daily star history and uses generic song and artist metadata in its render example.
+
 ### Fixed
 
 - On older macOS versions, AirPlay audio controls resolve the preceding SF Symbol name when the current name is unavailable. Rendering and `doctor` use the same lookup; systems with the current name retain it.
@@ -14,7 +20,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 - Presentation fills finish by actual focus departure or the audio endpoint, including empty entries, instrumental gaps, explicit releases, and late or sub-millisecond spans. Ordered boundary compression and a tapered smoothing window prevent reversed span starts and visible fill after departure. Exact internal fractions retain their precision; source timing, focus events, unaffected intervals, and external timestamp validation are preserved.
 - Release distribution rejects prerelease tags, draft releases, and releases marked as prereleases before packaging or registry publication. Registry jobs recheck release state after environment approval.
 - Video, aligned-lyrics, and JSON-report output commits recheck their destinations and preserve files created during processing unless `--force` permits replacement. Directories and input files remain protected, and failed text writes remove their temporary files.
-- Model downloads preserve existing cached bytes until a replacement has passed SHA-256 verification. Installation prepares a complete replacement separately and restores the previous files if publication fails.
+- Model downloads preserve existing cached bytes until a replacement has passed SHA-256 verification. Installation prepares a complete replacement separately and restores the previous files if activating the replacement fails.
 - Model installation and removal serialize changes to the same cache. Interrupted replacements retain a recovery record and are recovered before the next installation or removal. Cleanup preserves unrelated downloads.
 - Checkpoint ZIP parsing rejects invalid header and entry ranges instead of terminating on out-of-bounds access.
 
@@ -159,7 +165,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.1
 [1.3.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.0
 [1.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.2.0
 [1.1.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.1.0

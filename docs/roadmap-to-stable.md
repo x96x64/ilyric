@@ -1,8 +1,8 @@
 # Roadmap to the Stable Release
 
-## Current Status as of October 15, 2026
+## Current Status as of October 16, 2026
 
-The experimental source release, public preview, and stable release have been published. The current release is v1.3.0; see the [changelog](../CHANGELOG.md) and [distribution record](distribution.md#publication). The dated plan below preserves the sequence of decisions and confirmation points. Earlier statements about pending work and version targets are retained as dated records; they do not by themselves establish the current completion status of each task. Apple Developer ID signing and notarization remain pending as described in the distribution record.
+The experimental source release, public preview, and stable release have been published. The current release is v1.3.1; see the [changelog](../CHANGELOG.md) and [distribution record](distribution.md#publication). The dated plan below preserves the sequence of decisions and confirmation points. Earlier statements about pending work and version targets are retained as dated records; they do not by themselves establish the current completion status of each task. Apple Developer ID signing and notarization remain pending as described in the distribution record.
 
 The following summarizes the existing decisions without changing their objectives or approval requirements:
 
