@@ -4,7 +4,7 @@ import VideoExport
 
 /// The user-facing iLyrics command (docs/command-line-interface.md).
 enum CLI {
-    static let version = "1.3.1"
+    static let version = "1.3.2"
     static let usage = """
         Usage:
           ilyrics render AUDIO LYRICS -o VIDEO.mp4 [options]

@@ -4,6 +4,8 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [1.3.2] - Unreleased
+
 ### Added
 
 - `align` emits a nonfatal warning for output names without a case-insensitive `.ttml` extension. Other names remain accepted and still contain TTML; `.ttml` is needed for `render` to select TTML by extension. The warning remains visible with `--quiet` and `--force` after path-safety checks succeed.
@@ -11,7 +13,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 ### Fixed
 
 - `ilyrics help render`, `help align`, `help models`, and `help doctor` show the corresponding command's existing help. Unknown help targets and extra arguments report a usage error with status 2.
-- The `models` help lists the existing `--verbose` option. Current CLI and input-format references identify released version 1.3.1, distinguish Unreleased guidance, and clarify the existing signed LRC offset rule with positive and negative examples.
+- The `models` help lists the existing `--verbose` option. Current CLI and input-format references describe version 1.3.2 and clarify the existing signed LRC offset rule with positive and negative examples.
 
 ## [1.3.1] - 2026-10-16
 
@@ -174,7 +176,8 @@ The first experimental source release. English synchronization and the visual pr
 - Lyrics normalization for plain text: section labels, parenthesized background vocals, and balanced paragraph splitting.
 - Stereo audio output, direct high-resolution Apple Lossless input, and placeholder artwork for recordings without a cover.
 
-[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/x96x64/ilyrics/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.2
 [1.3.1]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.1
 [1.3.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.3.0
 [1.2.0]: https://github.com/x96x64/ilyrics/releases/tag/v1.2.0

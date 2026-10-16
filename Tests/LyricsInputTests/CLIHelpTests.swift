@@ -25,7 +25,7 @@ extension CommandSafetyTests {
         }
         for flag in ["-V", "--version"] {
             let version = try f.run([flag], environment: environment)
-            #expect(version.status == 0 && version.stderr.isEmpty && version.stdout == "ilyrics 1.3.1\n")
+            #expect(version.status == 0 && version.stderr.isEmpty && version.stdout == "ilyrics 1.3.2\n")
         }
         #expect(try FileManager.default.contentsOfDirectory(atPath: f.dir.path) == before)
     }
