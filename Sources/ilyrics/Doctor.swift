@@ -3,6 +3,7 @@ import AppKit
 import CoreML
 import AlignmentMac
 import LyricsScreenCore
+import LyricsScreenMac
 
 /// The `doctor` subcommand: environment checks, each with its recovery step.
 enum Doctor {
@@ -53,7 +54,7 @@ enum Doctor {
         ]
         let names = Set(
             parts.flatMap { p in [true, false].compactMap { ControlSymbols.symbol(for: p, playing: $0)?.name } })
-        let missing = names.filter { NSImage(systemSymbolName: $0, accessibilityDescription: nil) == nil }.sorted()
+        let missing = names.filter { SystemSymbols.image(named: $0) == nil }.sorted()
         report(
             missing.isEmpty, "SF Symbols",
             missing.isEmpty

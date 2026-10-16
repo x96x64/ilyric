@@ -6,6 +6,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ### Fixed
 
+- On older macOS versions, AirPlay audio controls resolve the preceding SF Symbol name when the current name is unavailable. Rendering and `doctor` use the same lookup; systems with the current name retain it.
 - Alignment holds a shared cache lock while using model weights. Installation and removal report that the cache is busy without changing its files; concurrent alignment readers remain permitted.
 - PNG artwork with truncated chunks or a missing terminal chunk is rejected before rendering. Unusable embedded artwork continues to produce a warning and use the placeholder.
 - Inactive-tile and artwork-background raster evaluation uses a retained, serialized Core Image context with eager image creation to mitigate the captured overlapping blur path on hosted virtual GPUs. Blur parameters, image graphs, source timing, and output colour policy remain unchanged.
