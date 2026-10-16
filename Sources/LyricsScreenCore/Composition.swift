@@ -67,7 +67,7 @@ public struct FocusSegment: Sendable {
         self.tau = tau
     }
     public func evaluate(_ time: Time) -> (position: Double, velocity: Double) {
-        let t = max(0, (time - start).seconds)
+        let t = max(0, time.seconds(since: start))
         let a = position - target
         let b = velocity + a / tau
         let e = exp(-t / tau)

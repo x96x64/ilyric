@@ -13,7 +13,7 @@ public enum InactiveTreatment {
         var initial = paragraph == focus ? 1.0 : 0.0
         var target = initial
         func value(_ t: Time) -> Double {
-            let x = max(0, min(1, (t - start).seconds / 0.15))
+            let x = max(0, min(1, t.seconds(since: start) / 0.15))
             let u = x * x * (3 - 2 * x)
             return initial + (target - initial) * u
         }

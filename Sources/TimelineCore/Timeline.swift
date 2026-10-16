@@ -12,6 +12,36 @@ public struct Time: Hashable, Comparable, Sendable {
         self.denominator = denominator / divisor
     }
     public var seconds: Double { Double(numerator) / Double(denominator) }
+    /// Scalar elapsed seconds, without requiring the rational difference to fit in a Time.
+    /// Preserve ordinary normalized arithmetic; use exact two-word subtraction before conversion
+    /// when intermediate products or the resulting numerator exceed Int64.
+    package func seconds(since other: Self) -> Double {
+        let common = Self.gcd(denominator, other.denominator)
+        let leftScale = other.denominator / common
+        let rightScale = denominator / common
+        let d = denominator.multipliedReportingOverflow(by: leftScale)
+        let left = numerator.multipliedReportingOverflow(by: leftScale)
+        let right = other.numerator.multipliedReportingOverflow(by: rightScale)
+        let n = left.partialValue.subtractingReportingOverflow(right.partialValue)
+        if !d.overflow && !left.overflow && !right.overflow && !n.overflow && n.partialValue != Int64.min {
+            return Time(n.partialValue, d.partialValue).seconds
+        }
+        let a = numerator.multipliedFullWidth(by: leftScale)
+        let b = other.numerator.multipliedFullWidth(by: rightScale)
+        let low = a.low.subtractingReportingOverflow(b.low)
+        // Each product has magnitude below 2^126; their signed difference fits two words.
+        let high = a.high - b.high - (low.overflow ? 1 : 0)
+        let value: Double
+        if high < 0 {
+            let magnitudeLow = (~low.partialValue) &+ 1
+            let magnitudeHigh = UInt64(bitPattern: ~high) + (magnitudeLow == 0 ? 1 : 0)
+            value = -(Double(magnitudeHigh) * 0x1p64 + Double(magnitudeLow))
+        } else {
+            value = Double(high) * 0x1p64 + Double(low.partialValue)
+        }
+        let divisor = UInt64(denominator).multipliedFullWidth(by: UInt64(leftScale))
+        return value / (Double(divisor.high) * 0x1p64 + Double(divisor.low))
+    }
     public static func < (a: Self, b: Self) -> Bool {
         let left = a.numerator.multipliedFullWidth(by: b.denominator)
         let right = b.numerator.multipliedFullWidth(by: a.denominator)

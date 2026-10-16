@@ -4,6 +4,33 @@ import Foundation
 @testable import VideoExport
 
 struct TimelineTests {
+    @Test func scalarElapsedSecondsPreserveOrdinaryArithmetic() {
+        let times = [Time(-3), Time(-1, 3), Time(0), Time(1, 60), Time(999, 1000), Time(5, 4), Time(100)]
+        for a in times {
+            for b in times {
+                #expect(a.seconds(since: b).bitPattern == (a - b).seconds.bitPattern)
+            }
+        }
+    }
+    @Test func scalarElapsedSecondsAvoidOverflowAndCancellation() {
+        let d: Int64 = 144_115_188_075_855_872
+        let deadline = Time(d - 1, d)
+        let begin = Time(1999, 2000)
+        let expected = 0.0005 - 1 / Double(d)
+        #expect(abs(deadline.seconds(since: begin) - expected) < 1e-18)
+        #expect(abs(begin.seconds(since: deadline) + expected) < 1e-18)
+        let a = Time(1, d)
+        let b = Time(1, d - 1)
+        let tiny = -1 / (Double(d) * Double(d - 1))
+        #expect(a.seconds == b.seconds)
+        #expect(a.seconds(since: b) < 0)
+        #expect(abs((a.seconds(since: b) - tiny) / tiny) < 1e-15)
+        #expect(b.seconds(since: a) == -a.seconds(since: b))
+        #expect(Time(Int64.max).seconds(since: Time(-Int64.max)) == 2 * Double(Int64.max))
+        #expect(Time(-Int64.max).seconds(since: Time(1)) == -0x1p63)
+        #expect(Time(-Int64.max).seconds(since: Time(Int64.max)) == -2 * Double(Int64.max))
+        #expect(Time(Int64.max, d).seconds(since: Time(-Int64.max, d - 1)).isFinite)
+    }
     @Test func testRationalNormalizationAndScheduling() {
         #expect((Time(2, 4)) == (Time(1, 2)))
         #expect((Time(1, 3) + Time(1, 6)) == (Time(1, 2)))
