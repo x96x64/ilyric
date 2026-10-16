@@ -4,7 +4,7 @@ All notable changes to iLyrics are recorded here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
-## [1.3.2] - Unreleased
+## [1.3.2] - 2026-10-16
 
 ### Added
 

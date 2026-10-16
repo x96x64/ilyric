@@ -2,7 +2,7 @@
 
 ## Current Status as of October 16, 2026
 
-The experimental source release, public preview, and stable release have been published. The current published release is v1.3.1; version 1.3.2 is prepared on main and awaits explicit publication approval. See the [changelog](../CHANGELOG.md) and [distribution record](distribution.md#publication). The dated plan below preserves the sequence of decisions and confirmation points. Earlier statements about pending work and version targets are retained as dated records; they do not by themselves establish the current completion status of each task. Apple Developer ID signing and notarization remain pending as described in the distribution record.
+The experimental source release, public preview, and stable release have been published. The current published release is v1.3.2, dated October 16, 2026. See the [changelog](../CHANGELOG.md) and [distribution record](distribution.md#publication). The dated plan below preserves the sequence of decisions and confirmation points. Earlier statements about pending work and version targets are retained as dated records; they do not by themselves establish the current completion status of each task. Apple Developer ID signing and notarization remain pending as described in the distribution record.
 
 The following summarizes the existing decisions without changing their objectives or approval requirements:
 

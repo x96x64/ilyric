@@ -2,7 +2,7 @@
 
 ## Status
 
-The current published release is v1.3.1, dated October 16, 2026. Version 1.3.2 is being prepared; its publication and release date remain pending. Distribution uses Homebrew, npm, and pip. The distribution design was established for the public preview on October 11, implemented for v0.2.0, and retained for subsequent releases; see [Publication](#publication). npm and pip contain the native macOS binary and model templates; Homebrew builds the tagged source locally.
+The current published release is v1.3.2, dated October 16, 2026. Distribution uses Homebrew, npm, and pip. The distribution design was established for the public preview on October 11, implemented for v0.2.0, and retained for subsequent releases; see [Publication](#publication). npm and pip contain the native macOS binary and model templates; Homebrew builds the tagged source locally.
 
 ## Release Archive
 
@@ -32,7 +32,7 @@ npm and pip install the binary and templates of the release archive; Homebrew bu
 
 On October 12, 2026, after the rename from iLyric and before first publication, the name `ilyrics` was unregistered on npm, PyPI, and Homebrew.
 
-Version 0.2.0 was published on October 12, 2026, through all three channels, and version 1.0.0, the stable release, on the same day. Version 1.1.0 was published on October 14, 2026, and versions 1.2.0 and 1.3.0 on October 15, 2026. Version 1.3.1 is dated October 16, 2026, and retains the same distribution channels. Version 1.3.2 is prepared for the same channels and has not yet been published. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
+Version 0.2.0 was published on October 12, 2026, through all three channels, and version 1.0.0, the stable release, on the same day. Version 1.1.0 was published on October 14, 2026, and versions 1.2.0 and 1.3.0 on October 15, 2026. Version 1.3.1 is dated October 16, 2026, and retains the same distribution channels. Version 1.3.2 is dated October 16, 2026, and retains the same distribution channels. PyPI and npm use trusted publishing from the `release.yml` workflow in the protected environments `pypi` and `npm`, which require the maintainer's approval; npm's first publication used a short-lived token, which was replaced by trusted publishing and deleted.
 
 ## Maintainer Actions
 
